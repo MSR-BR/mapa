@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function requireAuthenticatedUser() {
+export const requireAuthenticatedUser = cache(async function requireAuthenticatedUser() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = data?.claims?.sub;
@@ -10,4 +11,4 @@ export async function requireAuthenticatedUser() {
   if (error || typeof userId !== "string") redirect("/login");
 
   return { supabase, userId };
-}
+});

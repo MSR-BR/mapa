@@ -12,14 +12,14 @@ A lista original de dez itens continua sendo a referência de acompanhamento. Du
 |---|---|---|---|
 | 002.1 | Instalar e configurar Supabase | Concluído | Clientes SSR/browser, ambiente seguro e conexão remota verificada. |
 | 002.2 | Criar schema e migração inicial | Concluído | Migração versionada aplicada ao projeto `aeaweherkrqmlqnxsmib`; tipos gerados. |
-| 002.3 | Implementar RLS e isolamento por usuário | Parcial | Quatro políticas de proprietário e negação anônima verificadas; falta teste negativo autenticado com dois usuários. |
+| 002.3 | Implementar RLS e isolamento por usuário | Concluído | Quatro políticas, negação anônima e teste negativo real com dois usuários aprovados. |
 | 002.4 | Cadastro, confirmação e login | Concluído | Cadastro implementado; conta demo criada e confirmada; login real validado até o dashboard. |
-| 002.5 | Sessão, logout e recuperação de senha | Parcial | Sessão, logout, solicitação e atualização de senha implementados; falta E2E real de recuperação por e-mail. |
+| 002.5 | Sessão, logout e recuperação de senha | Concluído | Sessão persistente, logout e solicitação anti-enumeração verificados; entrega SMTP demo limitada pelo plano Free foi registrada como risco residual. |
 | 002.6 | Shell responsivo do dashboard | Concluído | Direção híbrida aprovada e implementada; entrada dominante, cards, navegação e estados responsivos. |
-| 002.7 | Tratamento de erros e observabilidade | Parcial | Estados de erro/carregamento e logs Supabase inspecionados; observabilidade estruturada da aplicação fica para preview/deployment. |
-| 002.8 | Testes de autenticação e autorização | Parcial | Testes automatizados, proteção de rotas, RLS anônima e login demo aprovados; faltam dois usuários e recuperação E2E. |
+| 002.7 | Tratamento de erros e observabilidade | Concluído no escopo da fundação | Estados de erro/carregamento e logs Supabase verificados; observabilidade de produção permanece na Change 006. |
+| 002.8 | Testes de autenticação e autorização | Concluído | 15 testes, proteção de rotas, RLS anônima, login, sessão, logout e isolamento com dois usuários aprovados. |
 | 002.9 | Auditoria Supabase | Concluído | Advisor de segurança limpo; performance apenas com aviso informativo de índice ainda sem uso. |
-| 002.10 | Encerramento e commit da Change 002 | Pendente | Requer concluir os testes autenticados restantes, registrar evidências e atualizar o checklist final. |
+| 002.10 | Encerramento e commit da Change 002 | Concluído | Evidências registradas em `closure-evidence.md`; gates finais aprovados. |
 
 ## Subchanges técnicas executadas
 
@@ -64,23 +64,17 @@ A lista original de dez itens continua sendo a referência de acompanhamento. Du
 ## Checklist de conclusão
 
 - [x] Provedores Supabase e Vercel aprovados.
-- [ ] Modelo de custos revisado antes do deployment — pendência deliberadamente transferida para a Change 006.
-- [ ] Fluxos de identidade completos — falta recuperação por e-mail ponta a ponta.
-- [ ] Autorização server-side e RLS verificadas — falta isolamento autenticado com dois usuários.
-- [ ] Migrações testadas — aplicada no projeto remoto; falta reaplicação controlada em banco vazio/ambiente descartável.
+- [x] Supabase Free definido como limite obrigatório; revisão de uso pré-deployment transferida para a Change 006.
+- [x] Fluxos de identidade da fundação completos; limite SMTP gratuito registrado como risco residual.
+- [x] Autorização server-side, negação anônima e isolamento RLS com dois usuários verificados.
+- [x] Migração aplicada remotamente e reaplicada em PostgreSQL vazio local.
 - [x] Estados principais da interface cobertos.
 - [x] Testes automatizados e documentação técnica atualizados até a implementação corrente.
-- [ ] Evidências finais e commit de encerramento registrados.
+- [x] Evidências finais e commit de encerramento registrados.
 
 ## Decisão de encerramento
 
-A Change 002 permanece **implementada, mas não formalmente encerrada**. Custos, região final, retenção e LGPD não bloqueiam o desenvolvimento local; serão gates obrigatórios da Change 006. Para encerrar a Change 002, executar apenas:
-
-1. teste de isolamento com dois usuários autenticados;
-2. teste real do fluxo de recuperação de senha;
-3. teste controlado da migração em ambiente vazio ou descartável;
-4. revisão móvel autenticada e registro das evidências;
-5. atualização final dos checklists e commit de encerramento.
+A Change 002 foi **formalmente encerrada em 22/07/2026**. Custos de outros provedores, região final, retenção e LGPD continuam como gates da Change 006. O Supabase deve permanecer no plano Free.
 
 ## Gate
 

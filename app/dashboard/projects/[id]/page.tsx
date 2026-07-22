@@ -12,7 +12,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data: project } = await supabase
     .from("projects")
-    .select("*")
+    .select(
+      "id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, created_at, updated_at, deleted_at, owner_id",
+    )
     .eq("id", id)
     .eq("owner_id", userId)
     .is("deleted_at", null)

@@ -152,3 +152,41 @@ test("uses the approved dark silver authentication shell", async () => {
   assert.match(styles, /\.auth-shell \{[^}]*background: #08090b/s);
   assert.match(styles, /linear-gradient\(125deg, #ffffff/);
 });
+
+test("keeps authenticated Supabase usage within the free-plan budget", async () => {
+  const [dashboard, projectPage, projectAuth, architecture] = await Promise.all([
+    readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+    readProjectFile("modules/projects/auth.ts"),
+    readProjectFile(".specs/shared/architecture.md"),
+  ]);
+
+  assert.match(dashboard, /\.limit\(12\)/);
+  assert.doesNotMatch(projectPage, /\.select\("\*"\)/);
+  assert.match(projectAuth, /cache\(async function requireAuthenticatedUser/);
+  assert.match(architecture, /Supabase Free/);
+  assert.match(architecture, /paginação por cursor/);
+});
+
+test("provides a two-user authenticated RLS verification without admin keys", async () => {
+  const verification = await readProjectFile("scripts/verify-authenticated-rls.mjs");
+
+  assert.match(verification, /TEST_USER_A_EMAIL/);
+  assert.match(verification, /TEST_USER_B_EMAIL/);
+  assert.match(verification, /RLS permitiu leitura entre proprietários/);
+  assert.match(verification, /RLS permitiu atualização entre proprietários/);
+  assert.match(verification, /RLS permitiu exclusão entre proprietários/);
+  assert.doesNotMatch(verification, /service.role|sb_secret_|SUPABASE_SECRET/i);
+});
+
+test("validates the migration locally without a paid Supabase branch", async () => {
+  const [script, architecture] = await Promise.all([
+    readProjectFile("scripts/verify-migration-local.sh"),
+    readProjectFile(".specs/shared/architecture.md"),
+  ]);
+
+  assert.match(script, /postgres:17-alpine/);
+  assert.match(script, /1\|4\|1/);
+  assert.match(script, /trap cleanup/);
+  assert.match(architecture, /sem branches pagas/);
+});

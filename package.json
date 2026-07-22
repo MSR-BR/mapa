@@ -11,6 +11,8 @@
     "start": "next start",
     "supabase:verify": "node --env-file-if-exists=.env.local scripts/verify-supabase.mjs",
     "supabase:verify-rls": "node --env-file-if-exists=.env.local scripts/verify-anonymous-rls.mjs",
+    "supabase:verify-authenticated-rls": "node --env-file-if-exists=.env.local scripts/verify-authenticated-rls.mjs",
+    "supabase:verify-migration-local": "sh scripts/verify-migration-local.sh",
     "test": "node --test tests/foundation.test.mjs",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",

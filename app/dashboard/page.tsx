@@ -17,7 +17,7 @@ export default async function DashboardPage() {
     .select("id, title, status, knowledge_area, academic_level, updated_at")
     .is("deleted_at", null)
     .order("updated_at", { ascending: false })
-    .limit(100);
+    .limit(12);
   const projects = data ?? [];
 
   return (

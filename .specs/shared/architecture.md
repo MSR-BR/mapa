@@ -16,6 +16,7 @@ O Mapa da Pesquisa será uma aplicação web responsiva, organizada como monóli
 - Documentos: geração server-side de DOCX e PDF.
 - Testes: unitários, integração, componentes e ponta a ponta.
 - Deploy: Vercel para a aplicação e Supabase para PostgreSQL e autenticação.
+- Restrição operacional: permanecer no plano **Supabase Free**, sem branches pagas ou upgrade automático.
 
 A biblioteca cliente, o modelo relacional e as políticas de acesso serão definidos na Change 002. A escolha dos provedores não autoriza deployment de produção antes da Change 006.
 
@@ -107,6 +108,17 @@ Relacionamentos e tipos definitivos serão formalizados por migração na Change
 - Métricas de latência, taxa de erro, duração de jobs e falhas por etapa.
 - Eventos de auditoria para operações sensíveis, sem armazenar conteúdo desnecessário.
 - Monitoramento separado para aplicação, banco e provedores externos.
+
+## 9.1 Orçamento de uso do Supabase
+
+- Consultas selecionam somente colunas necessárias e sempre usam limites explícitos em listas.
+- A biblioteca inicial carrega no máximo 12 projetos; expansão futura usará paginação por cursor.
+- Verificações autenticadas repetidas dentro da mesma renderização são deduplicadas por requisição.
+- Dados privados não usam cache compartilhado entre usuários.
+- Não usar Realtime, Storage, Edge Functions ou branches enquanto não houver requisito funcional aprovado.
+- Evitar polling; mutações revalidam apenas as rotas afetadas.
+- Índices devem acompanhar filtros recorrentes e políticas RLS, sem criar índices especulativos.
+- O painel de uso do Supabase será revisado antes de qualquer piloto; atingir um limite deve degradar ou bloquear a função, nunca autorizar cobrança automaticamente.
 
 ## 10. Estrutura de pastas planejada
 

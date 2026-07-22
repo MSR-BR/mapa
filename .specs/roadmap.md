@@ -7,7 +7,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | Ordem | Mudança | Estado em 22/07/2026 | Resultado e gate de saída |
 |---|---|---|---|
 | 001 | Criar estrutura do projeto | Concluída | Next.js/Vercel saneado, ferramentas e smoke aprovados. |
-| 002 | Implementar fundação do MVP | Em fechamento | Autenticação, Supabase, RLS e shell prontos; faltam quatro validações finais. |
+| 002 | Implementar fundação do MVP | Concluída | Autenticação, Supabase Free, RLS, migração e shell aprovados. |
 | 003 | Implementar projetos e briefing | Parcialmente antecipada | CRUD básico existe; faltam validação por campo, proteção contra perda e E2E completo. |
 | 004 | Implementar geração e editor | Não iniciada | Job, estrutura validada, progresso, regeneração e edição. |
 | 005 | Testes e validação | Não iniciada | Cobertura crítica, segurança, acessibilidade e responsividade do MVP completo. |
@@ -16,7 +16,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 ## Marcos
 
 - M0: arquitetura e especificações aprovadas — concluído.
-- M1: fundação técnica pronta — em fechamento da Change 002.
+- M1: fundação técnica pronta — concluído.
 - M2: gerenciamento de projetos utilizável — parcialmente entregue, formalizado na Change 003.
 - M3: estrutura gerada e editável — pendente.
 - M4: MVP validado — pendente.

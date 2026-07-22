@@ -11,6 +11,7 @@
 - Aplicação web e Route Handlers: Vercel, usando o runtime padrão do Next.js.
 - Banco de dados e autenticação: Supabase, projeto `aeaweherkrqmlqnxsmib`.
 - O projeto Research Starter (`ygmzwfatdbyxvpbuusmy`) permanece fora do escopo.
+- Supabase deve permanecer no plano Free durante todo o projeto; recursos pagos e branches remotas estão proibidos sem nova decisão explícita do usuário.
 
 ## Pipeline
 
@@ -43,4 +44,4 @@
 
 ## Limite desta decisão
 
-Vercel e Supabase estão confirmados como arquitetura-alvo. Esta decisão não cria nem publica um projeto Vercel: a implantação real ocorre somente na Change 006 e após decisão de custos, região e requisitos LGPD.
+Vercel e Supabase estão confirmados como arquitetura-alvo. Esta decisão não cria nem publica um projeto Vercel: a implantação real ocorre somente na Change 006 e após decisão de região e requisitos LGPD. A Change 006 deve demonstrar compatibilidade com o Supabase Free; aumento de plano não é uma alternativa automática.
