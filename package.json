@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "supabase:verify": "node --env-file-if-exists=.env.local scripts/verify-supabase.mjs",
+    "supabase:verify-rls": "node --env-file-if-exists=.env.local scripts/verify-anonymous-rls.mjs",
     "test": "node --test tests/foundation.test.mjs",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",

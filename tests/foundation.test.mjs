@@ -49,3 +49,16 @@ test("pins Supabase to the Mapa project and requires a publishable key", async (
   );
   assert.match(environment, /NEXT_PUBLIC_SUPABASE_PROJECT_REF=aeaweherkrqmlqnxsmib/);
 });
+
+test("defines an owner-scoped projects schema with RLS", async () => {
+  const migration = await readProjectFile(
+    "supabase/migrations/20260722013741_create_projects_foundation.sql",
+  );
+
+  assert.match(migration, /owner_id uuid not null references auth\.users/);
+  assert.match(migration, /alter table public\.projects enable row level security/);
+  assert.match(migration, /revoke all on table public\.projects from anon/);
+  assert.equal((migration.match(/create policy/g) ?? []).length, 4);
+  assert.match(migration, /with check \(\(select auth\.uid\(\)\).*owner_id\)/s);
+  assert.doesNotMatch(migration, /auth\.role\(\)|security definer/i);
+});
