@@ -47,6 +47,18 @@ Inicializar a base técnica executável, os padrões de qualidade e as fronteira
 - [x] Documentação atualizada.
 - [x] Nenhum segredo ou feature fora de escopo incluído.
 
+## Reconciliação da Parcela 1
+
+- [x] Hosting decidido: **Vercel**, com runtime padrão do Next.js.
+- [x] Vinext, Cloudflare e D1/SQLite removidos da arquitetura.
+- [x] Persistência alinhada ao Supabase/PostgreSQL.
+- [x] Dependências vulneráveis corrigidas; auditoria registrou zero vulnerabilidades.
+- [x] Especificações e estratégia de deployment atualizadas.
+- [x] Região, retenção, LGPD e custos registrados como decisões obrigatórias antes do deployment.
+- [x] Commit-base criado e Change 001 encerrada.
+
+> A recomendação antiga de manter Vinext/Cloudflare Sites foi substituída por decisão posterior do usuário em favor da Vercel. Ela não representa mais a arquitetura vigente.
+
 ## Gate
 
 **Não implementar até receber aprovação explícita do usuário.**

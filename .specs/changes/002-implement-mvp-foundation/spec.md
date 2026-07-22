@@ -4,13 +4,30 @@
 
 Entregar identidade, persistência, autorização e o shell responsivo que sustentam os fluxos do produto.
 
-## Subchanges
+## Plano reconciliado da Parcela 2
 
-1. `002.1` — integrar o Supabase com configuração pública segura.
-2. `002.2` — criar o modelo relacional, migrações e políticas RLS.
-3. `002.3` — implementar autenticação básica e sessão.
-4. `002.4` — implementar a fundação de gerenciamento de projetos.
-5. `002.5` — concluir o shell responsivo e validar a change.
+A lista original de dez itens continua sendo a referência de acompanhamento. Durante a execução, alguns itens foram agrupados em cinco subchanges técnicas; o status abaixo restaura a correspondência com o plano original.
+
+| Item | Entrega | Status em 22/07/2026 | Evidência ou pendência |
+|---|---|---|---|
+| 002.1 | Instalar e configurar Supabase | Concluído | Clientes SSR/browser, ambiente seguro e conexão remota verificada. |
+| 002.2 | Criar schema e migração inicial | Concluído | Migração versionada aplicada ao projeto `aeaweherkrqmlqnxsmib`; tipos gerados. |
+| 002.3 | Implementar RLS e isolamento por usuário | Parcial | Quatro políticas de proprietário e negação anônima verificadas; falta teste negativo autenticado com dois usuários. |
+| 002.4 | Cadastro, confirmação e login | Concluído | Cadastro implementado; conta demo criada e confirmada; login real validado até o dashboard. |
+| 002.5 | Sessão, logout e recuperação de senha | Parcial | Sessão, logout, solicitação e atualização de senha implementados; falta E2E real de recuperação por e-mail. |
+| 002.6 | Shell responsivo do dashboard | Concluído | Direção híbrida aprovada e implementada; entrada dominante, cards, navegação e estados responsivos. |
+| 002.7 | Tratamento de erros e observabilidade | Parcial | Estados de erro/carregamento e logs Supabase inspecionados; observabilidade estruturada da aplicação fica para preview/deployment. |
+| 002.8 | Testes de autenticação e autorização | Parcial | Testes automatizados, proteção de rotas, RLS anônima e login demo aprovados; faltam dois usuários e recuperação E2E. |
+| 002.9 | Auditoria Supabase | Concluído | Advisor de segurança limpo; performance apenas com aviso informativo de índice ainda sem uso. |
+| 002.10 | Encerramento e commit da Change 002 | Pendente | Requer concluir os testes autenticados restantes, registrar evidências e atualizar o checklist final. |
+
+## Subchanges técnicas executadas
+
+1. `002.1` — integração Supabase.
+2. `002.2` — schema relacional e RLS.
+3. `002.3` — autenticação e sessão.
+4. `002.4` — fundação de gerenciamento de projetos.
+5. `002.5` — direção visual e shell responsivo.
 
 ## Requisitos
 
@@ -47,12 +64,23 @@ Entregar identidade, persistência, autorização e o shell responsivo que suste
 ## Checklist de conclusão
 
 - [x] Provedores Supabase e Vercel aprovados.
-- [ ] Modelo de custos revisado antes do deployment.
-- [ ] Fluxos de identidade completos.
-- [ ] Autorização server-side e RLS verificadas.
-- [ ] Migrações testadas.
-- [ ] Estados da interface cobertos.
-- [ ] Testes e documentação atualizados.
+- [ ] Modelo de custos revisado antes do deployment — pendência deliberadamente transferida para a Change 006.
+- [ ] Fluxos de identidade completos — falta recuperação por e-mail ponta a ponta.
+- [ ] Autorização server-side e RLS verificadas — falta isolamento autenticado com dois usuários.
+- [ ] Migrações testadas — aplicada no projeto remoto; falta reaplicação controlada em banco vazio/ambiente descartável.
+- [x] Estados principais da interface cobertos.
+- [x] Testes automatizados e documentação técnica atualizados até a implementação corrente.
+- [ ] Evidências finais e commit de encerramento registrados.
+
+## Decisão de encerramento
+
+A Change 002 permanece **implementada, mas não formalmente encerrada**. Custos, região final, retenção e LGPD não bloqueiam o desenvolvimento local; serão gates obrigatórios da Change 006. Para encerrar a Change 002, executar apenas:
+
+1. teste de isolamento com dois usuários autenticados;
+2. teste real do fluxo de recuperação de senha;
+3. teste controlado da migração em ambiente vazio ou descartável;
+4. revisão móvel autenticada e registro das evidências;
+5. atualização final dos checklists e commit de encerramento.
 
 ## Gate
 
