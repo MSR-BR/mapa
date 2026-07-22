@@ -64,16 +64,18 @@ test("defines an owner-scoped projects schema with RLS", async () => {
 });
 
 test("protects the dashboard beyond the auth proxy", async () => {
-  const [dashboard, proxy, authActions, recoveryPage] = await Promise.all([
+  const [dashboard, projectAuth, proxy, authActions, recoveryPage] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("modules/projects/auth.ts"),
     readProjectFile("lib/supabase/proxy.ts"),
     readProjectFile("modules/auth/actions.ts"),
     readProjectFile("app/(auth)/forgot-password/page.tsx"),
   ]);
 
   assert.match(proxy, /auth\.getClaims\(\)/);
-  assert.match(dashboard, /auth\.getClaims\(\)/);
-  assert.match(dashboard, /redirect\("\/login"\)/);
+  assert.match(dashboard, /requireAuthenticatedUser\(\)/);
+  assert.match(projectAuth, /auth\.getClaims\(\)/);
+  assert.match(projectAuth, /redirect\("\/login"\)/);
   assert.match(authActions, /signInWithPassword/);
   assert.match(authActions, /resetPasswordForEmail/);
   assert.match(authActions, /Se o e-mail estiver cadastrado/);
@@ -86,4 +88,36 @@ test("sanitizes auth callback destinations", async () => {
   assert.match(callback, /startsWith\("\/"\)/);
   assert.match(callback, /!value\.startsWith\("\/\/"\)/);
   assert.match(callback, /exchangeCodeForSession/);
+});
+
+test("derives project ownership from verified claims", async () => {
+  const [actions, projectAuth] = await Promise.all([
+    readProjectFile("modules/projects/actions.ts"),
+    readProjectFile("modules/projects/auth.ts"),
+  ]);
+
+  assert.match(projectAuth, /auth\.getClaims\(\)/);
+  assert.match(projectAuth, /claims\?\.sub/);
+  assert.match(actions, /owner_id: userId/);
+  assert.doesNotMatch(actions, /formData\.get\("owner/i);
+  assert.match(actions, /\.eq\("owner_id", userId\)/);
+});
+
+test("implements duplicate and confirmed soft-delete operations", async () => {
+  const actions = await readProjectFile("modules/projects/actions.ts");
+
+  assert.match(actions, /status: "draft"/);
+  assert.match(actions, /confirmDelete/);
+  assert.match(actions, /deleted_at: now/);
+  assert.match(actions, /\.is\("deleted_at", null\)/);
+  assert.doesNotMatch(actions, /\.delete\(\)/);
+});
+
+test("validates project fields against database limits", async () => {
+  const validation = await readProjectFile("modules/projects/validation.ts");
+
+  assert.match(validation, /title\.length > 160/);
+  assert.match(validation, /keywords\.length > 12/);
+  assert.match(validation, /optionalText\(formData, "problemStatement", 5000\)/);
+  assert.match(validation, /optionalText\(formData, "knowledgeArea", 120\)/);
 });

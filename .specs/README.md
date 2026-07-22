@@ -4,8 +4,8 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Fase: Change 001 e subchanges 001.1, 002.1, 002.2 e 002.3 concluídas.
-- Código da aplicação: schema relacional, RLS e autenticação básica implementados.
+- Fase: Change 001 e subchanges 001.1, 002.1, 002.2 e 002.3 concluídas; 002.4 implementada com aceite autenticado pendente.
+- Código da aplicação: schema, RLS, autenticação e gerenciamento inicial de projetos implementados.
 - Próximo gate: aprovação da subchange 002.4 para gerenciamento inicial de projetos.
 - Integração Research Starter: bloqueada até o fornecimento do contrato e do protocolo de execução.
 

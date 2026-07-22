@@ -56,9 +56,42 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .form-link, .auth-footer a { color: var(--accent); font-weight: 650; }
 .auth-footer { margin: 1.5rem 0 0; color: var(--muted); font-size: 0.9rem; }
 .empty-state { margin: 2rem 0; padding: 2rem; border: 1px dashed var(--border); border-radius: 1rem; color: var(--muted); text-align: center; }
+.app-shell { min-height: 100vh; }
+.app-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; padding: 0.75rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--border); background: var(--surface); }
+.app-brand { color: var(--foreground); font-weight: 750; letter-spacing: -0.03em; text-decoration: none; }
+.app-header nav { display: flex; align-items: center; gap: 1rem; }
+.app-header nav a { color: var(--muted); font-size: 0.9rem; font-weight: 650; text-decoration: none; }
+.app-header nav button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 0.9rem; font-weight: 650; cursor: pointer; }
+.workspace-shell { width: min(100%, 76rem); margin: 0 auto; padding: clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
+.narrow-workspace { width: min(100%, 54rem); }
+.workspace-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }
+.workspace-heading h1, .narrow-workspace h1 { max-width: none; }
+.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1rem; margin-top: 2.5rem; }
+.project-card { display: grid; gap: 0.75rem; min-height: 13rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); color: var(--foreground); text-decoration: none; transition: border-color 150ms ease, transform 150ms ease; }
+.project-card:hover { border-color: #9bb9ac; transform: translateY(-2px); }
+.project-card h2 { margin: 0; font-size: 1.35rem; letter-spacing: -0.03em; }
+.project-card p, .project-card time { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.project-card time { align-self: end; }
+.project-status { width: fit-content; padding: 0.25rem 0.55rem; border-radius: 999px; background: #edf6f1; color: var(--accent); font-size: 0.72rem; font-weight: 750; text-transform: uppercase; }
+.back-link { display: inline-block; margin-bottom: 1.5rem; color: var(--accent); font-weight: 650; text-decoration: none; }
+.project-form { display: grid; gap: 1.25rem; margin-top: 2.5rem; padding: clamp(1.25rem, 4vw, 2.5rem); border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); }
+.project-form label { display: grid; gap: 0.45rem; font-size: 0.9rem; font-weight: 650; }
+.project-form label span { color: var(--muted); font-size: 0.78rem; font-weight: 450; }
+.project-form input, .project-form textarea, .project-form select { width: 100%; border: 1px solid var(--border); border-radius: 0.7rem; padding: 0.7rem 0.75rem; background: white; color: var(--foreground); font: inherit; }
+.project-form textarea { resize: vertical; }
+.project-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.project-form > button, .danger-button { min-height: 2.75rem; border: 0; border-radius: 0.75rem; padding: 0.7rem 1rem; background: var(--accent); color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.project-form > button:disabled { cursor: wait; opacity: 0.65; }
+.project-danger-zone { display: grid; gap: 1rem; margin-top: 2rem; padding: 1.5rem; border: 1px solid #e7c4c0; border-radius: 1rem; background: #fffafa; }
+.project-danger-zone h2 { margin: 0; font-size: 1.1rem; }
+.delete-form { display: grid; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #efd8d5; }
+.delete-form label { display: flex; align-items: center; gap: 0.55rem; color: #71332e; font-size: 0.88rem; }
+.danger-button { width: fit-content; background: #a33b32; }
 
 @media (max-width: 600px) {
   .foundation-shell { align-items: start; padding: 1rem; }
   .foundation-card { padding: 1.5rem; border-radius: 1rem; }
   .status-grid { grid-template-columns: 1fr; }
+  .workspace-heading { align-items: start; flex-direction: column; }
+  .project-form-grid { grid-template-columns: 1fr; }
 }
