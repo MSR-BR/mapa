@@ -140,3 +140,15 @@ test("implements the approved hybrid dashboard with a real quick-create action",
   assert.match(loading, /aria-busy="true"/);
   assert.match(error, /Tentar novamente/);
 });
+
+test("uses the approved dark silver authentication shell", async () => {
+  const [authLayout, styles] = await Promise.all([
+    readProjectFile("app/(auth)/layout.tsx"),
+    readProjectFile("app/globals.css"),
+  ]);
+
+  assert.match(authLayout, /auth-intro-copy/);
+  assert.match(authLayout, /Da primeira pergunta ao seu mapa de pesquisa/);
+  assert.match(styles, /\.auth-shell \{[^}]*background: #08090b/s);
+  assert.match(styles, /linear-gradient\(125deg, #ffffff/);
+});
