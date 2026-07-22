@@ -1,0 +1,6 @@
+[mcp_servers.supabase_mapa]
+enabled = true
+required = true
+url = "https://mcp.supabase.com/mcp?project_ref=aeaweherkrqmlqnxsmib&features=database,development,debugging,docs"
+auth = "oauth"
+default_tools_approval_mode = "writes"
