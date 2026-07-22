@@ -34,3 +34,18 @@ test("uses the standard Next.js runtime expected by Vercel", async () => {
   assert.equal(manifest.dependencies.vinext, undefined);
   assert.equal(manifest.devDependencies?.wrangler, undefined);
 });
+
+test("pins Supabase to the Mapa project and requires a publishable key", async () => {
+  const [config, environment] = await Promise.all([
+    readProjectFile("lib/supabase/config.ts"),
+    readProjectFile(".env.example"),
+  ]);
+
+  assert.match(config, /aeaweherkrqmlqnxsmib/);
+  assert.match(config, /sb_publishable_/);
+  assert.doesNotMatch(
+    environment,
+    /^(?:SUPABASE_SERVICE_ROLE_KEY|.*=sb_secret_)/m,
+  );
+  assert.match(environment, /NEXT_PUBLIC_SUPABASE_PROJECT_REF=aeaweherkrqmlqnxsmib/);
+});

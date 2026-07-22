@@ -4,9 +4,9 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Fase: Change 001 e subchange 001.1 concluídas.
-- Código da aplicação: fundação técnica alinhada a Next.js/Vercel; funcionalidades do MVP ainda não iniciadas.
-- Próximo gate: revisão e aprovação da Change 002.
+- Fase: Change 001 e subchanges 001.1 e 002.1 concluídas.
+- Código da aplicação: fundação Next.js/Vercel conectada com segurança ao Supabase; funcionalidades do MVP ainda não iniciadas.
+- Próximo gate: aprovação da subchange 002.2 para modelo relacional e RLS.
 - Integração Research Starter: bloqueada até o fornecimento do contrato e do protocolo de execução.
 
 ## Ordem de leitura

@@ -9,12 +9,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "supabase:verify": "node --env-file-if-exists=.env.local scripts/verify-supabase.mjs",
     "test": "node --test tests/foundation.test.mjs",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.8",
     "next": "16.2.11",
     "react": "19.2.8",
     "react-dom": "19.2.8"
