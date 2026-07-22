@@ -6,7 +6,8 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 - Fase: Change 001 e subchanges 001.1, 002.1, 002.2 e 002.3 concluídas; 002.4 implementada com aceite autenticado pendente.
 - Código da aplicação: schema, RLS, autenticação e gerenciamento inicial de projetos implementados.
-- Próximo gate: aprovação da subchange 002.4 para gerenciamento inicial de projetos.
+- Próximo gate: decisão e aprovação da direção visual da subchange 002.5.
+- Decisão visual pendente para 002.5: cards, entrada central limpa ou composição híbrida.
 - Integração Research Starter: bloqueada até o fornecimento do contrato e do protocolo de execução.
 
 ## Ordem de leitura
