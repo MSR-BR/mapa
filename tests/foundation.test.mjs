@@ -62,3 +62,28 @@ test("defines an owner-scoped projects schema with RLS", async () => {
   assert.match(migration, /with check \(\(select auth\.uid\(\)\).*owner_id\)/s);
   assert.doesNotMatch(migration, /auth\.role\(\)|security definer/i);
 });
+
+test("protects the dashboard beyond the auth proxy", async () => {
+  const [dashboard, proxy, authActions, recoveryPage] = await Promise.all([
+    readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("lib/supabase/proxy.ts"),
+    readProjectFile("modules/auth/actions.ts"),
+    readProjectFile("app/(auth)/forgot-password/page.tsx"),
+  ]);
+
+  assert.match(proxy, /auth\.getClaims\(\)/);
+  assert.match(dashboard, /auth\.getClaims\(\)/);
+  assert.match(dashboard, /redirect\("\/login"\)/);
+  assert.match(authActions, /signInWithPassword/);
+  assert.match(authActions, /resetPasswordForEmail/);
+  assert.match(authActions, /Se o e-mail estiver cadastrado/);
+  assert.match(recoveryPage, /caso o e-mail pertença a uma conta/);
+});
+
+test("sanitizes auth callback destinations", async () => {
+  const callback = await readProjectFile("app/auth/callback/route.ts");
+
+  assert.match(callback, /startsWith\("\/"\)/);
+  assert.match(callback, /!value\.startsWith\("\/\/"\)/);
+  assert.match(callback, /exchangeCodeForSession/);
+});

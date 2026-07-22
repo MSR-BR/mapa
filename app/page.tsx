@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="foundation-shell">
@@ -15,8 +17,13 @@ export default function Home() {
           <div><dt>Próxima fase</dt><dd>Fundação do MVP</dd></div>
         </dl>
         <p className="notice">
-          Nenhum dado acadêmico, referência ou integração externa está ativo nesta fase.
+          A autenticação básica está disponível. Os fluxos de projetos serão
+          liberados nas próximas etapas aprovadas.
         </p>
+        <div className="foundation-actions">
+          <Link className="primary-link" href="/login">Entrar</Link>
+          <Link className="secondary-link" href="/signup">Criar conta</Link>
+        </div>
       </section>
     </main>
   );
