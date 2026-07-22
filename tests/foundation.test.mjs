@@ -121,3 +121,22 @@ test("validates project fields against database limits", async () => {
   assert.match(validation, /optionalText\(formData, "problemStatement", 5000\)/);
   assert.match(validation, /optionalText\(formData, "knowledgeArea", 120\)/);
 });
+
+test("implements the approved hybrid dashboard with a real quick-create action", async () => {
+  const [dashboard, quickStart, visualDecision, loading, error] = await Promise.all([
+    readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("modules/projects/quick-start-form.tsx"),
+    readProjectFile(".specs/changes/002-implement-mvp-foundation/subchanges/002.5-polish-responsive-shell.md"),
+    readProjectFile("app/dashboard/loading.tsx"),
+    readProjectFile("app/dashboard/error.tsx"),
+  ]);
+
+  assert.match(dashboard, /O que você quer pesquisar\?/);
+  assert.match(dashboard, /Projetos recentes/);
+  assert.match(quickStart, /useActionState/);
+  assert.match(quickStart, /createProject/);
+  assert.match(quickStart, /Abrir configurações iniciais/);
+  assert.match(visualDecision, /\[x\] Híbrida/);
+  assert.match(loading, /aria-busy="true"/);
+  assert.match(error, /Tentar novamente/);
+});
