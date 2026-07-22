@@ -13,8 +13,39 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 
   assert.match(layout, /<html lang="pt-BR"/);
   assert.match(layout, /title: "Mapa da Pesquisa"/);
-  assert.match(page, /Fundação técnica pronta para evoluir/);
-  assert.match(page, /Change 001/);
+  assert.match(page, /O que você quer pesquisar\?/);
+  assert.match(page, /PublicStartForm/);
+});
+
+test("requests login only after the public central execution", async () => {
+  const [home, publicStart, loginPage, authActions, quickStart] = await Promise.all([
+    readProjectFile("app/page.tsx"),
+    readProjectFile("modules/projects/public-start-form.tsx"),
+    readProjectFile("app/(auth)/login/page.tsx"),
+    readProjectFile("modules/auth/actions.ts"),
+    readProjectFile("modules/projects/quick-start-form.tsx"),
+  ]);
+
+  assert.doesNotMatch(home, /href="\/login"/);
+  assert.match(publicStart, /sessionStorage\.setItem/);
+  assert.match(publicStart, /login\?next=/);
+  assert.match(loginPage, /hiddenFields/);
+  assert.match(authActions, /readSafeDestination/);
+  assert.match(quickStart, /requestSubmit/);
+});
+
+test("starts Change 004 with a versioned canonical schema and anti-hallucination prompt", async () => {
+  const [schema, prompt, spec] = await Promise.all([
+    readProjectFile("modules/generation/schema.ts"),
+    readProjectFile("modules/generation/prompts/structure-v1.ts"),
+    readProjectFile(".specs/changes/004-implement-core-feature-2/spec.md"),
+  ]);
+
+  assert.match(schema, /RESEARCH_STRUCTURE_SCHEMA_VERSION = "1\.0\.0"/);
+  assert.match(schema, /candidate\.chapters\.length === REQUIRED_CHAPTERS\.length/);
+  assert.equal((schema.match(/"Introdução"|"Revisão da Literatura"|"Metodologia Científica"|"Desenvolvimento da Pesquisa"|"Conclusões"/g) ?? []).length, 5);
+  assert.match(prompt, /Não invente referências, citações, dados, resultados ou conclusões empíricas/);
+  assert.match(spec, /Status: iniciada/);
 });
 
 test("defines an uncached health endpoint", async () => {
@@ -114,12 +145,22 @@ test("implements duplicate and confirmed soft-delete operations", async () => {
 });
 
 test("validates project fields against database limits", async () => {
-  const validation = await readProjectFile("modules/projects/validation.ts");
+  const [validation, form, actions] = await Promise.all([
+    readProjectFile("modules/projects/validation.ts"),
+    readProjectFile("modules/projects/project-form.tsx"),
+    readProjectFile("modules/projects/actions.ts"),
+  ]);
 
-  assert.match(validation, /title\.length > 160/);
+  assert.match(validation, /FIELD_LIMITS\.title/);
   assert.match(validation, /keywords\.length > 12/);
-  assert.match(validation, /optionalText\(formData, "problemStatement", 5000\)/);
-  assert.match(validation, /optionalText\(formData, "knowledgeArea", 120\)/);
+  assert.match(validation, /problemStatement: 5000/);
+  assert.match(validation, /knowledgeArea: 120/);
+  assert.match(validation, /fieldErrors\.problemStatement/);
+  assert.match(actions, /values: result\.values/);
+  assert.match(form, /setCustomValidity/);
+  assert.match(form, /aria-invalid/);
+  assert.match(form, /beforeunload/);
+  assert.match(form, /Descartar alterações não salvas/);
 });
 
 test("implements the approved hybrid dashboard with a real quick-create action", async () => {

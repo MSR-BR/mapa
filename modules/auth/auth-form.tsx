@@ -18,6 +18,7 @@ type AuthFormProps = {
   emailOnly?: boolean;
   passwordOnly?: boolean;
   submitLabel: string;
+  hiddenFields?: Record<string, string>;
 };
 
 export function AuthForm({
@@ -27,6 +28,7 @@ export function AuthForm({
   emailOnly = false,
   passwordOnly = false,
   submitLabel,
+  hiddenFields,
 }: AuthFormProps) {
   const [state, formAction, pending] = useActionState(
     action,
@@ -35,6 +37,9 @@ export function AuthForm({
 
   return (
     <form action={formAction} className="auth-form">
+      {Object.entries(hiddenFields ?? {}).map(([name, value]) => (
+        <input key={name} name={name} type="hidden" value={value} />
+      ))}
       {!passwordOnly ? (
         <label>
           E-mail

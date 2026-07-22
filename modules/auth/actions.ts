@@ -13,6 +13,13 @@ const invalidCredentials: AuthActionState = {
   status: "error",
 };
 
+function readSafeDestination(formData: FormData) {
+  const value = formData.get("next");
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
+    ? value
+    : "/dashboard";
+}
+
 export async function login(
   _previousState: AuthActionState,
   formData: FormData,
@@ -26,7 +33,7 @@ export async function login(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) return invalidCredentials;
-  redirect("/dashboard");
+  redirect(readSafeDestination(formData));
 }
 
 export async function signUp(

@@ -7,22 +7,24 @@ import { requireAuthenticatedUser } from "./auth";
 import type { ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
 
-const invalidProject: ProjectActionState = {
-  message: "Revise o título, os limites dos campos e as palavras-chave.",
-  status: "error",
-};
-
 export async function createProject(
   _previousState: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
-  const input = parseProjectForm(formData);
-  if (!input) return invalidProject;
+  const result = parseProjectForm(formData);
+  if (!result.success) {
+    return {
+      fieldErrors: result.fieldErrors,
+      message: "Revise os campos indicados.",
+      status: "error",
+      values: result.values,
+    };
+  }
 
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...input, owner_id: userId })
+    .insert({ ...result.data, owner_id: userId })
     .select("id")
     .single();
 
@@ -39,13 +41,21 @@ export async function updateProject(
   formData: FormData,
 ): Promise<ProjectActionState> {
   const projectId = readProjectId(formData);
-  const input = parseProjectForm(formData);
-  if (!projectId || !input) return invalidProject;
+  const result = parseProjectForm(formData);
+  if (!result.success) {
+    return {
+      fieldErrors: result.fieldErrors,
+      message: "Revise os campos indicados.",
+      status: "error",
+      values: result.values,
+    };
+  }
+  if (!projectId) return { message: "Projeto inválido.", status: "error" };
 
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
-    .update({ ...input, updated_at: new Date().toISOString() })
+    .update({ ...result.data, updated_at: new Date().toISOString() })
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)

@@ -1,18 +1,40 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import { createProject } from "./actions";
 import { initialProjectActionState } from "./types";
+import { PENDING_PROJECT_KEY } from "./public-start-form";
 
-export function QuickStartForm() {
+export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction, pending] = useActionState(
     createProject,
     initialProjectActionState,
   );
 
+  useEffect(() => {
+    if (!resumeDraft || !formRef.current) return;
+    try {
+      const raw = sessionStorage.getItem(PENDING_PROJECT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as Record<string, unknown>;
+      const form = formRef.current;
+      const title = form.elements.namedItem("title") as HTMLTextAreaElement | null;
+      const area = form.elements.namedItem("knowledgeArea") as HTMLInputElement | null;
+      const level = form.elements.namedItem("academicLevel") as HTMLSelectElement | null;
+      if (title && typeof draft.title === "string") title.value = draft.title.slice(0, 160);
+      if (area && typeof draft.knowledgeArea === "string") area.value = draft.knowledgeArea.slice(0, 120);
+      if (level && typeof draft.academicLevel === "string") level.value = draft.academicLevel;
+      sessionStorage.removeItem(PENDING_PROJECT_KEY);
+      form.requestSubmit();
+    } catch {
+      sessionStorage.removeItem(PENDING_PROJECT_KEY);
+    }
+  }, [resumeDraft]);
+
   return (
-    <form action={formAction} className="quick-start-form">
+    <form action={formAction} className="quick-start-form" ref={formRef}>
       <label className="sr-only" htmlFor="quick-project-title">
         Título provisório ou pergunta de pesquisa
       </label>

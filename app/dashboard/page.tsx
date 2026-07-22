@@ -10,7 +10,8 @@ const statusLabels: Record<string, string> = {
   in_progress: "Em andamento",
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ resume?: string }> }) {
+  const { resume } = await searchParams;
   const { supabase } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
@@ -29,7 +30,7 @@ export default async function DashboardPage() {
           Comece com um título provisório ou uma pergunta. Depois, organize tema,
           problema e palavras-chave no seu ritmo.
         </p>
-        <QuickStartForm />
+        <QuickStartForm resumeDraft={resume === "1"} />
         <p className="quick-start-note">Você poderá editar todos os detalhes antes de avançar.</p>
       </section>
 

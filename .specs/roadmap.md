@@ -8,8 +8,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 |---|---|---|---|
 | 001 | Criar estrutura do projeto | Concluída | Next.js/Vercel saneado, ferramentas e smoke aprovados. |
 | 002 | Implementar fundação do MVP | Concluída | Autenticação, Supabase Free, RLS, migração e shell aprovados. |
-| 003 | Implementar projetos e briefing | Parcialmente antecipada | CRUD básico existe; faltam validação por campo, proteção contra perda e E2E completo. |
-| 004 | Implementar geração e editor | Não iniciada | Job, estrutura validada, progresso, regeneração e edição. |
+| 003 | Implementar projetos e briefing | Concluída | CRUD, briefing validado, proteção contra perda e evidências encerrados. |
+| 004 | Implementar geração e editor | Em andamento | Schema 1.0.0 e prompt v1 iniciados; provedor e orçamento pendentes. |
 | 005 | Testes e validação | Não iniciada | Cobertura crítica, segurança, acessibilidade e responsividade do MVP completo. |
 | 006 | Exportação e deployment | Não iniciada | DOCX/PDF, custos, região, retenção, LGPD e produção Vercel. |
 
@@ -17,7 +17,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 
 - M0: arquitetura e especificações aprovadas — concluído.
 - M1: fundação técnica pronta — concluído.
-- M2: gerenciamento de projetos utilizável — parcialmente entregue, formalizado na Change 003.
+- M2: gerenciamento de projetos utilizável — concluído.
 - M3: estrutura gerada e editável — pendente.
 - M4: MVP validado — pendente.
 - M5: piloto implantado — pendente.
