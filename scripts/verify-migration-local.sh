@@ -18,6 +18,7 @@ docker run --detach --rm \
   --env POSTGRES_PASSWORD=mapa_local_check \
   --volume "$PWD/scripts/verify-migration-auth-stub.sql:/docker-entrypoint-initdb.d/000_auth_stub.sql:ro" \
   --volume "$PWD/supabase/migrations/20260722013741_create_projects_foundation.sql:/docker-entrypoint-initdb.d/100_projects.sql:ro" \
+  --volume "$PWD/supabase/migrations/20260723003616_create_generation_workspace.sql:/docker-entrypoint-initdb.d/200_generation.sql:ro" \
   postgres:17-alpine >/dev/null
 
 attempt=0
@@ -34,12 +35,15 @@ result="$(docker exec "$container_name" psql --username postgres --tuples-only -
   select
     (select count(*) from pg_tables where schemaname = 'public' and tablename = 'projects'),
     (select count(*) from pg_policies where schemaname = 'public' and tablename = 'projects'),
-    (select count(*) from pg_indexes where schemaname = 'public' and tablename = 'projects' and indexname = 'projects_owner_updated_at_idx');
+    (select count(*) from pg_indexes where schemaname = 'public' and tablename = 'projects' and indexname = 'projects_owner_updated_at_idx'),
+    (select count(*) from pg_tables where schemaname = 'public' and tablename in ('generation_jobs', 'research_structures')),
+    (select count(*) from pg_policies where schemaname = 'public' and tablename in ('generation_jobs', 'research_structures')),
+    (select count(*) from pg_indexes where schemaname = 'public' and indexname in ('generation_jobs_project_created_idx', 'generation_jobs_owner_created_idx', 'research_structures_owner_idx'));
 ")"
 
-if [ "$result" != "1|4|1" ]; then
+if [ "$result" != "1|4|1|2|8|3" ]; then
   echo "Estrutura inesperada após migração: $result" >&2
   exit 1
 fi
 
-echo "Migração validada em PostgreSQL vazio: tabela, quatro políticas e índice confirmados."
+echo "Migrações validadas em PostgreSQL vazio: três tabelas, doze políticas e quatro índices confirmados."

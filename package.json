@@ -13,17 +13,22 @@
     "supabase:verify-rls": "node --env-file-if-exists=.env.local scripts/verify-anonymous-rls.mjs",
     "supabase:verify-authenticated-rls": "node --env-file-if-exists=.env.local scripts/verify-authenticated-rls.mjs",
     "supabase:verify-migration-local": "sh scripts/verify-migration-local.sh",
+    "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
+    "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",
     "test": "node --test tests/foundation.test.mjs",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "@ai-sdk/google": "3.0.99",
     "@supabase/ssr": "0.12.3",
     "@supabase/supabase-js": "2.110.8",
+    "ai": "6.0.234",
     "next": "16.2.11",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.2.1",

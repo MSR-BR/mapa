@@ -34,7 +34,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(quickStart, /requestSubmit/);
 });
 
-test("starts Change 004 with a versioned canonical schema and anti-hallucination prompt", async () => {
+test("completes Change 004 with a versioned canonical schema and anti-hallucination prompt", async () => {
   const [schema, prompt, spec] = await Promise.all([
     readProjectFile("modules/generation/schema.ts"),
     readProjectFile("modules/generation/prompts/structure-v1.ts"),
@@ -42,10 +42,58 @@ test("starts Change 004 with a versioned canonical schema and anti-hallucination
   ]);
 
   assert.match(schema, /RESEARCH_STRUCTURE_SCHEMA_VERSION = "1\.0\.0"/);
-  assert.match(schema, /candidate\.chapters\.length === REQUIRED_CHAPTERS\.length/);
+  assert.match(schema, /z\.array\(researchChapterSchema\)\.length\(REQUIRED_CHAPTERS\.length\)/);
   assert.equal((schema.match(/"Introdução"|"Revisão da Literatura"|"Metodologia Científica"|"Desenvolvimento da Pesquisa"|"Conclusões"/g) ?? []).length, 5);
   assert.match(prompt, /Não invente referências, citações, dados, resultados ou conclusões empíricas/);
-  assert.match(spec, /Status: iniciada/);
+  assert.match(spec, /Status: concluída/);
+});
+
+test("implements an idempotent and owner-scoped generation pipeline", async () => {
+  const [route, gemini, migration] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/generate/route.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("supabase/migrations/20260723003616_create_generation_workspace.sql"),
+  ]);
+
+  assert.match(route, /idempotencyKey/);
+  assert.match(route, /maxReferences: 20/);
+  assert.match(route, /A geração falhou sem alterar a estrutura salva/);
+  assert.match(gemini, /Output\.object/);
+  assert.match(gemini, /validateReferenceIds/);
+  assert.match(migration, /unique \(owner_id, idempotency_key\)/);
+  assert.equal((migration.match(/create policy/g) ?? []).length, 8);
+  assert.match(migration, /alter table public\.research_structures enable row level security/);
+});
+
+test("provides persistent editing with loss protection and retry", async () => {
+  const [workspace, saveRoute] = await Promise.all([
+    readProjectFile("modules/generation/generation-workspace.tsx"),
+    readProjectFile("app/api/projects/[id]/generation/route.ts"),
+  ]);
+
+  assert.match(workspace, /beforeunload/);
+  assert.match(workspace, /Regenerar substituirá a versão salva/);
+  assert.match(workspace, /Tentar novamente/);
+  assert.match(saveRoute, /editableResearchStructureSchema/);
+  assert.match(saveRoute, /validateReferenceIds/);
+});
+
+test("keeps the Research Starter key server-side and follows its v1 contract", async () => {
+  const [client, route, verification, environment] = await Promise.all([
+    readProjectFile("modules/research-starter/client.ts"),
+    readProjectFile("app/api/research-starter/reports/route.ts"),
+    readProjectFile("scripts/verify-research-starter.mjs"),
+    readProjectFile(".env.example"),
+  ]);
+
+  assert.match(client, /import "server-only"/);
+  assert.match(client, /RESEARCH_STARTER_API_KEY/);
+  assert.match(client, /\/api\/v1\/reports/);
+  assert.match(route, /requireAuthenticatedUser/);
+  assert.match(route, /publicationInterval: \{ kind: interval \}/);
+  assert.match(verification, /maxReferences: 3/);
+  assert.match(environment, /^RESEARCH_STARTER_API_KEY=$/m);
+  assert.doesNotMatch(environment, /NEXT_PUBLIC_RESEARCH_STARTER/);
 });
 
 test("defines an uncached health endpoint", async () => {
@@ -227,7 +275,7 @@ test("validates the migration locally without a paid Supabase branch", async () 
   ]);
 
   assert.match(script, /postgres:17-alpine/);
-  assert.match(script, /1\|4\|1/);
+  assert.match(script, /1\|4\|1\|2\|8\|3/);
   assert.match(script, /trap cleanup/);
   assert.match(architecture, /sem branches pagas/);
 });

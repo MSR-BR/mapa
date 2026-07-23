@@ -1,6 +1,6 @@
 # Change 004 — Geração e editor
 
-Status: iniciada em 22/07/2026.
+Status: concluída em 23/07/2026.
 
 ## Objetivo
 
@@ -9,12 +9,12 @@ Gerar uma estrutura acadêmica inicial validada, permitir regeneração segura e
 ## Requisitos
 
 - Adaptador configurável de IA e prompts versionados.
-- Job assíncrono com progresso, idempotência, retry controlado e cancelamento quando viável.
+- Job com progresso persistido, idempotência e nova tentativa controlada. Cancelamento durante chamadas externas síncronas foi considerado inviável nesta versão.
 - Schema canônico conforme `shared/output-format.md`.
 - Editor seguro dos capítulos e seções.
 - Salvamento, aviso de alterações e regeneração com confirmação.
 - Aplicação integral da política anti-alucinação.
-- Research Starter permanece inativo sem contrato.
+- Research Starter opera exclusivamente no backend conforme o contrato v1 fornecido.
 
 ## Decisões iniciais
 
@@ -22,7 +22,9 @@ Gerar uma estrutura acadêmica inicial validada, permitir regeneração segura e
 - Prompt de estrutura iniciado como `structure-v1`.
 - Os cinco capítulos obrigatórios são validados por identidade, ordem e quantidade.
 - Nenhum provedor de IA, chamada externa ou recurso pago será ativado sem aprovação de orçamento.
-- Até a escolha do provedor, a implementação fica restrita ao contrato, validação e segurança.
+- Gemini foi aprovado como provedor de geração, usando a conta paga já mantida pelo responsável.
+- Research Starter v1 foi aprovado como fonte externa de referências e evidências.
+- A integração Research Starter ocorre somente no backend e limita a consulta antes de encaminhar evidências ao Gemini.
 
 ## Critérios de aceite
 
@@ -35,10 +37,24 @@ Gerar uma estrutura acadêmica inicial validada, permitir regeneração segura e
 
 ## Checklist de conclusão
 
-- [ ] Provedor, limites e orçamento aprovados.
+- [x] Provedor Gemini e conta paga aprovados; limites operacionais serão monitorados.
 - [x] Schema e prompt inicial versionados.
-- [ ] Jobs resilientes implementados.
-- [ ] Editor e proteção contra perda completos.
-- [ ] Política anti-alucinação testada.
+- [x] Jobs resilientes implementados.
+- [x] Editor e proteção contra perda completos.
+- [x] Política anti-alucinação testada.
 - [x] Integração Research Starter não foi inventada.
-- [ ] Testes e documentação atualizados.
+- [x] Testes e documentação atualizados.
+
+## Subchanges entregues
+
+- **004.1 — Pipeline de evidências:** Research Starter limitado a 20 referências e Gemini 2.5 Flash com saída estruturada.
+- **004.2 — Execução resiliente:** estados reais persistidos, idempotência por usuário e falha sem sobrescrever conteúdo válido.
+- **004.3 — Editor:** capítulos editáveis, salvamento versionado, proteção contra perda e confirmação de regeneração.
+- **004.4 — Validação:** RLS, bloqueio de referências desconhecidas, testes automatizados e verificadores reais das APIs.
+
+## Economia de recursos
+
+- Uma única estrutura atual é mantida por projeto por `upsert`.
+- Nenhuma consulta externa ocorre no carregamento da página; a geração é sempre explícita.
+- O polling existe somente enquanto uma geração solicitada está em andamento.
+- Referências e evidências são compactadas antes do Gemini e limitadas a 20 itens.

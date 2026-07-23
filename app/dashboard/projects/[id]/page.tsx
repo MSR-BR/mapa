@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { deleteProject, duplicateProject, updateProject } from "@/modules/projects/actions";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { ProjectForm } from "@/modules/projects/project-form";
+import { GenerationWorkspace } from "@/modules/generation/generation-workspace";
+import { loadGenerationSnapshot } from "@/modules/generation/storage";
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,6 +23,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     .maybeSingle();
 
   if (!project) notFound();
+  const generationSnapshot = await loadGenerationSnapshot(supabase, userId, id);
 
   return (
     <main className="workspace-shell narrow-workspace">
@@ -28,6 +31,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <p className="eyebrow">Editar projeto</p>
       <h1>{project.title}</h1>
       <ProjectForm action={updateProject} project={project} submitLabel="Salvar alterações" />
+      <GenerationWorkspace initialSnapshot={generationSnapshot} projectId={project.id} />
       <section className="project-danger-zone" aria-labelledby="project-actions-title">
         <h2 id="project-actions-title">Outras ações</h2>
         <form action={duplicateProject}>

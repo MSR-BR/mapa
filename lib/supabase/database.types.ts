@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      generation_jobs: {
+        Row: {
+          attempt_count: number
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          idempotency_key: string
+          owner_id: string
+          project_id: string
+          report_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          idempotency_key: string
+          owner_id: string
+          project_id: string
+          report_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          idempotency_key?: string
+          owner_id?: string
+          project_id?: string
+          report_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           academic_level: string | null
@@ -58,6 +108,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      research_structures: {
+        Row: {
+          content: Json
+          created_at: string
+          model: string
+          owner_id: string
+          project_id: string
+          prompt_version: string
+          references_data: Json
+          revision: number
+          schema_version: string
+          updated_at: string
+          warnings: string[]
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          model: string
+          owner_id: string
+          project_id: string
+          prompt_version: string
+          references_data?: Json
+          revision?: number
+          schema_version: string
+          updated_at?: string
+          warnings?: string[]
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          model?: string
+          owner_id?: string
+          project_id?: string
+          prompt_version?: string
+          references_data?: Json
+          revision?: number
+          schema_version?: string
+          updated_at?: string
+          warnings?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_structures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
