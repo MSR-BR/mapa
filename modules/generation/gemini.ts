@@ -32,6 +32,13 @@ const interpretedResearchRequestSchema = z.object({
   title: z.string().trim().min(3).max(80),
 });
 
+const promptSuggestionsSchema = z.object({
+  suggestions: z.array(z.object({
+    kind: z.enum(["tema", "formulacao"]),
+    text: z.string().trim().min(12).max(500),
+  })).min(2).max(3),
+});
+
 const generatedStructureSchema = z.object({
   chapters: z.array(z.object({
     sections: z.array(z.object({
@@ -90,6 +97,36 @@ function compactEvidence(report: ResearchStarterSuccess) {
     summary: report.summary,
     warnings: report.warnings.slice(0, 8),
   };
+}
+
+export async function suggestResearchPrompts(prompt: string) {
+  const { output } = await generateText({
+    maxOutputTokens: 500,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: promptSuggestionsSchema }),
+    prompt: [
+      "Ajude o usuário a consolidar um pedido para criar um mapa de pesquisa acadêmica.",
+      "Retorne exatamente 3 sugestões curtas em português.",
+      "Cada sugestão deve ser um pedido completo que possa substituir o texto atual no campo.",
+      "Inclua pelo menos uma sugestão de tema: um recorte relevante e coerente com a intenção já escrita.",
+      "Inclua pelo menos uma sugestão de formulação: reescreva o pedido com maior precisão acadêmica.",
+      "Quando houver informação suficiente, explicite objeto, relação investigada, contexto ou população.",
+      "Não invente instituições, locais, períodos, populações ou métodos não indicados pelo usuário.",
+      "Não responda ao tema e não crie a estrutura da pesquisa; apenas aprimore o pedido.",
+      `Texto em elaboração: ${JSON.stringify(prompt.slice(0, 5_000))}`,
+    ].join("\n"),
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingBudget: 0 },
+      } satisfies GoogleLanguageModelOptions,
+    },
+    temperature: 0.45,
+  });
+
+  return promptSuggestionsSchema.parse(output).suggestions.map((suggestion) => ({
+    kind: suggestion.kind,
+    text: suggestion.text.trim(),
+  }));
 }
 
 export async function interpretResearchRequest(

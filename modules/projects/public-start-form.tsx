@@ -3,11 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { ResearchPromptInput } from "./research-prompt-input";
+
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 
 export function PublicStartForm() {
   const router = useRouter();
   const [continuing, setContinuing] = useState(false);
+  const [prompt, setPrompt] = useState("");
 
   function continueToLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,20 +28,16 @@ export function PublicStartForm() {
   return (
     <form className="quick-start-form public-start-form" onSubmit={continueToLogin}>
       <label className="sr-only" htmlFor="public-project-title">Título provisório ou pergunta de pesquisa</label>
-      <textarea
-        autoFocus
+      <ResearchPromptInput
         id="public-project-title"
-        maxLength={5_000}
-        name="prompt"
-        onKeyDown={(event) => {
+        onChange={setPrompt}
+        onEnter={(event) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
             event.currentTarget.form?.requestSubmit();
           }
         }}
-        placeholder="Crie um mapa de tese de mestrado a respeito do uso de inteligência artificial no ensino superior"
-        required
-        rows={3}
+        value={prompt}
       />
       <div className="quick-start-toolbar quick-start-toolbar-simple">
         <span>Enter para gerar · Shift + Enter para nova linha</span>

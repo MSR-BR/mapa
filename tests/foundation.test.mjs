@@ -38,6 +38,23 @@ test("requests login only after the public central execution", async () => {
   assert.match(quickStart, /requestSubmit/);
 });
 
+test("suggests AI refinements while the research request is being written", async () => {
+  const [input, route, gemini] = await Promise.all([
+    readProjectFile("modules/projects/research-prompt-input.tsx"),
+    readProjectFile("app/api/prompt-suggestions/route.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+  ]);
+
+  assert.match(input, /Crie um roteiro de tese de mestrado/);
+  assert.match(input, /650/);
+  assert.match(input, /Sugestões para consolidar o mapa/);
+  assert.match(input, /Tema/);
+  assert.match(input, /Formulação/);
+  assert.match(route, /suggestResearchPrompts/);
+  assert.match(gemini, /exatamente 3 sugestões curtas/);
+  assert.match(gemini, /Não invente instituições/);
+});
+
 test("completes Change 004 with a versioned canonical schema and anti-hallucination prompt", async () => {
   const [schema, prompt, spec] = await Promise.all([
     readProjectFile("modules/generation/schema.ts"),

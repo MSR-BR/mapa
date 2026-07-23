@@ -1,14 +1,17 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "../generation/research-activity-icon";
 import { createProject } from "./actions";
 import { initialProjectActionState } from "./types";
 import { PENDING_PROJECT_KEY } from "./public-start-form";
+import { ResearchPromptInput } from "./research-prompt-input";
 
 export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const resumeSubmitPending = useRef(false);
+  const [prompt, setPrompt] = useState("");
   const [state, formAction, pending] = useActionState(
     createProject,
     initialProjectActionState,
@@ -20,36 +23,38 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
       const raw = sessionStorage.getItem(PENDING_PROJECT_KEY);
       if (!raw) return;
       const draft = JSON.parse(raw) as Record<string, unknown>;
-      const form = formRef.current;
-      const prompt = form.elements.namedItem("prompt") as HTMLTextAreaElement | null;
-      if (prompt && typeof draft.prompt === "string") prompt.value = draft.prompt.slice(0, 5_000);
+      if (typeof draft.prompt === "string") {
+        resumeSubmitPending.current = true;
+        const savedPrompt = draft.prompt.slice(0, 5_000);
+        queueMicrotask(() => setPrompt(savedPrompt));
+      }
       sessionStorage.removeItem(PENDING_PROJECT_KEY);
-      form.requestSubmit();
     } catch {
       sessionStorage.removeItem(PENDING_PROJECT_KEY);
     }
   }, [resumeDraft]);
+
+  useEffect(() => {
+    if (!resumeSubmitPending.current || !prompt || !formRef.current) return;
+    resumeSubmitPending.current = false;
+    formRef.current.requestSubmit();
+  }, [prompt]);
 
   return (
     <form action={formAction} className="quick-start-form" ref={formRef}>
       <label className="sr-only" htmlFor="quick-project-title">
         Título provisório ou pergunta de pesquisa
       </label>
-      <textarea
-        autoComplete="off"
-        autoFocus
+      <ResearchPromptInput
         id="quick-project-title"
-        maxLength={5_000}
-        name="prompt"
-        onKeyDown={(event) => {
+        onChange={setPrompt}
+        onEnter={(event) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
             event.currentTarget.form?.requestSubmit();
           }
         }}
-        placeholder="Crie um mapa de tese de mestrado a respeito do uso de inteligência artificial no ensino superior"
-        required
-        rows={3}
+        value={prompt}
       />
 
       <input name="autoGenerate" type="hidden" value="yes" />
