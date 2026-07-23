@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { GENERATION_MODEL, generateResearchStructure, interpretResearchRequest } from "@/modules/generation/gemini";
+import {
+  broadenResearchQuery,
+  GENERATION_MODEL,
+  generateResearchStructure,
+  interpretResearchRequest,
+} from "@/modules/generation/gemini";
 import { STRUCTURE_PROMPT_VERSION } from "@/modules/generation/prompts/structure-v1";
 import { RESEARCH_STRUCTURE_SCHEMA_VERSION } from "@/modules/generation/schema";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
@@ -82,7 +87,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const knowledgeArea = interpreted.knowledgeAreaProposed
       ? `Área proposta: ${interpreted.knowledgeArea}`.slice(0, 120)
       : interpreted.knowledgeArea;
-    const interpretedProject = {
+    let interpretedProject = {
       ...project,
       keywords: interpreted.keywords,
       knowledge_area: knowledgeArea,
@@ -123,6 +128,34 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         publicationInterval: { kind: "last-10-years" },
         topic: interpreted.researchQuery,
       });
+    }
+    if (report.references.length === 0) {
+      const broaderQuery = await broadenResearchQuery(
+        interpretedProject,
+        interpreted.researchQuery,
+      );
+      if (broaderQuery.toLocaleLowerCase("en") !== interpreted.researchQuery.toLocaleLowerCase("en")) {
+        console.warn("research_starter_retry_broader_query", {
+          projectId: id,
+          queryLength: broaderQuery.length,
+        });
+        report = await fetchResearchStarterReport({
+          includeMarkdown: false,
+          maxReferences: 20,
+          maxTopPapers: 10,
+          publicationInterval: { kind: "last-10-years" },
+          topic: broaderQuery,
+        });
+        if (report.references.length > 0) {
+          interpretedProject = { ...interpretedProject, theme: broaderQuery };
+          const { error: broaderQuerySaveError } = await supabase
+            .from("projects")
+            .update({ theme: broaderQuery, updated_at: new Date().toISOString() })
+            .eq("id", id)
+            .eq("owner_id", userId);
+          if (broaderQuerySaveError) throw broaderQuerySaveError;
+        }
+      }
     }
     if (report.references.length === 0) {
       throw new Error("Research Starter não encontrou referências verificáveis para este tema.");

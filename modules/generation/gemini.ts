@@ -39,6 +39,10 @@ const promptSuggestionsSchema = z.object({
   })).min(2).max(3),
 });
 
+const broaderResearchQuerySchema = z.object({
+  researchQuery: z.string().trim().min(8).max(180),
+});
+
 const generatedStructureSchema = z.object({
   chapters: z.array(z.object({
     sections: z.array(z.object({
@@ -127,6 +131,40 @@ export async function suggestResearchPrompts(prompt: string) {
     kind: suggestion.kind,
     text: suggestion.text.trim(),
   }));
+}
+
+export async function broadenResearchQuery(
+  project: ResearchRequestInput,
+  currentQuery: string,
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 160,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: broaderResearchQuerySchema }),
+    prompt: [
+      "Crie uma consulta bibliográfica mais ampla em inglês para bases acadêmicas.",
+      "Use entre 3 e 7 conceitos centrais e no máximo 180 caracteres.",
+      "Preserve o objeto científico e a relação principal do pedido.",
+      "Remova tipos de documento, grau acadêmico e formulações restritivas como doctoral thesis, dissertation, alignment ou compliance.",
+      "Mantenha país ou população somente quando forem essenciais ao recorte.",
+      "Não use operadores booleanos, aspas, explicações ou instruções de formato.",
+      `Consulta que não retornou referências verificáveis: ${JSON.stringify(currentQuery)}`,
+      `Contexto: ${JSON.stringify({
+        knowledgeArea: project.knowledge_area,
+        keywords: project.keywords,
+        prompt: project.problem_statement,
+        title: project.title,
+      })}`,
+    ].join("\n"),
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingBudget: 0 },
+      } satisfies GoogleLanguageModelOptions,
+    },
+    temperature: 0.1,
+  });
+
+  return broaderResearchQuerySchema.parse(output).researchQuery.trim();
 }
 
 export async function interpretResearchRequest(
