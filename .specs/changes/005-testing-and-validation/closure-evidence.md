@@ -2,7 +2,7 @@
 
 Data: 23/07/2026  
 Ambiente validado: `https://mapa-gray-two.vercel.app`  
-Deployment validado: `dpl_4kVPDeqymw9vBDtXEavQNRpDMQJu`
+Deployment final: `dpl_Gh2c6YDBUnsgEVbVsqXzQqY3q9hB`
 
 ## Matriz de rastreabilidade
 
