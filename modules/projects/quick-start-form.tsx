@@ -20,12 +20,8 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
       if (!raw) return;
       const draft = JSON.parse(raw) as Record<string, unknown>;
       const form = formRef.current;
-      const title = form.elements.namedItem("title") as HTMLTextAreaElement | null;
-      const area = form.elements.namedItem("knowledgeArea") as HTMLInputElement | null;
-      const level = form.elements.namedItem("academicLevel") as HTMLSelectElement | null;
-      if (title && typeof draft.title === "string") title.value = draft.title.slice(0, 160);
-      if (area && typeof draft.knowledgeArea === "string") area.value = draft.knowledgeArea.slice(0, 120);
-      if (level && typeof draft.academicLevel === "string") level.value = draft.academicLevel;
+      const prompt = form.elements.namedItem("prompt") as HTMLTextAreaElement | null;
+      if (prompt && typeof draft.prompt === "string") prompt.value = draft.prompt.slice(0, 5_000);
       sessionStorage.removeItem(PENDING_PROJECT_KEY);
       form.requestSubmit();
     } catch {
@@ -42,39 +38,24 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
         autoComplete="off"
         autoFocus
         id="quick-project-title"
-        maxLength={160}
-        name="title"
-        placeholder="Ex.: Como a inteligência artificial está transformando o ensino superior?"
+        maxLength={5_000}
+        name="prompt"
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            event.currentTarget.form?.requestSubmit();
+          }
+        }}
+        placeholder="Crie o mapa de uma tese de mestrado a respeito do efeito barocalórico em spin crossover"
         required
         rows={3}
       />
 
-      <div className="quick-start-toolbar">
-        <details className="quick-settings">
-          <summary aria-label="Abrir configurações iniciais">
-            <span aria-hidden="true">⚙</span>
-            <span>Configurar</span>
-          </summary>
-          <div className="quick-settings-panel">
-            <label>
-              Área do conhecimento
-              <input maxLength={120} name="knowledgeArea" placeholder="Ex.: Educação" />
-            </label>
-            <label>
-              Nível acadêmico
-              <select defaultValue="" name="academicLevel">
-                <option value="">Não informado</option>
-                <option value="undergraduate">Graduação</option>
-                <option value="specialization">Especialização</option>
-                <option value="masters">Mestrado</option>
-                <option value="doctorate">Doutorado</option>
-                <option value="other">Outro</option>
-              </select>
-            </label>
-          </div>
-        </details>
+      <input name="autoGenerate" type="hidden" value="yes" />
+      <div className="quick-start-toolbar quick-start-toolbar-simple">
+        <span>Enter para gerar · Shift + Enter para nova linha</span>
         <button disabled={pending} type="submit">
-          {pending ? "Criando…" : "Criar mapa"}
+          {pending ? "Iniciando…" : "Gerar mapa"}
           <span aria-hidden="true">→</span>
         </button>
       </div>
@@ -83,6 +64,16 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
         <p className={`quick-form-message ${state.status}`} role="status">
           {state.message}
         </p>
+      ) : null}
+      {pending ? (
+        <div className="generation-overlay" role="status" aria-live="polite">
+          <div className="generation-overlay-card">
+            <span className="generation-orbit" aria-hidden="true">✦</span>
+            <p className="section-kicker">Criando seu mapa</p>
+            <h2>Interpretando o pedido…</h2>
+            <p>Preparando o projeto para iniciar a pesquisa e a geração da estrutura.</p>
+          </div>
+        </div>
       ) : null}
     </form>
   );

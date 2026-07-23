@@ -11,6 +11,13 @@ export async function createProject(
   _previousState: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
+  const autoGenerate = formData.get("autoGenerate") === "yes";
+  const prompt = formData.get("prompt");
+  if (autoGenerate && typeof prompt === "string" && prompt.trim()) {
+    const normalizedPrompt = prompt.trim();
+    formData.set("title", normalizedPrompt.slice(0, 160));
+    formData.set("problemStatement", normalizedPrompt.slice(0, 5_000));
+  }
   const result = parseProjectForm(formData);
   if (!result.success) {
     return {
@@ -33,7 +40,7 @@ export async function createProject(
   }
 
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}`);
+  redirect(`/dashboard/projects/${data.id}${autoGenerate ? "?generate=1" : ""}`);
 }
 
 export async function updateProject(

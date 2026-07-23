@@ -200,6 +200,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .quick-start-toolbar > button { display: inline-flex; min-height: 2.75rem; align-items: center; gap: 0.55rem; border: 0; border-radius: 0.8rem; padding: 0.7rem 1rem; background: #e8f6ef; color: #174c38; font: inherit; font-weight: 750; cursor: pointer; }
 .quick-start-toolbar > button:hover { background: white; }
 .quick-start-toolbar > button:disabled { cursor: wait; opacity: 0.6; }
+.quick-start-toolbar-simple { align-items: center; }
+.quick-start-toolbar-simple > span { color: #9aa7a1; font-size: 0.76rem; }
 .quick-settings summary { display: inline-flex; min-height: 2.6rem; align-items: center; gap: 0.5rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 0.8rem; padding: 0.6rem 0.75rem; color: #c2cdc8; cursor: pointer; font-size: 0.84rem; font-weight: 650; list-style: none; }
 .quick-settings summary::-webkit-details-marker { display: none; }
 .quick-settings summary:hover, .quick-settings[open] summary { border-color: rgb(255 255 255 / 28%); color: white; }
@@ -208,6 +210,21 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .quick-settings-panel input, .quick-settings-panel select { width: 100%; min-height: 2.65rem; border: 1px solid var(--border); border-radius: 0.65rem; padding: 0.6rem 0.7rem; background: white; color: var(--foreground); font: inherit; }
 .quick-form-message { margin: 0.8rem 0 0; color: #ffb9b2; font-size: 0.82rem; }
 .quick-start-note { margin: 0.9rem 0 0; color: #75867e; font-size: 0.8rem; }
+.generation-overlay { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 1.25rem; background: rgb(8 14 12 / 72%); backdrop-filter: blur(14px); }
+.generation-overlay-card { width: min(100%, 38rem); padding: clamp(1.6rem, 5vw, 3rem); border: 1px solid rgb(255 255 255 / 14%); border-radius: 1.6rem; background: linear-gradient(145deg, #17221e, #0c1210); box-shadow: 0 2rem 7rem rgb(0 0 0 / 42%); color: white; text-align: left; }
+.generation-overlay-card h2 { max-width: none; margin: 0.5rem 0 0; color: white; font-size: clamp(1.65rem, 5vw, 2.5rem); }
+.generation-overlay-card > p:not(.section-kicker) { color: #aebdb5; line-height: 1.6; }
+.generation-orbit { display: grid; width: 3.4rem; height: 3.4rem; place-items: center; margin-bottom: 1.35rem; border: 1px solid rgb(174 230 204 / 25%); border-radius: 50%; background: radial-gradient(circle, #caeee0 0%, #77c7a7 25%, #173c2e 70%); box-shadow: 0 0 0 0 rgb(119 199 167 / 32%); color: #07100c; font-size: 1.15rem; animation: generation-orbit 1.7s ease-out infinite; }
+.generation-progress { display: grid; gap: 0.8rem; margin: 1.6rem 0 0; padding: 0; list-style: none; counter-reset: progress; }
+.generation-progress li { display: grid; grid-template-columns: 1.75rem 1fr; align-items: start; gap: 0.7rem; color: #71827a; line-height: 1.45; counter-increment: progress; }
+.generation-progress li::before { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; border: 1px solid #46544e; border-radius: 50%; content: counter(progress); font-size: 0.68rem; font-weight: 800; }
+.generation-progress li.current { color: white; }
+.generation-progress li.current::before { border-color: #91dabd; background: #91dabd; color: #10271e; box-shadow: 0 0 0 0.35rem rgb(145 218 189 / 10%); }
+.generation-progress li.done { color: #9ab2a8; }
+.generation-progress li.done::before { border-color: #4d816c; content: "✓"; color: #91dabd; }
+.generation-progress a { color: #bcebd8; font-weight: 750; }
+.generation-overlay-note { margin: 1.5rem 0 0; border-top: 1px solid rgb(255 255 255 / 9%); padding-top: 1rem; font-size: 0.78rem; }
+@keyframes generation-orbit { 70% { box-shadow: 0 0 0 1rem rgb(119 199 167 / 0%); transform: rotate(180deg); } 100% { transform: rotate(360deg); } }
 .recent-projects { margin-top: clamp(4rem, 9vw, 7rem); }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
 .section-heading h2 { margin: 0.2rem 0 0; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.045em; }
@@ -249,6 +266,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .quick-start-form { margin-top: 1.6rem; padding: 0.9rem; border-radius: 1.2rem; }
   .quick-start-form textarea { min-height: 8rem; }
   .quick-start-toolbar { align-items: center; }
+  .quick-start-toolbar-simple > span { max-width: 12rem; }
   .quick-settings summary span:last-child { display: none; }
   .quick-settings-panel { bottom: calc(100% + 0.5rem); }
   .recent-projects { margin-top: 4rem; }

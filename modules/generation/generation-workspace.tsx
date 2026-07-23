@@ -6,6 +6,7 @@ import type { ResearchStructure } from "./schema";
 import type { GenerationSnapshot } from "./types";
 
 type Props = {
+  autoGenerate?: boolean;
   initialSnapshot: GenerationSnapshot;
   projectId: string;
 };
@@ -15,16 +16,17 @@ const STATUS_LABELS = {
   failed: "A geração encontrou um problema",
   generating: "Organizando capítulos com Gemini…",
   queued: "Preparando geração…",
-  researching: "Buscando referências verificadas…",
+  researching: "Buscando referências no Research Starter…",
 } as const;
 
-export function GenerationWorkspace({ initialSnapshot, projectId }: Props) {
+export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, projectId }: Props) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [draft, setDraft] = useState<ResearchStructure | null>(initialSnapshot.structure);
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const saving = useRef(false);
+  const autoTriggered = useRef(false);
 
   useEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
@@ -79,6 +81,14 @@ export function GenerationWorkspace({ initialSnapshot, projectId }: Props) {
     }
   }
 
+  useEffect(() => {
+    if (!autoGenerate || autoTriggered.current || initialSnapshot.structure) return;
+    autoTriggered.current = true;
+    void generate();
+    // A geração automática deve ocorrer uma única vez ao entrar pela execução central.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoGenerate]);
+
   async function save() {
     if (!draft) return;
     saving.current = true;
@@ -114,9 +124,27 @@ export function GenerationWorkspace({ initialSnapshot, projectId }: Props) {
   }
 
   const status = snapshot.job?.status;
+  const activeStatus = status && status !== "completed" && status !== "failed" ? status : "queued";
 
   return (
     <section className="generation-workspace" aria-labelledby="generation-title">
+      {busy ? (
+        <div className="generation-overlay" role="status" aria-live="polite">
+          <div className="generation-overlay-card">
+            <span className="generation-orbit" aria-hidden="true">✦</span>
+            <p className="section-kicker">Mapa em construção</p>
+            <h2>{STATUS_LABELS[activeStatus]}</h2>
+            <ol className="generation-progress">
+              <li className={activeStatus === "queued" ? "current" : "done"}>Interpretando tema, recorte e nível acadêmico do prompt</li>
+              <li className={activeStatus === "researching" ? "current" : activeStatus === "generating" ? "done" : ""}>
+                Buscando literatura no <a href="https://research-starter-six.vercel.app" rel="noreferrer" target="_blank">Research Starter ↗</a>
+              </li>
+              <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências com Gemini</li>
+            </ol>
+            <p className="generation-overlay-note">Você pode manter esta tela aberta; o resultado aparecerá automaticamente.</p>
+          </div>
+        </div>
+      ) : null}
       <div className="generation-heading">
         <div>
           <p className="section-kicker">Change 004 · geração e editor</p>

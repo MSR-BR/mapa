@@ -235,10 +235,11 @@ test("validates project fields against database limits", async () => {
   assert.match(form, /Descartar alterações não salvas/);
 });
 
-test("implements the approved hybrid dashboard with a real quick-create action", async () => {
-  const [dashboard, quickStart, visualDecision, loading, error] = await Promise.all([
+test("implements the approved hybrid dashboard with prompt-first automatic generation", async () => {
+  const [dashboard, quickStart, generation, visualDecision, loading, error] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/quick-start-form.tsx"),
+    readProjectFile("modules/generation/generation-workspace.tsx"),
     readProjectFile(".specs/changes/002-implement-mvp-foundation/subchanges/002.5-polish-responsive-shell.md"),
     readProjectFile("app/dashboard/loading.tsx"),
     readProjectFile("app/dashboard/error.tsx"),
@@ -248,7 +249,10 @@ test("implements the approved hybrid dashboard with a real quick-create action",
   assert.match(dashboard, /Projetos recentes/);
   assert.match(quickStart, /useActionState/);
   assert.match(quickStart, /createProject/);
-  assert.match(quickStart, /Abrir configurações iniciais/);
+  assert.doesNotMatch(quickStart, /Abrir configurações iniciais/);
+  assert.match(quickStart, /autoGenerate/);
+  assert.match(generation, /Buscando literatura no/);
+  assert.match(generation, /Research Starter/);
   assert.match(visualDecision, /\[x\] Híbrida/);
   assert.match(loading, /aria-busy="true"/);
   assert.match(error, /Tentar novamente/);

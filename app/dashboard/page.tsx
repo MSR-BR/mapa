@@ -27,11 +27,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <p className="eyebrow">Seu próximo mapa começa aqui</p>
         <h1 id="quick-start-title">O que você quer pesquisar?</h1>
         <p className="quick-start-summary">
-          Comece com um título provisório ou uma pergunta. Depois, organize tema,
-          problema e palavras-chave no seu ritmo.
+          Descreva em linguagem natural o trabalho que deseja criar. Tema, nível,
+          recorte e demais orientações podem ir no mesmo prompt.
         </p>
         <QuickStartForm resumeDraft={resume === "1"} />
-        <p className="quick-start-note">Você poderá editar todos os detalhes antes de avançar.</p>
+        <p className="quick-start-note">Ao pressionar Enter, a pesquisa e a estrutura começam automaticamente.</p>
       </section>
 
       <section className="recent-projects" aria-labelledby="recent-projects-title">
@@ -40,7 +40,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <p className="section-kicker">Biblioteca</p>
             <h2 id="recent-projects-title">Projetos recentes</h2>
           </div>
-          <Link className="text-link" href="/dashboard/projects/new">Formulário completo</Link>
         </div>
 
         {error ? (

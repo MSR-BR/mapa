@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { deleteProject, duplicateProject, updateProject } from "@/modules/projects/actions";
+import { deleteProject, duplicateProject } from "@/modules/projects/actions";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
-import { ProjectForm } from "@/modules/projects/project-form";
 import { GenerationWorkspace } from "@/modules/generation/generation-workspace";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
 
-export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ generate?: string }> }) {
   const { id } = await params;
+  const { generate } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const { supabase, userId } = await requireAuthenticatedUser();
@@ -28,10 +28,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   return (
     <main className="workspace-shell narrow-workspace">
       <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
-      <p className="eyebrow">Editar projeto</p>
+      <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
-      <ProjectForm action={updateProject} project={project} submitLabel="Salvar alterações" />
-      <GenerationWorkspace initialSnapshot={generationSnapshot} projectId={project.id} />
+      <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
       <section className="project-danger-zone" aria-labelledby="project-actions-title">
         <h2 id="project-actions-title">Outras ações</h2>
         <form action={duplicateProject}>
