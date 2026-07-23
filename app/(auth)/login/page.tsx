@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { AuthForm } from "@/modules/auth/auth-form";
-import { login } from "@/modules/auth/actions";
+import { login, loginWithGoogle } from "@/modules/auth/actions";
 
 function safeNext(value: string | undefined) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
@@ -9,6 +9,7 @@ function safeNext(value: string | undefined) {
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
+  const googleAuthEnabled = process.env.GOOGLE_AUTH_ENABLED === "true";
   return (
     <>
       <p className="eyebrow">Acesso</p>
@@ -21,6 +22,18 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         hiddenFields={{ next: safeNext(next) }}
         submitLabel="Entrar"
       />
+      {googleAuthEnabled ? (
+        <>
+          <div className="auth-divider"><span>ou</span></div>
+          <form action={loginWithGoogle}>
+            <input name="next" type="hidden" value={safeNext(next)} />
+            <button className="google-auth-button" type="submit">
+              <span aria-hidden="true" className="google-mark">G</span>
+              Continuar com Google
+            </button>
+          </form>
+        </>
+      ) : null}
       <p className="auth-footer">Ainda não possui conta? <Link href="/signup">Criar conta</Link></p>
     </>
   );

@@ -36,6 +36,20 @@ export async function login(
   redirect(readSafeDestination(formData));
 }
 
+export async function loginWithGoogle(formData: FormData) {
+  const next = readSafeDestination(formData);
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    options: {
+      redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
+    provider: "google",
+  });
+
+  if (error || !data.url) redirect("/login?error=google");
+  redirect(data.url);
+}
+
 export async function signUp(
   _previousState: AuthActionState,
   formData: FormData,

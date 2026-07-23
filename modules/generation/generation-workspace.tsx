@@ -177,7 +177,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           {draft ? (
             <>
               <button className="generation-action-button" disabled={busy} onClick={() => void generate()} type="button">Regenerar</button>
-              <button className="generation-action-button" disabled={busy} onClick={() => setOptimizingLiterature(true)} type="button">Buscar literatura</button>
+              <button className="generation-action-button" disabled={busy} onClick={() => setOptimizingLiterature(true)} type="button">Otimizar literatura</button>
             </>
           ) : null}
           {draft ? <button className="generation-action-button generation-save-button" disabled={busy} onClick={() => void save()} type="button">{busy ? "Processando…" : "Salvar"}</button> : null}
@@ -195,7 +195,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <div aria-labelledby="keyword-dialog-title" aria-modal="true" className="keyword-dialog" role="dialog">
             <button aria-label="Fechar" className="project-dialog-close" onClick={() => setOptimizingLiterature(false)} type="button">×</button>
             <p className="section-kicker">Nova busca bibliográfica</p>
-            <h3 id="keyword-dialog-title">Buscar nova literatura</h3>
+            <h3 id="keyword-dialog-title">Otimizar literatura</h3>
             <p>Informe palavras-chave específicas. A estrutura e as referências serão regeneradas.</p>
             <label>
               Palavras-chave
@@ -209,7 +209,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               />
             </label>
             <div className="keyword-dialog-actions">
-              <button className="secondary-button" onClick={() => setOptimizingLiterature(false)} type="button">Cancelar</button>
+              <button className="primary-action" onClick={() => setOptimizingLiterature(false)} type="button">Cancelar</button>
               <button className="primary-action" onClick={optimizeLiterature} type="button">OK e regenerar</button>
             </div>
           </div>

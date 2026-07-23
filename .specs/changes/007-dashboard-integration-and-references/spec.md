@@ -22,8 +22,8 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - A consulta enviada às bases bibliográficas é produzida em inglês; título, área e interface permanecem no idioma do usuário.
 - Se a busca dos últimos cinco anos não trouxer referências, o backend repete uma vez com intervalo de dez anos.
 - Quando a área não estiver explícita, o Gemini propõe a área e o card a identifica como “Área proposta”.
-- “Buscar literatura” aceita novas palavras-chave, substitui o foco anterior e regenera consulta, metadados, referências e estrutura.
-- Regenerar, Buscar literatura e Salvar usam o mesmo tamanho e alinhamento; somente Salvar recebe destaque de cor.
+- “Otimizar literatura” aceita novas palavras-chave, substitui o foco anterior e regenera consulta, metadados, referências e estrutura.
+- Regenerar, Otimizar literatura e Salvar usam o mesmo tamanho e alinhamento; somente Salvar recebe destaque de cor.
 - O prompt integral continua preservado no briefing; somente a consulta temática otimizada é enviada ao Research Starter.
 - Gerações sem referências verificáveis do Research Starter falham sem sobrescrever conteúdo.
 - DOCX e PDF identificam o Research Starter e incluem link para o serviço.

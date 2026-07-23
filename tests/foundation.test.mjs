@@ -31,7 +31,10 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /sessionStorage\.setItem/);
   assert.match(publicStart, /login\?next=/);
   assert.match(loginPage, /hiddenFields/);
+  assert.match(loginPage, /Continuar com Google/);
   assert.match(authActions, /readSafeDestination/);
+  assert.match(authActions, /signInWithOAuth/);
+  assert.match(authActions, /provider: "google"/);
   assert.match(quickStart, /requestSubmit/);
 });
 
@@ -93,7 +96,7 @@ test("provides persistent editing with loss protection and retry", async () => {
 
   assert.match(workspace, /beforeunload/);
   assert.match(workspace, /Regenerar substituirá a versão salva/);
-  assert.match(workspace, /Buscar literatura/);
+  assert.match(workspace, /Otimizar literatura/);
   assert.match(workspace, /keywords: keywordOverrides/);
   assert.match(workspace, /OK e regenerar/);
   assert.match(workspace, /generation-save-button/);
