@@ -17,6 +17,7 @@ import type { ExportDocumentInput } from "./types";
 const NAVY = "203748";
 const MUTED = "626B72";
 const GOLD = "9A7418";
+const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
 
 function metadataParagraph(label: string, value: string | null | undefined) {
   if (!value) return null;
@@ -97,6 +98,17 @@ export async function createDocxExport(input: ExportDocumentInput) {
 
   body.push(new Paragraph({ children: [new PageBreak()] }));
   body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Referências verificadas" }));
+  body.push(new Paragraph({
+    children: [
+      new TextRun({ color: MUTED, text: "Referências otimizadas com " }),
+      new ExternalHyperlink({
+        children: [new TextRun({ color: "176B4D", style: "Hyperlink", text: "Research Starter" })],
+        link: RESEARCH_STARTER_URL,
+      }),
+      new TextRun({ color: MUTED, text: "." }),
+    ],
+    spacing: { after: 240 },
+  }));
   for (const reference of input.references) {
     const authors = reference.authors.length > 0 ? reference.authors.join(", ") : "Autoria não informada";
     const details = [authors, reference.year?.toString(), reference.doi ? `DOI: ${reference.doi}` : null].filter(Boolean).join(". ");

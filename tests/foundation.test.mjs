@@ -13,7 +13,8 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 
   assert.match(layout, /<html lang="pt-BR"/);
   assert.match(layout, /title: "Mapa da Pesquisa"/);
-  assert.match(page, /O que você quer pesquisar\?/);
+  assert.match(page, /O que você quer desenvolver\?/);
+  assert.doesNotMatch(page, /Comece pela ideia/);
   assert.match(page, /PublicStartForm/);
 });
 
@@ -58,6 +59,8 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(route, /idempotencyKey/);
   assert.match(route, /maxReferences: 20/);
   assert.match(route, /slice\(0, 180\)/);
+  assert.match(route, /report\.references\.length === 0/);
+  assert.match(route, /title: structure\.title/);
   assert.match(route, /A geração falhou sem alterar a estrutura salva/);
   assert.match(gemini, /Output\.object/);
   assert.match(gemini, /generatedStructureSchema/);
@@ -99,8 +102,10 @@ test("exports only the authenticated owner's saved structure as DOCX and PDF", a
   assert.match(route, /loadGenerationSnapshot/);
   assert.match(docx, /Revisar antes do uso/);
   assert.match(docx, /Referências verificadas/);
+  assert.match(docx, /Referências otimizadas com/);
   assert.match(pdf, /bufferPages: true/);
   assert.match(pdf, /Referências verificadas/);
+  assert.match(pdf, /Referências otimizadas com Research Starter/);
   assert.match(workspace, /Exportar DOCX/);
   assert.match(workspace, /Salve as alterações antes de exportar/);
 });
@@ -250,7 +255,7 @@ test("implements the approved hybrid dashboard with prompt-first automatic gener
 
   assert.match(dashboard, /Qual seu tema de pesquisa\?/);
   assert.match(dashboard, /Projetos recentes/);
-  assert.match(dashboard, /ProjectCardModal/);
+  assert.match(dashboard, /DashboardProjectGrid/);
   assert.match(quickStart, /useActionState/);
   assert.match(quickStart, /createProject/);
   assert.doesNotMatch(quickStart, /Abrir configurações iniciais/);
@@ -260,6 +265,27 @@ test("implements the approved hybrid dashboard with prompt-first automatic gener
   assert.match(visualDecision, /\[x\] Híbrida/);
   assert.match(loading, /aria-busy="true"/);
   assert.match(error, /Tentar novamente/);
+});
+
+test("supports anchored project actions and owner-scoped AI integration", async () => {
+  const [grid, card, route, gemini, layout] = await Promise.all([
+    readProjectFile("modules/projects/dashboard-project-grid.tsx"),
+    readProjectFile("modules/projects/project-card-modal.tsx"),
+    readProjectFile("app/api/projects/integrate/route.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("app/dashboard/layout.tsx"),
+  ]);
+
+  assert.match(grid, /Selecione projetos para integrar/);
+  assert.match(grid, /\/api\/projects\/integrate/);
+  assert.match(card, /getBoundingClientRect/);
+  assert.match(card, />Abrir</);
+  assert.match(card, />Excluir</);
+  assert.match(route, /\.eq\("owner_id", userId\)/);
+  assert.match(route, /projectIds\.length < 2 \|\| projectIds\.length > 4/);
+  assert.match(route, /mergeResearchStructures/);
+  assert.match(gemini, /Integre os mapas fornecidos/);
+  assert.match(layout, />Dashboard</);
 });
 
 test("uses the approved dark silver authentication shell", async () => {

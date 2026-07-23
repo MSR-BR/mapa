@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { deleteProject } from "./actions";
 
-type Props = {
+export type DashboardProject = {
   academicArea: string;
   projectId: string;
   statusLabel: string;
@@ -13,65 +13,96 @@ type Props = {
   updatedAt: string;
 };
 
+type Props = DashboardProject & {
+  onSelectionChange: (projectId: string, selected: boolean) => void;
+  selected: boolean;
+};
+
 export function ProjectCardModal({
   academicArea,
+  onSelectionChange,
   projectId,
+  selected,
   statusLabel,
   title,
   updatedAt,
 }: Props) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<HTMLButtonElement>(null);
+  const [menuPosition, setMenuPosition] = useState<{ left: number; top: number } | null>(null);
+
+  function toggleMenu() {
+    if (menuPosition) {
+      setMenuPosition(null);
+      return;
+    }
+    const rect = dotsRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setMenuPosition({
+      left: Math.max(12, Math.min(window.innerWidth - 292, rect.right - 280)),
+      top: Math.min(window.innerHeight - 190, rect.bottom + 8),
+    });
+  }
+
+  useEffect(() => {
+    if (!menuPosition) return;
+    const close = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node) && !dotsRef.current?.contains(event.target as Node)) {
+        setMenuPosition(null);
+      }
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [menuPosition]);
 
   return (
-    <>
-      <button
-        className="project-card project-card-button"
-        onClick={() => dialogRef.current?.showModal()}
-        type="button"
-      >
-        <span className="project-card-topline">
-          <span className="project-status">{statusLabel}</span>
-          <span className="card-arrow" aria-hidden="true">•••</span>
-        </span>
-        <strong>{title}</strong>
-        <span className="project-card-area">{academicArea}</span>
-        <time dateTime={updatedAt}>
-          Atualizado em {new Intl.DateTimeFormat("pt-BR").format(new Date(updatedAt))}
-        </time>
-      </button>
-
-      <dialog
-        className="project-dialog"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) event.currentTarget.close();
-        }}
-        ref={dialogRef}
-      >
-        <button
-          aria-label="Fechar"
-          className="project-dialog-close"
-          onClick={() => dialogRef.current?.close()}
-          type="button"
-        >
-          ×
+    <article className={`project-card ${selected ? "project-card-selected" : ""}`}>
+      <button aria-label={`Opções de ${title}`} className="project-card-open" onClick={toggleMenu} type="button" />
+      <div className="project-card-controls">
+        <label className="project-selector">
+          <input
+            aria-label={`Selecionar ${title} para integração`}
+            checked={selected}
+            onChange={(event) => onSelectionChange(projectId, event.target.checked)}
+            type="checkbox"
+          />
+        </label>
+        <button aria-label={`Abrir opções de ${title}`} className="project-menu-trigger" onClick={toggleMenu} ref={dotsRef} type="button">
+          •••
         </button>
-        <p className="section-kicker">Projeto salvo</p>
-        <h2>{title}</h2>
-        <p>{academicArea} · {statusLabel}</p>
-        <div className="project-dialog-actions">
-          <Link className="primary-link" href={`/dashboard/projects/${projectId}`}>Continuar</Link>
-          <form
-            action={deleteProject}
-            onSubmit={(event) => {
-              if (!window.confirm("Excluir este projeto e todo o conteúdo gerado?")) event.preventDefault();
-            }}
-          >
-            <input name="projectId" type="hidden" value={projectId} />
-            <input name="confirmDelete" type="hidden" value="yes" />
-            <button className="danger-button" type="submit">Excluir</button>
-          </form>
+      </div>
+      <span className="project-status">{statusLabel}</span>
+      <strong>{title}</strong>
+      <span className="project-card-area">{academicArea}</span>
+      <time dateTime={updatedAt}>
+        Atualizado em {new Intl.DateTimeFormat("pt-BR").format(new Date(updatedAt))}
+      </time>
+
+      {menuPosition ? (
+        <div
+          aria-label={`Ações de ${title}`}
+          className="project-popover"
+          ref={menuRef}
+          role="dialog"
+          style={{ left: menuPosition.left, top: menuPosition.top }}
+        >
+          <strong>{title}</strong>
+          <span>{academicArea} · {statusLabel}</span>
+          <div className="project-popover-actions">
+            <Link className="primary-link" href={`/dashboard/projects/${projectId}`}>Abrir</Link>
+            <form
+              action={deleteProject}
+              onSubmit={(event) => {
+                if (!window.confirm("Excluir este projeto e todo o conteúdo gerado?")) event.preventDefault();
+              }}
+            >
+              <input name="projectId" type="hidden" value={projectId} />
+              <input name="confirmDelete" type="hidden" value="yes" />
+              <button className="danger-button" type="submit">Excluir</button>
+            </form>
+          </div>
         </div>
-      </dialog>
-    </>
+      ) : null}
+    </article>
   );
 }

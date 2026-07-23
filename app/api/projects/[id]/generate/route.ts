@@ -59,6 +59,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       publicationInterval: { kind: "last-5-years" },
       topic: [project.title, project.theme, project.problem_statement, project.keywords.join(", ")].filter(Boolean).join(" — ").slice(0, 180),
     });
+    if (report.references.length === 0) {
+      throw new Error("Research Starter não encontrou referências verificáveis para este tema.");
+    }
 
     await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
     const structure = await generateResearchStructure(project, report);
@@ -80,11 +83,15 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
     await Promise.all([
       supabase.from("generation_jobs").update({ completed_at: now, status: "completed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
-      supabase.from("projects").update({ status: "generated", updated_at: now }).eq("id", id).eq("owner_id", userId),
+      supabase.from("projects").update({ status: "generated", title: structure.title, updated_at: now }).eq("id", id).eq("owner_id", userId),
     ]);
     return NextResponse.json(await loadGenerationSnapshot(supabase, userId, id));
   } catch (error) {
-    const errorCode = error instanceof Error && error.message.includes("Referências não verificadas") ? "unverified-references" : "generation-failed";
+    const errorCode = error instanceof Error && error.message.includes("não encontrou referências")
+      ? "research-starter-empty"
+      : error instanceof Error && error.message.includes("Referências não verificadas")
+        ? "unverified-references"
+        : "generation-failed";
     console.error("generation_job_failed", {
       errorCode,
       jobId: job.id,
@@ -96,6 +103,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
       supabase.from("projects").update({ status: "failed", updated_at: now }).eq("id", id).eq("owner_id", userId),
     ]);
-    return NextResponse.json({ error: "A geração falhou sem alterar a estrutura salva.", errorCode }, { status: 502 });
+    return NextResponse.json({
+      error: errorCode === "research-starter-empty"
+        ? "O Research Starter não encontrou fontes verificáveis. Ajuste o tema ou tente novamente."
+        : "A geração falhou sem alterar a estrutura salva.",
+      errorCode,
+    }, { status: 502 });
   }
 }

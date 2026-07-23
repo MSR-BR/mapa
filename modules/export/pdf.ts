@@ -3,6 +3,7 @@ import PDFDocument from "pdfkit";
 import type { ExportDocumentInput } from "./types";
 
 const COLORS = { gold: "#9A7418", muted: "#626B72", navy: "#203748", text: "#1C2428" };
+const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
 
 function ensureSpace(doc: PDFKit.PDFDocument, height: number) {
   if (doc.y + height > doc.page.height - 84) doc.addPage();
@@ -79,6 +80,11 @@ export async function createPdfExport(input: ExportDocumentInput) {
 
   doc.addPage();
   doc.fillColor(COLORS.navy).font("Helvetica-Bold").fontSize(18).text("Referências verificadas");
+  doc.moveDown(0.5);
+  doc.fillColor(COLORS.muted).font("Helvetica").fontSize(9).text(
+    "Referências otimizadas com Research Starter.",
+    { link: RESEARCH_STARTER_URL, underline: true },
+  );
   doc.moveDown(0.8);
   for (const reference of input.references) {
     ensureSpace(doc, 75);

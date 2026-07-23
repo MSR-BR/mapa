@@ -6,8 +6,7 @@ export default function Home() {
       <section className="quick-start public-hero" aria-labelledby="page-title">
         <div className="brand-mark" aria-hidden="true">MP</div>
         <p className="eyebrow">Mapa da Pesquisa</p>
-        <h1 id="page-title">O que você quer pesquisar?</h1>
-        <p className="quick-start-summary">Comece pela ideia. O acesso será solicitado somente quando você executar a criação do mapa.</p>
+        <h1 id="page-title">O que você quer desenvolver?</h1>
         <PublicStartForm />
       </section>
     </main>

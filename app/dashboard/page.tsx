@@ -1,5 +1,5 @@
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
-import { ProjectCardModal } from "@/modules/projects/project-card-modal";
+import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
 
 const statusLabels: Record<string, string> = {
@@ -51,18 +51,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <span>Escreva uma ideia acima para criar o primeiro mapa.</span>
           </div>
         ) : (
-          <div className="project-grid" aria-label="Projetos">
-            {projects.map((project) => (
-              <ProjectCardModal
-                academicArea={project.knowledge_area || "Área a definir"}
-                key={project.id}
-                projectId={project.id}
-                statusLabel={statusLabels[project.status] ?? project.status}
-                title={project.title}
-                updatedAt={project.updated_at}
-              />
-            ))}
-          </div>
+          <DashboardProjectGrid
+            projects={projects.map((project) => ({
+              academicArea: project.knowledge_area || "Área a definir",
+              projectId: project.id,
+              statusLabel: statusLabels[project.status] ?? project.status,
+              title: project.title,
+              updatedAt: project.updated_at,
+            }))}
+          />
         )}
       </section>
     </main>

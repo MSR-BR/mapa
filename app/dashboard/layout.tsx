@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <span>Mapa da Pesquisa</span>
         </Link>
         <nav aria-label="Navegação principal">
-          <Link className="nav-projects-link" href="/dashboard">Projetos</Link>
+          <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
           <details className="account-menu">
             <summary aria-label="Abrir menu da conta">
               <span

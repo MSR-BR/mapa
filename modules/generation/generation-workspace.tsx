@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import type { ResearchStructure } from "./schema";
@@ -21,6 +22,7 @@ const STATUS_LABELS = {
 } as const;
 
 export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, projectId }: Props) {
+  const router = useRouter();
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [draft, setDraft] = useState<ResearchStructure | null>(initialSnapshot.structure);
   const [busy, setBusy] = useState(false);
@@ -93,7 +95,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   async function save() {
     if (!draft) return;
     if (!dirty) {
-      setMessage("O projeto já está salvo na sua conta.");
+      router.push("/dashboard");
       return;
     }
     saving.current = true;
@@ -109,7 +111,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível salvar.");
       setDirty(false);
       setSnapshot((current) => ({ ...current, revision: payload.revision, structure: draft }));
-      setMessage(`Versão ${payload.revision} salva.`);
+      router.push("/dashboard");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível salvar.");
     } finally {
@@ -146,7 +148,6 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               </li>
               <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências com Gemini</li>
             </ol>
-            <p className="generation-overlay-note">Você pode manter esta tela aberta; o resultado aparecerá automaticamente.</p>
           </div>
         </div>
       ) : null}
@@ -186,7 +187,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <div className="export-panel" aria-label="Exportar última versão salva">
             <div>
               <strong>Exportar versão {snapshot.revision ?? 1}</strong>
-              <span>{dirty ? "Salve as alterações antes de exportar." : "DOCX editável ou PDF pronto para leitura."}</span>
+              <span>{dirty ? "Salve as alterações antes de exportar." : "DOCX editável ou PDF com referências otimizadas pelo Research Starter."}</span>
             </div>
             <div className="export-actions">
               {dirty ? (
