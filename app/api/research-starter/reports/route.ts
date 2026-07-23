@@ -19,8 +19,8 @@ export async function POST(request: Request) {
   const interval = typeof candidate.interval === "string" && LEVELS.has(candidate.interval)
     ? candidate.interval as "last-5-years" | "last-10-years"
     : "last-5-years";
-  if (!topic || topic.length > 500) {
-    return NextResponse.json({ error: "Informe um tema com até 500 caracteres." }, { status: 400 });
+  if (!topic || topic.length > 180) {
+    return NextResponse.json({ error: "Informe um tema com até 180 caracteres." }, { status: 400 });
   }
 
   const reportRequest: ResearchStarterRequest = {

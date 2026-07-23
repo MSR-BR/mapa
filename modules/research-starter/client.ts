@@ -33,9 +33,13 @@ export async function fetchResearchStarterReport(
   });
   const payload: unknown = await response.json();
 
-  if (!isResponse(payload)) throw new Error("Resposta inválida do Research Starter.");
+  if (!isResponse(payload)) {
+    console.error("research_starter_invalid_response", { status: response.status });
+    throw new Error("Resposta inválida do Research Starter.");
+  }
   if (!response.ok || !payload.ok) {
     const code = payload.ok ? `http-${response.status}` : payload.code;
+    console.error("research_starter_request_failed", { code, status: response.status });
     throw new Error(`Research Starter indisponível (${code}).`);
   }
   return payload;

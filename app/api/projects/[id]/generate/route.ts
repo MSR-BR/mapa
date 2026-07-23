@@ -57,7 +57,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       maxReferences: 20,
       maxTopPapers: 10,
       publicationInterval: { kind: "last-5-years" },
-      topic: [project.title, project.theme, project.problem_statement, project.keywords.join(", ")].filter(Boolean).join(" — ").slice(0, 500),
+      topic: [project.title, project.theme, project.problem_statement, project.keywords.join(", ")].filter(Boolean).join(" — ").slice(0, 180),
     });
 
     await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
@@ -85,6 +85,12 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json(await loadGenerationSnapshot(supabase, userId, id));
   } catch (error) {
     const errorCode = error instanceof Error && error.message.includes("Referências não verificadas") ? "unverified-references" : "generation-failed";
+    console.error("generation_job_failed", {
+      errorCode,
+      jobId: job.id,
+      message: error instanceof Error ? error.message : "unknown-error",
+      projectId: id,
+    });
     const now = new Date().toISOString();
     await Promise.all([
       supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),

@@ -1,19 +1,36 @@
 import "server-only";
 
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGoogleGenerativeAI, type GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
+import { z } from "zod";
 
 import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 
 import { STRUCTURE_PROMPT_VERSION, STRUCTURE_SYSTEM_RULES } from "./prompts/structure-v1";
 import {
+  REQUIRED_CHAPTERS,
+  RESEARCH_STRUCTURE_SCHEMA_VERSION,
   researchStructureSchema,
   type ResearchStructure,
   validateReferenceIds,
 } from "./schema";
 
 export const GENERATION_MODEL = "gemini-2.5-flash";
+
+const generatedStructureSchema = z.object({
+  chapters: z.array(z.object({
+    sections: z.array(z.object({
+      content: z.string(),
+      optional: z.boolean(),
+      provenance: z.enum(["briefing", "suggestion", "user"]),
+      referenceIds: z.array(z.string()),
+      title: z.string(),
+    })).min(1).max(8),
+  })).length(REQUIRED_CHAPTERS.length),
+  title: z.string(),
+  warnings: z.array(z.string()),
+});
 
 function getGoogleProvider() {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -62,12 +79,34 @@ export async function generateResearchStructure(
   const { output } = await generateText({
     maxOutputTokens: 8_000,
     model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: researchStructureSchema }),
+    output: Output.object({ schema: generatedStructureSchema }),
     prompt,
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingBudget: 0 },
+      } satisfies GoogleLanguageModelOptions,
+    },
     temperature: 0.25,
   });
 
-  const structure = researchStructureSchema.parse(output);
+  const structure = researchStructureSchema.parse({
+    chapters: output.chapters.map((chapter, chapterIndex) => ({
+      id: `chapter-${chapterIndex + 1}`,
+      number: chapterIndex + 1,
+      sections: chapter.sections.map((section, sectionIndex) => ({
+        content: section.content.trim().slice(0, 12_000),
+        id: `chapter-${chapterIndex + 1}-section-${sectionIndex + 1}`,
+        optional: section.optional,
+        provenance: section.provenance,
+        referenceIds: [...new Set(section.referenceIds.map((referenceId) => referenceId.trim()).filter(Boolean))].slice(0, 12),
+        title: section.title.trim().slice(0, 160),
+      })),
+      title: REQUIRED_CHAPTERS[chapterIndex],
+    })),
+    schemaVersion: RESEARCH_STRUCTURE_SCHEMA_VERSION,
+    title: output.title.trim().slice(0, 160),
+    warnings: output.warnings.map((warning) => warning.trim()).filter(Boolean).slice(0, 12),
+  });
   const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
   const invalidReferenceIds = validateReferenceIds(structure, allowedReferenceIds);
   if (invalidReferenceIds.length > 0) {

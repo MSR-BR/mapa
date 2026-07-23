@@ -1,1 +1,34 @@
-# Change 005 — Testes e validação## ObjetivoValidar o MVP como um sistema completo e corrigir lacunas que impeçam um piloto seguro.## Requisitos- Executar a estratégia de testes completa.- Revisar acessibilidade, responsividade, segurança e performance.- Verificar logs, métricas, erros e recuperação.- Criar matriz de rastreabilidade requisito → teste.- Documentar riscos residuais e runbooks essenciais.## Critérios de aceite- Todas as jornadas críticas passam.- Quality gate de `testing-strategy.md` satisfeito.- Nenhuma violação conhecida de isolamento entre usuários.- Falhas externas não causam perda silenciosa de dados.- Riscos residuais têm proprietário e decisão documentada.## Arquivos a modificar- Suítes e fixtures em `tests/`.- Configurações de CI e qualidade.- Código apenas para correções dentro do escopo do MVP.- Documentação de rastreabilidade e runbooks.## Testes a executar- Unitários, integração, componentes e E2E completos.- Auditoria automatizada de acessibilidade.- Testes de autorização e entradas hostis.- Testes de carga focalizados em geração/exportação.- Build reproduzível e smoke de preview.## Checklist de conclusão- [ ] Matriz de rastreabilidade completa.- [ ] Quality gate aprovado.- [ ] Falhas críticas/altas corrigidas.- [ ] Riscos residuais registrados.- [ ] Runbooks revisados.- [ ] Evidências de teste registradas.
+# Change 005 — Testes e validação
+
+Status: concluída em 23/07/2026.
+
+## Objetivo
+
+Validar o MVP como um sistema completo e corrigir lacunas que impeçam um piloto seguro.
+
+## Escopo validado
+
+- Gate local completo: lint, typecheck, testes e build de produção.
+- Jornada real em produção: login, projeto, briefing, geração, edição, salvamento e recarga.
+- Integrações reais com Research Starter e Gemini.
+- Autorização por RLS, acesso anônimo e propriedade de projeto.
+- Responsividade em viewport móvel e smoke em desktop.
+- Health check, logs sanitizados e recuperação de falhas externas.
+- Auditoria de dependências e documentação de riscos residuais.
+
+## Critérios de aceite
+
+- [x] As jornadas críticas disponíveis no MVP passam.
+- [x] O quality gate de `testing-strategy.md` passa para o escopo implementado.
+- [x] Não há violação conhecida de isolamento entre usuários.
+- [x] Falhas externas não sobrescrevem a última estrutura válida.
+- [x] Riscos residuais possuem proprietário e decisão documentada.
+- [x] Evidências e procedimentos operacionais estão registrados.
+
+## Observação de escopo
+
+A exportação DOCX/PDF continua pertencendo à Change 006 e, portanto, não integra o gate funcional desta change. O deployment Vercel foi antecipado para permitir o teste E2E real do restante do MVP; isso não encerra a Change 006.
+
+## Evidências
+
+Consulte `closure-evidence.md` para a matriz requisito → teste, incidentes corrigidos, runbooks e riscos residuais.

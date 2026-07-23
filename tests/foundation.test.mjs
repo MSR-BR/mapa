@@ -57,8 +57,12 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
 
   assert.match(route, /idempotencyKey/);
   assert.match(route, /maxReferences: 20/);
+  assert.match(route, /slice\(0, 180\)/);
   assert.match(route, /A geração falhou sem alterar a estrutura salva/);
   assert.match(gemini, /Output\.object/);
+  assert.match(gemini, /generatedStructureSchema/);
+  assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
+  assert.match(gemini, /thinkingBudget: 0/);
   assert.match(gemini, /validateReferenceIds/);
   assert.match(migration, /unique \(owner_id, idempotency_key\)/);
   assert.equal((migration.match(/create policy/g) ?? []).length, 8);

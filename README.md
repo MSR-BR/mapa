@@ -4,7 +4,9 @@ Plataforma web para apoiar o planejamento inicial de pesquisas científicas, TCC
 
 ## Estado
 
-As Changes 001 e 001.1 estabelecem a fundação técnica em Next.js, pronta para deployment futuro na Vercel e integração com Supabase. Autenticação, projetos, geração, edição e exportação pertencem às próximas changes aprovadas.
+As Changes 001 a 005 estão concluídas. O MVP já possui autenticação, projetos e briefing no Supabase, geração acadêmica com Research Starter + Gemini, editor persistente e deployment validado na Vercel. A Change 006 permanece para exportação DOCX/PDF e fechamento operacional do piloto.
+
+Produção: <https://mapa-gray-two.vercel.app>
 
 ## Requisitos
 
@@ -20,7 +22,7 @@ npm run dev
 
 A aplicação fica em `http://localhost:3000` e o health check em `http://localhost:3000/api/health`.
 
-O deployment público será realizado somente na Change 006.
+As chaves do Gemini e do Research Starter são usadas somente no backend. Nunca prefixe esses segredos com `NEXT_PUBLIC_`.
 
 ## Qualidade
 

@@ -16,6 +16,7 @@ const { output } = await generateText({
     }),
   }),
   prompt: "Retorne chapterCount igual a 5 e schemaVersion igual a 1.0.0.",
+  providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } },
   temperature: 0,
 });
 
