@@ -4,7 +4,7 @@ Plataforma web para apoiar o planejamento inicial de pesquisas científicas, TCC
 
 ## Estado
 
-As Changes 001 a 005 estão concluídas. O MVP já possui autenticação, projetos e briefing no Supabase, geração acadêmica com Research Starter + Gemini, editor persistente e deployment validado na Vercel. A Change 006 permanece para exportação DOCX/PDF e fechamento operacional do piloto.
+As Changes 001 a 006 estão concluídas. O MVP possui autenticação, projetos e briefing no Supabase, geração acadêmica com Research Starter + Gemini, editor persistente, exportações DOCX/PDF e deployment validado na Vercel.
 
 Produção: <https://mapa-gray-two.vercel.app>
 
@@ -23,6 +23,8 @@ npm run dev
 A aplicação fica em `http://localhost:3000` e o health check em `http://localhost:3000/api/health`.
 
 As chaves do Gemini e do Research Starter são usadas somente no backend. Nunca prefixe esses segredos com `NEXT_PUBLIC_`.
+
+As exportações são geradas sob demanda no backend e não consomem Supabase Storage.
 
 ## Qualidade
 

@@ -152,6 +152,25 @@ export function GenerationWorkspace({ initialSnapshot, projectId }: Props) {
             <span>Versão {snapshot.revision ?? 1}</span>
             {dirty ? <span className="dirty-chip">Alterações não salvas</span> : <span>Salvo</span>}
           </div>
+          <div className="export-panel" aria-label="Exportar última versão salva">
+            <div>
+              <strong>Exportar versão {snapshot.revision ?? 1}</strong>
+              <span>{dirty ? "Salve as alterações antes de exportar." : "DOCX editável ou PDF pronto para leitura."}</span>
+            </div>
+            <div className="export-actions">
+              {dirty ? (
+                <>
+                  <button disabled type="button">Exportar DOCX</button>
+                  <button disabled type="button">Exportar PDF</button>
+                </>
+              ) : (
+                <>
+                  <a href={`/api/projects/${projectId}/exports/docx`}>Exportar DOCX</a>
+                  <a href={`/api/projects/${projectId}/exports/pdf`}>Exportar PDF</a>
+                </>
+              )}
+            </div>
+          </div>
           {draft.chapters.map((chapter, chapterIndex) => (
             <article className="chapter-card" key={chapter.id}>
               <div className="chapter-number">{String(chapter.number).padStart(2, "0")}</div>

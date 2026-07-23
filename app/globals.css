@@ -159,6 +159,13 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .editor-meta { display: flex; flex-wrap: wrap; gap: 0.55rem; color: #9eaca5; font-size: 0.76rem; }
 .editor-meta span { padding: 0.3rem 0.55rem; border: 1px solid #34433c; border-radius: 999px; }
 .editor-meta .dirty-chip { border-color: #887744; color: #ffe59d; }
+.export-panel { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border: 1px solid #3b4a43; border-radius: 0.9rem; background: rgb(255 255 255 / 4%); }
+.export-panel > div:first-child { display: grid; gap: 0.2rem; }
+.export-panel span { color: #9eaca5; font-size: 0.78rem; }
+.export-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.export-actions a, .export-actions button { display: inline-flex; min-height: 2.6rem; align-items: center; justify-content: center; border: 1px solid #66776e; border-radius: 0.7rem; padding: 0.6rem 0.8rem; background: transparent; color: #edf5f1; font: inherit; font-size: 0.8rem; font-weight: 750; text-decoration: none; cursor: pointer; }
+.export-actions a:hover { border-color: #c5dace; background: rgb(255 255 255 / 7%); }
+.export-actions button:disabled { cursor: not-allowed; opacity: 0.45; }
 .chapter-card { display: grid; grid-template-columns: 3.5rem 1fr; gap: 1rem; padding: 1.25rem; border: 1px solid #34423b; border-radius: 1rem; background: #f7faf8; color: #16211c; }
 .chapter-number { color: #84938b; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; }
 .chapter-content { min-width: 0; }
@@ -252,6 +259,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .generation-actions { width: 100%; }
   .generation-actions button { flex: 1; }
   .chapter-card { grid-template-columns: 1fr; }
+  .export-panel { align-items: stretch; flex-direction: column; }
+  .export-actions a, .export-actions button { flex: 1; }
 }
 
 @media (max-width: 860px) {

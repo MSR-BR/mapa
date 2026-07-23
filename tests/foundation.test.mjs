@@ -82,6 +82,26 @@ test("provides persistent editing with loss protection and retry", async () => {
   assert.match(saveRoute, /validateReferenceIds/);
 });
 
+test("exports only the authenticated owner's saved structure as DOCX and PDF", async () => {
+  const [route, docx, pdf, workspace] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
+    readProjectFile("modules/export/docx.ts"),
+    readProjectFile("modules/export/pdf.ts"),
+    readProjectFile("modules/generation/generation-workspace.tsx"),
+  ]);
+
+  assert.match(route, /\.eq\("owner_id", userId\)/);
+  assert.match(route, /private, no-store/);
+  assert.match(route, /Content-Disposition/);
+  assert.match(route, /loadGenerationSnapshot/);
+  assert.match(docx, /Revisar antes do uso/);
+  assert.match(docx, /Referências verificadas/);
+  assert.match(pdf, /bufferPages: true/);
+  assert.match(pdf, /Referências verificadas/);
+  assert.match(workspace, /Exportar DOCX/);
+  assert.match(workspace, /Salve as alterações antes de exportar/);
+});
+
 test("keeps the Research Starter key server-side and follows its v1 contract", async () => {
   const [client, route, verification, environment] = await Promise.all([
     readProjectFile("modules/research-starter/client.ts"),
