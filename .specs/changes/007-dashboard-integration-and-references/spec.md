@@ -19,6 +19,8 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - Títulos gerados e integrados são resumidos pelo Gemini em até 80 caracteres.
 - Projetos iniciados pelo prompt recebem título resumido antes da primeira persistência; o texto integral nunca é usado como identificação do card.
 - Antes da primeira persistência e da busca, o Gemini converte o pedido integral em título curto, palavras-chave específicas, consulta acadêmica de até 240 caracteres e área do conhecimento.
+- A consulta enviada às bases bibliográficas é produzida em inglês; título, área e interface permanecem no idioma do usuário.
+- Se a busca dos últimos cinco anos não trouxer referências, o backend repete uma vez com intervalo de dez anos.
 - Quando a área não estiver explícita, o Gemini propõe a área e o card a identifica como “Área proposta”.
 - “Otimizar literatura” aceita novas palavras-chave e regenera consulta, metadados, referências e estrutura.
 - O prompt integral continua preservado no briefing; somente a consulta temática otimizada é enviada ao Research Starter.
@@ -40,6 +42,7 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - [x] Integração rejeita projetos sem estrutura salva ou fora da propriedade do usuário.
 - [x] Research Starter com zero referências não é tratado como sucesso.
 - [x] Instruções de formato e frases conversacionais não contaminam a consulta enviada ao Research Starter.
+- [x] Consulta bibliográfica em inglês evita a perda de resultados causada pelo ranqueamento multilíngue do Research Starter.
 - [x] Novas palavras-chave podem disparar uma regeneração completa da literatura.
 - [x] Exportações exibem referências e atribuição clicável.
 - [x] Testes, lint, TypeScript e build passam antes do deploy.

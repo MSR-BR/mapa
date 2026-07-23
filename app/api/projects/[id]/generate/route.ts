@@ -59,6 +59,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
   try {
     const alreadyInterpreted = keywordOverrides.length === 0
+      && project.status !== "failed"
       && project.theme
       && project.keywords.length >= 3
       && project.title !== project.problem_statement;
@@ -97,13 +98,28 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       .eq("owner_id", userId);
     if (interpretationSaveError) throw interpretationSaveError;
 
-    const report = await fetchResearchStarterReport({
+    let report = await fetchResearchStarterReport({
       includeMarkdown: false,
       maxReferences: 20,
       maxTopPapers: 10,
       publicationInterval: { kind: "last-5-years" },
       topic: interpreted.researchQuery,
     });
+    if (report.references.length === 0) {
+      console.warn("research_starter_retry_broader_interval", {
+        projectId: id,
+        rankedPapers: report.coverage.rankedPapers,
+        searchQualityStatus: report.coverage.searchQualityStatus,
+        sourceRecords: report.coverage.sourceRecords,
+      });
+      report = await fetchResearchStarterReport({
+        includeMarkdown: false,
+        maxReferences: 20,
+        maxTopPapers: 10,
+        publicationInterval: { kind: "last-10-years" },
+        topic: interpreted.researchQuery,
+      });
+    }
     if (report.references.length === 0) {
       throw new Error("Research Starter não encontrou referências verificáveis para este tema.");
     }

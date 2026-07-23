@@ -96,7 +96,8 @@ export async function interpretResearchRequest(project: ResearchRequestInput) {
   const prompt = [
     "Interprete o pedido de pesquisa sem inventar informações.",
     "Produza um título curto e acadêmico, com no máximo 80 caracteres.",
-    "Produza uma consulta temática para busca bibliográfica, com no máximo 240 caracteres.",
+    "Produza a consulta temática para busca bibliográfica em inglês, com no máximo 240 caracteres.",
+    "Mantenha título e área do conhecimento no idioma do pedido; somente researchQuery deve estar em inglês.",
     "A consulta deve conter apenas o objeto de estudo, relações centrais, população ou contexto relevante.",
     "Remova instruções operacionais como 'preciso', 'crie', 'faça', 'estrutura', 'monografia', 'tese' ou pedidos sobre formato.",
     "Escolha termos que funcionem em bases acadêmicas e preserve o sentido do usuário.",

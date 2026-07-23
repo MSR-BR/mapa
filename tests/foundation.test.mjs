@@ -61,6 +61,9 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(route, /interpretResearchRequest/);
   assert.match(route, /keywordOverrides/);
   assert.match(route, /topic: interpreted\.researchQuery/);
+  assert.match(route, /project\.status !== "failed"/);
+  assert.match(route, /research_starter_retry_broader_interval/);
+  assert.match(route, /kind: "last-10-years"/);
   assert.match(route, /knowledge_area: knowledgeArea/);
   assert.match(route, /report\.references\.length === 0/);
   assert.match(route, /title: structure\.title/);
@@ -68,6 +71,7 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(gemini, /Output\.object/);
   assert.match(gemini, /generatedStructureSchema/);
   assert.match(gemini, /interpretedResearchRequestSchema/);
+  assert.match(gemini, /consulta temática para busca bibliográfica em inglês/);
   assert.match(gemini, /knowledgeAreaProposed/);
   assert.match(gemini, /proponha a mais adequada/);
   assert.match(gemini, /Remova instruções operacionais/);
