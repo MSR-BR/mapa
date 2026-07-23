@@ -1,6 +1,6 @@
 # Change 008 — Login com Google
 
-Status: em implementação em 23/07/2026.
+Status: concluída em 23/07/2026.
 
 ## Objetivo
 
@@ -21,6 +21,6 @@ Preservar o acesso por e-mail e senha e oferecer autenticação Google pelo Supa
 - [x] Logs reais confirmam login por e-mail com status 200 em produção.
 - [x] A ação Google gera a URL OAuth pelo SDK oficial do Supabase.
 - [x] Callback troca o código por sessão e rejeita destinos externos.
-- [ ] Provedor Google habilitado no Supabase.
-- [ ] Jornada Google concluída em produção com uma conta real.
-- [ ] Quality gate e deploy aprovados.
+- [x] Provedor Google habilitado no Supabase.
+- [x] Jornada Google concluída em produção com uma conta real e retorno ao dashboard.
+- [x] Quality gate e deploy aprovados.
