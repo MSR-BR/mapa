@@ -25,6 +25,8 @@ type ResearchRequestInput = Pick<
 >;
 
 const interpretedResearchRequestSchema = z.object({
+  knowledgeArea: z.string().trim().min(2).max(100),
+  knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
   title: z.string().trim().min(3).max(80),
@@ -99,6 +101,9 @@ export async function interpretResearchRequest(project: ResearchRequestInput) {
     "Remova instruções operacionais como 'preciso', 'crie', 'faça', 'estrutura', 'monografia', 'tese' ou pedidos sobre formato.",
     "Escolha termos que funcionem em bases acadêmicas e preserve o sentido do usuário.",
     "Extraia de 3 a 10 palavras-chave específicas. Não inclua termos genéricos sobre escrita acadêmica.",
+    "Identifique a área do conhecimento. Se ela estiver explícita, preserve-a e retorne knowledgeAreaProposed=false.",
+    "Se a área não estiver explícita, proponha a mais adequada e retorne knowledgeAreaProposed=true.",
+    "Quando houver palavras-chave fornecidas pelo usuário, trate-as como orientação prioritária para a consulta.",
     `Pedido integral: ${JSON.stringify({
       academicLevel: project.academic_level,
       knowledgeArea: project.knowledge_area,
@@ -123,6 +128,8 @@ export async function interpretResearchRequest(project: ResearchRequestInput) {
   });
 
   return interpretedResearchRequestSchema.parse({
+    knowledgeArea: output.knowledgeArea.trim(),
+    knowledgeAreaProposed: output.knowledgeAreaProposed,
     keywords: [...new Set(output.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 10),
     researchQuery: output.researchQuery.trim(),
     title: output.title.trim(),

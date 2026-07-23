@@ -18,8 +18,14 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const idempotencyKey = body && typeof body === "object" && "idempotencyKey" in body
     ? String(body.idempotencyKey)
     : "";
+  const keywordOverrides = body && typeof body === "object" && "keywords" in body && Array.isArray(body.keywords)
+    ? [...new Set(body.keywords.map((keyword) => String(keyword).trim()).filter(Boolean))]
+    : [];
   if (!UUID.test(id) || !UUID.test(idempotencyKey)) {
     return NextResponse.json({ error: "Requisição de geração inválida." }, { status: 400 });
+  }
+  if (keywordOverrides.length > 10 || keywordOverrides.some((keyword) => keyword.length < 2 || keyword.length > 80)) {
+    return NextResponse.json({ error: "Informe até 10 palavras-chave válidas." }, { status: 400 });
   }
 
   const { supabase, userId } = await requireAuthenticatedUser();
@@ -52,25 +58,38 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
   try {
-    const alreadyInterpreted = project.theme
+    const alreadyInterpreted = keywordOverrides.length === 0
+      && project.theme
       && project.keywords.length >= 3
       && project.title !== project.problem_statement;
     const interpreted = alreadyInterpreted
       ? {
+          knowledgeArea: project.knowledge_area?.replace(/^Área proposta:\s*/i, "") || "Interdisciplinar",
+          knowledgeAreaProposed: project.knowledge_area?.startsWith("Área proposta:") ?? true,
           keywords: project.keywords,
           researchQuery: project.theme!,
           title: project.title,
         }
-      : await interpretResearchRequest(project);
+      : await interpretResearchRequest({
+          ...project,
+          keywords: keywordOverrides.length > 0 ? keywordOverrides : project.keywords,
+          theme: keywordOverrides.length > 0 ? null : project.theme,
+        });
+    const knowledgeArea = interpreted.knowledgeAreaProposed
+      ? `Área proposta: ${interpreted.knowledgeArea}`.slice(0, 120)
+      : interpreted.knowledgeArea;
     const interpretedProject = {
       ...project,
       keywords: interpreted.keywords,
+      knowledge_area: knowledgeArea,
       title: interpreted.title,
     };
     const { error: interpretationSaveError } = await supabase
       .from("projects")
       .update({
         keywords: interpreted.keywords,
+        knowledge_area: knowledgeArea,
+        theme: interpreted.researchQuery,
         title: interpreted.title,
         updated_at: new Date().toISOString(),
       })

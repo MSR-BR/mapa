@@ -38,6 +38,9 @@ export async function createProject(
       projectData = {
         ...result.data,
         keywords: interpreted.keywords,
+        knowledge_area: interpreted.knowledgeAreaProposed
+          ? `Área proposta: ${interpreted.knowledgeArea}`.slice(0, 120)
+          : interpreted.knowledgeArea,
         theme: interpreted.researchQuery,
         title: interpreted.title,
       };

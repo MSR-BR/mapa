@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { logout } from "@/modules/auth/actions";
+import { AccountMenu } from "@/modules/auth/account-menu";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -30,23 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </Link>
         <nav aria-label="Navegação principal">
           <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
-          <details className="account-menu">
-            <summary aria-label="Abrir menu da conta">
-              <span
-                className={`account-avatar ${avatarUrl ? "has-photo" : ""}`}
-                style={avatarUrl ? { backgroundImage: `url("${avatarUrl.replaceAll('"', "%22")}")` } : undefined}
-              >
-                {avatarUrl ? null : initials}
-              </span>
-            </summary>
-            <div className="account-menu-panel">
-              <div className="account-identity">
-                {displayName ? <strong>{displayName}</strong> : null}
-                {email ? <span>{email}</span> : null}
-              </div>
-              <form action={logout}><button type="submit">Sair</button></form>
-            </div>
-          </details>
+          <AccountMenu avatarUrl={avatarUrl} displayName={displayName} email={email} initials={initials} />
         </nav>
       </header>
       {children}

@@ -59,13 +59,17 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(route, /idempotencyKey/);
   assert.match(route, /maxReferences: 20/);
   assert.match(route, /interpretResearchRequest/);
+  assert.match(route, /keywordOverrides/);
   assert.match(route, /topic: interpreted\.researchQuery/);
+  assert.match(route, /knowledge_area: knowledgeArea/);
   assert.match(route, /report\.references\.length === 0/);
   assert.match(route, /title: structure\.title/);
   assert.match(route, /A geração falhou sem alterar a estrutura salva/);
   assert.match(gemini, /Output\.object/);
   assert.match(gemini, /generatedStructureSchema/);
   assert.match(gemini, /interpretedResearchRequestSchema/);
+  assert.match(gemini, /knowledgeAreaProposed/);
+  assert.match(gemini, /proponha a mais adequada/);
   assert.match(gemini, /Remova instruções operacionais/);
   assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
   assert.match(gemini, /thinkingBudget: 0/);
@@ -83,6 +87,9 @@ test("provides persistent editing with loss protection and retry", async () => {
 
   assert.match(workspace, /beforeunload/);
   assert.match(workspace, /Regenerar substituirá a versão salva/);
+  assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /keywords: keywordOverrides/);
+  assert.match(workspace, /OK e regenerar/);
   assert.match(workspace, /Tentar novamente/);
   assert.match(workspace, /Salvar projeto/);
   assert.match(workspace, /reference-code/);
@@ -216,6 +223,8 @@ test("derives project ownership from verified claims", async () => {
   assert.match(actions, /owner_id: userId/);
   assert.match(actions, /interpretResearchRequest/);
   assert.match(actions, /title: interpreted\.title/);
+  assert.match(actions, /knowledgeAreaProposed/);
+  assert.match(actions, /Área proposta:/);
   assert.doesNotMatch(actions, /formData\.get\("owner/i);
   assert.match(actions, /\.eq\("owner_id", userId\)/);
 });
@@ -274,12 +283,13 @@ test("implements the approved hybrid dashboard with prompt-first automatic gener
 });
 
 test("supports anchored project actions and owner-scoped AI integration", async () => {
-  const [grid, card, route, gemini, layout] = await Promise.all([
+  const [grid, card, route, gemini, layout, accountMenu] = await Promise.all([
     readProjectFile("modules/projects/dashboard-project-grid.tsx"),
     readProjectFile("modules/projects/project-card-modal.tsx"),
     readProjectFile("app/api/projects/integrate/route.ts"),
     readProjectFile("modules/generation/gemini.ts"),
     readProjectFile("app/dashboard/layout.tsx"),
+    readProjectFile("modules/auth/account-menu.tsx"),
   ]);
 
   assert.match(grid, /Selecione projetos para integrar/);
@@ -288,6 +298,7 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(card, /createPortal/);
   assert.match(card, /event\.key === "Escape"/);
   assert.match(card, /document\.addEventListener\("pointerdown", close\)/);
+  assert.doesNotMatch(card, /project-card-open/);
   assert.match(card, />Abrir</);
   assert.match(card, />Excluir</);
   assert.match(route, /\.eq\("owner_id", userId\)/);
@@ -295,6 +306,9 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(route, /mergeResearchStructures/);
   assert.match(gemini, /Integre os mapas fornecidos/);
   assert.match(layout, />Dashboard</);
+  assert.match(layout, /AccountMenu/);
+  assert.match(accountMenu, /document\.addEventListener\("pointerdown", closeOutside\)/);
+  assert.match(accountMenu, /event\.key === "Escape"/);
 });
 
 test("uses the approved dark silver authentication shell", async () => {

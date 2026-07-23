@@ -16,7 +16,7 @@ type Props = {
 const STATUS_LABELS = {
   completed: "Estrutura pronta",
   failed: "A geração encontrou um problema",
-  generating: "Organizando capítulos com Gemini…",
+  generating: "Organizando capítulos…",
   queued: "Preparando geração…",
   researching: "Buscando referências no Research Starter…",
 } as const;
@@ -27,7 +27,9 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   const [draft, setDraft] = useState<ResearchStructure | null>(initialSnapshot.structure);
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [keywordsInput, setKeywordsInput] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [optimizingLiterature, setOptimizingLiterature] = useState(false);
   const saving = useRef(false);
   const autoTriggered = useRef(false);
 
@@ -56,7 +58,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     setSnapshot(next);
   }
 
-  async function generate() {
+  async function generate(keywordOverrides: string[] = []) {
     if (dirty && !window.confirm("Regenerar substituirá a versão salva. Deseja continuar?")) return;
     setBusy(true);
     setMessage(null);
@@ -64,7 +66,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     const poll = window.setInterval(() => { void refresh(); }, 1_500);
     try {
       const response = await fetch(`/api/projects/${projectId}/generate`, {
-        body: JSON.stringify({ idempotencyKey }),
+        body: JSON.stringify({ idempotencyKey, keywords: keywordOverrides }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
@@ -83,6 +85,21 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       setBusy(false);
       router.refresh();
     }
+  }
+
+  function optimizeLiterature() {
+    const keywords = [...new Set(
+      keywordsInput
+        .split(/[,;\n]+/)
+        .map((keyword) => keyword.trim())
+        .filter(Boolean),
+    )].slice(0, 10);
+    if (keywords.length === 0) {
+      setMessage("Informe ao menos uma palavra-chave para otimizar a literatura.");
+      return;
+    }
+    setOptimizingLiterature(false);
+    void generate(keywords);
   }
 
   useEffect(() => {
@@ -147,7 +164,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               <li className={activeStatus === "researching" ? "current" : activeStatus === "generating" ? "done" : ""}>
                 Buscando literatura no <a href="https://research-starter-six.vercel.app" rel="noreferrer" target="_blank">Research Starter ↗</a>
               </li>
-              <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências com Gemini</li>
+              <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências</li>
             </ol>
           </div>
         </div>
@@ -157,10 +174,47 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <h2 id="generation-title">Estrutura da pesquisa</h2>
         </div>
         <div className="generation-actions">
-          {draft ? <button className="secondary-button" disabled={busy} onClick={() => void generate()} type="button">Regenerar</button> : null}
+          {draft ? (
+            <div className="generation-regeneration-actions">
+              <button className="secondary-button" disabled={busy} onClick={() => void generate()} type="button">Regenerar</button>
+              <button className="text-button literature-button" disabled={busy} onClick={() => setOptimizingLiterature(true)} type="button">Otimizar literatura</button>
+            </div>
+          ) : null}
           {draft ? <button className="primary-action" disabled={busy} onClick={() => void save()} type="button">{busy ? "Processando…" : "Salvar projeto"}</button> : null}
         </div>
       </div>
+
+      {optimizingLiterature ? (
+        <div
+          className="keyword-dialog-backdrop"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setOptimizingLiterature(false);
+          }}
+          role="presentation"
+        >
+          <div aria-labelledby="keyword-dialog-title" aria-modal="true" className="keyword-dialog" role="dialog">
+            <button aria-label="Fechar" className="project-dialog-close" onClick={() => setOptimizingLiterature(false)} type="button">×</button>
+            <p className="section-kicker">Nova busca bibliográfica</p>
+            <h3 id="keyword-dialog-title">Otimizar literatura</h3>
+            <p>Informe palavras-chave específicas. A estrutura e as referências serão regeneradas.</p>
+            <label>
+              Palavras-chave
+              <textarea
+                autoFocus
+                maxLength={800}
+                onChange={(event) => setKeywordsInput(event.target.value)}
+                placeholder="robótica educacional, aprendizagem STEM, ensino médio"
+                rows={4}
+                value={keywordsInput}
+              />
+            </label>
+            <div className="keyword-dialog-actions">
+              <button className="secondary-button" onClick={() => setOptimizingLiterature(false)} type="button">Cancelar</button>
+              <button className="primary-action" onClick={optimizeLiterature} type="button">OK e regenerar</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {status && (busy || status === "failed") ? (
         <div className={`generation-status ${status === "failed" ? "generation-error" : ""}`} role="status">

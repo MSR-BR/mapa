@@ -65,7 +65,6 @@ export function ProjectCardModal({
 
   return (
     <article className={`project-card ${selected ? "project-card-selected" : ""}`}>
-      <button aria-label={`Opções de ${title}`} className="project-card-open" onClick={toggleMenu} type="button" />
       <div className="project-card-controls">
         <label className="project-selector">
           <input
