@@ -241,6 +241,14 @@ test("sanitizes auth callback destinations", async () => {
   assert.match(callback, /exchangeCodeForSession/);
 });
 
+test("documents the canonical authentication callback required in production", async () => {
+  const operations = await readProjectFile("docs/operations.md");
+
+  assert.match(operations, /NEXT_PUBLIC_APP_URL.*https:\/\/mapadapesquisa\.vercel\.app/);
+  assert.match(operations, /Site URL no Supabase Auth.*https:\/\/mapadapesquisa\.vercel\.app/);
+  assert.match(operations, /Redirect URL permitida.*https:\/\/mapadapesquisa\.vercel\.app\/auth\/callback/);
+});
+
 test("derives project ownership from verified claims", async () => {
   const [actions, projectAuth] = await Promise.all([
     readProjectFile("modules/projects/actions.ts"),
