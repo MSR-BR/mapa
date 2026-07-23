@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import { ResearchPromptInput } from "./research-prompt-input";
 
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
+export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
 
 export function PublicStartForm() {
   const router = useRouter();
@@ -18,8 +19,9 @@ export function PublicStartForm() {
     const prompt = String(formData.get("prompt") ?? "").trim();
     if (!prompt) return;
 
-    sessionStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify({
+    localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify({
       prompt,
+      savedAt: Date.now(),
     }));
     setContinuing(true);
     router.push("/login?next=%2Fdashboard%3Fresume%3D1");

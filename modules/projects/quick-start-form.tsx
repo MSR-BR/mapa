@@ -5,7 +5,10 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { ResearchActivityIcon } from "../generation/research-activity-icon";
 import { createProject } from "./actions";
 import { initialProjectActionState } from "./types";
-import { PENDING_PROJECT_KEY } from "./public-start-form";
+import {
+  PENDING_PROJECT_KEY,
+  PENDING_PROJECT_MAX_AGE_MS,
+} from "./public-start-form";
 import { ResearchPromptInput } from "./research-prompt-input";
 
 export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean }) {
@@ -20,17 +23,19 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
   useEffect(() => {
     if (!resumeDraft || !formRef.current) return;
     try {
-      const raw = sessionStorage.getItem(PENDING_PROJECT_KEY);
+      const raw = localStorage.getItem(PENDING_PROJECT_KEY);
       if (!raw) return;
       const draft = JSON.parse(raw) as Record<string, unknown>;
-      if (typeof draft.prompt === "string") {
+      const savedAt = typeof draft.savedAt === "number" ? draft.savedAt : 0;
+      const fresh = Date.now() - savedAt <= PENDING_PROJECT_MAX_AGE_MS;
+      if (fresh && typeof draft.prompt === "string") {
         resumeSubmitPending.current = true;
         const savedPrompt = draft.prompt.slice(0, 5_000);
         queueMicrotask(() => setPrompt(savedPrompt));
       }
-      sessionStorage.removeItem(PENDING_PROJECT_KEY);
+      localStorage.removeItem(PENDING_PROJECT_KEY);
     } catch {
-      sessionStorage.removeItem(PENDING_PROJECT_KEY);
+      localStorage.removeItem(PENDING_PROJECT_KEY);
     }
   }, [resumeDraft]);
 

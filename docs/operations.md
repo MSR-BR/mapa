@@ -2,7 +2,7 @@
 
 ## Ambiente
 
-- Produção: `https://mapa-gray-two.vercel.app`
+- Produção: `https://mapadapesquisa.vercel.app`
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.

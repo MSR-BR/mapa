@@ -28,7 +28,8 @@ test("requests login only after the public central execution", async () => {
   ]);
 
   assert.doesNotMatch(home, /href="\/login"/);
-  assert.match(publicStart, /sessionStorage\.setItem/);
+  assert.match(publicStart, /localStorage\.setItem/);
+  assert.match(publicStart, /savedAt: Date\.now\(\)/);
   assert.match(publicStart, /login\?next=/);
   assert.match(loginPage, /hiddenFields/);
   assert.match(loginPage, /Continuar com Google/);
@@ -36,6 +37,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(authActions, /signInWithOAuth/);
   assert.match(authActions, /provider: "google"/);
   assert.match(quickStart, /requestSubmit/);
+  assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
 });
 
 test("suggests AI refinements while the research request is being written", async () => {
