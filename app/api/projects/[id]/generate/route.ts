@@ -52,7 +52,16 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
   try {
-    const interpreted = await interpretResearchRequest(project);
+    const alreadyInterpreted = project.theme
+      && project.keywords.length >= 3
+      && project.title !== project.problem_statement;
+    const interpreted = alreadyInterpreted
+      ? {
+          keywords: project.keywords,
+          researchQuery: project.theme!,
+          title: project.title,
+        }
+      : await interpretResearchRequest(project);
     const interpretedProject = {
       ...project,
       keywords: interpreted.keywords,

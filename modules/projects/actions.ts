@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { interpretResearchRequest } from "@/modules/generation/gemini";
+
 import { requireAuthenticatedUser } from "./auth";
 import type { ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
@@ -29,9 +31,27 @@ export async function createProject(
   }
 
   const { supabase, userId } = await requireAuthenticatedUser();
+  let projectData = result.data;
+  if (autoGenerate) {
+    try {
+      const interpreted = await interpretResearchRequest(result.data);
+      projectData = {
+        ...result.data,
+        keywords: interpreted.keywords,
+        theme: interpreted.researchQuery,
+        title: interpreted.title,
+      };
+    } catch (error) {
+      console.error("project_prompt_interpretation_failed", {
+        message: error instanceof Error ? error.message : "unknown-error",
+        userId,
+      });
+      return { message: "Não foi possível interpretar o tema. Tente novamente.", status: "error" };
+    }
+  }
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...result.data, owner_id: userId })
+    .insert({ ...projectData, owner_id: userId })
     .select("id")
     .single();
 

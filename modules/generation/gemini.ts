@@ -19,6 +19,11 @@ import {
 
 export const GENERATION_MODEL = "gemini-2.5-flash";
 
+type ResearchRequestInput = Pick<
+  Project,
+  "academic_level" | "keywords" | "knowledge_area" | "problem_statement" | "theme" | "title"
+>;
+
 const interpretedResearchRequestSchema = z.object({
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
@@ -85,7 +90,7 @@ function compactEvidence(report: ResearchStarterSuccess) {
   };
 }
 
-export async function interpretResearchRequest(project: Project) {
+export async function interpretResearchRequest(project: ResearchRequestInput) {
   const prompt = [
     "Interprete o pedido de pesquisa sem inventar informações.",
     "Produza um título curto e acadêmico, com no máximo 80 caracteres.",

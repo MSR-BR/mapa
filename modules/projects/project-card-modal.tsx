@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
 import { deleteProject } from "./actions";
@@ -51,8 +52,15 @@ export function ProjectCardModal({
         setMenuPosition(null);
       }
     };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuPosition(null);
+    };
     document.addEventListener("pointerdown", close);
-    return () => document.removeEventListener("pointerdown", close);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, [menuPosition]);
 
   return (
@@ -78,7 +86,7 @@ export function ProjectCardModal({
         Atualizado em {new Intl.DateTimeFormat("pt-BR").format(new Date(updatedAt))}
       </time>
 
-      {menuPosition ? (
+      {menuPosition && typeof document !== "undefined" ? createPortal(
         <div
           aria-label={`Ações de ${title}`}
           className="project-popover"
@@ -101,7 +109,8 @@ export function ProjectCardModal({
               <button className="danger-button" type="submit">Excluir</button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </article>
   );

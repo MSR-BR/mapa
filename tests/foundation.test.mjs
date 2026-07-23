@@ -214,6 +214,8 @@ test("derives project ownership from verified claims", async () => {
   assert.match(projectAuth, /auth\.getClaims\(\)/);
   assert.match(projectAuth, /claims\?\.sub/);
   assert.match(actions, /owner_id: userId/);
+  assert.match(actions, /interpretResearchRequest/);
+  assert.match(actions, /title: interpreted\.title/);
   assert.doesNotMatch(actions, /formData\.get\("owner/i);
   assert.match(actions, /\.eq\("owner_id", userId\)/);
 });
@@ -283,6 +285,9 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(grid, /Selecione projetos para integrar/);
   assert.match(grid, /\/api\/projects\/integrate/);
   assert.match(card, /getBoundingClientRect/);
+  assert.match(card, /createPortal/);
+  assert.match(card, /event\.key === "Escape"/);
+  assert.match(card, /document\.addEventListener\("pointerdown", close\)/);
   assert.match(card, />Abrir</);
   assert.match(card, />Excluir</);
   assert.match(route, /\.eq\("owner_id", userId\)/);

@@ -12,9 +12,11 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - O cabeçalho autenticado oferece botões de Dashboard e área pessoal.
 - Salvar um projeto retorna à biblioteca.
 - O menu de cada card abre junto aos três pontos e oferece Abrir ou Excluir.
+- O popup do card é renderizado acima da grade, aceita ações no primeiro clique e fecha ao clicar fora ou pressionar Esc.
 - Dois a quatro projetos salvos podem ser selecionados e integrados pelo Gemini.
 - A integração consulta somente projetos e estruturas do usuário autenticado.
 - Títulos gerados e integrados são resumidos pelo Gemini em até 80 caracteres.
+- Projetos iniciados pelo prompt recebem título resumido antes da primeira persistência; o texto integral nunca é usado como identificação do card.
 - Antes da busca, o Gemini converte o pedido integral em título curto, palavras-chave específicas e consulta acadêmica de até 240 caracteres.
 - O prompt integral continua preservado no briefing; somente a consulta temática otimizada é enviada ao Research Starter.
 - Gerações sem referências verificáveis do Research Starter falham sem sobrescrever conteúdo.
