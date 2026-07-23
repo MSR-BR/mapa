@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { deleteProject, duplicateProject } from "@/modules/projects/actions";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { GenerationWorkspace } from "@/modules/generation/generation-workspace";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
@@ -31,18 +30,6 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
-      <section className="project-danger-zone" aria-labelledby="project-actions-title">
-        <h2 id="project-actions-title">Outras ações</h2>
-        <form action={duplicateProject}>
-          <input name="projectId" type="hidden" value={project.id} />
-          <button className="secondary-button" type="submit">Duplicar projeto</button>
-        </form>
-        <form action={deleteProject} className="delete-form">
-          <input name="projectId" type="hidden" value={project.id} />
-          <label><input name="confirmDelete" required type="checkbox" value="yes" /> Confirmo que desejo excluir este projeto.</label>
-          <button className="danger-button" type="submit">Excluir projeto</button>
-        </form>
-      </section>
     </main>
   );
 }

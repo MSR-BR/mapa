@@ -9,7 +9,6 @@ export default function Home() {
         <h1 id="page-title">O que você quer pesquisar?</h1>
         <p className="quick-start-summary">Comece pela ideia. O acesso será solicitado somente quando você executar a criação do mapa.</p>
         <PublicStartForm />
-        <p className="quick-start-note">Seu texto fica neste navegador até você entrar.</p>
       </section>
     </main>
   );

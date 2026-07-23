@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 
+import { ResearchActivityIcon } from "../generation/research-activity-icon";
 import { createProject } from "./actions";
 import { initialProjectActionState } from "./types";
 import { PENDING_PROJECT_KEY } from "./public-start-form";
@@ -68,7 +69,7 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
       {pending ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
-            <span className="generation-orbit" aria-hidden="true">✦</span>
+            <ResearchActivityIcon />
             <p className="section-kicker">Criando seu mapa</p>
             <h2>Interpretando o pedido…</h2>
             <p>Preparando o projeto para iniciar a pesquisa e a geração da estrutura.</p>

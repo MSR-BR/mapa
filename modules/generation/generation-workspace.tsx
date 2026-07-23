@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { ResearchStructure } from "./schema";
+import { ResearchActivityIcon } from "./research-activity-icon";
 import type { GenerationSnapshot } from "./types";
 
 type Props = {
@@ -91,6 +92,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
 
   async function save() {
     if (!draft) return;
+    if (!dirty) {
+      setMessage("O projeto já está salvo na sua conta.");
+      return;
+    }
     saving.current = true;
     setBusy(true);
     setMessage(null);
@@ -131,7 +136,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
-            <span className="generation-orbit" aria-hidden="true">✦</span>
+            <ResearchActivityIcon />
             <p className="section-kicker">Mapa em construção</p>
             <h2>{STATUS_LABELS[activeStatus]}</h2>
             <ol className="generation-progress">
@@ -147,13 +152,11 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       ) : null}
       <div className="generation-heading">
         <div>
-          <p className="section-kicker">Change 004 · geração e editor</p>
           <h2 id="generation-title">Estrutura da pesquisa</h2>
-          <p>Referências do Research Starter, organização pelo Gemini e edição persistente.</p>
         </div>
         <div className="generation-actions">
           {draft ? <button className="secondary-button" disabled={busy} onClick={() => void generate()} type="button">Regenerar</button> : null}
-          {draft ? <button className="primary-action" disabled={busy || !dirty} onClick={() => void save()} type="button">{busy ? "Processando…" : "Salvar estrutura"}</button> : null}
+          {draft ? <button className="primary-action" disabled={busy} onClick={() => void save()} type="button">{busy ? "Processando…" : "Salvar projeto"}</button> : null}
         </div>
       </div>
 
@@ -226,6 +229,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               <ol>
                 {snapshot.references.map((reference) => (
                   <li key={reference.referenceId}>
+                    <span className="reference-code">{reference.referenceId}</span>
                     <strong>{reference.title ?? "Título indisponível"}</strong>
                     <span>{[reference.authors.slice(0, 3).join(", "), reference.year].filter(Boolean).join(" · ")}</span>
                     {reference.url ? <a href={reference.url} rel="noreferrer" target="_blank">Abrir fonte ↗</a> : null}

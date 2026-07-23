@@ -78,6 +78,9 @@ test("provides persistent editing with loss protection and retry", async () => {
   assert.match(workspace, /beforeunload/);
   assert.match(workspace, /Regenerar substituirá a versão salva/);
   assert.match(workspace, /Tentar novamente/);
+  assert.match(workspace, /Salvar projeto/);
+  assert.match(workspace, /reference-code/);
+  assert.doesNotMatch(workspace, /Change 004 · geração e editor/);
   assert.match(saveRoute, /editableResearchStructureSchema/);
   assert.match(saveRoute, /validateReferenceIds/);
 });

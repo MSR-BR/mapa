@@ -194,6 +194,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .references-panel ol { display: grid; gap: 0.75rem; margin: 1rem 0 0; padding-left: 1.4rem; }
 .references-panel li { padding-left: 0.35rem; color: #aebdb5; }
 .references-panel li strong, .references-panel li span { display: block; }
+.references-panel li .reference-code { width: fit-content; margin: 0 0 0.35rem; border: 1px solid #50645a; border-radius: 999px; padding: 0.18rem 0.45rem; color: #c7e0d3; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; }
 .references-panel li strong { color: #edf5f1; }
 .references-panel li span, .references-panel li a { margin-top: 0.25rem; color: #9eaca5; font-size: 0.78rem; }
 .references-panel li a { display: inline-block; color: #c7e0d3; }
@@ -227,7 +228,15 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .generation-overlay-card { width: min(100%, 38rem); padding: clamp(1.6rem, 5vw, 3rem); border: 1px solid rgb(255 255 255 / 14%); border-radius: 1.6rem; background: linear-gradient(145deg, #17221e, #0c1210); box-shadow: 0 2rem 7rem rgb(0 0 0 / 42%); color: white; text-align: left; }
 .generation-overlay-card h2 { max-width: none; margin: 0.5rem 0 0; color: white; font-size: clamp(1.65rem, 5vw, 2.5rem); }
 .generation-overlay-card > p:not(.section-kicker) { color: #aebdb5; line-height: 1.6; }
-.generation-orbit { display: grid; width: 3.4rem; height: 3.4rem; place-items: center; margin-bottom: 1.35rem; border: 1px solid rgb(174 230 204 / 25%); border-radius: 50%; background: radial-gradient(circle, #caeee0 0%, #77c7a7 25%, #173c2e 70%); box-shadow: 0 0 0 0 rgb(119 199 167 / 32%); color: #07100c; font-size: 1.15rem; animation: generation-orbit 1.7s ease-out infinite; }
+.research-activity-icon { position: relative; display: block; width: 4.4rem; height: 3.4rem; margin-bottom: 1.35rem; }
+.research-path { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, #88c8ae, transparent); transform-origin: left center; }
+.research-path-one { top: 1.05rem; left: 0.75rem; width: 3.05rem; transform: rotate(17deg); }
+.research-path-two { top: 2.5rem; left: 0.8rem; width: 3rem; transform: rotate(-24deg); }
+.research-node { position: absolute; width: 0.72rem; height: 0.72rem; border: 2px solid #a5dcc5; border-radius: 50%; background: #10251d; box-shadow: 0 0 0 0 rgb(136 200 174 / 32%); animation: research-node-pulse 1.8s ease-out infinite; }
+.research-node-one { top: 0.75rem; left: 0.35rem; }
+.research-node-two { top: 1.35rem; left: 1.95rem; animation-delay: 0.25s; }
+.research-node-three { top: 0.3rem; right: 0.25rem; animation-delay: 0.5s; }
+.research-node-four { right: 0.7rem; bottom: 0.1rem; animation-delay: 0.75s; }
 .generation-progress { display: grid; gap: 0.8rem; margin: 1.6rem 0 0; padding: 0; list-style: none; counter-reset: progress; }
 .generation-progress li { display: grid; grid-template-columns: 1.75rem 1fr; align-items: start; gap: 0.7rem; color: #71827a; line-height: 1.45; counter-increment: progress; }
 .generation-progress li::before { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; border: 1px solid #46544e; border-radius: 50%; content: counter(progress); font-size: 0.68rem; font-weight: 800; }
@@ -237,7 +246,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .generation-progress li.done::before { border-color: #4d816c; content: "✓"; color: #91dabd; }
 .generation-progress a { color: #bcebd8; font-weight: 750; }
 .generation-overlay-note { margin: 1.5rem 0 0; border-top: 1px solid rgb(255 255 255 / 9%); padding-top: 1rem; font-size: 0.78rem; }
-@keyframes generation-orbit { 70% { box-shadow: 0 0 0 1rem rgb(119 199 167 / 0%); transform: rotate(180deg); } 100% { transform: rotate(360deg); } }
+@keyframes research-node-pulse { 65% { box-shadow: 0 0 0 0.65rem rgb(136 200 174 / 0%); transform: scale(1.25); } 100% { transform: scale(1); } }
 .recent-projects { margin-top: clamp(4rem, 9vw, 7rem); }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
 .section-heading h2 { margin: 0.2rem 0 0; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.045em; }
