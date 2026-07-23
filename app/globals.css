@@ -170,9 +170,9 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .generation-heading { display: flex; align-items: start; justify-content: space-between; gap: 1.5rem; }
 .generation-heading h2 { margin: 0.35rem 0 0; font-size: clamp(1.6rem, 3vw, 2.25rem); letter-spacing: -0.045em; }
 .generation-heading p:not(.section-kicker) { max-width: 42rem; margin: 0.65rem 0 0; color: #9eaca5; line-height: 1.55; }
-.generation-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
-.generation-regeneration-actions { display: grid; justify-items: stretch; gap: 0.25rem; }
-.generation-regeneration-actions .literature-button { min-height: auto; margin: 0; padding: 0.2rem 0.35rem; font-size: 0.76rem; text-align: center; }
+.generation-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.65rem; }
+.generation-action-button { display: inline-flex; min-width: 8.5rem; min-height: 2.75rem; align-items: center; justify-content: center; border: 1px solid #66776e; border-radius: 0.75rem; padding: 0.7rem 1rem; background: transparent; color: #edf5f1; font: inherit; font-weight: 750; cursor: pointer; }
+.generation-save-button { border-color: transparent; background: linear-gradient(135deg, #f8fbf9, #a6b7af); color: #101713; }
 .primary-action { min-height: 2.75rem; border: 0; border-radius: 0.75rem; padding: 0.7rem 1rem; background: linear-gradient(135deg, #f8fbf9, #a6b7af); color: #101713; font: inherit; font-weight: 750; cursor: pointer; }
 .primary-action:disabled, .generation-actions button:disabled { cursor: wait; opacity: 0.5; }
 .generation-workspace .secondary-button { border-color: #435149; background: transparent; color: #dce7e1; }

@@ -92,7 +92,10 @@ function compactEvidence(report: ResearchStarterSuccess) {
   };
 }
 
-export async function interpretResearchRequest(project: ResearchRequestInput) {
+export async function interpretResearchRequest(
+  project: ResearchRequestInput,
+  options: { replacementKeywords?: string[] } = {},
+) {
   const prompt = [
     "Interprete o pedido de pesquisa sem inventar informações.",
     "Produza um título curto e acadêmico, com no máximo 80 caracteres.",
@@ -105,6 +108,13 @@ export async function interpretResearchRequest(project: ResearchRequestInput) {
     "Identifique a área do conhecimento. Se ela estiver explícita, preserve-a e retorne knowledgeAreaProposed=false.",
     "Se a área não estiver explícita, proponha a mais adequada e retorne knowledgeAreaProposed=true.",
     "Quando houver palavras-chave fornecidas pelo usuário, trate-as como orientação prioritária para a consulta.",
+    ...(options.replacementKeywords?.length
+      ? [
+          "As novas palavras-chave abaixo substituem o foco anterior da pesquisa.",
+          "Crie título, área, palavras-chave e researchQuery a partir desse novo foco. Não preserve um objeto de estudo conflitante do briefing original.",
+          `Novo foco obrigatório: ${JSON.stringify(options.replacementKeywords)}`,
+        ]
+      : []),
     `Pedido integral: ${JSON.stringify({
       academicLevel: project.academic_level,
       knowledgeArea: project.knowledge_area,
@@ -140,6 +150,7 @@ export async function interpretResearchRequest(project: ResearchRequestInput) {
 export async function generateResearchStructure(
   project: Project,
   report: ResearchStarterSuccess,
+  options: { replacementFocus?: boolean } = {},
 ): Promise<ResearchStructure> {
   const evidence = compactEvidence(report);
   const prompt = [
@@ -147,6 +158,9 @@ export async function generateResearchStructure(
     "Use referenceIds somente quando a afirmação estiver apoiada pela evidência fornecida.",
     "Não escreva bibliografia fictícia. Quando faltar evidência, declare a lacuna em warnings.",
     "Crie um título curto, específico e informativo, com no máximo 80 caracteres.",
+    ...(options.replacementFocus
+      ? ["O tema e as palavras-chave atuais substituem o foco conflitante do briefing original. Toda a estrutura deve refletir o foco atual e as novas evidências."]
+      : []),
     `Versão do prompt: ${STRUCTURE_PROMPT_VERSION}.`,
     `Briefing do projeto: ${JSON.stringify({
       academicLevel: project.academic_level,

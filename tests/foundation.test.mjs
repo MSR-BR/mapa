@@ -74,6 +74,8 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(gemini, /consulta temática para busca bibliográfica em inglês/);
   assert.match(gemini, /knowledgeAreaProposed/);
   assert.match(gemini, /proponha a mais adequada/);
+  assert.match(gemini, /substituem o foco anterior da pesquisa/);
+  assert.match(gemini, /replacementFocus/);
   assert.match(gemini, /Remova instruções operacionais/);
   assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
   assert.match(gemini, /thinkingBudget: 0/);
@@ -91,11 +93,12 @@ test("provides persistent editing with loss protection and retry", async () => {
 
   assert.match(workspace, /beforeunload/);
   assert.match(workspace, /Regenerar substituirá a versão salva/);
-  assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /Buscar literatura/);
   assert.match(workspace, /keywords: keywordOverrides/);
   assert.match(workspace, /OK e regenerar/);
+  assert.match(workspace, /generation-save-button/);
   assert.match(workspace, /Tentar novamente/);
-  assert.match(workspace, /Salvar projeto/);
+  assert.match(workspace, /: "Salvar"/);
   assert.match(workspace, /reference-code/);
   assert.match(workspace, /router\.refresh\(\)/);
   assert.doesNotMatch(workspace, /Change 004 · geração e editor/);

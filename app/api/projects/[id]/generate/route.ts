@@ -71,11 +71,14 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
           researchQuery: project.theme!,
           title: project.title,
         }
-      : await interpretResearchRequest({
-          ...project,
-          keywords: keywordOverrides.length > 0 ? keywordOverrides : project.keywords,
-          theme: keywordOverrides.length > 0 ? null : project.theme,
-        });
+      : await interpretResearchRequest(
+          {
+            ...project,
+            keywords: keywordOverrides.length > 0 ? keywordOverrides : project.keywords,
+            theme: keywordOverrides.length > 0 ? null : project.theme,
+          },
+          keywordOverrides.length > 0 ? { replacementKeywords: keywordOverrides } : {},
+        );
     const knowledgeArea = interpreted.knowledgeAreaProposed
       ? `Área proposta: ${interpreted.knowledgeArea}`.slice(0, 120)
       : interpreted.knowledgeArea;
@@ -83,6 +86,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       ...project,
       keywords: interpreted.keywords,
       knowledge_area: knowledgeArea,
+      theme: interpreted.researchQuery,
       title: interpreted.title,
     };
     const { error: interpretationSaveError } = await supabase
@@ -125,7 +129,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }
 
     await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
-    const structure = await generateResearchStructure(interpretedProject, report);
+    const structure = await generateResearchStructure(
+      interpretedProject,
+      report,
+      { replacementFocus: keywordOverrides.length > 0 },
+    );
     const references = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors, doi, referenceId, title, url, year }));
     const now = new Date().toISOString();
 
