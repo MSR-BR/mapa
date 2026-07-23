@@ -40,7 +40,7 @@ const promptSuggestionsSchema = z.object({
 });
 
 const broaderResearchQuerySchema = z.object({
-  researchQuery: z.string().trim().min(8).max(180),
+  searchTerms: z.array(z.string().trim().min(2).max(40)).min(3).max(5),
 });
 
 const generatedStructureSchema = z.object({
@@ -143,11 +143,11 @@ export async function broadenResearchQuery(
     output: Output.object({ schema: broaderResearchQuerySchema }),
     prompt: [
       "Crie uma consulta bibliográfica mais ampla em inglês para bases acadêmicas.",
-      "Use entre 3 e 7 conceitos centrais e no máximo 180 caracteres.",
+      "Retorne entre 3 e 5 termos de busca, cada um com no máximo 3 palavras.",
       "Preserve o objeto científico e a relação principal do pedido.",
       "Remova tipos de documento, grau acadêmico e formulações restritivas como doctoral thesis, dissertation, alignment ou compliance.",
       "Mantenha país ou população somente quando forem essenciais ao recorte.",
-      "Não use operadores booleanos, aspas, explicações ou instruções de formato.",
+      "Não acrescente sinônimos, explicações, operadores booleanos, aspas, métodos ou conceitos ausentes do pedido.",
       `Consulta que não retornou referências verificáveis: ${JSON.stringify(currentQuery)}`,
       `Contexto: ${JSON.stringify({
         knowledgeArea: project.knowledge_area,
@@ -164,7 +164,7 @@ export async function broadenResearchQuery(
     temperature: 0.1,
   });
 
-  return broaderResearchQuerySchema.parse(output).researchQuery.trim();
+  return broaderResearchQuerySchema.parse(output).searchTerms.join(" ").trim();
 }
 
 export async function interpretResearchRequest(

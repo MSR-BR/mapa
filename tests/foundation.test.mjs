@@ -90,6 +90,8 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(route, /research_starter_retry_broader_query/);
   assert.match(gemini, /Remova tipos de documento, grau acadêmico/);
   assert.match(gemini, /doctoral thesis, dissertation, alignment ou compliance/);
+  assert.match(gemini, /searchTerms/);
+  assert.match(gemini, /Não acrescente sinônimos/);
   assert.match(route, /knowledge_area: knowledgeArea/);
   assert.match(route, /report\.references\.length === 0/);
   assert.match(route, /title: structure\.title/);
