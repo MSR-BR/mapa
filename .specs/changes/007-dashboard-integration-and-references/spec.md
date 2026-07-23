@@ -15,6 +15,8 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - Dois a quatro projetos salvos podem ser selecionados e integrados pelo Gemini.
 - A integração consulta somente projetos e estruturas do usuário autenticado.
 - Títulos gerados e integrados são resumidos pelo Gemini em até 80 caracteres.
+- Antes da busca, o Gemini converte o pedido integral em título curto, palavras-chave específicas e consulta acadêmica de até 240 caracteres.
+- O prompt integral continua preservado no briefing; somente a consulta temática otimizada é enviada ao Research Starter.
 - Gerações sem referências verificáveis do Research Starter falham sem sobrescrever conteúdo.
 - DOCX e PDF identificam o Research Starter e incluem link para o serviço.
 
@@ -31,5 +33,6 @@ Simplificar a navegação, tornar referências externas obrigatórias para novas
 - [x] Card e botão de opções abrem o mesmo popup ancorado.
 - [x] Integração rejeita projetos sem estrutura salva ou fora da propriedade do usuário.
 - [x] Research Starter com zero referências não é tratado como sucesso.
+- [x] Instruções de formato e frases conversacionais não contaminam a consulta enviada ao Research Starter.
 - [x] Exportações exibem referências e atribuição clicável.
 - [x] Testes, lint, TypeScript e build passam antes do deploy.

@@ -81,6 +81,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     } finally {
       window.clearInterval(poll);
       setBusy(false);
+      router.refresh();
     }
   }
 

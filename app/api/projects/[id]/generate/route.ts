@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { GENERATION_MODEL, generateResearchStructure } from "@/modules/generation/gemini";
+import { GENERATION_MODEL, generateResearchStructure, interpretResearchRequest } from "@/modules/generation/gemini";
 import { STRUCTURE_PROMPT_VERSION } from "@/modules/generation/prompts/structure-v1";
 import { RESEARCH_STRUCTURE_SCHEMA_VERSION } from "@/modules/generation/schema";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
@@ -52,19 +52,36 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
   try {
+    const interpreted = await interpretResearchRequest(project);
+    const interpretedProject = {
+      ...project,
+      keywords: interpreted.keywords,
+      title: interpreted.title,
+    };
+    const { error: interpretationSaveError } = await supabase
+      .from("projects")
+      .update({
+        keywords: interpreted.keywords,
+        title: interpreted.title,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .eq("owner_id", userId);
+    if (interpretationSaveError) throw interpretationSaveError;
+
     const report = await fetchResearchStarterReport({
       includeMarkdown: false,
       maxReferences: 20,
       maxTopPapers: 10,
       publicationInterval: { kind: "last-5-years" },
-      topic: [project.title, project.theme, project.problem_statement, project.keywords.join(", ")].filter(Boolean).join(" — ").slice(0, 180),
+      topic: interpreted.researchQuery,
     });
     if (report.references.length === 0) {
       throw new Error("Research Starter não encontrou referências verificáveis para este tema.");
     }
 
     await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
-    const structure = await generateResearchStructure(project, report);
+    const structure = await generateResearchStructure(interpretedProject, report);
     const references = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors, doi, referenceId, title, url, year }));
     const now = new Date().toISOString();
 

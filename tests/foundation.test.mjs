@@ -58,12 +58,15 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
 
   assert.match(route, /idempotencyKey/);
   assert.match(route, /maxReferences: 20/);
-  assert.match(route, /slice\(0, 180\)/);
+  assert.match(route, /interpretResearchRequest/);
+  assert.match(route, /topic: interpreted\.researchQuery/);
   assert.match(route, /report\.references\.length === 0/);
   assert.match(route, /title: structure\.title/);
   assert.match(route, /A geração falhou sem alterar a estrutura salva/);
   assert.match(gemini, /Output\.object/);
   assert.match(gemini, /generatedStructureSchema/);
+  assert.match(gemini, /interpretedResearchRequestSchema/);
+  assert.match(gemini, /Remova instruções operacionais/);
   assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
   assert.match(gemini, /thinkingBudget: 0/);
   assert.match(gemini, /validateReferenceIds/);
@@ -83,6 +86,7 @@ test("provides persistent editing with loss protection and retry", async () => {
   assert.match(workspace, /Tentar novamente/);
   assert.match(workspace, /Salvar projeto/);
   assert.match(workspace, /reference-code/);
+  assert.match(workspace, /router\.refresh\(\)/);
   assert.doesNotMatch(workspace, /Change 004 · geração e editor/);
   assert.match(saveRoute, /editableResearchStructureSchema/);
   assert.match(saveRoute, /validateReferenceIds/);

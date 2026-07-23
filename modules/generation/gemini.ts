@@ -19,6 +19,12 @@ import {
 
 export const GENERATION_MODEL = "gemini-2.5-flash";
 
+const interpretedResearchRequestSchema = z.object({
+  keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
+  researchQuery: z.string().trim().min(8).max(240),
+  title: z.string().trim().min(3).max(80),
+});
+
 const generatedStructureSchema = z.object({
   chapters: z.array(z.object({
     sections: z.array(z.object({
@@ -77,6 +83,45 @@ function compactEvidence(report: ResearchStarterSuccess) {
     summary: report.summary,
     warnings: report.warnings.slice(0, 8),
   };
+}
+
+export async function interpretResearchRequest(project: Project) {
+  const prompt = [
+    "Interprete o pedido de pesquisa sem inventar informações.",
+    "Produza um título curto e acadêmico, com no máximo 80 caracteres.",
+    "Produza uma consulta temática para busca bibliográfica, com no máximo 240 caracteres.",
+    "A consulta deve conter apenas o objeto de estudo, relações centrais, população ou contexto relevante.",
+    "Remova instruções operacionais como 'preciso', 'crie', 'faça', 'estrutura', 'monografia', 'tese' ou pedidos sobre formato.",
+    "Escolha termos que funcionem em bases acadêmicas e preserve o sentido do usuário.",
+    "Extraia de 3 a 10 palavras-chave específicas. Não inclua termos genéricos sobre escrita acadêmica.",
+    `Pedido integral: ${JSON.stringify({
+      academicLevel: project.academic_level,
+      knowledgeArea: project.knowledge_area,
+      keywords: project.keywords,
+      prompt: project.problem_statement,
+      theme: project.theme,
+      provisionalTitle: project.title,
+    })}`,
+  ].join("\n");
+
+  const { output } = await generateText({
+    maxOutputTokens: 500,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: interpretedResearchRequestSchema }),
+    prompt,
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingBudget: 0 },
+      } satisfies GoogleLanguageModelOptions,
+    },
+    temperature: 0.1,
+  });
+
+  return interpretedResearchRequestSchema.parse({
+    keywords: [...new Set(output.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 10),
+    researchQuery: output.researchQuery.trim(),
+    title: output.title.trim(),
+  });
 }
 
 export async function generateResearchStructure(
