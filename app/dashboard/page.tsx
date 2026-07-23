@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { ProjectCardModal } from "@/modules/projects/project-card-modal";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
 
 const statusLabels: Record<string, string> = {
@@ -24,14 +23,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   return (
     <main className="workspace-shell dashboard-home">
       <section className="quick-start" aria-labelledby="quick-start-title">
-        <p className="eyebrow">Seu próximo mapa começa aqui</p>
-        <h1 id="quick-start-title">O que você quer pesquisar?</h1>
+        <h1 id="quick-start-title">Qual seu tema de pesquisa?</h1>
         <p className="quick-start-summary">
           Descreva em linguagem natural o trabalho que deseja criar. Tema, nível,
           recorte e demais orientações podem ir no mesmo prompt.
         </p>
         <QuickStartForm resumeDraft={resume === "1"} />
-        <p className="quick-start-note">Ao pressionar Enter, a pesquisa e a estrutura começam automaticamente.</p>
       </section>
 
       <section className="recent-projects" aria-labelledby="recent-projects-title">
@@ -56,19 +53,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ) : (
           <div className="project-grid" aria-label="Projetos">
             {projects.map((project) => (
-              <Link className="project-card" href={`/dashboard/projects/${project.id}`} key={project.id}>
-                <div className="project-card-topline">
-                  <span className={`project-status status-${project.status}`}>
-                    {statusLabels[project.status] ?? project.status}
-                  </span>
-                  <span className="card-arrow" aria-hidden="true">↗</span>
-                </div>
-                <h3>{project.title}</h3>
-                <p>{project.knowledge_area || "Área a definir"}</p>
-                <time dateTime={project.updated_at}>
-                  Atualizado em {new Intl.DateTimeFormat("pt-BR").format(new Date(project.updated_at))}
-                </time>
-              </Link>
+              <ProjectCardModal
+                academicArea={project.knowledge_area || "Área a definir"}
+                key={project.id}
+                projectId={project.id}
+                statusLabel={statusLabels[project.status] ?? project.status}
+                title={project.title}
+                updatedAt={project.updated_at}
+              />
             ))}
           </div>
         )}

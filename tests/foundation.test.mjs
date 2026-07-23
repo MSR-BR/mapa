@@ -245,8 +245,9 @@ test("implements the approved hybrid dashboard with prompt-first automatic gener
     readProjectFile("app/dashboard/error.tsx"),
   ]);
 
-  assert.match(dashboard, /O que você quer pesquisar\?/);
+  assert.match(dashboard, /Qual seu tema de pesquisa\?/);
   assert.match(dashboard, /Projetos recentes/);
+  assert.match(dashboard, /ProjectCardModal/);
   assert.match(quickStart, /useActionState/);
   assert.match(quickStart, /createProject/);
   assert.doesNotMatch(quickStart, /Abrir configurações iniciais/);

@@ -10,5 +10,5 @@ export const requireAuthenticatedUser = cache(async function requireAuthenticate
 
   if (error || typeof userId !== "string") redirect("/login");
 
-  return { supabase, userId };
+  return { claims: data!.claims, supabase, userId };
 });

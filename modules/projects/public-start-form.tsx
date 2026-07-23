@@ -36,7 +36,7 @@ export function PublicStartForm() {
             event.currentTarget.form?.requestSubmit();
           }
         }}
-        placeholder="Crie o mapa de uma tese de mestrado a respeito do efeito barocalórico em spin crossover"
+        placeholder="Crie um mapa de tese de mestrado a respeito do uso de inteligência artificial no ensino superior"
         required
         rows={3}
       />
