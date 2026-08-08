@@ -36,7 +36,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data: project } = await supabase
     .from("projects")
-    .select("*")
+    .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at")
     .eq("id", id)
     .eq("owner_id", userId)
     .is("deleted_at", null)

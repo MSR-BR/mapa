@@ -71,6 +71,29 @@ test("completes Change 004 with a versioned canonical schema and anti-hallucinat
   assert.match(spec, /Status: concluída/);
 });
 
+test("implements the additive Change 009 workflow foundation", async () => {
+  const [schema, stateMachine, storage, migration] = await Promise.all([
+    readProjectFile("modules/research-workflow/schema.ts"),
+    readProjectFile("modules/research-workflow/state-machine.ts"),
+    readProjectFile("modules/research-workflow/storage.ts"),
+    readProjectFile("supabase/migrations/20260807225154_create_research_workflow_v2_foundation.sql"),
+  ]);
+
+  assert.match(schema, /RESEARCH_WORKFLOW_SCHEMA_VERSION = "2\.0\.0"/);
+  assert.match(schema, /draft_prompt/);
+  assert.match(schema, /coherenceFindingSchema/);
+  assert.match(schema, /traceLinkSchema/);
+  assert.match(stateMachine, /allowedTransitions/);
+  assert.match(stateMachine, /collectDependentElementTypes/);
+  assert.match(storage, /import "server-only"/);
+  assert.match(storage, /\.eq\("owner_id", ownerId\)/);
+  assert.match(migration, /add column workflow_version smallint not null default 1/);
+  assert.match(migration, /foreign key \(project_id, owner_id\)/);
+  assert.match(migration, /alter table public\.research_workflows enable row level security/);
+  assert.equal((migration.match(/create policy/g) ?? []).length, 4);
+  assert.doesNotMatch(migration, /auth\.role\(\)|security definer/i);
+});
+
 test("implements an idempotent and owner-scoped generation pipeline", async () => {
   const [route, gemini, migration] = await Promise.all([
     readProjectFile("app/api/projects/[id]/generate/route.ts"),
@@ -264,10 +287,9 @@ test("derives project ownership from verified claims", async () => {
   assert.match(projectAuth, /auth\.getClaims\(\)/);
   assert.match(projectAuth, /claims\?\.sub/);
   assert.match(actions, /owner_id: userId/);
-  assert.match(actions, /interpretResearchRequest/);
-  assert.match(actions, /title: interpreted\.title/);
-  assert.match(actions, /knowledgeAreaProposed/);
-  assert.match(actions, /Área proposta:/);
+  assert.match(actions, /createResearchWorkflow/);
+  assert.match(actions, /workflow_version: autoGenerate \? 2 : 1/);
+  assert.match(actions, /Nova proposta de pesquisa/);
   assert.doesNotMatch(actions, /formData\.get\("owner/i);
   assert.match(actions, /\.eq\("owner_id", userId\)/);
 });
@@ -301,11 +323,11 @@ test("validates project fields against database limits", async () => {
   assert.match(form, /Descartar alterações não salvas/);
 });
 
-test("implements the approved hybrid dashboard with prompt-first automatic generation", async () => {
-  const [dashboard, quickStart, generation, visualDecision, loading, error] = await Promise.all([
+test("implements the approved hybrid dashboard with prompt-first proposal discovery", async () => {
+  const [dashboard, quickStart, discovery, visualDecision, loading, error] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/quick-start-form.tsx"),
-    readProjectFile("modules/generation/generation-workspace.tsx"),
+    readProjectFile("modules/research-workflow/proposal-discovery-workspace.tsx"),
     readProjectFile(".specs/changes/002-implement-mvp-foundation/subchanges/002.5-polish-responsive-shell.md"),
     readProjectFile("app/dashboard/loading.tsx"),
     readProjectFile("app/dashboard/error.tsx"),
@@ -318,11 +340,97 @@ test("implements the approved hybrid dashboard with prompt-first automatic gener
   assert.match(quickStart, /createProject/);
   assert.doesNotMatch(quickStart, /Abrir configurações iniciais/);
   assert.match(quickStart, /autoGenerate/);
-  assert.match(generation, /Buscando literatura no/);
-  assert.match(generation, /Research Starter/);
+  assert.match(discovery, /Escolha um caminho para a pesquisa/);
+  assert.match(discovery, /Mais próxima do seu pedido/);
+  assert.match(discovery, /Research Starter/);
   assert.match(visualDecision, /\[x\] Híbrida/);
   assert.match(loading, /aria-busy="true"/);
   assert.match(error, /Tentar novamente/);
+});
+
+test("implements Change 010 with one persisted discovery and six selectable proposals", async () => {
+  const [discoverRoute, selectionRoute, service, gemini, projectPage, storage] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/discover/route.ts"),
+    readProjectFile("app/api/projects/[id]/proposal-selection/route.ts"),
+    readProjectFile("modules/research-workflow/discovery-service.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+    readProjectFile("modules/generation/storage.ts"),
+  ]);
+
+  assert.match(discoverRoute, /discoverResearchProposals/);
+  assert.match(discoverRoute, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(discoverRoute, /state: "choosing_problem"/);
+  assert.match(selectionRoute, /selectedCandidateId/);
+  assert.match(selectionRoute, /activeStep: "problem_statement"/);
+  assert.match(service, /maxReferences: 20/);
+  assert.match(service, /last-5-years/);
+  assert.match(service, /last-10-years/);
+  assert.match(gemini, /Crie exatamente seis propostas acadêmicas distintas/);
+  assert.match(gemini, /A proposta 1 deve ter kind=exact/);
+  assert.match(projectPage, /workflow_version === 2/);
+  assert.match(projectPage, /ProposalDiscoveryWorkspace/);
+  assert.match(storage, /loadGenerationStatus/);
+  assert.doesNotMatch(discoverRoute, /select\("\*"\)/);
+});
+
+test("implements Change 011 with editable and versioned problem and objectives", async () => {
+  const [route, workspace, validation, schema, gemini, page] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/definition/route.ts"),
+    readProjectFile("modules/research-workflow/research-definition-workspace.tsx"),
+    readProjectFile("modules/research-workflow/definition-validation.ts"),
+    readProjectFile("modules/research-workflow/schema.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+  ]);
+
+  assert.match(route, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(route, /markDescendantsStale/);
+  assert.match(route, /elementVersions/);
+  assert.match(route, /validating_specific_objectives/);
+  assert.match(workspace, /Regenerar sugestão/);
+  assert.match(workspace, /Salvar rascunho/);
+  assert.match(workspace, /Validar e avançar/);
+  assert.match(workspace, /specifics\.length >= 6/);
+  assert.match(validation, /INFINITIVE_OPENING/);
+  assert.match(validation, /redundantes/);
+  assert.match(schema, /definitionStepSchema/);
+  assert.match(schema, /elementVersionSchema/);
+  assert.match(gemini, /Crie exatamente um objetivo geral/);
+  assert.match(gemini, /Crie exatamente quatro objetivos específicos/);
+  assert.match(page, /ResearchDefinitionWorkspace/);
+});
+
+test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", async () => {
+  const [route, workspace, validation, library, schema, gemini, page] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/chapters/route.ts"),
+    readProjectFile("modules/research-workflow/literature-development-workspace.tsx"),
+    readProjectFile("modules/research-workflow/chapter-validation.ts"),
+    readProjectFile("modules/research-workflow/knowledge-library.ts"),
+    readProjectFile("modules/research-workflow/schema.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+  ]);
+
+  assert.match(route, /generateLiteratureTopics/);
+  assert.match(route, /generateDevelopmentTopics/);
+  assert.match(route, /fetchResearchStarterReport/);
+  assert.match(route, /referenceArchive/);
+  assert.match(route, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(route, /validateCompleteObjectiveCoverage/);
+  assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /Cobertura dos objetivos/);
+  assert.match(workspace, /para cima/);
+  assert.match(workspace, /referências associadas/);
+  assert.match(validation, /resultados\? \(\?:encontrados/);
+  assert.match(validation, /entre três e seis/);
+  assert.match(library, /KNOWLEDGE_LIBRARY_VERSION/);
+  assert.match(library, /status: "suggested"/);
+  assert.match(schema, /chapterTopicDetails/);
+  assert.match(schema, /knowledgeSuggestions/);
+  assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 2/);
+  assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 4/);
+  assert.match(page, /LiteratureDevelopmentWorkspace/);
 });
 
 test("supports anchored project actions and owner-scoped AI integration", async () => {

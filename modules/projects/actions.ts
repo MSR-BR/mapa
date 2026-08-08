@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { interpretResearchRequest } from "@/modules/generation/gemini";
+import { createResearchWorkflow } from "@/modules/research-workflow/storage";
 
 import { requireAuthenticatedUser } from "./auth";
 import type { ProjectActionState } from "./types";
@@ -33,28 +33,15 @@ export async function createProject(
   const { supabase, userId } = await requireAuthenticatedUser();
   let projectData = result.data;
   if (autoGenerate) {
-    try {
-      const interpreted = await interpretResearchRequest(result.data);
-      projectData = {
-        ...result.data,
-        keywords: interpreted.keywords,
-        knowledge_area: interpreted.knowledgeAreaProposed
-          ? `Área proposta: ${interpreted.knowledgeArea}`.slice(0, 120)
-          : interpreted.knowledgeArea,
-        theme: interpreted.researchQuery,
-        title: interpreted.title,
-      };
-    } catch (error) {
-      console.error("project_prompt_interpretation_failed", {
-        message: error instanceof Error ? error.message : "unknown-error",
-        userId,
-      });
-      return { message: "Não foi possível interpretar o tema. Tente novamente.", status: "error" };
-    }
+    projectData = {
+      ...result.data,
+      problem_statement: result.data.problem_statement || result.data.title,
+      title: "Nova proposta de pesquisa",
+    };
   }
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...projectData, owner_id: userId })
+    .insert({ ...projectData, owner_id: userId, workflow_version: autoGenerate ? 2 : 1 })
     .select("id")
     .single();
 
@@ -62,8 +49,26 @@ export async function createProject(
     return { message: "Não foi possível criar o projeto.", status: "error" };
   }
 
+  if (autoGenerate) {
+    try {
+      await createResearchWorkflow(supabase, userId, data.id);
+    } catch (workflowError) {
+      const now = new Date().toISOString();
+      await supabase
+        .from("projects")
+        .update({ deleted_at: now, updated_at: now })
+        .eq("id", data.id)
+        .eq("owner_id", userId);
+      console.error("research_workflow_creation_failed", {
+        message: workflowError instanceof Error ? workflowError.message : "unknown-error",
+        projectId: data.id,
+      });
+      return { message: "Não foi possível iniciar o novo mapa.", status: "error" };
+    }
+  }
+
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}${autoGenerate ? "?generate=1" : ""}`);
+  redirect(`/dashboard/projects/${data.id}${autoGenerate ? "?discover=1" : ""}`);
 }
 
 export async function updateProject(

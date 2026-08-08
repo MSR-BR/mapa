@@ -4,11 +4,11 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Fase: Change 001 e subchanges 001.1, 002.1, 002.2 e 002.3 concluídas; 002.4 implementada com aceite autenticado pendente.
-- Código da aplicação: schema, RLS, autenticação e gerenciamento inicial de projetos implementados.
-- Próximo gate: decisão e aprovação da direção visual da subchange 002.5.
-- Decisão visual pendente para 002.5: cards, entrada central limpa ou composição híbrida.
-- Integração Research Starter: bloqueada até o fornecimento do contrato e do protocolo de execução.
+- Fase: MVP v1 concluído; descoberta, problemática e objetivos do v2 concluídos.
+- Código da aplicação: o fluxo v1 permanece disponível para projetos legados; novos prompts iniciam o fluxo v2.
+- Próximo gate: revisão e aprovação explícita da Change 013.
+- Direção do v2: prompt geral, seis propostas assistidas por IA e Research Starter, validação progressiva, matriz metodológica e mapa final rastreável.
+- Integrações confirmadas: Gemini no backend, Research Starter v1 e Supabase do Mapa limitado ao Project Ref documentado.
 
 ## Ordem de leitura
 

@@ -78,6 +78,7 @@ export type Database = {
           theme: string | null
           title: string
           updated_at: string
+          workflow_version: number
         }
         Insert: {
           academic_level?: string | null
@@ -92,6 +93,7 @@ export type Database = {
           theme?: string | null
           title: string
           updated_at?: string
+          workflow_version?: number
         }
         Update: {
           academic_level?: string | null
@@ -106,8 +108,59 @@ export type Database = {
           theme?: string | null
           title?: string
           updated_at?: string
+          workflow_version?: number
         }
         Relationships: []
+      }
+      research_workflows: {
+        Row: {
+          content: Json
+          created_at: string
+          owner_id: string
+          project_id: string
+          revision: number
+          schema_version: string
+          source_revision: number
+          stable_state: string
+          state: string
+          updated_at: string
+          validation_state: Json
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          owner_id: string
+          project_id: string
+          revision?: number
+          schema_version?: string
+          source_revision?: number
+          stable_state?: string
+          state?: string
+          updated_at?: string
+          validation_state?: Json
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          owner_id?: string
+          project_id?: string
+          revision?: number
+          schema_version?: string
+          source_revision?: number
+          stable_state?: string
+          state?: string
+          updated_at?: string
+          validation_state?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_workflows_project_owner_fkey"
+            columns: ["project_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id", "owner_id"]
+          },
+        ]
       }
       research_structures: {
         Row: {

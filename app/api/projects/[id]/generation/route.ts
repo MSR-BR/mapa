@@ -2,17 +2,20 @@ import { NextResponse } from "next/server";
 
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { editableResearchStructureSchema, validateReferenceIds } from "@/modules/generation/schema";
-import { loadGenerationSnapshot } from "@/modules/generation/storage";
+import { loadGenerationSnapshot, loadGenerationStatus } from "@/modules/generation/storage";
 import { toJson } from "@/modules/generation/types";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
   const { supabase, userId } = await requireAuthenticatedUser();
-  const snapshot = await loadGenerationSnapshot(supabase, userId, id);
-  return NextResponse.json(snapshot, { headers: { "Cache-Control": "private, no-store" } });
+  const statusOnly = new URL(request.url).searchParams.get("status") === "1";
+  const payload = statusOnly
+    ? { job: await loadGenerationStatus(supabase, userId, id) }
+    : await loadGenerationSnapshot(supabase, userId, id);
+  return NextResponse.json(payload, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {

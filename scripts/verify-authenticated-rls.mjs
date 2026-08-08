@@ -48,6 +48,7 @@ const [userA, userB] = await Promise.all([
 ]);
 
 let projectId;
+let workflowCreated = false;
 try {
   const created = await readJson(
     await fetch(`${baseUrl}/rest/v1/projects?select=id,owner_id`, {
@@ -62,6 +63,19 @@ try {
     throw new Error("O projeto temporário não foi criado para o proprietário esperado.");
   }
   projectId = created[0].id;
+
+  const workflow = await readJson(
+    await fetch(`${baseUrl}/rest/v1/research_workflows?select=project_id,owner_id,state`, {
+      body: JSON.stringify({ owner_id: userA.userId, project_id: projectId }),
+      headers: projectHeaders(userA.token),
+      method: "POST",
+    }),
+    "Criação de workflow temporário",
+  );
+  if (workflow.length !== 1 || workflow[0].state !== "draft_prompt") {
+    throw new Error("O workflow temporário não iniciou no estado esperado.");
+  }
+  workflowCreated = true;
 
   const encodedFilter = encodeURIComponent(`eq.${projectId}`);
   const readByB = await readJson(
@@ -91,9 +105,33 @@ try {
   );
   if (deleteByB.length !== 0) throw new Error("RLS permitiu exclusão entre proprietários.");
 
-  console.log("Isolamento autenticado confirmado para leitura, atualização e exclusão.");
+  const readWorkflowByB = await readJson(
+    await fetch(`${baseUrl}/rest/v1/research_workflows?select=project_id&project_id=${encodedFilter}`, {
+      headers: projectHeaders(userB.token, "return=minimal"),
+    }),
+    "Leitura negativa do workflow pelo usuário B",
+  );
+  if (readWorkflowByB.length !== 0) throw new Error("RLS permitiu leitura cruzada do workflow.");
+
+  const updateWorkflowByB = await readJson(
+    await fetch(`${baseUrl}/rest/v1/research_workflows?project_id=${encodedFilter}&select=project_id`, {
+      body: JSON.stringify({ state: "completed" }),
+      headers: projectHeaders(userB.token),
+      method: "PATCH",
+    }),
+    "Atualização negativa do workflow pelo usuário B",
+  );
+  if (updateWorkflowByB.length !== 0) throw new Error("RLS permitiu atualização cruzada do workflow.");
+
+  console.log("Isolamento autenticado confirmado para projetos e workflows.");
 } finally {
   if (projectId) {
+    if (workflowCreated) {
+      await fetch(`${baseUrl}/rest/v1/research_workflows?project_id=eq.${projectId}`, {
+        headers: projectHeaders(userA.token, "return=minimal"),
+        method: "DELETE",
+      });
+    }
     const now = new Date().toISOString();
     await fetch(`${baseUrl}/rest/v1/projects?id=eq.${projectId}`, {
       body: JSON.stringify({ deleted_at: now, updated_at: now }),

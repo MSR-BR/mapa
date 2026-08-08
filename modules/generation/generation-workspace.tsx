@@ -52,10 +52,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   }, [dirty]);
 
   async function refresh() {
-    const response = await fetch(`/api/projects/${projectId}/generation`, { cache: "no-store" });
+    const response = await fetch(`/api/projects/${projectId}/generation?status=1`, { cache: "no-store" });
     if (!response.ok) return;
-    const next = await response.json() as GenerationSnapshot;
-    setSnapshot(next);
+    const next = await response.json() as Pick<GenerationSnapshot, "job">;
+    setSnapshot((current) => ({ ...current, job: next.job }));
   }
 
   async function generate(keywordOverrides: string[] = []) {

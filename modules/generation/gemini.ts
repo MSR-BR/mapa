@@ -7,6 +7,14 @@ import { z } from "zod";
 import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
+import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
+import {
+  problemCandidateSchema,
+  problemCandidatesSchema,
+  type InterpretedDiscovery,
+  type ProblemCandidate,
+  type ProposalDiscovery,
+} from "@/modules/research-workflow/schema";
 
 import { STRUCTURE_PROMPT_VERSION, STRUCTURE_SYSTEM_RULES } from "./prompts/structure-v1";
 import {
@@ -59,6 +67,32 @@ const generatedStructureSchema = z.object({
 
 type GeneratedStructure = z.infer<typeof generatedStructureSchema>;
 
+const generatedProblemCandidatesSchema = z.object({
+  candidates: z.array(problemCandidateSchema.omit({ id: true })).length(6),
+});
+
+const generatedDefinitionSchema = z.object({
+  content: z.string().trim().min(20).max(700),
+  referenceIds: z.array(z.string().trim().min(1).max(120)).max(12),
+});
+
+const generatedSpecificObjectivesSchema = z.object({
+  objectives: z.array(generatedDefinitionSchema).length(4),
+});
+
+const generatedChapterTopicsSchema = z.object({
+  topics: z.array(z.object({
+    exceptionJustification: z.string().trim().min(10).max(500).nullable(),
+    generalObjectiveAligned: z.boolean(),
+    objectiveCoverage: z.array(z.object({
+      degree: z.enum(["partial", "full"]),
+      objectiveId: z.string().uuid(),
+    })).min(1).max(6),
+    referenceIds: z.array(z.string().trim().min(1).max(120)).min(1).max(12),
+    title: z.string().trim().min(3).max(180),
+  })).min(3).max(6),
+});
+
 function normalizeGeneratedStructure(output: GeneratedStructure) {
   return researchStructureSchema.parse({
     chapters: output.chapters.map((chapter, chapterIndex) => ({
@@ -101,6 +135,21 @@ function compactEvidence(report: ResearchStarterSuccess) {
     summary: report.summary,
     warnings: report.warnings.slice(0, 8),
   };
+}
+
+function compactDiscoveryEvidence(discovery: ProposalDiscovery) {
+  return discovery.references.map((reference) => ({
+    authors: reference.authors,
+    referenceId: reference.referenceId,
+    title: reference.title,
+    year: reference.year,
+  }));
+}
+
+function assertDiscoveryReferenceIds(referenceIds: string[], discovery: ProposalDiscovery) {
+  const allowed = new Set(discovery.references.map((reference) => reference.referenceId));
+  const invalid = referenceIds.filter((referenceId) => !allowed.has(referenceId));
+  if (invalid.length > 0) throw new Error(`Referências não verificadas: ${[...new Set(invalid)].join(", ")}`);
 }
 
 export async function suggestResearchPrompts(prompt: string) {
@@ -220,6 +269,214 @@ export async function interpretResearchRequest(
     researchQuery: output.researchQuery.trim(),
     title: output.title.trim(),
   });
+}
+
+export async function generateProblemCandidates(
+  originalPrompt: string,
+  interpreted: InterpretedDiscovery,
+  report: ResearchStarterSuccess,
+): Promise<ProblemCandidate[]> {
+  const evidence = compactEvidence(report);
+  const { output } = await generateText({
+    maxOutputTokens: 4_500,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedProblemCandidatesSchema }),
+    prompt: [
+      "Crie exatamente seis propostas acadêmicas distintas para o Mapa da Pesquisa.",
+      "Escreva em português do Brasil.",
+      "A proposta 1 deve ter kind=exact e ser a correspondência mais fiel possível ao pedido, sem trocar seu objeto central.",
+      "As propostas 2 a 6 devem ter kind=alternative e variar de forma material apenas recorte, relação, contexto, perspectiva teórica ou aplicação sustentada pelo pedido ou pelas evidências.",
+      "Não produza seis paráfrases do mesmo título e não invente instituições, populações, locais, períodos, métodos ou resultados.",
+      "Cada proposta deve conter um título curto, uma única grande pergunta e uma ou duas frases curtas de contexto.",
+      "Toda problemQuestion deve começar exatamente por 'Como' ou 'De que forma', ser investigável e não antecipar a resposta.",
+      "Use de três a cinco palavras-chave específicas por proposta.",
+      "Mantenha knowledgeAreaProposed=true quando a área tiver sido proposta, e false quando estiver explícita no pedido.",
+      "Use somente referenceIds presentes nas evidências. Não invente referências.",
+      "A posição deve corresponder à ordem de 1 a 6.",
+      `Pedido original: ${JSON.stringify(originalPrompt.slice(0, 5_000))}`,
+      `Interpretação: ${JSON.stringify(interpreted)}`,
+      `Evidências verificadas: ${JSON.stringify(evidence)}`,
+    ].join("\n"),
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingBudget: 0 },
+      } satisfies GoogleLanguageModelOptions,
+    },
+    temperature: 0.35,
+  });
+
+  const candidates = output.candidates.map((candidate) => ({
+    ...candidate,
+    id: crypto.randomUUID(),
+    keywords: [...new Set(candidate.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 5),
+    referenceIds: [...new Set(candidate.referenceIds.map((referenceId) => referenceId.trim()).filter(Boolean))].slice(0, 12),
+  }));
+  const parsed = problemCandidatesSchema.parse(candidates);
+  const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
+  const unknownReferenceIds = parsed.flatMap((candidate) => candidate.referenceIds)
+    .filter((referenceId) => !allowedReferenceIds.has(referenceId));
+  if (unknownReferenceIds.length > 0) {
+    throw new Error(`Referências não verificadas: ${[...new Set(unknownReferenceIds)].join(", ")}`);
+  }
+  return parsed;
+}
+
+export async function regenerateProblemStatement(
+  candidate: ProblemCandidate,
+  discovery: ProposalDiscovery,
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 700,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedDefinitionSchema }),
+    prompt: [
+      "Reescreva uma única problemática de pesquisa em português do Brasil.",
+      "Comece exatamente por 'Como' ou 'De que forma' e termine com um único ponto de interrogação.",
+      "Mantenha objeto, relação e recorte da proposta escolhida. Não acrescente método, instituição, população ou resultado.",
+      "Use somente referenceIds presentes nas evidências.",
+      `Proposta escolhida: ${JSON.stringify(candidate)}`,
+      `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.25,
+  });
+  const result = generatedDefinitionSchema.parse(output);
+  assertDiscoveryReferenceIds(result.referenceIds, discovery);
+  return result;
+}
+
+export async function generateGeneralObjective(
+  problemStatement: string,
+  candidate: ProblemCandidate,
+  discovery: ProposalDiscovery,
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 700,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedDefinitionSchema }),
+    prompt: [
+      "Crie exatamente um objetivo geral em português do Brasil.",
+      "Inicie com verbo no infinitivo e responda diretamente à problemática.",
+      "Expresse o principal resultado intelectual pretendido, sem antecipar resultado empírico e sem ampliar o escopo.",
+      "Não acrescente método, instituição, população ou recorte ausente.",
+      "Use somente referenceIds presentes nas evidências.",
+      `Problemática validada: ${JSON.stringify(problemStatement)}`,
+      `Proposta escolhida: ${JSON.stringify(candidate)}`,
+      `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.2,
+  });
+  const result = generatedDefinitionSchema.parse(output);
+  assertDiscoveryReferenceIds(result.referenceIds, discovery);
+  return result;
+}
+
+export async function generateSpecificObjectives(
+  problemStatement: string,
+  generalObjective: string,
+  discovery: ProposalDiscovery,
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 2_400,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedSpecificObjectivesSchema }),
+    prompt: [
+      "Crie exatamente quatro objetivos específicos em português do Brasil.",
+      "Cada objetivo começa com verbo no infinitivo e representa uma etapa necessária para atender o objetivo geral.",
+      "Organize uma progressão lógica, sem impor verbos mecanicamente, sem redundâncias e sem objetivos mais amplos que o geral.",
+      "Não acrescente método, instituição, população, resultado ou produto ausente no escopo validado.",
+      "Use somente referenceIds presentes nas evidências.",
+      `Problemática validada: ${JSON.stringify(problemStatement)}`,
+      `Objetivo geral validado: ${JSON.stringify(generalObjective)}`,
+      `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.25,
+  });
+  const objectives = generatedSpecificObjectivesSchema.parse(output).objectives;
+  assertDiscoveryReferenceIds(objectives.flatMap((objective) => objective.referenceIds), discovery);
+  return objectives;
+}
+
+function assertGeneratedTopicLinks(
+  topics: Omit<ChapterTopicInput, "id">[],
+  objectiveIds: Set<string>,
+  discovery: ProposalDiscovery,
+) {
+  assertDiscoveryReferenceIds(topics.flatMap((topic) => topic.referenceIds), discovery);
+  const invalidObjectives = topics.flatMap((topic) => topic.objectiveCoverage)
+    .filter((coverage) => !objectiveIds.has(coverage.objectiveId));
+  if (invalidObjectives.length > 0) throw new Error("A IA relacionou um tópico a objetivo inexistente.");
+}
+
+export async function generateLiteratureTopics(
+  problemStatement: string,
+  generalObjective: string,
+  specificObjectives: Array<{ content: string; id: string }>,
+  discovery: ProposalDiscovery,
+  acceptedConcepts: string[] = [],
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 3_200,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedChapterTopicsSchema }),
+    prompt: [
+      "Crie exatamente quatro tópicos para o Capítulo 2 — Revisão da Literatura, em português do Brasil.",
+      "Cubra conceitos, teorias, modelos, contexto normativo ou evidências necessários à problemática e aos objetivos.",
+      "Cada título deve ser curto, acadêmico e não pode afirmar resultados da pesquisa.",
+      "Relacione cada tópico a um ou mais IDs reais de objetivos específicos e indique cobertura partial ou full.",
+      "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
+      "Conceitos controlados aceitos são vocabulário candidato; só os inclua se forem coerentes com o tema e sustentados pelas evidências.",
+      `Problemática: ${JSON.stringify(problemStatement)}`,
+      `Objetivo geral: ${JSON.stringify(generalObjective)}`,
+      `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
+      `Conceitos controlados aceitos: ${JSON.stringify(acceptedConcepts)}`,
+      `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.25,
+  });
+  const topics = generatedChapterTopicsSchema.parse(output).topics.map((topic) => ({
+    ...topic,
+    exceptionJustification: null,
+    generalObjectiveAligned: false,
+  }));
+  assertGeneratedTopicLinks(topics, new Set(specificObjectives.map((objective) => objective.id)), discovery);
+  return topics;
+}
+
+export async function generateDevelopmentTopics(
+  problemStatement: string,
+  generalObjective: string,
+  specificObjectives: Array<{ content: string; id: string }>,
+  literatureTopics: ChapterTopicInput[],
+  discovery: ProposalDiscovery,
+) {
+  const { output } = await generateText({
+    maxOutputTokens: 3_200,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedChapterTopicsSchema }),
+    prompt: [
+      "Crie exatamente quatro tópicos para o Capítulo 4 — Desenvolvimento, Estudo de Caso, Análise e Discussão, em português do Brasil.",
+      "Operacionalize os objetivos específicos que não foram atendidos exclusivamente pela revisão da literatura.",
+      "Derive semanticamente os títulos das ações dos objetivos sem copiá-los mecanicamente.",
+      "Não use expressões como 'resultados encontrados' ou 'resultados obtidos', pois a pesquisa ainda é uma proposta.",
+      "Relacione cada tópico a um ou mais IDs reais de objetivos específicos.",
+      "O último tópico deve se relacionar diretamente ao objetivo geral e retornar generalObjectiveAligned=true; use justificativa somente se isso for metodologicamente impossível.",
+      "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
+      `Problemática: ${JSON.stringify(problemStatement)}`,
+      `Objetivo geral: ${JSON.stringify(generalObjective)}`,
+      `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
+      `Cobertura do Capítulo 2: ${JSON.stringify(literatureTopics)}`,
+      `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.25,
+  });
+  const topics = generatedChapterTopicsSchema.parse(output).topics;
+  assertGeneratedTopicLinks(topics, new Set(specificObjectives.map((objective) => objective.id)), discovery);
+  return topics;
 }
 
 export async function generateResearchStructure(
