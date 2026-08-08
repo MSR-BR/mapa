@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { createResearchWorkflow } from "@/modules/research-workflow/storage";
+import { isResearchMapV2EnabledForClaims } from "@/modules/research-workflow/rollout";
+import {
+  createResearchWorkflow,
+  duplicateResearchWorkflow,
+} from "@/modules/research-workflow/storage";
 
 import { requireAuthenticatedUser } from "./auth";
 import type { ProjectActionState } from "./types";
@@ -30,7 +34,8 @@ export async function createProject(
     };
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const { claims, supabase, userId } = await requireAuthenticatedUser();
+  const useResearchMapV2 = autoGenerate && isResearchMapV2EnabledForClaims(claims);
   let projectData = result.data;
   if (autoGenerate) {
     projectData = {
@@ -41,7 +46,7 @@ export async function createProject(
   }
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...projectData, owner_id: userId, workflow_version: autoGenerate ? 2 : 1 })
+    .insert({ ...projectData, owner_id: userId, workflow_version: useResearchMapV2 ? 2 : 1 })
     .select("id")
     .single();
 
@@ -49,7 +54,7 @@ export async function createProject(
     return { message: "Não foi possível criar o projeto.", status: "error" };
   }
 
-  if (autoGenerate) {
+  if (useResearchMapV2) {
     try {
       await createResearchWorkflow(supabase, userId, data.id);
     } catch (workflowError) {
@@ -68,7 +73,7 @@ export async function createProject(
   }
 
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}${autoGenerate ? "?discover=1" : ""}`);
+  redirect(`/dashboard/projects/${data.id}${useResearchMapV2 ? "?discover=1" : autoGenerate ? "?generate=1" : ""}`);
 }
 
 export async function updateProject(
@@ -113,7 +118,7 @@ export async function duplicateProject(formData: FormData) {
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data: source } = await supabase
     .from("projects")
-    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level")
+    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)
@@ -129,6 +134,19 @@ export async function duplicateProject(formData: FormData) {
     .single();
 
   if (error || !copy) redirect("/dashboard?error=duplicate");
+  if (source.workflow_version === 2) {
+    try {
+      await duplicateResearchWorkflow(supabase, userId, projectId, copy.id);
+    } catch {
+      const now = new Date().toISOString();
+      await supabase
+        .from("projects")
+        .update({ deleted_at: now, updated_at: now })
+        .eq("id", copy.id)
+        .eq("owner_id", userId);
+      redirect("/dashboard?error=duplicate");
+    }
+  }
   revalidatePath("/dashboard");
   redirect(`/dashboard/projects/${copy.id}`);
 }

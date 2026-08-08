@@ -55,6 +55,7 @@ export const definitionStepSchema = z.enum([
   "specific_objectives",
   "literature_topics",
   "development_topics",
+  "methodology_matrix",
 ]);
 
 export type DefinitionStep = z.infer<typeof definitionStepSchema>;
@@ -105,6 +106,39 @@ export const knowledgeSuggestionSchema = z.object({
 });
 
 export type KnowledgeSuggestion = z.infer<typeof knowledgeSuggestionSchema>;
+
+export const methodologyClassificationSchema = z.object({
+  analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+  approach: z.enum(["Qualitativa", "Quantitativa", "Mista"]),
+  ethicsWarnings: z.array(z.string().trim().min(10).max(400)).max(6),
+  instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  nature: z.enum(["Básica", "Aplicada"]),
+  objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
+  procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  rationale: z.string().trim().min(20).max(800),
+  revision: z.number().int().positive(),
+  sourceRevision: z.number().int().positive(),
+  status: validationStatusSchema,
+  updatedBy: z.enum(["ai", "user", "system"]),
+});
+
+export type MethodologyClassification = z.infer<typeof methodologyClassificationSchema>;
+
+export const methodologyRowSchema = z.object({
+  analysisTreatment: z.string().trim().min(20).max(1_200),
+  associatedTopicIds: z.array(z.string().uuid()).max(12),
+  dataCollection: z.string().trim().min(20).max(1_200),
+  expectedResult: z.string().trim().min(20).max(1_000),
+  id: z.string().uuid(),
+  objectiveId: z.string().uuid(),
+  revision: z.number().int().positive(),
+  sourceRevision: z.number().int().positive(),
+  status: validationStatusSchema,
+  updatedBy: z.enum(["ai", "user", "system"]),
+  warnings: z.array(z.string().trim().min(1).max(500)).max(6),
+});
+
+export type MethodologyRow = z.infer<typeof methodologyRowSchema>;
 
 export const traceLinkSchema = z.object({
   fromElementId: z.string().uuid(),
@@ -199,6 +233,8 @@ export const researchWorkflowContentSchema = z.object({
   elementVersions: z.array(elementVersionSchema).max(300).default([]),
   elements: z.array(validatedElementSchema).max(120).default([]),
   knowledgeSuggestions: z.array(knowledgeSuggestionSchema).max(20).default([]),
+  methodologyClassification: methodologyClassificationSchema.nullable().default(null),
+  methodologyRows: z.array(methodologyRowSchema).max(6).default([]),
   referenceArchive: z.array(discoveryReferenceSchema).max(100).default([]),
   traceLinks: z.array(traceLinkSchema).max(240).default([]),
 });
@@ -227,6 +263,8 @@ export const EMPTY_WORKFLOW_CONTENT: ResearchWorkflowContent = {
   elementVersions: [],
   elements: [],
   knowledgeSuggestions: [],
+  methodologyClassification: null,
+  methodologyRows: [],
   referenceArchive: [],
   traceLinks: [],
 };

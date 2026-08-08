@@ -326,7 +326,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     const saved = await saveWorkflow(workflow, content, "validating_development", "validating_development", sourceRevision, supabase, userId);
     return saved ? NextResponse.json({ message: "Capítulo 2 validado.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
-  content = researchWorkflowContentSchema.parse({ ...content, activeStep: null });
+  content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
   const saved = await saveWorkflow(workflow, content, "validating_methodology", "validating_methodology", sourceRevision, supabase, userId);
   return saved ? NextResponse.json({ message: "Capítulo 4 validado.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }

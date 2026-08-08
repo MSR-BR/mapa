@@ -1,6 +1,6 @@
 # Change 013 — Metodologia e resultados esperados
 
-Status: especificada; depende das Changes 011 e 012.
+Status: concluída em 08/08/2026; depende das Changes 011 e 012.
 
 ## Objetivo
 
@@ -46,12 +46,12 @@ O Mapa sugere uma classificação coerente e editável:
 
 ## Critérios de aceite
 
-- [ ] Todo objetivo específico possui coleta, análise e resultado esperado.
-- [ ] Coleta e análise são metodologicamente compatíveis.
-- [ ] Nenhum resultado esperado é redigido como fato já observado.
-- [ ] A classificação metodológica é editável e rastreada.
-- [ ] O título deriva do objetivo geral e pode ser alterado pelo usuário.
-- [ ] A tabela permanece utilizável em telas pequenas e por teclado.
+- [x] Todo objetivo específico possui coleta, análise e resultado esperado.
+- [x] Coleta e análise são metodologicamente compatíveis.
+- [x] Nenhum resultado esperado é redigido como fato já observado.
+- [x] A classificação metodológica é editável e rastreada.
+- [x] O título deriva do objetivo geral e pode ser alterado pelo usuário.
+- [x] A tabela permanece utilizável em telas pequenas e por teclado.
 
 ## Testes
 
@@ -60,4 +60,3 @@ O Mapa sugere uma classificação coerente e editável:
 - Resultados factuais ou inventados são bloqueados/sinalizados.
 - Edição, autosave, conflito de versão e restauração.
 - Acessibilidade semântica da tabela e alternativa mobile.
-

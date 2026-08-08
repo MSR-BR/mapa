@@ -288,7 +288,8 @@ test("derives project ownership from verified claims", async () => {
   assert.match(projectAuth, /claims\?\.sub/);
   assert.match(actions, /owner_id: userId/);
   assert.match(actions, /createResearchWorkflow/);
-  assert.match(actions, /workflow_version: autoGenerate \? 2 : 1/);
+  assert.match(actions, /isResearchMapV2EnabledForClaims/);
+  assert.match(actions, /workflow_version: useResearchMapV2 \? 2 : 1/);
   assert.match(actions, /Nova proposta de pesquisa/);
   assert.doesNotMatch(actions, /formData\.get\("owner/i);
   assert.match(actions, /\.eq\("owner_id", userId\)/);
@@ -298,6 +299,7 @@ test("implements duplicate and confirmed soft-delete operations", async () => {
   const actions = await readProjectFile("modules/projects/actions.ts");
 
   assert.match(actions, /status: "draft"/);
+  assert.match(actions, /duplicateResearchWorkflow/);
   assert.match(actions, /confirmDelete/);
   assert.match(actions, /deleted_at: now/);
   assert.match(actions, /\.is\("deleted_at", null\)/);

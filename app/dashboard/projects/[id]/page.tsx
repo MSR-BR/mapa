@@ -7,6 +7,8 @@ import { loadGenerationSnapshot } from "@/modules/generation/storage";
 import { ProposalDiscoveryWorkspace } from "@/modules/research-workflow/proposal-discovery-workspace";
 import { ResearchDefinitionWorkspace } from "@/modules/research-workflow/research-definition-workspace";
 import { LiteratureDevelopmentWorkspace } from "@/modules/research-workflow/literature-development-workspace";
+import { MethodologyWorkspace } from "@/modules/research-workflow/methodology-workspace";
+import { FinalMapWorkspace } from "@/modules/research-workflow/final-map-workspace";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string }> }) {
@@ -30,19 +32,23 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, userId, id);
     if (!workflow) notFound();
+    const isMethodologyStage = workflow.state === "validating_methodology";
+    const isFinalMapStage = ["completed", "reviewing_map"].includes(workflow.state);
+    const isChapterPlanningStage = Boolean(workflow.content.discovery?.selectedCandidateId)
+      && (
+        ["literature_topics", "development_topics"].includes(workflow.content.activeStep ?? "")
+        || ["validating_literature", "validating_development"].includes(workflow.state)
+      );
     return (
       <main className="workspace-shell proposal-workspace-shell">
         <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
-        {workflow.content.discovery?.selectedCandidateId && [
-          "literature_topics",
-          "development_topics",
-        ].includes(workflow.content.activeStep ?? "") || [
-          "validating_literature",
-          "validating_development",
-          "validating_methodology",
-        ].includes(workflow.state) ? (
+        {isFinalMapStage ? (
+          <FinalMapWorkspace initialWorkflow={workflow} projectId={project.id} />
+        ) : isMethodologyStage ? (
+          <MethodologyWorkspace initialWorkflow={workflow} projectId={project.id} />
+        ) : isChapterPlanningStage ? (
           <LiteratureDevelopmentWorkspace initialWorkflow={workflow} projectId={project.id} />
         ) : workflow.content.discovery?.selectedCandidateId ? (
           <ResearchDefinitionWorkspace initialWorkflow={workflow} projectId={project.id} />

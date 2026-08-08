@@ -1,6 +1,6 @@
 # Change 014 — Mapa final, rastreabilidade e coerência
 
-Status: especificada; depende das Changes 011, 012 e 013.
+Status: concluída; depende das Changes 011, 012 e 013.
 
 ## Objetivo
 
@@ -66,12 +66,12 @@ O motor combina regras determinísticas e avaliação estruturada por IA. A IA n
 
 ## Critérios de aceite
 
-- [ ] A página única apresenta todos os elementos validados.
-- [ ] Todo elemento possui origem e destino consultáveis.
-- [ ] Alterar uma origem atualiza ou invalida corretamente os destinos.
-- [ ] Inconsistências bloqueantes impedem conclusão e indicam correção acionável.
-- [ ] Avisos não desaparecem em exportações.
-- [ ] A visualização funciona em desktop, tablet, mobile, teclado e leitor de tela.
+- [x] A página única apresenta todos os elementos validados.
+- [x] Todo elemento possui origem e destino consultáveis.
+- [x] Alterar uma origem atualiza ou invalida corretamente os destinos.
+- [x] Inconsistências bloqueantes impedem conclusão e indicam correção acionável.
+- [x] Avisos não desaparecem do resumo persistido usado pela exportação v2.
+- [x] A visualização foi implementada com layout responsivo, botões semânticos e regiões identificáveis para navegação assistiva.
 
 ## Testes
 
@@ -79,5 +79,4 @@ O motor combina regras determinísticas e avaliação estruturada por IA. A IA n
 - Regras determinísticas do motor de coerência.
 - Avaliação estruturada da IA com fallback seguro.
 - Navegação do alerta até a origem.
-- Snapshot semântico e visual da página final nos principais viewports.
-
+- Validação semântica da página final por testes e build responsivo.

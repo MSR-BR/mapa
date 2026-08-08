@@ -18,9 +18,9 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 010 | Descoberta de propostas | Concluída | Prompt pesquisado e seis cards distintos e fundamentados, com integração real validada. |
 | 011 | Problemática e objetivos | Concluída | Etapas 1, 2 e 3 editáveis, versionadas e validadas. |
 | 012 | Capítulos 2 e 4 | Concluída | Etapas 4 e 5 editáveis, rastreáveis e ligadas aos objetivos e à literatura verificável. |
-| 013 | Metodologia e resultados esperados | Planejada | Matriz metodológica completa por objetivo. |
-| 014 | Rastreabilidade e coerência | Planejada | Página final única, grafo de origem/destino e motor de regras. |
-| 015 | Transição e entrega do v2 | Planejada | Legado preservado, dashboard/exportações atualizados e rollout validado. |
+| 013 | Metodologia e resultados esperados | Concluída | Matriz metodológica completa por objetivo, com classificação editável e resultados esperados validados. |
+| 014 | Rastreabilidade e coerência | Concluída | Página final única, grafo de origem/destino e motor de regras. |
+| 015 | Transição e entrega do v2 | Implementada localmente | Legado preservado, dashboard/exportações atualizados; pendente CPD e smoke de produção. |
 
 ## Marcos
 
@@ -31,8 +31,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - M4: MVP validado — concluído.
 - M5: piloto implantado — concluído em ambiente controlado.
 - M6: fluxo conceitual v2 aprovado — pendente.
-- M7: descoberta, problemática e objetivos validados; etapas 4 e 5 pendentes.
-- M8: mapa rastreável e coerente entregue — pendente.
+- M7: descoberta, problemática, objetivos, capítulos, metodologia e resultados esperados validados.
+- M8: mapa rastreável e coerente entregue — concluído.
 - M9: v2 implantado com compatibilidade legada — pendente.
 
 ## Dependências externas

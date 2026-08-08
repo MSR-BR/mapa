@@ -8,10 +8,13 @@ import { deleteProject } from "./actions";
 
 export type DashboardProject = {
   academicArea: string;
+  progress: number | null;
   projectId: string;
+  stageLabel: string;
   statusLabel: string;
   title: string;
   updatedAt: string;
+  workflowVersion: number;
 };
 
 type Props = DashboardProject & {
@@ -22,11 +25,14 @@ type Props = DashboardProject & {
 export function ProjectCardModal({
   academicArea,
   onSelectionChange,
+  progress,
   projectId,
   selected,
+  stageLabel,
   statusLabel,
   title,
   updatedAt,
+  workflowVersion,
 }: Props) {
   const menuRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +87,15 @@ export function ProjectCardModal({
       <span className="project-status">{statusLabel}</span>
       <strong>{title}</strong>
       <span className="project-card-area">{academicArea}</span>
+      <div className="project-card-progress" aria-label={progress === null ? stageLabel : `${stageLabel}, ${progress}% concluído`}>
+        <span>{stageLabel}</span>
+        {progress !== null ? (
+          <>
+            <div aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
+            <b>{progress}%</b>
+          </>
+        ) : <b>v{workflowVersion}</b>}
+      </div>
       <time dateTime={updatedAt}>
         Atualizado em {new Intl.DateTimeFormat("pt-BR").format(new Date(updatedAt))}
       </time>

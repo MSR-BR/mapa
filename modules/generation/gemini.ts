@@ -8,7 +8,10 @@ import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
+import { methodologyPlanInputSchema, type MethodologyPlanInput } from "@/modules/research-workflow/methodology-validation";
+import type { FinalMap } from "@/modules/research-workflow/final-map";
 import {
+  coherenceFindingSchema,
   problemCandidateSchema,
   problemCandidatesSchema,
   type InterpretedDiscovery,
@@ -91,6 +94,33 @@ const generatedChapterTopicsSchema = z.object({
     referenceIds: z.array(z.string().trim().min(1).max(120)).min(1).max(12),
     title: z.string().trim().min(3).max(180),
   })).min(3).max(6),
+});
+
+const generatedMethodologyPlanSchema = z.object({
+  classification: z.object({
+    analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+    approach: z.enum(["Qualitativa", "Quantitativa", "Mista"]),
+    ethicsWarnings: z.array(z.string().trim().min(10).max(400)).max(6),
+    instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+    nature: z.enum(["Básica", "Aplicada"]),
+    objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
+    procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+    rationale: z.string().trim().min(20).max(800),
+  }),
+  rows: z.array(z.object({
+    analysisTreatment: z.string().trim().min(20).max(1_200),
+    associatedTopicIds: z.array(z.string().uuid()).max(12),
+    dataCollection: z.string().trim().min(20).max(1_200),
+    expectedResult: z.string().trim().min(20).max(1_000),
+    objectiveId: z.string().uuid(),
+  })).min(3).max(6),
+  title: z.string().trim().min(3).max(120),
+});
+
+const generatedCoherenceReviewSchema = z.object({
+  findings: z.array(coherenceFindingSchema.omit({ id: true }).extend({
+    severity: z.enum(["warning", "suggestion"]),
+  })).max(8),
 });
 
 function normalizeGeneratedStructure(output: GeneratedStructure) {
@@ -477,6 +507,109 @@ export async function generateDevelopmentTopics(
   const topics = generatedChapterTopicsSchema.parse(output).topics;
   assertGeneratedTopicLinks(topics, new Set(specificObjectives.map((objective) => objective.id)), discovery);
   return topics;
+}
+
+export async function generateMethodologyPlan(
+  problemStatement: string,
+  generalObjective: string,
+  specificObjectives: Array<{ content: string; id: string }>,
+  literatureTopics: ChapterTopicInput[],
+  developmentTopics: ChapterTopicInput[],
+  discovery: ProposalDiscovery,
+  existingRows: MethodologyPlanInput["rows"] = [],
+) {
+  const chapterTopics = [...literatureTopics, ...developmentTopics].map((topic) => ({
+    chapter: literatureTopics.some((item) => item.id === topic.id) ? "Capítulo 2" : "Capítulo 4",
+    id: topic.id,
+    objectiveCoverage: topic.objectiveCoverage,
+    title: topic.title,
+  }));
+  const objectiveIds = new Set(specificObjectives.map((objective) => objective.id));
+  const topicIds = new Set(chapterTopics.map((topic) => topic.id));
+  const existingByObjective = new Map(existingRows.map((row) => [row.objectiveId, row.id]));
+
+  const { output } = await generateText({
+    maxOutputTokens: 5_000,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedMethodologyPlanSchema }),
+    prompt: [
+      "Crie a matriz metodológica de uma proposta de pesquisa em português do Brasil.",
+      "A matriz deve ter exatamente uma linha para cada objetivo específico validado.",
+      "Para cada linha, descreva como as informações/dados serão levantados, como serão analisados/tratados e qual resultado esperado ou impacto é pretendido.",
+      "Resultados esperados são contribuições, produtos intelectuais, sínteses ou impactos pretendidos. Nunca escreva achados como se a pesquisa já tivesse sido executada.",
+      "Classifique a metodologia de modo editável: natureza, objetivos, abordagem, procedimentos, instrumentos, técnicas de análise e avisos éticos.",
+      "A classificação deve ser coerente com os instrumentos e técnicas usados nas linhas.",
+      "Use apenas objectiveId dos objetivos específicos fornecidos e associatedTopicIds dos tópicos dos capítulos 2 e 4 fornecidos.",
+      "Cada linha precisa estar ligada a pelo menos um tópico dos capítulos 2 ou 4.",
+      "Sugira um título final curto derivado do objetivo geral, sem copiar integralmente o objetivo.",
+      "Não invente instituição, amostra, local, período, aprovação ética ou dado sensível ausente. Se houver risco ético ou de acesso, registre como aviso.",
+      `Problemática: ${JSON.stringify(problemStatement)}`,
+      `Objetivo geral: ${JSON.stringify(generalObjective)}`,
+      `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
+      `Tópicos dos capítulos: ${JSON.stringify(chapterTopics)}`,
+      `Evidências verificadas: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.22,
+  });
+
+  const generated = generatedMethodologyPlanSchema.parse(output);
+  const invalidObjectiveIds = generated.rows.map((row) => row.objectiveId).filter((objectiveId) => !objectiveIds.has(objectiveId));
+  if (invalidObjectiveIds.length > 0) throw new Error("A IA relacionou uma linha metodológica a objetivo inexistente.");
+  const invalidTopicIds = generated.rows.flatMap((row) => row.associatedTopicIds).filter((topicId) => !topicIds.has(topicId));
+  if (invalidTopicIds.length > 0) throw new Error("A IA relacionou metodologia a tópico inexistente.");
+
+  return methodologyPlanInputSchema.parse({
+    classification: generated.classification,
+    rows: generated.rows.map((row) => ({
+      ...row,
+      id: existingByObjective.get(row.objectiveId) ?? crypto.randomUUID(),
+      warnings: [],
+    })),
+    title: generated.title,
+  });
+}
+
+export async function reviewFinalMapCoherence(finalMap: FinalMap) {
+  const allowedElementIds = new Set(finalMap.nodes.filter((node) => /^[0-9a-f-]{36}$/i.test(node.id)).map((node) => node.id));
+  const { output } = await generateText({
+    maxOutputTokens: 2_400,
+    model: getGoogleProvider()(GENERATION_MODEL),
+    output: Output.object({ schema: generatedCoherenceReviewSchema }),
+    prompt: [
+      "Revise a coerência de uma proposta de pesquisa já validada por regras determinísticas.",
+      "Escreva em português do Brasil.",
+      "Retorne apenas avisos ou sugestões; não use severity=blocking.",
+      "Não reclassifique nem contradiga as inconsistências determinísticas já listadas.",
+      "Não invente resultados empíricos, instituições, amostras, autores ou fontes.",
+      "Aponte somente problemas acionáveis de alinhamento entre problemática, objetivo geral, objetivos específicos, capítulos, metodologia, resultados esperados e título.",
+      "Use somente elementIds presentes nos nós fornecidos e que sejam UUIDs.",
+      `Nós: ${JSON.stringify(finalMap.nodes.map((node) => ({
+        content: node.content,
+        id: node.id,
+        kind: node.kind,
+        label: node.label,
+        title: node.title,
+      })))}`,
+      `Relações: ${JSON.stringify(finalMap.edges)}`,
+      `Achados determinísticos já existentes: ${JSON.stringify(finalMap.findings.map((finding) => ({
+        message: finding.message,
+        rule: finding.rule,
+        severity: finding.severity,
+      })))}`,
+    ].join("\n"),
+    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    temperature: 0.1,
+  });
+
+  return generatedCoherenceReviewSchema.parse(output).findings
+    .map((finding) => ({
+      ...finding,
+      elementIds: finding.elementIds.filter((id) => allowedElementIds.has(id)).slice(0, 12),
+      id: crypto.randomUUID(),
+      rule: `IA: ${finding.rule}`.slice(0, 120),
+    }))
+    .filter((finding) => finding.elementIds.length > 0);
 }
 
 export async function generateResearchStructure(

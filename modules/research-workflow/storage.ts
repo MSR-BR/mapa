@@ -3,6 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database, Json } from "@/lib/supabase/database.types";
+import { cloneResearchWorkflowContent } from "./clone";
 import {
   EMPTY_WORKFLOW_CONTENT,
   RESEARCH_WORKFLOW_SCHEMA_VERSION,
@@ -74,5 +75,35 @@ export async function createResearchWorkflow(
     .single();
 
   if (error) throw new Error("Não foi possível iniciar o fluxo da pesquisa.");
+  return mapStoredWorkflow(data);
+}
+
+export async function duplicateResearchWorkflow(
+  supabase: SupabaseClient<Database>,
+  ownerId: string,
+  sourceProjectId: string,
+  targetProjectId: string,
+) {
+  const source = await loadResearchWorkflow(supabase, ownerId, sourceProjectId);
+  if (!source) throw new Error("Fluxo original não encontrado.");
+
+  const state = source.state === "completed" ? "reviewing_map" : source.state;
+  const stableState = source.stableState === "completed" ? "reviewing_map" : source.stableState;
+  const { data, error } = await supabase
+    .from("research_workflows")
+    .insert({
+      content: cloneResearchWorkflowContent(source.content) as unknown as Json,
+      owner_id: ownerId,
+      project_id: targetProjectId,
+      schema_version: RESEARCH_WORKFLOW_SCHEMA_VERSION,
+      source_revision: 1,
+      stable_state: stableState,
+      state,
+      validation_state: {},
+    })
+    .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
+    .single();
+
+  if (error) throw new Error("Não foi possível duplicar o fluxo da pesquisa.");
   return mapStoredWorkflow(data);
 }

@@ -7,6 +7,10 @@ import {
   problemCandidatesSchema,
   researchWorkflowContentSchema,
   researchWorkflowSchema,
+  type MethodologyClassification,
+  type MethodologyRow,
+  type ResearchWorkflow,
+  type ValidatedElement,
 } from "../modules/research-workflow/schema";
 import {
   assertWorkflowTransition,
@@ -26,6 +30,28 @@ import {
   validateCompleteObjectiveCoverage,
   type ChapterTopicInput,
 } from "../modules/research-workflow/chapter-validation";
+import {
+  methodologyCompatibilityWarnings,
+  validateMethodologyPlan,
+  type MethodologyPlanInput,
+} from "../modules/research-workflow/methodology-validation";
+import {
+  buildFinalMap,
+  canCompleteFinalMap,
+  finalMapSummary,
+} from "../modules/research-workflow/final-map";
+import { cloneResearchWorkflowContent } from "../modules/research-workflow/clone";
+import {
+  workflowDashboardMeta,
+  workflowDashboardTitle,
+} from "../modules/research-workflow/dashboard";
+import { isResearchMapV2EnabledForClaims } from "../modules/research-workflow/rollout";
+import {
+  createFinalMapDocxExport,
+} from "../modules/export/docx";
+import {
+  createFinalMapPdfExport,
+} from "../modules/export/pdf";
 
 test("accepts the empty versioned workflow foundation", () => {
   const workflow = researchWorkflowSchema.parse({
@@ -49,6 +75,8 @@ test("accepts the empty versioned workflow foundation", () => {
     elementVersions: [],
     elements: [],
     knowledgeSuggestions: [],
+    methodologyClassification: null,
+    methodologyRows: [],
     referenceArchive: [],
     traceLinks: [],
   });
@@ -185,6 +213,7 @@ test("accepts three to six stable specific objectives and detects redundancy", (
 
 const OBJECTIVE_1 = "10000000-0000-4000-8000-000000000001";
 const OBJECTIVE_2 = "10000000-0000-4000-8000-000000000002";
+const OBJECTIVE_3 = "10000000-0000-4000-8000-000000000003";
 
 function makeChapterTopic(
   id: string,
@@ -269,4 +298,346 @@ test("reports objective coverage states and blocks uncovered objectives", () => 
     : topic);
   assert.equal(objectiveCoverageStatus(OBJECTIVE_2, literatureFull, development), "Atendido no Capítulo 2");
   assert.deepEqual(validateCompleteObjectiveCoverage(literatureFull, development, [OBJECTIVE_1, OBJECTIVE_2]), []);
+});
+
+function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): MethodologyPlanInput {
+  return {
+    classification: {
+      analysisTechniques: ["Análise de conteúdo", "Estatística descritiva"],
+      approach: "Mista",
+      ethicsWarnings: ["Avaliar necessidade de aprovação institucional caso haja participantes humanos."],
+      instruments: ["Documentos acadêmicos", "Questionário estruturado"],
+      nature: "Aplicada",
+      objectives: ["Exploratória", "Descritiva"],
+      procedures: ["Pesquisa documental", "Survey"],
+      rationale: "A classificação combina revisão documental e levantamento estruturado para atender aos objetivos validados.",
+    },
+    rows: [
+      {
+        analysisTreatment: "Os dados serão organizados por categorias temáticas e confrontados com a literatura selecionada.",
+        associatedTopicIds: ["40000000-0000-4000-8000-000000000001"],
+        dataCollection: "Serão levantados documentos, artigos e registros acadêmicos relacionados ao primeiro objetivo.",
+        expectedResult: "Espera-se produzir uma síntese conceitual que delimite o fenômeno investigado.",
+        id: "60000000-0000-4000-8000-000000000001",
+        objectiveId: OBJECTIVE_1,
+        warnings: [],
+      },
+      {
+        analysisTreatment: "As respostas serão tratadas por estatística descritiva e interpretação comparativa dos padrões.",
+        associatedTopicIds: ["50000000-0000-4000-8000-000000000001"],
+        dataCollection: "Serão coletadas respostas por questionário estruturado junto ao público definido no projeto.",
+        expectedResult: "Espera-se caracterizar dimensões relevantes para orientar a discussão da proposta.",
+        id: "60000000-0000-4000-8000-000000000002",
+        objectiveId: OBJECTIVE_2,
+        warnings: [],
+      },
+      {
+        analysisTreatment: "Os achados documentais e descritivos serão triangulados para elaborar recomendações coerentes.",
+        associatedTopicIds: ["50000000-0000-4000-8000-000000000002"],
+        dataCollection: "Serão reunidos registros e evidências derivados das etapas anteriores da proposta.",
+        expectedResult: "Espera-se formular recomendações acadêmicas alinhadas ao objetivo geral da pesquisa.",
+        id: "60000000-0000-4000-8000-000000000003",
+        objectiveId: OBJECTIVE_3,
+        warnings: [],
+      },
+    ],
+    title: "Inteligência Artificial e Aprendizagem no Ensino Superior",
+    ...overrides,
+  };
+}
+
+test("validates methodology matrix coverage and expected-result wording", () => {
+  const options = {
+    allowedObjectiveIds: new Set([OBJECTIVE_1, OBJECTIVE_2, OBJECTIVE_3]),
+    allowedTopicIds: new Set([
+      "40000000-0000-4000-8000-000000000001",
+      "50000000-0000-4000-8000-000000000001",
+      "50000000-0000-4000-8000-000000000002",
+    ]),
+    generalObjective: "Analisar a influência da inteligência artificial na aprendizagem no ensino superior.",
+  };
+  assert.deepEqual(validateMethodologyPlan(makeMethodologyPlan(), options).errors, []);
+  assert.match(validateMethodologyPlan(makeMethodologyPlan({
+    rows: makeMethodologyPlan().rows.map((row, index) => index === 2 ? { ...row, objectiveId: OBJECTIVE_1 } : row),
+  }), options).errors.join(" "), /objetivo específico/);
+  assert.match(validateMethodologyPlan(makeMethodologyPlan({
+    rows: makeMethodologyPlan().rows.map((row, index) => index === 0
+      ? { ...row, expectedResult: "Foram encontrados resultados conclusivos sobre a aprendizagem." }
+      : row),
+  }), options).errors[0], /já tivesse sido executada/);
+});
+
+test("warns about uncertain methodology compatibility without blocking", () => {
+  const plan = makeMethodologyPlan({
+    classification: {
+      ...makeMethodologyPlan().classification,
+      approach: "Qualitativa",
+      analysisTechniques: ["Estatística inferencial"],
+    },
+    rows: makeMethodologyPlan().rows.map((row, index) => index === 0
+      ? { ...row, analysisTreatment: "Os relatos serão analisados por regressão estatística inferencial.", dataCollection: "Serão realizadas entrevistas semiestruturadas com participantes." }
+      : row),
+  });
+  const warnings = methodologyCompatibilityWarnings(plan.rows, plan.classification);
+  assert.equal(warnings.some((warning) => /entrevistas/.test(warning)), true);
+  assert.equal(warnings.some((warning) => /abordagem qualitativa/.test(warning)), true);
+});
+
+const PROBLEM_ID = "70000000-0000-4000-8000-000000000001";
+const GENERAL_ID = "70000000-0000-4000-8000-000000000002";
+const TITLE_ID = "70000000-0000-4000-8000-000000000003";
+const LITERATURE_1 = "40000000-0000-4000-8000-000000000001";
+const LITERATURE_2 = "40000000-0000-4000-8000-000000000002";
+const LITERATURE_3 = "40000000-0000-4000-8000-000000000003";
+const DEVELOPMENT_1 = "50000000-0000-4000-8000-000000000001";
+const DEVELOPMENT_2 = "50000000-0000-4000-8000-000000000002";
+const DEVELOPMENT_3 = "50000000-0000-4000-8000-000000000003";
+
+function validatedElement(id: string, type: ValidatedElement["type"], approvedContent: string, referenceIds: string[] = []): ValidatedElement {
+  return {
+    approvedContent,
+    id,
+    proposedContent: approvedContent,
+    referenceIds,
+    revision: 1,
+    sourceRevision: 1,
+    status: "validated",
+    type,
+    updatedBy: "user",
+  };
+}
+
+function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): ResearchWorkflow {
+  const candidates = Array.from({ length: 6 }, (_, index) => makeCandidate(index + 1));
+  const methodologyPlan = makeMethodologyPlan();
+  const methodologyClassification: MethodologyClassification = {
+    ...methodologyPlan.classification,
+    revision: 1,
+    sourceRevision: 1,
+    status: "validated",
+    updatedBy: "ai",
+  };
+  const methodologyRows: MethodologyRow[] = methodologyPlan.rows.map((row) => ({
+    ...row,
+    revision: 1,
+    sourceRevision: 1,
+    status: "validated",
+    updatedBy: "ai",
+  }));
+  return researchWorkflowSchema.parse({
+    content: {
+      activeStep: null,
+      chapterTopicDetails: [
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, topicId: LITERATURE_1 },
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, topicId: LITERATURE_2 },
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_3 }], order: 3, topicId: LITERATURE_3 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, topicId: DEVELOPMENT_1 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, topicId: DEVELOPMENT_2 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: true, objectiveCoverage: [{ degree: "full", objectiveId: OBJECTIVE_3 }], order: 3, topicId: DEVELOPMENT_3 },
+      ],
+      coherenceFindings: [],
+      discovery: {
+        candidates,
+        generatedAt: "2026-08-08T10:00:00.000Z",
+        interpreted: {
+          knowledgeArea: "Educação",
+          knowledgeAreaProposed: true,
+          keywords: ["inteligência artificial", "aprendizagem", "ensino superior"],
+          researchQuery: "inteligência artificial aprendizagem ensino superior",
+          title: "IA e aprendizagem",
+        },
+        originalPrompt: "Crie um roteiro de pesquisa sobre inteligência artificial e aprendizagem no ensino superior.",
+        references: Array.from({ length: 6 }, (_, index) => ({
+          authors: [`Autor ${index + 1}`],
+          doi: null,
+          referenceId: `ref-${index + 1}`,
+          title: `Fonte verificável ${index + 1}`,
+          url: `https://example.com/ref-${index + 1}`,
+          year: 2024,
+        })),
+        reportId: "rs-test",
+        selectedCandidateId: candidates[0].id,
+        warnings: [],
+      },
+      elementVersions: [],
+      elements: [
+        validatedElement(PROBLEM_ID, "problem_statement", "Como a inteligência artificial influencia a aprendizagem no ensino superior?", ["ref-1"]),
+        validatedElement(GENERAL_ID, "general_objective", "Analisar a influência da inteligência artificial na aprendizagem no ensino superior.", ["ref-1"]),
+        validatedElement(OBJECTIVE_1, "specific_objective", "Caracterizar o uso da inteligência artificial por estudantes do ensino superior.", ["ref-1"]),
+        validatedElement(OBJECTIVE_2, "specific_objective", "Identificar dimensões da aprendizagem associadas à inteligência artificial no ensino superior.", ["ref-1"]),
+        validatedElement(OBJECTIVE_3, "specific_objective", "Propor recomendações para integrar inteligência artificial à aprendizagem no ensino superior.", ["ref-1"]),
+        validatedElement(LITERATURE_1, "literature_topic", "Fundamentos conceituais da inteligência artificial na educação", ["ref-1"]),
+        validatedElement(LITERATURE_2, "literature_topic", "Aprendizagem no ensino superior mediada por tecnologias", ["ref-1"]),
+        validatedElement(LITERATURE_3, "literature_topic", "Evidências acadêmicas sobre uso educacional de IA", ["ref-1"]),
+        validatedElement(DEVELOPMENT_1, "development_topic", "Contexto institucional do uso de IA no ensino superior", ["ref-1"]),
+        validatedElement(DEVELOPMENT_2, "development_topic", "Procedimentos de análise das práticas de aprendizagem", ["ref-1"]),
+        validatedElement(DEVELOPMENT_3, "development_topic", "Síntese propositiva para integração da IA à aprendizagem", ["ref-1"]),
+        validatedElement(TITLE_ID, "research_title", "Inteligência Artificial e Aprendizagem no Ensino Superior", ["ref-1"]),
+      ],
+      knowledgeSuggestions: [],
+      methodologyClassification,
+      methodologyRows,
+      referenceArchive: [],
+      traceLinks: [
+        { fromElementId: PROBLEM_ID, rule: "Problemática orienta o objetivo geral.", sourceRevision: 1, toElementId: GENERAL_ID },
+        { fromElementId: GENERAL_ID, rule: "Objetivo geral se desdobra em objetivo específico.", sourceRevision: 1, toElementId: OBJECTIVE_1 },
+        { fromElementId: GENERAL_ID, rule: "Objetivo geral se desdobra em objetivo específico.", sourceRevision: 1, toElementId: OBJECTIVE_2 },
+        { fromElementId: GENERAL_ID, rule: "Objetivo geral se desdobra em objetivo específico.", sourceRevision: 1, toElementId: OBJECTIVE_3 },
+        { fromElementId: OBJECTIVE_1, rule: "Objetivo específico fundamenta tópico.", sourceRevision: 1, toElementId: LITERATURE_1 },
+        { fromElementId: OBJECTIVE_2, rule: "Objetivo específico fundamenta tópico.", sourceRevision: 1, toElementId: LITERATURE_2 },
+        { fromElementId: OBJECTIVE_3, rule: "Objetivo específico fundamenta tópico.", sourceRevision: 1, toElementId: LITERATURE_3 },
+        { fromElementId: OBJECTIVE_1, rule: "Objetivo específico orienta desenvolvimento.", sourceRevision: 1, toElementId: DEVELOPMENT_1 },
+        { fromElementId: OBJECTIVE_2, rule: "Objetivo específico orienta desenvolvimento.", sourceRevision: 1, toElementId: DEVELOPMENT_2 },
+        { fromElementId: OBJECTIVE_3, rule: "Objetivo específico orienta desenvolvimento.", sourceRevision: 1, toElementId: DEVELOPMENT_3 },
+        { fromElementId: OBJECTIVE_1, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[0].id },
+        { fromElementId: OBJECTIVE_2, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[1].id },
+        { fromElementId: OBJECTIVE_3, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[2].id },
+        { fromElementId: GENERAL_ID, rule: "Objetivo geral sustenta o título final.", sourceRevision: 1, toElementId: TITLE_ID },
+      ],
+    },
+    ownerId: "16ba4d4e-bf5b-49d6-8f65-8a678103194b",
+    projectId: "f5ce3156-7832-4717-8268-12dcf81fe1c0",
+    revision: 7,
+    schemaVersion: RESEARCH_WORKFLOW_SCHEMA_VERSION,
+    sourceRevision: 3,
+    stableState: "reviewing_map",
+    state: "reviewing_map",
+    updatedAt: "2026-08-08T10:00:00.000Z",
+    ...overrides,
+  });
+}
+
+test("builds a final map with traceability and completion gate", () => {
+  const finalMap = buildFinalMap(makeCompleteWorkflow());
+  assert.equal(canCompleteFinalMap(finalMap), true);
+  assert.equal(finalMap.findings.filter((finding) => finding.severity === "blocking").length, 0);
+  assert.ok(finalMap.nodes.some((node) => node.kind === "prompt"));
+  assert.ok(finalMap.nodes.some((node) => node.kind === "reference"));
+  assert.ok(finalMap.edges.some((edge) => edge.label === "originou proposta escolhida"));
+  assert.match(finalMapSummary(finalMap), /Objetivos específicos:/);
+  assert.match(finalMapSummary(finalMap), /Referências verificáveis:/);
+});
+
+test("keeps final map warnings in the persisted summary for later exports", () => {
+  const workflow = makeCompleteWorkflow();
+  workflow.content.coherenceFindings = [{
+    elementIds: [GENERAL_ID],
+    id: "80000000-0000-4000-8000-000000000001",
+    message: "O objetivo geral pode explicitar melhor o recorte temporal.",
+    resolution: "Ajuste o objetivo geral se quiser maior precisão.",
+    rule: "IA: precisão do recorte",
+    severity: "warning",
+  }];
+  assert.match(finalMapSummary(buildFinalMap(workflow)), /recorte temporal/);
+});
+
+test("blocks final map completion when a reference was not verified by Research Starter", () => {
+  const workflow = makeCompleteWorkflow();
+  workflow.content.elements = workflow.content.elements.map((item) => item.id === LITERATURE_1
+    ? { ...item, referenceIds: ["referencia-inventada"] }
+    : item);
+  const finalMap = buildFinalMap(workflow);
+  assert.equal(canCompleteFinalMap(finalMap), false);
+  assert.equal(finalMap.findings.some((finding) => /referência/i.test(finding.message) && finding.severity === "blocking"), true);
+});
+
+test("blocks final map completion when methodology rows do not cover every objective", () => {
+  const workflow = makeCompleteWorkflow();
+  workflow.content.methodologyRows = workflow.content.methodologyRows.slice(0, 2);
+  const finalMap = buildFinalMap(workflow);
+  assert.equal(canCompleteFinalMap(finalMap), false);
+  assert.equal(finalMap.findings.some((finding) => /matriz metodológica/i.test(finding.message) && finding.severity === "blocking"), true);
+});
+
+test("clones v2 workflow content with independent IDs and traceability", () => {
+  const workflow = makeCompleteWorkflow();
+  const cloned = cloneResearchWorkflowContent(workflow.content);
+  assert.notEqual(cloned.discovery?.selectedCandidateId, workflow.content.discovery?.selectedCandidateId);
+  assert.notEqual(cloned.elements[0].id, workflow.content.elements[0].id);
+  assert.notEqual(cloned.methodologyRows[0].id, workflow.content.methodologyRows[0].id);
+  assert.equal(cloned.traceLinks.length, workflow.content.traceLinks.length);
+  assert.equal(cloned.coherenceFindings.length, 0);
+});
+
+test("summarizes v2 dashboard cards without exposing the raw prompt as title", () => {
+  const workflow = makeCompleteWorkflow();
+  const meta = workflowDashboardMeta(workflow, { area: null, title: "Nova proposta de pesquisa" });
+  assert.equal(meta.progress, 88);
+  assert.equal(meta.stageLabel, "Revisão final");
+  assert.equal(meta.title, "Inteligência Artificial e Aprendizagem no Ensino Superior");
+
+  const draft = researchWorkflowSchema.parse({
+    ...workflow,
+    content: researchWorkflowContentSchema.parse({
+      ...EMPTY_WORKFLOW_CONTENT,
+      discovery: {
+        candidates: Array.from({ length: 6 }, (_, index) => makeCandidate(index + 1)),
+        generatedAt: "2026-08-08T10:00:00.000Z",
+        interpreted: {
+          knowledgeArea: "Educação",
+          knowledgeAreaProposed: true,
+          keywords: ["inteligência artificial", "aprendizagem", "ensino superior"],
+          researchQuery: "inteligência artificial aprendizagem ensino superior",
+          title: "IA e aprendizagem",
+        },
+        originalPrompt: "Crie uma frase enorme que não deve virar exatamente o título do card do projeto.",
+        references: [{
+          authors: ["Autora"],
+          doi: null,
+          referenceId: "ref-1",
+          title: "Fonte verificável",
+          url: "https://example.com/ref-1",
+          year: 2024,
+        }],
+        reportId: "rs-test",
+        selectedCandidateId: null,
+        warnings: [],
+      },
+    }),
+    state: "choosing_problem",
+    stableState: "choosing_problem",
+  });
+  assert.equal(workflowDashboardTitle(draft, "Nova proposta de pesquisa"), "IA e aprendizagem");
+});
+
+test("supports server-side rollout control for v2 creation", () => {
+  const previousRollout = process.env.MAPA_V2_ROLLOUT;
+  const previousEmails = process.env.MAPA_V2_ALLOWED_EMAILS;
+  try {
+    process.env.MAPA_V2_ROLLOUT = "disabled";
+    assert.equal(isResearchMapV2EnabledForClaims({ email: "mario.reis.junior@gmail.com" }), false);
+    process.env.MAPA_V2_ROLLOUT = "admin_only";
+    process.env.MAPA_V2_ALLOWED_EMAILS = "mario.reis.junior@gmail.com";
+    assert.equal(isResearchMapV2EnabledForClaims({ email: "mario.reis.junior@gmail.com" }), true);
+    assert.equal(isResearchMapV2EnabledForClaims({ email: "outra@example.com" }), false);
+  } finally {
+    if (previousRollout === undefined) delete process.env.MAPA_V2_ROLLOUT;
+    else process.env.MAPA_V2_ROLLOUT = previousRollout;
+    if (previousEmails === undefined) delete process.env.MAPA_V2_ALLOWED_EMAILS;
+    else process.env.MAPA_V2_ALLOWED_EMAILS = previousEmails;
+  }
+});
+
+test("creates DOCX and PDF exports for the v2 final map preset", async () => {
+  const finalMap = buildFinalMap(makeCompleteWorkflow());
+  const input = {
+    draft: false,
+    exportedAt: new Date("2026-08-08T10:00:00-03:00"),
+    finalMap,
+    project: {
+      academic_level: "masters",
+      keywords: ["inteligência artificial", "aprendizagem", "ensino superior"],
+      knowledge_area: "Educação",
+      problem_statement: "Como a inteligência artificial influencia a aprendizagem no ensino superior?",
+      theme: "IA no ensino superior",
+      title: "Inteligência Artificial e Aprendizagem",
+    },
+    revision: 7,
+  };
+  const [docx, pdf] = await Promise.all([
+    createFinalMapDocxExport(input),
+    createFinalMapPdfExport(input),
+  ]);
+  assert.equal(docx.subarray(0, 2).toString(), "PK");
+  assert.equal(pdf.subarray(0, 4).toString(), "%PDF");
 });

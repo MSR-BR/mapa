@@ -4,10 +4,10 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Fase: MVP v1 concluído; descoberta, problemática e objetivos do v2 concluídos.
+- Fase: MVP v1 concluído; fluxo v2 implementado localmente até transição/exportação.
 - Código da aplicação: o fluxo v1 permanece disponível para projetos legados; novos prompts iniciam o fluxo v2.
-- Próximo gate: revisão e aprovação explícita da Change 013.
-- Direção do v2: prompt geral, seis propostas assistidas por IA e Research Starter, validação progressiva, matriz metodológica e mapa final rastreável.
+- Próximo gate: CPD, preview e smoke de produção da Change 015.
+- Direção do v2: prompt geral, seis propostas assistidas por IA e Research Starter, validação progressiva, matriz metodológica, mapa final rastreável e transição segura para produção.
 - Integrações confirmadas: Gemini no backend, Research Starter v1 e Supabase do Mapa limitado ao Project Ref documentado.
 
 ## Ordem de leitura

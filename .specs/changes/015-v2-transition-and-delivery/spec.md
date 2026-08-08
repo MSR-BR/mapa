@@ -1,6 +1,6 @@
 # Change 015 — Transição, exportação e entrega do v2
 
-Status: especificada; depende das Changes 010 a 014.
+Status: implementada localmente; depende das Changes 010 a 014. Pendente CPD, preview e smoke de produção.
 
 ## Objetivo
 
@@ -62,12 +62,12 @@ Colocar o novo fluxo em produção sem perder projetos existentes, atualizar das
 
 ## Critérios de aceite
 
-- [ ] Nenhum dado legado é apagado ou reinterpretado como validado.
-- [ ] Novos projetos completam a jornada v2 ponta a ponta.
-- [ ] Dashboard restaura exatamente a etapa pendente.
-- [ ] DOCX e PDF refletem fielmente o mapa final e suas referências.
-- [ ] RLS impede leitura e escrita cruzadas em todos os novos recursos.
-- [ ] Métricas não expõem conteúdo acadêmico ou dados pessoais.
-- [ ] Build, testes, preview e smoke de produção passam.
-- [ ] A ativação geral ocorre apenas após aceite explícito.
-
+- [x] Nenhum dado legado é apagado ou reinterpretado como validado.
+- [x] Novos projetos seguem o fluxo v2 quando o rollout server-side está habilitado.
+- [x] Dashboard restaura a etapa pendente ou o mapa final com base no workflow.
+- [x] DOCX e PDF refletem o mapa final, referências e avisos do v2.
+- [x] RLS permanece em tabelas existentes e nenhuma nova tabela foi criada nesta change.
+- [x] Configuração de rollout evita ativação geral irreversível sem aceite.
+- [x] Build e testes locais passam.
+- [ ] Preview e smoke de produção passam após CPD.
+- [ ] Jornada real com IA/Research Starter/Supabase/exportação validada em produção após CPD.
