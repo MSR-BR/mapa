@@ -1,6 +1,6 @@
 # Change 015 — Transição, exportação e entrega do v2
 
-Status: implementada localmente; depende das Changes 010 a 014. Pendente CPD, preview e smoke de produção.
+Status: implantada em produção; depende das Changes 010 a 014. CPD e smoke público concluídos. Validação autenticada real depende de sessão/usuários de teste configurados.
 
 ## Objetivo
 
@@ -69,5 +69,5 @@ Colocar o novo fluxo em produção sem perder projetos existentes, atualizar das
 - [x] RLS permanece em tabelas existentes e nenhuma nova tabela foi criada nesta change.
 - [x] Configuração de rollout evita ativação geral irreversível sem aceite.
 - [x] Build e testes locais passam.
-- [ ] Preview e smoke de produção passam após CPD.
-- [ ] Jornada real com IA/Research Starter/Supabase/exportação validada em produção após CPD.
+- [x] Preview e smoke de produção passam após CPD.
+- [ ] Jornada real autenticada com IA/Research Starter/Supabase/exportação validada em produção após CPD.

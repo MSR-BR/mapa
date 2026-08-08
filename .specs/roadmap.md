@@ -20,7 +20,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 012 | Capítulos 2 e 4 | Concluída | Etapas 4 e 5 editáveis, rastreáveis e ligadas aos objetivos e à literatura verificável. |
 | 013 | Metodologia e resultados esperados | Concluída | Matriz metodológica completa por objetivo, com classificação editável e resultados esperados validados. |
 | 014 | Rastreabilidade e coerência | Concluída | Página final única, grafo de origem/destino e motor de regras. |
-| 015 | Transição e entrega do v2 | Implementada localmente | Legado preservado, dashboard/exportações atualizados; pendente CPD e smoke de produção. |
+| 015 | Transição e entrega do v2 | Implantada em produção | Legado preservado, dashboard/exportações atualizados, CPD e smoke público concluídos; pendente apenas validação autenticada real. |
 
 ## Marcos
 
@@ -30,10 +30,10 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - M3: estrutura gerada e editável — concluído.
 - M4: MVP validado — concluído.
 - M5: piloto implantado — concluído em ambiente controlado.
-- M6: fluxo conceitual v2 aprovado — pendente.
+- M6: fluxo conceitual v2 aprovado — concluído.
 - M7: descoberta, problemática, objetivos, capítulos, metodologia e resultados esperados validados.
 - M8: mapa rastreável e coerente entregue — concluído.
-- M9: v2 implantado com compatibilidade legada — pendente.
+- M9: v2 implantado com compatibilidade legada — concluído em produção; validação autenticada real permanece como checklist operacional.
 
 ## Dependências externas
 
