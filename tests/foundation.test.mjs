@@ -417,10 +417,12 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /generateLiteratureTopics/);
   assert.match(route, /generateDevelopmentTopics/);
   assert.match(route, /fetchResearchStarterReport/);
+  assert.match(route, /topics: undefined/);
   assert.match(route, /referenceArchive/);
   assert.match(route, /\.eq\("revision", workflow\.revision\)/);
   assert.match(route, /validateCompleteObjectiveCoverage/);
   assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /requestBody\.topics = topics/);
   assert.match(workspace, /Cobertura dos objetivos/);
   assert.match(workspace, /para cima/);
   assert.match(workspace, /referências associadas/);

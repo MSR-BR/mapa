@@ -67,8 +67,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
     setMessage(null);
     setErrors([]);
     try {
+      const requestBody: Record<string, unknown> = { action, revision: workflow.revision, step: chapter, ...extra };
+      if (action === "save" || action === "validate") requestBody.topics = topics;
       const response = await fetch(`/api/projects/${projectId}/chapters`, {
-        body: JSON.stringify({ action, revision: workflow.revision, step: chapter, topics, ...extra }),
+        body: JSON.stringify(requestBody),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });

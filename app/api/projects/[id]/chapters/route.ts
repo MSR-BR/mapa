@@ -186,7 +186,14 @@ async function generatedLiteratureTopics(
 
 export async function POST(request: Request, routeContext: { params: Promise<{ id: string }> }) {
   const { id } = await routeContext.params;
-  const parsed = requestSchema.safeParse(await request.json().catch(() => null));
+  const requestBody = await request.json().catch(() => null);
+  const normalizedRequestBody = requestBody
+    && typeof requestBody === "object"
+    && "action" in requestBody
+    && !["save", "validate"].includes(String(requestBody.action))
+    ? { ...requestBody, topics: undefined }
+    : requestBody;
+  const parsed = requestSchema.safeParse(normalizedRequestBody);
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
   const { supabase, userId } = await requireAuthenticatedUser();
   const workflow = await loadResearchWorkflow(supabase, userId, id);
