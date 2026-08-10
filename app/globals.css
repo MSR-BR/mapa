@@ -152,6 +152,9 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .project-selection-toolbar button { min-height: 2.45rem; }
 .project-selection-toolbar button:disabled { cursor: not-allowed; opacity: 0.5; }
 .integration-message { margin: 0.75rem 0 0; color: #8a2922; font-size: 0.85rem; }
+.continue-project-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; border: 1px solid #bdd2c8; border-radius: 1.15rem; padding: 1.1rem; background: linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(237 248 242 / 84%)); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 6%); }
+.continue-project-card h2 { max-width: 28rem; margin: 0.25rem 0; color: #172820; font-size: clamp(1.15rem, 3vw, 1.6rem); line-height: 1.15; letter-spacing: -0.035em; }
+.continue-project-card span { color: #56685f; font-size: 0.82rem; }
 .project-dialog { width: min(calc(100% - 2rem), 32rem); border: 1px solid var(--border); border-radius: 1.35rem; padding: clamp(1.4rem, 5vw, 2.4rem); background: var(--surface); color: var(--foreground); box-shadow: 0 2rem 6rem rgb(7 17 13 / 28%); }
 .project-dialog::backdrop { background: rgb(9 17 14 / 58%); backdrop-filter: blur(8px); }
 .project-dialog h2 { max-width: 24ch; margin: 0.45rem 0 0; font-size: clamp(1.5rem, 5vw, 2.2rem); line-height: 1.08; letter-spacing: -0.045em; }
@@ -337,6 +340,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .topic-reference-picker, .general-alignment { grid-column: 2; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
 .topic-reference-picker summary { color: #35614d; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
 .topic-reference-picker label { display: flex; align-items: start; gap: 0.45rem; margin-top: 0.5rem; color: #5f7168; font-size: 0.72rem; line-height: 1.35; }
+.chapter-topic-editor input[type="checkbox"], .general-alignment input[type="checkbox"], .topic-reference-picker input[type="checkbox"], .methodology-classification input[type="checkbox"], .methodology-topic-links input[type="checkbox"] { flex: 0 0 auto; width: 1rem; min-width: 1rem; height: 1rem; margin-top: 0.1rem; border-radius: 0.25rem; padding: 0; accent-color: var(--accent); }
 .general-alignment { display: grid; gap: 0.6rem; }
 .general-alignment label { display: flex; align-items: center; gap: 0.45rem; color: #40574c; font-size: 0.76rem; font-weight: 750; }
 .remove-topic { grid-column: 2; justify-self: end; border: 0; background: transparent; color: #8a443d; font: inherit; font-size: 0.7rem; font-weight: 750; cursor: pointer; }
@@ -345,6 +349,15 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .literature-optimizer > button { border-color: #7aa58f; color: #285f45; }
 .literature-optimizer > form { display: flex; width: min(100%, 48rem); align-items: end; gap: 0.6rem; border: 1px solid #c9d8d1; border-radius: 0.9rem; padding: 0.8rem; background: white; }
 .literature-optimizer label { display: grid; flex: 1; gap: 0.35rem; color: #53675d; font-size: 0.72rem; font-weight: 800; }
+.workflow-references-panel { display: grid; gap: 0.9rem; border: 1px solid #c8d8d0; border-radius: 1rem; padding: 1rem; background: rgb(255 255 255 / 72%); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 5%); }
+.workflow-references-panel h3 { margin: 0.2rem 0 0; color: #172820; font-size: clamp(1.05rem, 2.5vw, 1.35rem); letter-spacing: -0.03em; }
+.workflow-references-panel > div > span { color: #65766e; font-size: 0.78rem; }
+.workflow-references-panel ol { display: grid; gap: 0.65rem; margin: 0; padding-left: 1.2rem; }
+.workflow-references-panel li { border-left: 3px solid #d4e1dc; padding: 0.15rem 0 0.15rem 0.75rem; color: #53665d; font-size: 0.78rem; line-height: 1.4; }
+.workflow-references-panel li.associated { border-left-color: var(--accent); }
+.workflow-references-panel li b { display: block; width: fit-content; margin-bottom: 0.25rem; border-radius: 999px; padding: 0.14rem 0.45rem; background: #eef7f2; color: var(--accent); font-size: 0.62rem; text-transform: uppercase; }
+.workflow-references-panel li a, .workflow-references-panel li strong { display: block; color: #183529; font-weight: 800; }
+.workflow-references-panel li span { display: block; margin-top: 0.25rem; color: #6b7a73; font-size: 0.72rem; }
 .chapter-complete-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .chapter-complete-grid > div { border: 1px solid #cfddd6; border-radius: 0.9rem; padding: 1rem; background: var(--surface); }
 .chapter-complete-grid span { color: var(--accent); font-size: 0.72rem; font-weight: 850; text-transform: uppercase; }
@@ -354,7 +367,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .methodology-title-editor, .methodology-classification, .methodology-row { border: 1px solid #c8d8d0; border-radius: 1rem; background: var(--surface); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 5%); }
 .methodology-title-editor { padding: 1rem; }
 .methodology-title-editor label, .methodology-classification label, .methodology-row label { display: grid; gap: 0.45rem; color: #52645b; font-size: 0.72rem; font-weight: 800; }
-.methodology-title-editor input, .methodology-classification input, .methodology-classification select, .methodology-classification textarea, .methodology-row textarea { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.7rem; padding: 0.7rem 0.8rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
+.methodology-title-editor input, .methodology-classification input:not([type="checkbox"]), .methodology-classification select, .methodology-classification textarea, .methodology-row textarea { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.7rem; padding: 0.7rem 0.8rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
 .methodology-classification textarea, .methodology-row textarea { min-height: 6.8rem; resize: vertical; line-height: 1.5; }
 .methodology-classification { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; padding: 1rem; }
 .methodology-classification > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; }
@@ -370,8 +383,10 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .methodology-objective p { margin: 0; color: #4d6057; font-size: 0.78rem; line-height: 1.45; }
 .methodology-topic-links { grid-column: 1 / -1; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
 .methodology-topic-links summary { color: #35614d; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
-.methodology-topic-links label { display: flex; align-items: start; gap: 0.45rem; margin-top: 0.5rem; color: #5f7168; font-size: 0.72rem; line-height: 1.35; }
+.methodology-topic-links label { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: start; gap: 0.35rem 0.45rem; margin-top: 0.5rem; color: #5f7168; font-size: 0.72rem; line-height: 1.35; }
 .methodology-topic-links span { color: var(--accent); font-weight: 850; }
+.methodology-topic-links strong { color: #33493f; font-size: 0.76rem; }
+.methodology-topic-links small { grid-column: 3; color: #73857d; font-size: 0.66rem; line-height: 1.35; }
 .methodology-findings { border: 1px solid #d8c990; border-radius: 0.9rem; padding: 0.9rem 1rem; background: #fffcef; color: #67571d; }
 .methodology-findings ul { margin: 0.55rem 0 0; padding-left: 1.2rem; }
 .methodology-findings .blocking { color: #8a3027; }
@@ -499,6 +514,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 @keyframes skeleton-shimmer { to { background-position-x: -200%; } }
 
 @media (max-width: 600px) {
+  body { overflow-x: hidden; }
   .foundation-shell { align-items: start; padding: 1rem; }
   .foundation-card { padding: 1.5rem; border-radius: 1rem; }
   .status-grid { grid-template-columns: 1fr; }
@@ -519,6 +535,10 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .recent-projects { margin-top: 4rem; }
   .section-heading { align-items: start; flex-direction: column; }
   .project-grid { grid-template-columns: 1fr; }
+  .continue-project-card { align-items: stretch; flex-direction: column; }
+  .continue-project-card .primary-link { width: 100%; }
+  .proposal-workspace-shell { padding-top: 1.6rem; }
+  .proposal-workspace-shell h1 { max-width: 100%; overflow-wrap: anywhere; font-size: clamp(2rem, 12vw, 3.4rem); }
   .skeleton-title { height: 6rem; }
   .generation-heading { flex-direction: column; }
   .generation-actions { width: 100%; }
@@ -546,10 +566,16 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .chapter-topic-order { grid-template-columns: auto auto auto; justify-content: start; }
   .chapter-topic-editor fieldset, .topic-reference-picker, .general-alignment, .remove-topic { grid-column: 1; }
   .literature-optimizer > form { align-items: stretch; flex-direction: column; }
+  .workflow-references-panel { padding: 0.9rem; }
   .chapter-complete-grid { grid-template-columns: 1fr; }
   .methodology-classification, .methodology-classification > div, .methodology-row { grid-template-columns: 1fr; }
+  .methodology-classification { padding: 0.9rem; }
+  .methodology-classification fieldset label { min-height: 2.2rem; }
   .methodology-matrix-head { display: none; }
   .methodology-objective { border-right: 0; border-bottom: 1px solid #e0e9e4; padding-right: 0; padding-bottom: 0.75rem; }
+  .methodology-topic-links label { grid-template-columns: auto minmax(0, 1fr); }
+  .methodology-topic-links span { grid-column: 2; }
+  .methodology-topic-links small { grid-column: 2; }
   .final-map-actions { align-items: stretch; flex-direction: column; }
   .final-map-layout { grid-template-columns: 1fr; }
   .traceability-panel { position: static; }

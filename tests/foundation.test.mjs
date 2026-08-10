@@ -244,15 +244,17 @@ test("defines an owner-scoped projects schema with RLS", async () => {
 });
 
 test("protects the dashboard beyond the auth proxy", async () => {
-  const [dashboard, projectAuth, proxy, authActions, recoveryPage] = await Promise.all([
+  const [dashboard, projectAuth, proxy, proxyEntry, authActions, recoveryPage] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/auth.ts"),
     readProjectFile("lib/supabase/proxy.ts"),
+    readProjectFile("proxy.ts"),
     readProjectFile("modules/auth/actions.ts"),
     readProjectFile("app/(auth)/forgot-password/page.tsx"),
   ]);
 
   assert.match(proxy, /auth\.getClaims\(\)/);
+  assert.match(proxyEntry, /_next\/static/);
   assert.match(dashboard, /requireAuthenticatedUser\(\)/);
   assert.match(projectAuth, /auth\.getClaims\(\)/);
   assert.match(projectAuth, /redirect\("\/login"\)/);
@@ -326,7 +328,8 @@ test("validates project fields against database limits", async () => {
 });
 
 test("implements the approved hybrid dashboard with prompt-first proposal discovery", async () => {
-  const [dashboard, quickStart, discovery, visualDecision, loading, error] = await Promise.all([
+  const [home, dashboard, quickStart, discovery, visualDecision, loading, error] = await Promise.all([
+    readProjectFile("app/page.tsx"),
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/quick-start-form.tsx"),
     readProjectFile("modules/research-workflow/proposal-discovery-workspace.tsx"),
@@ -335,7 +338,10 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
     readProjectFile("app/dashboard/error.tsx"),
   ]);
 
+  assert.match(home, /redirect\("\/dashboard\?continue=1"\)/);
   assert.match(dashboard, /Qual seu tema de pesquisa\?/);
+  assert.match(dashboard, /Continue de onde parou/);
+  assert.match(dashboard, /continueParam === "1"/);
   assert.match(dashboard, /Projetos recentes/);
   assert.match(dashboard, /DashboardProjectGrid/);
   assert.match(quickStart, /useActionState/);
@@ -423,6 +429,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /validateCompleteObjectiveCoverage/);
   assert.match(workspace, /Otimizar literatura/);
   assert.match(workspace, /requestBody\.topics = topics/);
+  assert.match(workspace, /Referências encontradas e associadas/);
   assert.match(workspace, /Cobertura dos objetivos/);
   assert.match(workspace, /para cima/);
   assert.match(workspace, /referências associadas/);
@@ -435,6 +442,19 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 2/);
   assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 4/);
   assert.match(page, /LiteratureDevelopmentWorkspace/);
+});
+
+test("keeps methodology controls responsive and reference-aware", async () => {
+  const [workspace, styles] = await Promise.all([
+    readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
+    readProjectFile("app/globals.css"),
+  ]);
+
+  assert.match(workspace, /referenceById/);
+  assert.match(workspace, /referenceText\(reference\)/);
+  assert.match(styles, /input:not\(\[type="checkbox"\]\)/);
+  assert.match(styles, /methodology-classification input\[type="checkbox"\]/);
+  assert.match(styles, /@media \(max-width: 600px\)/);
 });
 
 test("supports anchored project actions and owner-scoped AI integration", async () => {

@@ -12,6 +12,7 @@ type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
 type Operation = "back" | "initialize" | "regenerate" | "save" | "validate" | null;
 type ClassificationDraft = MethodologyPlanInput["classification"];
 type MethodologyRowDraft = MethodologyPlanInput["rows"][number];
+type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
 
 const EMPTY_CLASSIFICATION: ClassificationDraft = {
   analysisTechniques: ["Análise temática"],
@@ -86,6 +87,11 @@ function listToText(items: string[]) {
   return items.join(", ");
 }
 
+function referenceText(reference: WorkflowReference) {
+  const author = reference.authors[0] ?? "Fonte";
+  return `${author}${reference.year ? ` (${reference.year})` : ""}. ${reference.title ?? reference.referenceId}`;
+}
+
 export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
@@ -105,6 +111,9 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const literatureTopics = readTopics(workflow, "literature");
   const developmentTopics = readTopics(workflow, "development");
   const topics = [...literatureTopics.map((topic) => ({ ...topic, chapterLabel: "Cap. 2" })), ...developmentTopics.map((topic) => ({ ...topic, chapterLabel: "Cap. 4" }))];
+  const references = [...(workflow.content.discovery?.references ?? []), ...workflow.content.referenceArchive]
+    .filter((reference, index, all) => all.findIndex((item) => item.referenceId === reference.referenceId) === index);
+  const referenceById = new Map(references.map((reference) => [reference.referenceId, reference]));
   const currentClassification: ClassificationDraft = {
     ...classification,
     analysisTechniques: textToList(analysisText),
@@ -277,7 +286,13 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
                 {topics.map((topic) => (
                   <label key={topic.id}>
                     <input checked={row.associatedTopicIds.includes(topic.id)} onChange={() => toggleTopic(row, topic.id)} type="checkbox" />
-                    <span>{topic.chapterLabel}</span>{topic.title}
+                    <span>{topic.chapterLabel}</span><strong>{topic.title}</strong>
+                    {topic.referenceIds.length > 0 ? (
+                      <small>{topic.referenceIds.flatMap((referenceId) => {
+                        const reference = referenceById.get(referenceId);
+                        return reference ? [referenceText(reference)] : [];
+                      }).slice(0, 2).join(" · ")}</small>
+                    ) : null}
                   </label>
                 ))}
               </details>

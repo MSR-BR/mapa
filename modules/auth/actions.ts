@@ -17,7 +17,7 @@ function readSafeDestination(formData: FormData) {
   const value = formData.get("next");
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
     ? value
-    : "/dashboard";
+    : "/dashboard?continue=1";
 }
 
 export async function login(
@@ -67,8 +67,8 @@ export async function signUp(
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
+    options: { emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent("/dashboard?continue=1")}` },
     password,
-    options: { emailRedirectTo: `${getAppUrl()}/auth/callback?next=/dashboard` },
   });
 
   if (error) {
@@ -78,7 +78,7 @@ export async function signUp(
     };
   }
 
-  if (data.session) redirect("/dashboard");
+  if (data.session) redirect("/dashboard?continue=1");
 
   return {
     message: "Se o cadastro puder ser concluído, enviaremos uma confirmação por e-mail.",

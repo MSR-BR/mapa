@@ -11,6 +11,13 @@ import type { ResearchWorkflow } from "./schema";
 type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
 type Chapter = "literature" | "development";
 type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
+type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
+
+function referenceText(reference: WorkflowReference) {
+  const authors = reference.authors.slice(0, 2).join(", ");
+  const title = reference.title ?? reference.referenceId;
+  return `${authors || "Fonte"}${reference.year ? ` (${reference.year})` : ""}. ${title}`;
+}
 
 function readTopics(workflow: ResearchWorkflow, chapter: Chapter): ChapterTopicInput[] {
   const type = chapter === "literature" ? "literature_topic" : "development_topic";
@@ -48,6 +55,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   const developmentTopics = chapter === "development" ? topics : readTopics(workflow, "development");
   const references = [...(discovery?.references ?? []), ...workflow.content.referenceArchive]
     .filter((reference, index, all) => all.findIndex((item) => item.referenceId === reference.referenceId) === index);
+  const associatedReferenceIds = new Set([...literatureTopics, ...developmentTopics].flatMap((topic) => topic.referenceIds));
   const savedTopics = readTopics(workflow, chapter);
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
@@ -140,6 +148,13 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
     void submit("optimize", { keywords: searchTerms });
   }
 
+  function associatedTopicTitles(referenceId: string) {
+    return [...literatureTopics, ...developmentTopics]
+      .filter((topic) => topic.referenceIds.includes(referenceId))
+      .map((topic) => topic.title)
+      .slice(0, 3);
+  }
+
   if (workflow.state === "validating_methodology" && workflow.content.activeStep === null) {
     return (
       <section className="definition-complete">
@@ -210,6 +225,29 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
 
       {chapter === "literature" ? (
         <div className="literature-optimizer"><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : null}</div>
+      ) : null}
+
+      {chapter === "literature" && references.length > 0 ? (
+        <aside className="workflow-references-panel" aria-label="Referências encontradas pelo Research Starter">
+          <div>
+            <p className="section-kicker">Research Starter</p>
+            <h3>Referências encontradas e associadas</h3>
+            <span>{associatedReferenceIds.size} associada(s) aos tópicos · {references.length} fonte(s) verificável(is)</span>
+          </div>
+          <ol>
+            {references.map((reference) => {
+              const titles = associatedTopicTitles(reference.referenceId);
+              const associated = titles.length > 0;
+              return (
+                <li className={associated ? "associated" : ""} key={reference.referenceId}>
+                  <b>{associated ? "Associada" : "Encontrada"}</b>
+                  {reference.url ? <a href={reference.url} rel="noreferrer" target="_blank">{referenceText(reference)}</a> : <strong>{referenceText(reference)}</strong>}
+                  <span>{associated ? `Tópicos: ${titles.join("; ")}` : "Ainda não associada a um tópico."}</span>
+                </li>
+              );
+            })}
+          </ol>
+        </aside>
       ) : null}
 
       <div className="definition-actions">

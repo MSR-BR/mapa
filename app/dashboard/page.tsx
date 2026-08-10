@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
@@ -14,8 +16,8 @@ const statusLabels: Record<string, string> = {
   in_progress: "Em andamento",
 };
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ resume?: string }> }) {
-  const { resume } = await searchParams;
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
+  const { resume, continue: continueParam } = await searchParams;
   const { supabase } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
@@ -63,6 +65,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       workflowVersion: project.workflow_version,
     };
   });
+  const continuationProject = projects.find((project) => {
+    const workflow = workflowByProject.get(project.id);
+    return project.workflow_version !== 2 || workflow?.state !== "completed";
+  }) ?? projects[0];
+  const continuationMeta = continuationProject
+    ? dashboardProjects.find((project) => project.projectId === continuationProject.id)
+    : null;
+
+  if (continueParam === "1" && resume !== "1" && continuationProject) {
+    redirect(`/dashboard/projects/${continuationProject.id}`);
+  }
 
   return (
     <main className="workspace-shell dashboard-home">
@@ -76,6 +89,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </section>
 
       <section className="recent-projects" aria-labelledby="recent-projects-title">
+        {continuationMeta ? (
+          <div className="continue-project-card">
+            <div>
+              <p className="section-kicker">Continue de onde parou</p>
+              <h2>{continuationMeta.title}</h2>
+              <span>{continuationMeta.stageLabel} · {continuationMeta.progress ?? 0}% concluído</span>
+            </div>
+            <a className="primary-link" href={`/dashboard/projects/${continuationMeta.projectId}`}>Abrir etapa</a>
+          </div>
+        ) : null}
+
         <div className="section-heading">
           <div>
             <p className="section-kicker">Biblioteca</p>

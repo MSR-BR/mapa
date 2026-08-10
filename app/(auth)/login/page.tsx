@@ -4,7 +4,7 @@ import { AuthForm } from "@/modules/auth/auth-form";
 import { login, loginWithGoogle } from "@/modules/auth/actions";
 
 function safeNext(value: string | undefined) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard?continue=1";
 }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
