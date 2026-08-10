@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
+import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
@@ -61,6 +62,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   async function submit(action: Exclude<Operation, null>, extra: Record<string, unknown> = {}) {
     if (busy) return;
     if (action === "regenerate" && changed && !window.confirm("A nova sugestão substituirá suas edições atuais. Deseja continuar?")) return;
+    if (action === "optimize" && changed && !window.confirm("A otimização buscará nova literatura e substituirá os tópicos atuais após sucesso. Deseja continuar?")) return;
     setOperation(action);
     setMessage(null);
     setErrors([]);
@@ -77,6 +79,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
       applyWorkflow(payload.workflow);
+      if (action === "optimize") setShowOptimize(false);
       setMessage(payload.message ?? null);
       router.refresh();
     } catch (error) {
@@ -124,6 +127,15 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   function toggleReference(topic: ChapterTopicInput, referenceId: string) {
     const exists = topic.referenceIds.includes(referenceId);
     updateTopic(topic.id, { referenceIds: exists ? topic.referenceIds.filter((id) => id !== referenceId) : [...topic.referenceIds, referenceId] });
+  }
+
+  function optimizeLiterature() {
+    const searchTerms = normalizeLiteratureSearchTerms(keywords);
+    if (searchTerms.length === 0) {
+      setErrors(["Informe uma frase, tema ou palavra-chave para buscar nova literatura."]);
+      return;
+    }
+    void submit("optimize", { keywords: searchTerms });
   }
 
   if (workflow.state === "validating_methodology" && workflow.content.activeStep === null) {
@@ -195,7 +207,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
       {message ? <p className="definition-message" role="status">{message}</p> : null}
 
       {chapter === "literature" ? (
-        <div className="literature-optimizer"><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <div><label>Novas palavras-chave<input onChange={(event) => setKeywords(event.target.value)} value={keywords} /></label><button onClick={() => void submit("optimize", { keywords: keywords.split(",").map((keyword) => keyword.trim()).filter(Boolean) })} type="button">Buscar e regenerar</button></div> : null}</div>
+        <div className="literature-optimizer"><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : null}</div>
       ) : null}
 
       <div className="definition-actions">

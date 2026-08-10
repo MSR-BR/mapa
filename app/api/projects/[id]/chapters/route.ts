@@ -23,6 +23,11 @@ import {
   type ResearchWorkflowContent,
   type ValidatedElement,
 } from "@/modules/research-workflow/schema";
+import {
+  buildOptimizedDiscoveryKeywords,
+  buildOptimizedResearchQuery,
+  normalizeLiteratureSearchTerms,
+} from "@/modules/research-workflow/literature-optimization";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
 export const maxDuration = 120;
@@ -31,7 +36,7 @@ const requestSchema = z.object({
   action: z.enum(["back", "concept", "initialize", "optimize", "regenerate", "save", "validate"]),
   conceptId: z.string().uuid().optional(),
   conceptStatus: z.enum(["accepted", "rejected"]).optional(),
-  keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10).optional(),
+  keywords: z.array(z.string().trim().min(2).max(160)).min(1).max(10).optional(),
   revision: z.number().int().positive(),
   step: z.enum(["literature", "development"]),
   topics: chapterTopicsInputSchema.optional(),
@@ -240,16 +245,19 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   if (action === "optimize") {
     if (step !== "literature" || !parsed.data.keywords) return NextResponse.json({ error: "Palavras-chave inválidas." }, { status: 400 });
-    const topic = parsed.data.keywords.join(" ").slice(0, 240);
+    const searchTerms = normalizeLiteratureSearchTerms(parsed.data.keywords);
+    if (searchTerms.length === 0) return NextResponse.json({ error: "Informe uma frase ou palavra-chave para otimizar a literatura." }, { status: 400 });
+    const topic = buildOptimizedResearchQuery(searchTerms);
     let report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-5-years" }, topic });
     if (report.references.length === 0) {
       report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-10-years" }, topic });
     }
     if (report.references.length === 0) return NextResponse.json({ error: "Nenhuma referência verificável foi encontrada. A versão anterior foi preservada." }, { status: 422 });
+    const optimizedKeywords = buildOptimizedDiscoveryKeywords(searchTerms, report, context.discovery.interpreted.keywords);
     const nextDiscovery = proposalDiscoverySchema.parse({
       ...context.discovery,
       generatedAt: new Date().toISOString(),
-      interpreted: { ...context.discovery.interpreted, keywords: parsed.data.keywords, researchQuery: topic },
+      interpreted: { ...context.discovery.interpreted, keywords: optimizedKeywords, researchQuery: topic },
       references: report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors: authors.slice(0, 8), doi, referenceId, title, url, year })),
       reportId: report.reportId,
       warnings: report.warnings.slice(0, 12),

@@ -343,7 +343,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .remove-topic:disabled { opacity: 0.35; }
 .literature-optimizer { display: grid; justify-items: start; gap: 0.7rem; }
 .literature-optimizer > button { border-color: #7aa58f; color: #285f45; }
-.literature-optimizer > div { display: flex; width: min(100%, 48rem); align-items: end; gap: 0.6rem; border: 1px solid #c9d8d1; border-radius: 0.9rem; padding: 0.8rem; background: white; }
+.literature-optimizer > form { display: flex; width: min(100%, 48rem); align-items: end; gap: 0.6rem; border: 1px solid #c9d8d1; border-radius: 0.9rem; padding: 0.8rem; background: white; }
 .literature-optimizer label { display: grid; flex: 1; gap: 0.35rem; color: #53675d; font-size: 0.72rem; font-weight: 800; }
 .chapter-complete-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .chapter-complete-grid > div { border: 1px solid #cfddd6; border-radius: 0.9rem; padding: 1rem; background: var(--surface); }
@@ -545,7 +545,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .chapter-topic-editor { grid-template-columns: 1fr; }
   .chapter-topic-order { grid-template-columns: auto auto auto; justify-content: start; }
   .chapter-topic-editor fieldset, .topic-reference-picker, .general-alignment, .remove-topic { grid-column: 1; }
-  .literature-optimizer > div { align-items: stretch; flex-direction: column; }
+  .literature-optimizer > form { align-items: stretch; flex-direction: column; }
   .chapter-complete-grid { grid-template-columns: 1fr; }
   .methodology-classification, .methodology-classification > div, .methodology-row { grid-template-columns: 1fr; }
   .methodology-matrix-head { display: none; }

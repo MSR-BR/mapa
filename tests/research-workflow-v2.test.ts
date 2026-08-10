@@ -45,6 +45,11 @@ import {
   workflowDashboardMeta,
   workflowDashboardTitle,
 } from "../modules/research-workflow/dashboard";
+import {
+  buildOptimizedDiscoveryKeywords,
+  buildOptimizedResearchQuery,
+  normalizeLiteratureSearchTerms,
+} from "../modules/research-workflow/literature-optimization";
 import { isResearchMapV2EnabledForClaims } from "../modules/research-workflow/rollout";
 import {
   createFinalMapDocxExport,
@@ -255,6 +260,32 @@ test("validates chapter limits, distinct titles and verified links", () => {
     topics[1],
     topics[2],
   ], options)[0], /não verificada/);
+});
+
+test("accepts a single phrase for literature optimization searches", () => {
+  const terms = normalizeLiteratureSearchTerms(" efeito barocalorico ");
+  assert.deepEqual(terms, ["efeito barocalorico"]);
+  assert.equal(buildOptimizedResearchQuery(terms), "efeito barocalorico");
+
+  const keywords = buildOptimizedDiscoveryKeywords(terms, {
+    interpretedTopic: "barocaloric effect in solid-state cooling",
+    query: {
+      correctedTopic: null,
+      interpretedTopic: "barocaloric materials",
+      method: "test",
+      originalTopic: "efeito barocalorico",
+    },
+    summary: {
+      currentState: "A literatura discute materiais barocalóricos e aplicações em refrigeração.",
+      headline: "Materiais barocalóricos para refrigeração",
+      overview: "Síntese de teste.",
+    },
+    topic: "efeito barocalorico",
+  }, ["efeito magnetocalorico"]);
+
+  assert.equal(keywords[0], "efeito barocalorico");
+  assert.equal(keywords.length >= 3, true);
+  assert.equal(keywords.includes("barocaloric"), true);
 });
 
 test("blocks premature results and requires a justified final Chapter 4 topic", () => {
