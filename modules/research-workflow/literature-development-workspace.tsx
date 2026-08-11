@@ -229,7 +229,16 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
       {message ? <p className="definition-message" role="status">{message}</p> : null}
 
       {chapter === "literature" ? (
-        <div className="literature-optimizer"><p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. Se tudo estiver bom, você pode apenas validar e avançar.</p><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : null}</div>
+        <div className="literature-optimizer">
+          <article className="literature-optimizer-card">
+            <div>
+              <p className="section-kicker">Research Starter</p>
+              <h3>Otimizar literatura</h3>
+              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. Se tudo estiver bom, você pode apenas validar e avançar.</p>
+            </div>
+            {showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : <button onClick={() => setShowOptimize(true)} type="button">Otimizar literatura</button>}
+          </article>
+        </div>
       ) : null}
 
       {chapter === "literature" && references.length > 0 ? (
