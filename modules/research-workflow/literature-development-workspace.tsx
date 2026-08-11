@@ -13,6 +13,11 @@ type Chapter = "literature" | "development";
 type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
 
+const COVERAGE_DEGREE_LABELS = {
+  full: "Atende bem",
+  partial: "Ajuda em parte",
+} as const;
+
 function referenceText(reference: WorkflowReference) {
   const authors = reference.authors.slice(0, 2).join(", ");
   const title = reference.title ?? reference.referenceId;
@@ -208,9 +213,9 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
           <article className="chapter-topic-editor" key={topic.id}>
             <div className="chapter-topic-order"><span>{chapterNumber}.{index + 1}</span><button aria-label={`Mover ${topic.title} para cima`} disabled={index === 0} onClick={() => moveTopic(index, -1)} type="button">↑</button><button aria-label={`Mover ${topic.title} para baixo`} disabled={index === topics.length - 1} onClick={() => moveTopic(index, 1)} type="button">↓</button></div>
             <label>Título do tópico<input maxLength={180} onChange={(event) => updateTopic(topic.id, { title: event.target.value })} value={topic.title} /></label>
-            <fieldset><legend>Objetivos relacionados</legend>{specifics.map((objective, objectiveIndex) => {
+            <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. Use “Atende bem” quando o tópico cobre o objetivo de modo central; use “Ajuda em parte” quando ele apenas contribui e precisa ser complementado por outros tópicos.</p>{specifics.map((objective, objectiveIndex) => {
               const coverage = topic.objectiveCoverage.find((item) => item.objectiveId === objective.id);
-              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id)} type="checkbox" /> OE{objectiveIndex + 1}</label>{coverage && chapter === "literature" ? <select aria-label={`Cobertura do objetivo ${objectiveIndex + 1}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">Parcial</option><option value="full">Completa</option></select> : null}</div>;
+              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id)} type="checkbox" /> OE{objectiveIndex + 1}</label>{coverage && chapter === "literature" ? <select aria-label={`Cobertura do objetivo ${objectiveIndex + 1}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{COVERAGE_DEGREE_LABELS.partial}</option><option value="full">{COVERAGE_DEGREE_LABELS.full}</option></select> : null}</div>;
             })}</fieldset>
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
             {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
@@ -224,7 +229,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
       {message ? <p className="definition-message" role="status">{message}</p> : null}
 
       {chapter === "literature" ? (
-        <div className="literature-optimizer"><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : null}</div>
+        <div className="literature-optimizer"><p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. Se tudo estiver bom, você pode apenas validar e avançar.</p><button onClick={() => setShowOptimize((current) => !current)} type="button">Otimizar literatura</button>{showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : null}</div>
       ) : null}
 
       {chapter === "literature" && references.length > 0 ? (

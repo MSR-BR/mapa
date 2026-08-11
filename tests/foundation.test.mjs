@@ -428,6 +428,10 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /\.eq\("revision", workflow\.revision\)/);
   assert.match(route, /validateCompleteObjectiveCoverage/);
   assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /Atende bem/);
+  assert.match(workspace, /Ajuda em parte/);
+  assert.match(workspace, /Quando otimizar:/);
+  assert.match(workspace, /Se tudo estiver bom, você pode apenas validar e avançar/);
   assert.match(workspace, /requestBody\.topics = topics/);
   assert.match(workspace, /Referências encontradas e associadas/);
   assert.match(workspace, /Cobertura dos objetivos/);
