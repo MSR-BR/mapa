@@ -108,6 +108,12 @@ function referenceText(reference: WorkflowReference) {
   return `${author}${reference.year ? ` (${reference.year})` : ""}. ${reference.title ?? reference.referenceId}`;
 }
 
+function methodologyMessageText(message: string) {
+  return message
+    .replace(/^Linha (\d+)(?=:)/i, (_, index: string) => `OE${index} (objetivo específico ${index})`)
+    .replace(/^A linha (\d+)/i, (_, index: string) => `OE${index} (objetivo específico ${index})`);
+}
+
 export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
@@ -357,11 +363,11 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         })}
       </div>
 
-      {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></div> : null}
+      {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}
       {findings.length > 0 ? (
         <div className="methodology-findings" role="status">
           <strong>Avisos de coerência</strong>
-          <ul>{findings.map((finding) => <li className={finding.severity} key={finding.id}>{finding.message}</li>)}</ul>
+          <ul>{findings.map((finding) => <li className={finding.severity} key={finding.id}>{methodologyMessageText(finding.message)}</li>)}</ul>
         </div>
       ) : null}
       {message ? <p className="definition-message" role="status">{message}</p> : null}

@@ -463,6 +463,9 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /METHODOLOGY_HELP/);
   assert.match(workspace, /data-methodology-help/);
   assert.match(workspace, /Explicar/);
+  assert.match(workspace, /methodologyMessageText/);
+  assert.match(workspace, /OE\$\{index\} \(objetivo específico \$\{index\}\)/);
+  assert.match(workspace, /methodologyMessageText\(finding\.message\)/);
   assert.match(styles, /input:not\(\[type="checkbox"\]\)/);
   assert.match(styles, /methodology-classification input\[type="checkbox"\]/);
   assert.match(styles, /methodology-classification fieldset \{[^}]*align-items: flex-start/);
