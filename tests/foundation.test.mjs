@@ -451,18 +451,26 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
 });
 
 test("keeps methodology controls responsive and reference-aware", async () => {
-  const [workspace, styles] = await Promise.all([
+  const [workspace, styles, route, gemini] = await Promise.all([
     readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
     readProjectFile("app/globals.css"),
+    readProjectFile("app/api/projects/[id]/methodology/route.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
   ]);
 
   assert.match(workspace, /referenceById/);
   assert.match(workspace, /referenceText\(reference\)/);
+  assert.match(workspace, /METHODOLOGY_HELP/);
+  assert.match(workspace, /data-methodology-help/);
+  assert.match(workspace, /Explicar/);
   assert.match(styles, /input:not\(\[type="checkbox"\]\)/);
   assert.match(styles, /methodology-classification input\[type="checkbox"\]/);
   assert.match(styles, /methodology-classification fieldset \{[^}]*align-items: flex-start/);
   assert.match(styles, /methodology-classification fieldset label \{[^}]*border-radius: 0\.75rem/);
+  assert.match(styles, /methodology-help-popover/);
   assert.doesNotMatch(styles, /methodology-classification fieldset label \{[^}]*border-radius: 999px/);
+  assert.match(route, /improvementNotes/);
+  assert.match(gemini, /Corrija especificamente estes avisos/);
   assert.match(styles, /@media \(max-width: 600px\)/);
 });
 

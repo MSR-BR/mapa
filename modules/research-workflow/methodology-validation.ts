@@ -45,6 +45,10 @@ function unique(values: string[]) {
   return [...new Set(values)];
 }
 
+function methodologyRowLabel(index: number) {
+  return `OE${index + 1} (objetivo específico ${index + 1})`;
+}
+
 function likelyInstrument(row: MethodologyRow | MethodologyPlanInput["rows"][number]) {
   const collection = row.dataCollection;
   if (includesAny(collection, ["entrevista", "grupo focal", "relato"])) return "qualitative";
@@ -74,7 +78,7 @@ export function methodologyCompatibilityWarnings(
   for (const [index, row] of rows.entries()) {
     const instrument = likelyInstrument(row);
     const analysis = likelyAnalysis(row);
-    const label = `Linha ${index + 1}`;
+    const label = methodologyRowLabel(index);
 
     if (instrument === "qualitative" && analysis === "quantitative") {
       warnings.push(`${label}: entrevistas ou relatos geralmente pedem análise qualitativa ou mista; confirme se haverá quantificação adequada.`);
@@ -132,8 +136,9 @@ export function validateMethodologyPlan(
 
   parsed.data.rows.forEach((row, index) => {
     const unknownTopics = row.associatedTopicIds.filter((topicId) => !options.allowedTopicIds.has(topicId));
-    if (unknownTopics.length > 0) errors.push(`A linha ${index + 1} aponta para tópico de capítulo inexistente.`);
-    if (row.associatedTopicIds.length === 0) errors.push(`A linha ${index + 1} precisa estar ligada a ao menos um tópico dos capítulos 2 ou 4.`);
+    const label = methodologyRowLabel(index);
+    if (unknownTopics.length > 0) errors.push(`${label} aponta para tópico de capítulo inexistente.`);
+    if (row.associatedTopicIds.length === 0) errors.push(`${label} precisa estar ligado a ao menos um tópico dos capítulos 2 ou 4.`);
     if (includesAny(row.expectedResult, [
       "foi encontrado",
       "foram encontrados",
@@ -148,7 +153,7 @@ export function validateMethodologyPlan(
       "resultados encontrados",
       "resultados obtidos",
     ])) {
-      errors.push(`A linha ${index + 1} descreve achados como se a pesquisa já tivesse sido executada.`);
+      errors.push(`${label} descreve achados como se a pesquisa já tivesse sido executada.`);
     }
   });
 

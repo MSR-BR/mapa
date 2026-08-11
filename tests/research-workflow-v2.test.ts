@@ -411,6 +411,8 @@ test("warns about uncertain methodology compatibility without blocking", () => {
   });
   const warnings = methodologyCompatibilityWarnings(plan.rows, plan.classification);
   assert.equal(warnings.some((warning) => /entrevistas/.test(warning)), true);
+  assert.equal(warnings.some((warning) => /^OE1 \(objetivo específico 1\)/.test(warning)), true);
+  assert.equal(warnings.every((warning) => !/Linha/.test(warning)), true);
   assert.equal(warnings.some((warning) => /abordagem qualitativa/.test(warning)), true);
 });
 

@@ -517,6 +517,7 @@ export async function generateMethodologyPlan(
   developmentTopics: ChapterTopicInput[],
   discovery: ProposalDiscovery,
   existingRows: MethodologyPlanInput["rows"] = [],
+  improvementNotes: string[] = [],
 ) {
   const chapterTopics = [...literatureTopics, ...developmentTopics].map((topic) => ({
     chapter: literatureTopics.some((item) => item.id === topic.id) ? "Capítulo 2" : "Capítulo 4",
@@ -541,6 +542,9 @@ export async function generateMethodologyPlan(
       "A classificação deve ser coerente com os instrumentos e técnicas usados nas linhas.",
       "Use apenas objectiveId dos objetivos específicos fornecidos e associatedTopicIds dos tópicos dos capítulos 2 e 4 fornecidos.",
       "Cada linha precisa estar ligada a pelo menos um tópico dos capítulos 2 ou 4.",
+      improvementNotes.length > 0
+        ? `Corrija especificamente estes avisos da versão anterior, sem repetir a mesma deficiência: ${JSON.stringify(improvementNotes)}`
+        : "Se estiver regenerando, revise criticamente a coerência entre instrumentos, abordagem e técnicas antes de responder.",
       "Sugira um título final curto derivado do objetivo geral, sem copiar integralmente o objetivo.",
       "Não invente instituição, amostra, local, período, aprovação ética ou dado sensível ausente. Se houver risco ético ou de acesso, registre como aviso.",
       `Problemática: ${JSON.stringify(problemStatement)}`,

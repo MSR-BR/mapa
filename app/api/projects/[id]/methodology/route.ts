@@ -340,6 +340,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!context) return NextResponse.json({ error: "Objetivos e capítulos precisam estar validados." }, { status: 409 });
   const approvedProblem = context.problem.approvedContent!;
   const approvedGeneral = context.general.approvedContent!;
+  const allowedObjectiveIds = new Set(context.specifics.map((item) => item.id));
+  const allowedTopicIds = new Set([...context.literature, ...context.development].map((topic) => topic.id));
 
   if (action === "back") {
     const content = researchWorkflowContentSchema.parse({ ...workflow.content, activeStep: "development_topics" });
@@ -354,6 +356,14 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   let plan: MethodologyPlanInput;
   try {
     if (action === "initialize" || action === "regenerate") {
+      const previousPlan = action === "regenerate" ? planFromContent(workflow.content) : null;
+      const improvementNotes = previousPlan
+        ? validateMethodologyPlan(previousPlan, {
+          allowedObjectiveIds,
+          allowedTopicIds,
+          generalObjective: approvedGeneral,
+        }).warnings
+        : [];
       plan = await generateMethodologyPlan(
         approvedProblem,
         approvedGeneral,
@@ -370,6 +380,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           objectiveId: row.objectiveId,
           warnings: row.warnings,
         })),
+        improvementNotes,
       );
     } else {
       plan = planFromRequest(parsed.data);
@@ -382,8 +393,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   if (action === "save" || action === "initialize" || action === "regenerate") {
     const { warnings } = validateMethodologyPlan(plan, {
-      allowedObjectiveIds: new Set(context.specifics.map((item) => item.id)),
-      allowedTopicIds: new Set([...context.literature, ...context.development].map((topic) => topic.id)),
+      allowedObjectiveIds,
+      allowedTopicIds,
       generalObjective: approvedGeneral,
     });
     content = researchWorkflowContentSchema.parse({
@@ -396,8 +407,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const { errors, warnings } = validateMethodologyPlan(plan, {
-    allowedObjectiveIds: new Set(context.specifics.map((item) => item.id)),
-    allowedTopicIds: new Set([...context.literature, ...context.development].map((topic) => topic.id)),
+    allowedObjectiveIds,
+    allowedTopicIds,
     generalObjective: approvedGeneral,
   });
   if (errors.length > 0) {

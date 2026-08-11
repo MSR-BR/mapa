@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import type { ChapterTopicInput } from "./chapter-validation";
@@ -13,6 +13,22 @@ type Operation = "back" | "initialize" | "regenerate" | "save" | "validate" | nu
 type ClassificationDraft = MethodologyPlanInput["classification"];
 type MethodologyRowDraft = MethodologyPlanInput["rows"][number];
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
+type MethodologyHelpTopic = "approach" | "nature" | "objectives";
+
+const METHODOLOGY_HELP: Record<MethodologyHelpTopic, { body: string; title: string }> = {
+  approach: {
+    body: "Qualitativa interpreta sentidos, experiências, documentos ou processos. Quantitativa mede variáveis e usa números/estatística. Mista combina as duas quando a pesquisa precisa interpretar e medir.",
+    title: "Abordagem",
+  },
+  nature: {
+    body: "Básica busca ampliar conhecimento teórico sobre um fenômeno. Aplicada usa esse conhecimento para resolver, orientar ou melhorar uma situação prática, produto, processo ou intervenção.",
+    title: "Natureza",
+  },
+  objectives: {
+    body: "Exploratória aproxima e mapeia um tema pouco definido. Descritiva caracteriza uma realidade, perfil ou processo. Explicativa busca relações, causas ou fatores que ajudam a explicar o fenômeno.",
+    title: "Objetivos metodológicos",
+  },
+};
 
 const EMPTY_CLASSIFICATION: ClassificationDraft = {
   analysisTechniques: ["Análise temática"],
@@ -105,6 +121,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
+  const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const initialized = useRef(false);
   const busy = operation !== null;
   const specifics = specificObjectives(workflow);
@@ -136,6 +153,28 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
     setAnalysisText(listToText(nextClassification.analysisTechniques));
     setEthicsText(listToText(nextClassification.ethicsWarnings));
     setRows(rowsDraft(next));
+  }
+
+  function toggleHelp(topic: MethodologyHelpTopic, event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    setOpenHelp((current) => current === topic ? null : topic);
+  }
+
+  function helpButton(topic: MethodologyHelpTopic) {
+    const help = METHODOLOGY_HELP[topic];
+    const open = openHelp === topic;
+    return (
+      <span className="methodology-help" data-methodology-help>
+        <button aria-expanded={open} aria-label={`Explicar ${help.title}`} className="methodology-help-button" onClick={(event) => toggleHelp(topic, event)} type="button">i</button>
+        {open ? (
+          <span className="methodology-help-popover" role="tooltip">
+            <strong>{help.title}</strong>
+            <span>{help.body}</span>
+          </span>
+        ) : null}
+      </span>
+    );
   }
 
   async function submit(action: Exclude<Operation, null>) {
@@ -180,6 +219,23 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
     // Inicialização única ao entrar na Etapa 6.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!openHelp) return;
+    function closeHelp(event: PointerEvent) {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target?.closest("[data-methodology-help]")) setOpenHelp(null);
+    }
+    function closeHelpWithKeyboard(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpenHelp(null);
+    }
+    document.addEventListener("pointerdown", closeHelp);
+    document.addEventListener("keydown", closeHelpWithKeyboard);
+    return () => {
+      document.removeEventListener("pointerdown", closeHelp);
+      document.removeEventListener("keydown", closeHelpWithKeyboard);
+    };
+  }, [openHelp]);
 
   function updateRow(id: string, update: Partial<MethodologyRowDraft>) {
     setRows((current) => current.map((row) => row.id === id ? { ...row, ...update } : row));
@@ -250,11 +306,11 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
 
       <aside className="methodology-classification" aria-label="Classificação metodológica">
         <div>
-          <label>Natureza<select onChange={(event) => setClassification((current) => ({ ...current, nature: event.target.value as ClassificationDraft["nature"] }))} value={classification.nature}><option>Aplicada</option><option>Básica</option></select></label>
-          <label>Abordagem<select onChange={(event) => setClassification((current) => ({ ...current, approach: event.target.value as ClassificationDraft["approach"] }))} value={classification.approach}><option>Qualitativa</option><option>Quantitativa</option><option>Mista</option></select></label>
+          <label><span className="methodology-field-heading">Natureza {helpButton("nature")}</span><select onChange={(event) => setClassification((current) => ({ ...current, nature: event.target.value as ClassificationDraft["nature"] }))} value={classification.nature}><option>Aplicada</option><option>Básica</option></select></label>
+          <label><span className="methodology-field-heading">Abordagem {helpButton("approach")}</span><select onChange={(event) => setClassification((current) => ({ ...current, approach: event.target.value as ClassificationDraft["approach"] }))} value={classification.approach}><option>Qualitativa</option><option>Quantitativa</option><option>Mista</option></select></label>
         </div>
         <fieldset>
-          <legend>Objetivos metodológicos</legend>
+          <legend><span className="methodology-field-heading">Objetivos metodológicos {helpButton("objectives")}</span></legend>
           {(["Exploratória", "Descritiva", "Explicativa"] as const).map((value) => (
             <label key={value}><input checked={classification.objectives.includes(value)} onChange={() => toggleClassificationObjective(value)} type="checkbox" />{value}</label>
           ))}
