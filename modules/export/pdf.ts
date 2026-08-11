@@ -1,6 +1,12 @@
 import PDFDocument from "pdfkit";
 
 import type { ExportDocumentInput, FinalMapExportInput } from "./types";
+import {
+  buildReferenceCodeMap,
+  citationMarkers,
+  literatureExpansionText,
+  withCitationMarkers,
+} from "@/modules/research-workflow/reference-citations";
 
 const COLORS = { gold: "#9A7418", muted: "#626B72", navy: "#203748", text: "#1C2428" };
 const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
@@ -12,6 +18,7 @@ function ensureSpace(doc: PDFKit.PDFDocument, height: number) {
 export async function createPdfExport(input: ExportDocumentInput) {
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const chunks: Buffer[] = [];
+  const referenceCodes = buildReferenceCodeMap(input.references);
   const doc = new PDFDocument({ bufferPages: true, info: { Author: "Mapa da Pesquisa", Subject: "Estrutura acadêmica para revisão", Title: input.project.title }, margins: { bottom: 72, left: 72, right: 72, top: 72 }, size: "LETTER" });
   doc.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
   const completed = new Promise<Buffer>((resolve, reject) => {
@@ -58,10 +65,10 @@ export async function createPdfExport(input: ExportDocumentInput) {
       ensureSpace(doc, 110);
       doc.fillColor("#2B5163").font("Helvetica-Bold").fontSize(13).text(section.title, { lineGap: 3 });
       doc.moveDown(0.4);
-      doc.fillColor(COLORS.text).font("Helvetica").fontSize(10.5).text(section.content, { align: "justify", lineGap: 4 });
+      doc.fillColor(COLORS.text).font("Helvetica").fontSize(10.5).text(withCitationMarkers(section.content, section.referenceIds, referenceCodes), { align: "justify", lineGap: 4 });
       if (section.referenceIds.length > 0) {
         doc.moveDown(0.35);
-        doc.fillColor(COLORS.muted).font("Helvetica-Oblique").fontSize(8.5).text(`Evidências: ${section.referenceIds.join(", ")}`);
+        doc.fillColor(COLORS.muted).font("Helvetica-Oblique").fontSize(8.5).text(`Evidências: ${citationMarkers(section.referenceIds, referenceCodes)}`);
       }
       doc.moveDown(1);
     }
@@ -89,7 +96,8 @@ export async function createPdfExport(input: ExportDocumentInput) {
   for (const reference of input.references) {
     ensureSpace(doc, 75);
     const authors = reference.authors.length > 0 ? reference.authors.join(", ") : "Autoria não informada";
-    doc.fillColor(COLORS.text).font("Helvetica-Bold").fontSize(9.5).text(`${reference.referenceId}. ${reference.title ?? "Título não informado"}`, { lineGap: 2 });
+    const code = referenceCodes.get(reference.referenceId) ?? reference.referenceId;
+    doc.fillColor(COLORS.text).font("Helvetica-Bold").fontSize(9.5).text(`${code}. ${reference.title ?? "Título não informado"}`, { lineGap: 2 });
     doc.fillColor(COLORS.muted).font("Helvetica").fontSize(8.5).text([authors, reference.year, reference.doi ? `DOI: ${reference.doi}` : null].filter(Boolean).join(". "), { lineGap: 2 });
     if (reference.url) doc.fillColor("#176B4D").text(reference.url, { link: reference.url, underline: true });
     doc.moveDown(0.65);
@@ -132,10 +140,16 @@ function addWrappedParagraph(doc: PDFKit.PDFDocument, text: string, options: { i
   doc.moveDown(0.6);
 }
 
+function finalMapTopicReferenceIds(input: FinalMapExportInput, topicIds: string[]) {
+  const topics = [...input.finalMap.literatureTopics, ...input.finalMap.developmentTopics];
+  return topics.filter((topic) => topicIds.includes(topic.id)).flatMap((topic) => topic.referenceIds);
+}
+
 export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const chunks: Buffer[] = [];
   const finalMap = input.finalMap;
+  const referenceCodes = buildReferenceCodeMap(finalMap.references);
   const doc = new PDFDocument({
     bufferPages: true,
     info: {
@@ -163,11 +177,11 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
 
   doc.addPage();
   addFinalMapHeading(doc, "Etapa 1. Problemática da pesquisa");
-  addWrappedParagraph(doc, finalMapText(finalMap.problemStatement));
+  addWrappedParagraph(doc, withCitationMarkers(finalMapText(finalMap.problemStatement), finalMap.problemStatement?.referenceIds ?? [], referenceCodes));
   addFinalMapHeading(doc, "Etapa 2. Objetivo geral");
-  addWrappedParagraph(doc, finalMapText(finalMap.generalObjective));
+  addWrappedParagraph(doc, withCitationMarkers(finalMapText(finalMap.generalObjective), finalMap.generalObjective?.referenceIds ?? [], referenceCodes));
   addFinalMapHeading(doc, "Etapa 3. Objetivos específicos");
-  finalMap.specificObjectives.forEach((objective, index) => addWrappedParagraph(doc, `${index + 1}. ${finalMapText(objective)}`, { indent: 14 }));
+  finalMap.specificObjectives.forEach((objective, index) => addWrappedParagraph(doc, `${index + 1}. ${withCitationMarkers(finalMapText(objective), objective.referenceIds, referenceCodes)}`, { indent: 14 }));
 
   doc.addPage();
   addFinalMapHeading(doc, "Capítulo 3. Metodologia e resultados esperados");
@@ -183,15 +197,18 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
     doc.fillColor(COLORS.text).font("Helvetica-Bold").text("Análise/tratamento:", { continued: true });
     doc.font("Helvetica").text(` ${row.analysisTreatment}`, { lineGap: 3 });
     doc.fillColor(COLORS.text).font("Helvetica-Bold").text("Resultado esperado:", { continued: true });
-    doc.font("Helvetica").text(` ${row.expectedResult}`, { lineGap: 3 });
+    doc.font("Helvetica").text(` ${withCitationMarkers(row.expectedResult, finalMapTopicReferenceIds(input, row.associatedTopicIds), referenceCodes)}`, { lineGap: 3 });
     doc.moveDown(0.85);
   }
 
   doc.addPage();
   addFinalMapHeading(doc, "Etapa 4. Capítulo 2 - Revisão da Literatura");
-  finalMap.literatureTopics.forEach((topic) => addWrappedParagraph(doc, `${topic.label} ${topic.title}`, { indent: 12 }));
+  finalMap.literatureTopics.forEach((topic) => {
+    addWrappedParagraph(doc, `${topic.label} ${withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}`, { indent: 12 });
+    addWrappedParagraph(doc, literatureExpansionText(topic.title, topic.referenceIds, referenceCodes), { indent: 18 });
+  });
   addFinalMapHeading(doc, "Etapa 5. Capítulo 4 - Desenvolvimento / Estudo de Caso / Análise e Discussão");
-  finalMap.developmentTopics.forEach((topic) => addWrappedParagraph(doc, `${topic.label} ${topic.title}`, { indent: 12 }));
+  finalMap.developmentTopics.forEach((topic) => addWrappedParagraph(doc, `${topic.label} ${withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}`, { indent: 12 }));
 
   doc.addPage();
   addFinalMapHeading(doc, "Avisos e pendências de coerência");
@@ -210,7 +227,8 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   for (const reference of finalMap.references) {
     ensureSpace(doc, 70);
     const authors = reference.authors.length > 0 ? reference.authors.join(", ") : "Autoria não informada";
-    doc.fillColor(COLORS.text).font("Helvetica-Bold").fontSize(9.4).text(`${reference.referenceId}. ${reference.title ?? "Título não informado"}`, { lineGap: 2 });
+    const code = referenceCodes.get(reference.referenceId) ?? reference.referenceId;
+    doc.fillColor(COLORS.text).font("Helvetica-Bold").fontSize(9.4).text(`${code}. ${reference.title ?? "Título não informado"}`, { lineGap: 2 });
     doc.fillColor(COLORS.muted).font("Helvetica").fontSize(8.5).text([authors, reference.year, reference.doi ? `DOI: ${reference.doi}` : null].filter(Boolean).join(". "), { lineGap: 2 });
     if (reference.url) doc.fillColor("#176B4D").text(reference.url, { link: reference.url, underline: true });
     doc.moveDown(0.65);

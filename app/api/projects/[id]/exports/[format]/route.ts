@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
-import { createDocxExport, createFinalMapDocxExport } from "@/modules/export/docx";
 import { buildExportFilename } from "@/modules/export/filename";
 import { createFinalMapPdfExport, createPdfExport } from "@/modules/export/pdf";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
@@ -16,6 +15,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 export async function GET(request: Request, context: { params: Promise<{ format: string; id: string }> }) {
   const { format, id } = await context.params;
   if (!UUID.test(id) || (format !== "docx" && format !== "pdf")) return NextResponse.json({ error: "Exportação inválida." }, { status: 400 });
+  if (format === "docx") return NextResponse.json({ error: "Exportação em Word está temporariamente indisponível. Use PDF." }, { status: 410 });
   const { searchParams } = new URL(request.url);
   const draft = searchParams.get("draft") === "1";
 
@@ -45,15 +45,15 @@ export async function GET(request: Request, context: { params: Promise<{ format:
       return NextResponse.json({ error: "Conclua o mapa ou exporte como rascunho identificado." }, { status: 409 });
     }
     const input = { draft: !completed, exportedAt: new Date(), finalMap, project, revision: workflow.revision };
-    const file = format === "docx" ? await createFinalMapDocxExport(input) : await createFinalMapPdfExport(input);
-    const filename = buildExportFilename(finalTitle, format);
+    const file = await createFinalMapPdfExport(input);
+    const filename = buildExportFilename(finalTitle, "pdf");
 
     return new NextResponse(new Uint8Array(file), {
       headers: {
         "Cache-Control": "private, no-store, max-age=0",
         "Content-Disposition": `attachment; filename="${filename}"`,
         "Content-Length": String(file.byteLength),
-        "Content-Type": format === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/pdf",
+        "Content-Type": "application/pdf",
         "X-Content-Type-Options": "nosniff",
       },
     });
@@ -63,15 +63,15 @@ export async function GET(request: Request, context: { params: Promise<{ format:
   if (!snapshot.structure || !snapshot.revision) return NextResponse.json({ error: "Salve uma estrutura antes de exportar." }, { status: 409 });
 
   const input = { exportedAt: new Date(), project, references: snapshot.references, revision: snapshot.revision, structure: snapshot.structure };
-  const file = format === "docx" ? await createDocxExport(input) : await createPdfExport(input);
-  const filename = buildExportFilename(project.title, format);
+  const file = await createPdfExport(input);
+  const filename = buildExportFilename(project.title, "pdf");
 
   return new NextResponse(new Uint8Array(file), {
     headers: {
       "Cache-Control": "private, no-store, max-age=0",
       "Content-Disposition": `attachment; filename="${filename}"`,
       "Content-Length": String(file.byteLength),
-      "Content-Type": format === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/pdf",
+      "Content-Type": "application/pdf",
       "X-Content-Type-Options": "nosniff",
     },
   });

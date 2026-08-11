@@ -9,6 +9,11 @@ import {
   type FinalMap,
   type FinalMapNode,
 } from "./final-map";
+import {
+  buildReferenceCodeMap,
+  literatureExpansionText,
+  withCitationMarkers,
+} from "./reference-citations";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
@@ -19,10 +24,10 @@ function chapterReferences(finalMap: FinalMap, referenceIds: string[]) {
   return finalMap.references.filter((reference) => wanted.has(reference.referenceId));
 }
 
-function referenceText(reference: FinalMap["references"][number]) {
+function referenceText(reference: FinalMap["references"][number], code?: string) {
   const authors = reference.authors.slice(0, 2).join(", ");
   const title = reference.title ?? reference.referenceId;
-  return `${authors || "Fonte"}${reference.year ? ` (${reference.year})` : ""}. ${title}`;
+  return `${code ? `[${code}] ` : ""}${authors || "Fonte"}${reference.year ? ` (${reference.year})` : ""}. ${title}`;
 }
 
 export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
@@ -33,6 +38,7 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const finalMap = useMemo(() => buildFinalMap(workflow), [workflow]);
+  const referenceCodes = useMemo(() => buildReferenceCodeMap(finalMap.references), [finalMap.references]);
   const selectedNode = finalMap.nodes.find((node) => node.id === selectedNodeId) ?? null;
   const selectedEdges = selectedNodeId
     ? finalMap.edges.filter((edge) => edge.from === selectedNodeId || edge.to === selectedNodeId)
@@ -41,6 +47,11 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
   const warningFindings = finalMap.findings.filter((finding) => finding.severity !== "blocking");
   const busy = operation !== null;
   const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
+
+  function topicReferenceIds(topicIds: string[]) {
+    const topics = [...finalMap.literatureTopics, ...finalMap.developmentTopics];
+    return topics.filter((topic) => topicIds.includes(topic.id)).flatMap((topic) => topic.referenceIds);
+  }
 
   async function submit(action: Exclude<Operation, null>, targetStep?: NonNullable<FinalMapNode["correctionStep"]>) {
     if (busy) return;
@@ -61,6 +72,10 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o mapa final.");
+      if (action === "complete") {
+        router.push("/dashboard");
+        return;
+      }
       setMessage(payload.message ?? (action === "review" ? "Coerência revisada." : null));
       router.refresh();
     } catch (error) {
@@ -109,10 +124,9 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
       <div className="final-export-panel" aria-label="Exportar mapa final">
         <div>
           <strong>{workflow.state === "completed" ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>
-          <span>{workflow.state === "completed" ? "DOCX editável ou PDF com referências e avisos preservados." : "O arquivo indicará que o mapa ainda é rascunho e manterá bloqueios/avisos visíveis."}</span>
+          <span>{workflow.state === "completed" ? "PDF com referências cruzadas e avisos preservados." : "O PDF indicará que o mapa ainda é rascunho e manterá bloqueios/avisos visíveis."}</span>
         </div>
         <div>
-          <a href={`/api/projects/${projectId}/exports/docx${exportSuffix}`}>Exportar DOCX</a>
           <a href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`}>Exportar PDF</a>
         </div>
       </div>
@@ -125,21 +139,21 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
           <section id="problem-section">
             <p className="section-kicker">Etapa 1</p>
             <h3>Problemática da pesquisa</h3>
-            <p>{finalMap.problemStatement?.approvedContent}</p>
+            <p>{withCitationMarkers(finalMap.problemStatement?.approvedContent ?? "", finalMap.problemStatement?.referenceIds ?? [], referenceCodes)}</p>
             {correctionButton("problem")}
           </section>
 
           <section>
             <p className="section-kicker">Etapa 2</p>
             <h3>Objetivo geral</h3>
-            <p>{finalMap.generalObjective?.approvedContent}</p>
+            <p>{withCitationMarkers(finalMap.generalObjective?.approvedContent ?? "", finalMap.generalObjective?.referenceIds ?? [], referenceCodes)}</p>
             {correctionButton("general")}
           </section>
 
           <section>
             <p className="section-kicker">Etapa 3</p>
             <h3>Objetivos específicos</h3>
-            <ol>{finalMap.specificObjectives.map((objective) => <li key={objective.id}>{objective.approvedContent}</li>)}</ol>
+            <ol>{finalMap.specificObjectives.map((objective) => <li key={objective.id}>{withCitationMarkers(objective.approvedContent ?? "", objective.referenceIds, referenceCodes)}</li>)}</ol>
             {correctionButton("specifics")}
           </section>
 
@@ -155,7 +169,7 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
                     <p><strong>Objetivo:</strong> {objective?.approvedContent}</p>
                     <p><strong>Levantamento:</strong> {row.dataCollection}</p>
                     <p><strong>Análise/tratamento:</strong> {row.analysisTreatment}</p>
-                    <p><strong>Resultado esperado:</strong> {row.expectedResult}</p>
+                    <p><strong>Resultado esperado:</strong> {withCitationMarkers(row.expectedResult, topicReferenceIds(row.associatedTopicIds), referenceCodes)}</p>
                   </div>
                 );
               })}
@@ -166,14 +180,19 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
           <section>
             <p className="section-kicker">Etapa 4 · Capítulo 2</p>
             <h3>Revisão da Literatura</h3>
-            <ol>{finalMap.literatureTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {topic.title}</li>)}</ol>
+            <ol>{finalMap.literatureTopics.map((topic) => (
+              <li key={topic.id}>
+                <strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}
+                <p className="literature-draft-text">{literatureExpansionText(topic.title, topic.referenceIds, referenceCodes)}</p>
+              </li>
+            ))}</ol>
             {correctionButton("literature")}
           </section>
 
           <section>
             <p className="section-kicker">Etapa 5 · Capítulo 4</p>
             <h3>Desenvolvimento / Estudo de Caso / Análise e Discussão</h3>
-            <ol>{finalMap.developmentTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {topic.title}</li>)}</ol>
+            <ol>{finalMap.developmentTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}</li>)}</ol>
             {correctionButton("development")}
           </section>
 
@@ -184,7 +203,7 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
               <ol className="final-reference-list">
                 {finalMap.references.map((reference) => (
                   <li key={reference.referenceId}>
-                    {reference.url ? <a href={reference.url} rel="noreferrer" target="_blank">{referenceText(reference)}</a> : referenceText(reference)}
+                    {reference.url ? <a href={reference.url} rel="noreferrer" target="_blank">{referenceText(reference, referenceCodes.get(reference.referenceId))}</a> : referenceText(reference, referenceCodes.get(reference.referenceId))}
                   </li>
                 ))}
               </ol>
@@ -233,7 +252,7 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
                 <div className="trace-references">
                   <strong>Referências associadas</strong>
                   {chapterReferences(finalMap, [...finalMap.literatureTopics, ...finalMap.developmentTopics].find((topic) => topic.id === selectedNode.id)?.referenceIds ?? []).map((reference) => (
-                    <p key={reference.referenceId}>{referenceText(reference)}</p>
+                    <p key={reference.referenceId}>{referenceText(reference, referenceCodes.get(reference.referenceId))}</p>
                   ))}
                 </div>
               ) : null}

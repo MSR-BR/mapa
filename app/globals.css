@@ -439,6 +439,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .final-map-document h3, .traceability-panel h3 { margin: 0.3rem 0 0; color: #172820; font-size: clamp(1.1rem, 2vw, 1.45rem); letter-spacing: -0.03em; }
 .final-map-document p, .final-map-document li, .traceability-panel p, .trace-selection li { color: #4f6259; line-height: 1.55; }
 .final-map-document ol, .final-map-document ul { margin-bottom: 0; padding-left: 1.25rem; }
+.literature-draft-text { margin: 0.4rem 0 0.75rem; border-left: 3px solid #d6e5dd; padding-left: 0.75rem; color: #60736a; font-size: 0.86rem; }
 .final-map-document section > button, .final-finding-list button, .trace-selection button { width: fit-content; border: 1px solid #b8cbc2; border-radius: 0.7rem; padding: 0.55rem 0.75rem; background: transparent; color: #2c6349; font: inherit; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
 .final-method-table { display: grid; gap: 0.7rem; margin-top: 0.8rem; }
 .final-method-table > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.25rem 0.7rem; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }

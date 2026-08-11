@@ -52,9 +52,6 @@ import {
 } from "../modules/research-workflow/literature-optimization";
 import { isResearchMapV2EnabledForClaims } from "../modules/research-workflow/rollout";
 import {
-  createFinalMapDocxExport,
-} from "../modules/export/docx";
-import {
   createFinalMapPdfExport,
 } from "../modules/export/pdf";
 
@@ -651,7 +648,7 @@ test("supports server-side rollout control for v2 creation", () => {
   }
 });
 
-test("creates DOCX and PDF exports for the v2 final map preset", async () => {
+test("creates a PDF export for the v2 final map preset", async () => {
   const finalMap = buildFinalMap(makeCompleteWorkflow());
   const input = {
     draft: false,
@@ -667,10 +664,6 @@ test("creates DOCX and PDF exports for the v2 final map preset", async () => {
     },
     revision: 7,
   };
-  const [docx, pdf] = await Promise.all([
-    createFinalMapDocxExport(input),
-    createFinalMapPdfExport(input),
-  ]);
-  assert.equal(docx.subarray(0, 2).toString(), "PK");
+  const pdf = await createFinalMapPdfExport(input);
   assert.equal(pdf.subarray(0, 4).toString(), "%PDF");
 });

@@ -157,25 +157,33 @@ test("provides persistent editing with loss protection and retry", async () => {
   assert.match(saveRoute, /validateReferenceIds/);
 });
 
-test("exports only the authenticated owner's saved structure as DOCX and PDF", async () => {
-  const [route, docx, pdf, workspace] = await Promise.all([
+test("exports only the authenticated owner's saved structure as PDF", async () => {
+  const [route, pdf, workspace, finalWorkspace, citationHelper, prompt] = await Promise.all([
     readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
-    readProjectFile("modules/export/docx.ts"),
     readProjectFile("modules/export/pdf.ts"),
     readProjectFile("modules/generation/generation-workspace.tsx"),
+    readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
+    readProjectFile("modules/research-workflow/reference-citations.ts"),
+    readProjectFile("modules/generation/prompts/structure-v1.ts"),
   ]);
 
   assert.match(route, /\.eq\("owner_id", userId\)/);
+  assert.match(route, /format === "docx"/);
+  assert.match(route, /temporariamente indisponível/);
   assert.match(route, /private, no-store/);
   assert.match(route, /Content-Disposition/);
   assert.match(route, /loadGenerationSnapshot/);
-  assert.match(docx, /Revisar antes do uso/);
-  assert.match(docx, /Referências verificadas/);
-  assert.match(docx, /Referências otimizadas com/);
   assert.match(pdf, /bufferPages: true/);
   assert.match(pdf, /Referências verificadas/);
   assert.match(pdf, /Referências otimizadas com Research Starter/);
-  assert.match(workspace, /Exportar DOCX/);
+  assert.match(pdf, /withCitationMarkers/);
+  assert.match(pdf, /literatureExpansionText/);
+  assert.match(citationHelper, /R\$\{String\(index \+ 1\)\.padStart\(2, "0"\)\}/);
+  assert.match(finalWorkspace, /literature-draft-text/);
+  assert.match(finalWorkspace, /router\.push\("\/dashboard"\)/);
+  assert.match(prompt, /Revisão da Literatura, escreva texto corrido/);
+  assert.doesNotMatch(workspace, /Exportar DOCX/);
+  assert.doesNotMatch(finalWorkspace, /Exportar DOCX/);
   assert.match(workspace, /Salve as alterações antes de exportar/);
 });
 
