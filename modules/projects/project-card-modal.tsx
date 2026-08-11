@@ -22,8 +22,9 @@ export type DashboardProject = {
 };
 
 type Props = DashboardProject & {
-  onSelectionChange: (projectId: string, selected: boolean) => void;
-  selected: boolean;
+  onSelectionChange?: (projectId: string, selected: boolean) => void;
+  selectable?: boolean;
+  selected?: boolean;
 };
 
 export function ProjectCardModal({
@@ -35,6 +36,7 @@ export function ProjectCardModal({
   projectId,
   referenceCount,
   referencePreview,
+  selectable = true,
   selected,
   stageLabel,
   statusLabel,
@@ -45,6 +47,7 @@ export function ProjectCardModal({
   const menuRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLButtonElement>(null);
   const [menuPosition, setMenuPosition] = useState<{ left: number; top: number } | null>(null);
+  const isSelected = selectable && Boolean(selected);
 
   function toggleMenu() {
     if (menuPosition) {
@@ -78,16 +81,18 @@ export function ProjectCardModal({
   }, [menuPosition]);
 
   return (
-    <article className={`project-card ${selected ? "project-card-selected" : ""}`}>
+    <article className={`project-card ${selectable ? "project-card-selectable" : ""} ${isSelected ? "project-card-selected" : ""}`}>
       <div className="project-card-controls">
-        <label className="project-selector">
-          <input
-            aria-label={`Selecionar ${title} para integração`}
-            checked={selected}
-            onChange={(event) => onSelectionChange(projectId, event.target.checked)}
-            type="checkbox"
-          />
-        </label>
+        {selectable ? (
+          <label className="project-selector">
+            <input
+              aria-label={`Selecionar ${title} para integração`}
+              checked={isSelected}
+              onChange={(event) => onSelectionChange?.(projectId, event.target.checked)}
+              type="checkbox"
+            />
+          </label>
+        ) : null}
         <button aria-label={`Abrir opções de ${title}`} className="project-menu-trigger" onClick={toggleMenu} ref={dotsRef} type="button">
           •••
         </button>

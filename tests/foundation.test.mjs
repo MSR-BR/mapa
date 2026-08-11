@@ -350,7 +350,11 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
   assert.match(dashboard, /Qual seu tema de pesquisa\?/);
   assert.match(dashboard, /Continue de onde parou/);
   assert.match(dashboard, /continueParam === "1"/);
-  assert.match(dashboard, /Projetos recentes/);
+  assert.match(dashboard, /Projetos em andamento/);
+  assert.match(dashboard, /Projetos concluídos/);
+  assert.match(dashboard, /Projetos integrados/);
+  assert.match(dashboard, /const continuationMeta = activeProjects\[0\] \?\? null/);
+  assert.doesNotMatch(dashboard, /\?\? projects\[0\]/);
   assert.match(dashboard, /DashboardProjectGrid/);
   assert.match(quickStart, /useActionState/);
   assert.match(quickStart, /createProject/);
@@ -497,11 +501,14 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   ]);
 
   assert.match(grid, /Selecione projetos para integrar/);
+  assert.match(grid, /apenas em andamento/);
+  assert.match(grid, /allowIntegration = true/);
   assert.match(grid, /\/api\/projects\/integrate/);
   assert.match(grid, /integration-progress-bar/);
   assert.match(grid, /Lendo mapas salvos e referências/);
   assert.match(grid, /Integração concluída/);
   assert.match(card, /project-card-references/);
+  assert.match(card, /selectable = true/);
   assert.match(card, /Integração de projetos/);
   assert.match(card, /Integração dos projetos:/);
   assert.match(card, /getBoundingClientRect/);

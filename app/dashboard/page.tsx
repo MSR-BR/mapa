@@ -54,6 +54,10 @@ function workflowReferences(content: ResearchWorkflowContent): CardReference[] {
   }));
 }
 
+function isWorkflowFinished(project: { status: string; workflow_version: number }, workflow: { state: string } | undefined) {
+  return project.status === "completed" || (project.workflow_version === 2 && workflow?.state === "completed");
+}
+
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
   const { resume, continue: continueParam } = await searchParams;
   const { supabase } = await requireAuthenticatedUser();
@@ -123,16 +127,28 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       workflowVersion: project.workflow_version,
     };
   });
-  const continuationProject = projects.find((project) => {
-    const workflow = workflowByProject.get(project.id);
-    return project.workflow_version !== 2 || workflow?.state !== "completed";
-  }) ?? projects[0];
-  const continuationMeta = continuationProject
-    ? dashboardProjects.find((project) => project.projectId === continuationProject.id)
-    : null;
+  const dashboardProjectById = new Map(dashboardProjects.map((project) => [project.projectId, project]));
+  const activeProjects = projects
+    .filter((project) => {
+      const workflow = workflowByProject.get(project.id);
+      const dashboardProject = dashboardProjectById.get(project.id);
+      return !dashboardProject?.isIntegration && !isWorkflowFinished(project, workflow);
+    })
+    .map((project) => dashboardProjectById.get(project.id))
+    .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
+  const completedProjects = projects
+    .filter((project) => {
+      const workflow = workflowByProject.get(project.id);
+      const dashboardProject = dashboardProjectById.get(project.id);
+      return !dashboardProject?.isIntegration && isWorkflowFinished(project, workflow);
+    })
+    .map((project) => dashboardProjectById.get(project.id))
+    .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
+  const integratedProjects = dashboardProjects.filter((project) => project.isIntegration);
+  const continuationMeta = activeProjects[0] ?? null;
 
-  if (continueParam === "1" && resume !== "1" && continuationProject) {
-    redirect(`/dashboard/projects/${continuationProject.id}`);
+  if (continueParam === "1" && resume !== "1" && continuationMeta) {
+    redirect(`/dashboard/projects/${continuationMeta.projectId}`);
   }
 
   return (
@@ -161,7 +177,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <div className="section-heading">
           <div>
             <p className="section-kicker">Biblioteca</p>
-            <h2 id="recent-projects-title">Projetos recentes</h2>
+            <h2 id="recent-projects-title">Seus projetos</h2>
           </div>
         </div>
 
@@ -177,7 +193,28 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <span>Escreva uma ideia acima para criar o primeiro mapa.</span>
           </div>
         ) : (
-          <DashboardProjectGrid projects={dashboardProjects} />
+          <div className="project-library-sections">
+            <DashboardProjectGrid
+              description="Projetos salvos que ainda têm etapas abertas."
+              emptyMessage="Nenhum projeto em andamento agora."
+              projects={activeProjects}
+              title="Projetos em andamento"
+            />
+            <DashboardProjectGrid
+              allowIntegration={false}
+              description="Mapas finalizados e prontos para consulta ou exportação."
+              emptyMessage="Nenhum projeto concluído ainda."
+              projects={completedProjects}
+              title="Projetos concluídos"
+            />
+            <DashboardProjectGrid
+              allowIntegration={false}
+              description="Mapas gerados pela integração de dois ou mais projetos."
+              emptyMessage="Nenhum projeto integrado ainda."
+              projects={integratedProjects}
+              title="Projetos integrados"
+            />
+          </div>
         )}
       </section>
     </main>

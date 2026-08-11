@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { ProjectCardModal, type DashboardProject } from "./project-card-modal";
 
@@ -17,17 +17,34 @@ type IntegrationProgress = {
   step: string;
 };
 
-export function DashboardProjectGrid({ projects }: { projects: DashboardProject[] }) {
+type DashboardProjectGridProps = {
+  allowIntegration?: boolean;
+  description?: string;
+  emptyMessage?: string;
+  projects: DashboardProject[];
+  title: string;
+};
+
+export function DashboardProjectGrid({
+  allowIntegration = true,
+  description,
+  emptyMessage = "Nenhum projeto nesta seção.",
+  projects,
+  title,
+}: DashboardProjectGridProps) {
   const router = useRouter();
+  const sectionTitleId = useId();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [integrating, setIntegrating] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [progress, setProgress] = useState<IntegrationProgress>({ percent: 0, step: INTEGRATION_STEPS[0] });
+  const canSelectForIntegration = allowIntegration && projects.length > 0;
   const selectedProjects = selectedIds
     .map((id) => projects.find((project) => project.projectId === id))
     .filter((project): project is DashboardProject => Boolean(project));
 
   function updateSelection(projectId: string, selected: boolean) {
+    if (!canSelectForIntegration) return;
     setSelectedIds((current) => selected
       ? current.includes(projectId) ? current : [...current, projectId]
       : current.filter((id) => id !== projectId));
@@ -76,18 +93,27 @@ export function DashboardProjectGrid({ projects }: { projects: DashboardProject[
   }
 
   return (
-    <>
-      <div className="project-selection-toolbar">
-        <span>{selectedIds.length === 0 ? "Selecione projetos para integrar" : `${selectedIds.length} projeto(s) selecionado(s): ${selectedProjects.map((project) => project.title).join(", ")}`}</span>
-        <button
-          className="secondary-button"
-          disabled={selectedIds.length < 2 || selectedIds.length > 4 || integrating}
-          onClick={() => void integrate()}
-          type="button"
-        >
-          {integrating ? "Integrando com IA…" : "Integrar"}
-        </button>
+    <section className="project-library-section" aria-labelledby={sectionTitleId}>
+      <div className="project-library-section-heading">
+        <div>
+          <h3 id={sectionTitleId}>{title}</h3>
+          {description ? <p>{description}</p> : null}
+        </div>
+        <span>{projects.length} projeto(s)</span>
       </div>
+      {allowIntegration ? (
+        <div className="project-selection-toolbar">
+          <span>{selectedIds.length === 0 ? "Selecione projetos para integrar — apenas em andamento" : `${selectedIds.length} projeto(s) selecionado(s): ${selectedProjects.map((project) => project.title).join(", ")}`}</span>
+          <button
+            className="secondary-button"
+            disabled={selectedIds.length < 2 || selectedIds.length > 4 || integrating}
+            onClick={() => void integrate()}
+            type="button"
+          >
+            {integrating ? "Integrando com IA…" : "Integrar"}
+          </button>
+        </div>
+      ) : null}
       {integrating ? (
         <div className="integration-progress-panel" role="status" aria-live="polite">
           <div>
@@ -110,16 +136,23 @@ export function DashboardProjectGrid({ projects }: { projects: DashboardProject[
         </div>
       ) : null}
       {message ? <p className="integration-message" role="alert">{message}</p> : null}
-      <div className="project-grid" aria-label="Projetos">
-        {projects.map((project) => (
-          <ProjectCardModal
-            {...project}
-            key={project.projectId}
-            onSelectionChange={updateSelection}
-            selected={selectedIds.includes(project.projectId)}
-          />
-        ))}
-      </div>
-    </>
+      {projects.length === 0 ? (
+        <div className="inline-state empty-projects compact-empty-projects">
+          <span>{emptyMessage}</span>
+        </div>
+      ) : (
+        <div className="project-grid" aria-label={title}>
+          {projects.map((project) => (
+            <ProjectCardModal
+              {...project}
+              key={project.projectId}
+              onSelectionChange={updateSelection}
+              selectable={canSelectForIntegration}
+              selected={selectedIds.includes(project.projectId)}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
