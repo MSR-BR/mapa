@@ -478,6 +478,9 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(card, />Excluir</);
   assert.match(route, /\.eq\("owner_id", userId\)/);
   assert.match(route, /projectIds\.length < 2 \|\| projectIds\.length > 4/);
+  assert.match(route, /research_workflows/);
+  assert.match(route, /workflowToResearchStructure/);
+  assert.match(route, /Todos os projetos precisam ter um mapa salvo/);
   assert.match(route, /mergeResearchStructures/);
   assert.match(gemini, /Integre os mapas fornecidos/);
   assert.match(layout, />Dashboard</);
