@@ -23,14 +23,16 @@ type DashboardProjectGridProps = {
   emptyMessage?: string;
   projects: DashboardProject[];
   title: string;
+  variant: "active" | "completed" | "integrated";
 };
 
 export function DashboardProjectGrid({
-  allowIntegration = true,
+  allowIntegration = false,
   description,
   emptyMessage = "Nenhum projeto nesta seção.",
   projects,
   title,
+  variant,
 }: DashboardProjectGridProps) {
   const router = useRouter();
   const sectionTitleId = useId();
@@ -42,6 +44,9 @@ export function DashboardProjectGrid({
   const selectedProjects = selectedIds
     .map((id) => projects.find((project) => project.projectId === id))
     .filter((project): project is DashboardProject => Boolean(project));
+  const selectionLabel = selectedIds.length === 0
+    ? "Selecione projetos concluídos para integrar"
+    : `${selectedIds.length} projeto(s) selecionado(s): ${selectedProjects.map((project) => project.title).join(", ")}`;
 
   function updateSelection(projectId: string, selected: boolean) {
     if (!canSelectForIntegration) return;
@@ -93,7 +98,7 @@ export function DashboardProjectGrid({
   }
 
   return (
-    <section className="project-library-section" aria-labelledby={sectionTitleId}>
+    <section className={`project-library-section project-library-section-${variant}`} aria-labelledby={sectionTitleId}>
       <div className="project-library-section-heading">
         <div>
           <h3 id={sectionTitleId}>{title}</h3>
@@ -101,9 +106,9 @@ export function DashboardProjectGrid({
         </div>
         <span>{projects.length} projeto(s)</span>
       </div>
-      {allowIntegration ? (
+      {canSelectForIntegration ? (
         <div className="project-selection-toolbar">
-          <span>{selectedIds.length === 0 ? "Selecione projetos para integrar — apenas em andamento" : `${selectedIds.length} projeto(s) selecionado(s): ${selectedProjects.map((project) => project.title).join(", ")}`}</span>
+          <span>{selectionLabel}</span>
           <button
             className="secondary-button"
             disabled={selectedIds.length < 2 || selectedIds.length > 4 || integrating}

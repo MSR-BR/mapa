@@ -195,24 +195,27 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ) : (
           <div className="project-library-sections">
             <DashboardProjectGrid
-              description="Projetos salvos que ainda têm etapas abertas."
+              description="Projetos salvos que ainda têm etapas abertas. Use esta área para continuar a construção do mapa."
               emptyMessage="Nenhum projeto em andamento agora."
               projects={activeProjects}
               title="Projetos em andamento"
+              variant="active"
             />
             <DashboardProjectGrid
-              allowIntegration={false}
-              description="Mapas finalizados e prontos para consulta ou exportação."
+              allowIntegration
+              description="Mapas finalizados. Marque dois a quatro projetos aqui para gerar uma integração."
               emptyMessage="Nenhum projeto concluído ainda."
               projects={completedProjects}
               title="Projetos concluídos"
+              variant="completed"
             />
             <DashboardProjectGrid
               allowIntegration={false}
-              description="Mapas gerados pela integração de dois ou mais projetos."
+              description="Mapas gerados pela integração de dois ou mais projetos, mantidos separados dos originais."
               emptyMessage="Nenhum projeto integrado ainda."
               projects={integratedProjects}
               title="Projetos integrados"
+              variant="integrated"
             />
           </div>
         )}
