@@ -458,10 +458,11 @@ test("keeps methodology controls responsive and reference-aware", async () => {
 });
 
 test("supports anchored project actions and owner-scoped AI integration", async () => {
-  const [grid, card, route, gemini, layout, accountMenu] = await Promise.all([
+  const [grid, card, route, projectPage, gemini, layout, accountMenu] = await Promise.all([
     readProjectFile("modules/projects/dashboard-project-grid.tsx"),
     readProjectFile("modules/projects/project-card-modal.tsx"),
     readProjectFile("app/api/projects/integrate/route.ts"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
     readProjectFile("modules/generation/gemini.ts"),
     readProjectFile("app/dashboard/layout.tsx"),
     readProjectFile("modules/auth/account-menu.tsx"),
@@ -469,6 +470,12 @@ test("supports anchored project actions and owner-scoped AI integration", async 
 
   assert.match(grid, /Selecione projetos para integrar/);
   assert.match(grid, /\/api\/projects\/integrate/);
+  assert.match(grid, /integration-progress-bar/);
+  assert.match(grid, /Lendo mapas salvos e referências/);
+  assert.match(grid, /Integração concluída/);
+  assert.match(card, /project-card-references/);
+  assert.match(card, /Integração de projetos/);
+  assert.match(card, /Integração dos projetos:/);
   assert.match(card, /getBoundingClientRect/);
   assert.match(card, /createPortal/);
   assert.match(card, /event\.key === "Escape"/);
@@ -481,7 +488,10 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(route, /research_workflows/);
   assert.match(route, /workflowToResearchStructure/);
   assert.match(route, /Todos os projetos precisam ter um mapa salvo/);
+  assert.match(route, /sourceTitles/);
   assert.match(route, /mergeResearchStructures/);
+  assert.match(projectPage, /integration-result-banner/);
+  assert.match(projectPage, /Este mapa é uma integração dos projetos/);
   assert.match(gemini, /Integre os mapas fornecidos/);
   assert.match(layout, />Dashboard</);
   assert.match(layout, /AccountMenu/);

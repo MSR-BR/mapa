@@ -270,6 +270,10 @@ export async function POST(request: Request) {
   if (!projects || projects.length !== projectIds.length) {
     return NextResponse.json({ error: "Um dos projetos não foi encontrado." }, { status: 404 });
   }
+  const orderedProjects = projectIds
+    .map((id) => projects.find((project) => project.id === id))
+    .filter((project): project is ProjectForIntegration => Boolean(project));
+  const sourceTitles = orderedProjects.map((project) => project.title);
 
   const [{ data: storedStructures }, { data: storedWorkflows }] = await Promise.all([
     supabase
@@ -288,7 +292,7 @@ export async function POST(request: Request) {
   const workflowByProject = new Map((storedWorkflows ?? []).map((workflow) => [workflow.project_id, workflow as StoredWorkflowRow]));
   const sources: Array<{ structure: ResearchStructure; title: string }> = [];
   const references: StoredReference[] = [];
-  for (const [sourceIndex, project] of (projects as ProjectForIntegration[]).entries()) {
+  for (const [sourceIndex, project] of orderedProjects.entries()) {
     const stored = storedByProject.get(project.id);
     const workflow = parseWorkflow(workflowByProject.get(project.id));
     const structure = workflow
@@ -311,11 +315,11 @@ export async function POST(request: Request) {
 
   try {
     const structure = await mergeResearchStructures(sources, references);
-    const theme = projects.map((project) => project.theme).filter(Boolean).join(" · ").slice(0, 500) || null;
-    const problemStatement = `Integração dos projetos: ${projects.map((project) => project.title).join("; ")}`.slice(0, 5_000);
-    const keywords = [...new Set(projects.flatMap((project) => project.keywords))].slice(0, 12);
-    const knowledgeArea = [...new Set(projects.map((project) => project.knowledge_area).filter(Boolean))].join(" / ").slice(0, 120) || null;
-    const academicLevel = projects.map((project) => project.academic_level).find(Boolean) ?? null;
+    const theme = orderedProjects.map((project) => project.theme).filter(Boolean).join(" · ").slice(0, 500) || null;
+    const problemStatement = `Integração dos projetos: ${sourceTitles.join("; ")}`.slice(0, 5_000);
+    const keywords = [...new Set(orderedProjects.flatMap((project) => project.keywords))].slice(0, 12);
+    const knowledgeArea = [...new Set(orderedProjects.map((project) => project.knowledge_area).filter(Boolean))].join(" / ").slice(0, 120) || null;
+    const academicLevel = orderedProjects.map((project) => project.academic_level).find(Boolean) ?? null;
     const { data: integrated, error: projectError } = await supabase
       .from("projects")
       .insert({
@@ -347,7 +351,7 @@ export async function POST(request: Request) {
       await supabase.from("projects").update({ deleted_at: now, updated_at: now }).eq("id", integrated.id).eq("owner_id", userId);
       throw new Error("Não foi possível salvar a estrutura integrada.");
     }
-    return NextResponse.json({ projectId: integrated.id });
+    return NextResponse.json({ projectId: integrated.id, sourceTitles });
   } catch (error) {
     console.error("project_integration_failed", {
       message: error instanceof Error ? error.message : "unknown-error",

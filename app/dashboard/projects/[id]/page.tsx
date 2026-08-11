@@ -11,7 +11,20 @@ import { MethodologyWorkspace } from "@/modules/research-workflow/methodology-wo
 import { FinalMapWorkspace } from "@/modules/research-workflow/final-map-workspace";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
-export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string }> }) {
+function integrationSource(problemStatement: string | null) {
+  return problemStatement?.match(/^Integração dos projetos:\s*(.+)$/i)?.[1]?.trim() ?? null;
+}
+
+function IntegrationBanner({ source }: { source: string | null }) {
+  return source ? (
+    <div className="integration-result-banner" role="status">
+      <strong>Projeto integrado</strong>
+      <span>Este mapa é uma integração dos projetos: {source}.</span>
+    </div>
+  ) : null;
+}
+
+export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string }> }) {
   const { id } = await params;
   const { discover, generate } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -28,6 +41,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     .maybeSingle();
 
   if (!project) notFound();
+  const source = integrationSource(project.problem_statement);
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, userId, id);
@@ -44,6 +58,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
+        <IntegrationBanner source={source} />
         {isFinalMapStage ? (
           <FinalMapWorkspace initialWorkflow={workflow} projectId={project.id} />
         ) : isMethodologyStage ? (
@@ -71,6 +86,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
+      <IntegrationBanner source={source} />
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
     </main>
   );

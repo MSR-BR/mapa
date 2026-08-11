@@ -7,6 +7,8 @@ import { workflowDashboardMeta } from "@/modules/research-workflow/dashboard";
 import {
   researchWorkflowContentSchema,
   researchWorkflowSchema,
+  type DiscoveryReference,
+  type ResearchWorkflowContent,
 } from "@/modules/research-workflow/schema";
 
 const statusLabels: Record<string, string> = {
@@ -16,23 +18,69 @@ const statusLabels: Record<string, string> = {
   in_progress: "Em andamento",
 };
 
+type CardReference = {
+  label: string;
+  title: string | null;
+};
+
+function referenceLabel(reference: DiscoveryReference) {
+  const authors = reference.authors.slice(0, 2).join(", ") || "Fonte";
+  return `${authors}${reference.year ? ` (${reference.year})` : ""}`;
+}
+
+function readClassicReferences(value: unknown): CardReference[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item): CardReference[] => {
+    if (!item || typeof item !== "object") return [];
+    const reference = item as { authors?: unknown; title?: unknown; year?: unknown };
+    const authors = Array.isArray(reference.authors)
+      ? reference.authors.filter((author): author is string => typeof author === "string")
+      : [];
+    const title = typeof reference.title === "string" ? reference.title : null;
+    const year = typeof reference.year === "number" ? reference.year : null;
+    return [{
+      label: `${authors.slice(0, 2).join(", ") || "Fonte"}${year ? ` (${year})` : ""}`,
+      title,
+    }];
+  });
+}
+
+function workflowReferences(content: ResearchWorkflowContent): CardReference[] {
+  const references = [...(content.discovery?.references ?? []), ...content.referenceArchive]
+    .filter((reference, index, all) => all.findIndex((item) => item.referenceId === reference.referenceId) === index);
+  return references.map((reference) => ({
+    label: referenceLabel(reference),
+    title: reference.title,
+  }));
+}
+
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
   const { resume, continue: continueParam } = await searchParams;
   const { supabase } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
-    .select("id, title, status, knowledge_area, academic_level, updated_at, workflow_version")
+    .select("id, title, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version")
     .is("deleted_at", null)
     .order("updated_at", { ascending: false })
     .limit(12);
   const projects = data ?? [];
+  const projectIds = projects.map((project) => project.id);
   const v2ProjectIds = projects.filter((project) => project.workflow_version === 2).map((project) => project.id);
-  const { data: workflows } = v2ProjectIds.length > 0
-    ? await supabase
-      .from("research_workflows")
-      .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
-      .in("project_id", v2ProjectIds)
-    : { data: [] };
+  const [{ data: workflows }, { data: structures }] = await Promise.all([
+    v2ProjectIds.length > 0
+      ? supabase
+        .from("research_workflows")
+        .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
+        .in("project_id", v2ProjectIds)
+      : Promise.resolve({ data: [] }),
+    projectIds.length > 0
+      ? supabase
+        .from("research_structures")
+        .select("project_id, prompt_version, references_data")
+        .in("project_id", projectIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+  const structureByProject = new Map((structures ?? []).map((structure) => [structure.project_id, structure]));
   const workflowByProject = new Map((workflows ?? []).flatMap((workflow) => {
     const content = researchWorkflowContentSchema.safeParse(workflow.content);
     if (!content.success) return [];
@@ -51,15 +99,25 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   }));
   const dashboardProjects = projects.map((project) => {
     const workflow = workflowByProject.get(project.id);
+    const structure = structureByProject.get(project.id);
     const meta = project.workflow_version === 2 && workflow
       ? workflowDashboardMeta(workflow, { area: project.knowledge_area, title: project.title })
       : null;
+    const references = workflow
+      ? workflowReferences(workflow.content)
+      : readClassicReferences(structure?.references_data);
+    const integrationSource = project.problem_statement?.match(/^Integração dos projetos:\s*(.+)$/i)?.[1]?.trim() ?? null;
+    const isIntegration = structure?.prompt_version.endsWith("-merge") || Boolean(integrationSource);
     return {
       academicArea: meta?.area ?? project.knowledge_area ?? "Área a definir",
+      integrationSource,
+      isIntegration,
       progress: meta?.progress ?? null,
       projectId: project.id,
+      referenceCount: references.length,
+      referencePreview: references.slice(0, 2),
       stageLabel: meta?.stageLabel ?? "Fluxo clássico",
-      statusLabel: project.workflow_version === 2 ? "Mapa v2" : statusLabels[project.status] ?? project.status,
+      statusLabel: isIntegration ? "Integração" : project.workflow_version === 2 ? "Mapa v2" : statusLabels[project.status] ?? project.status,
       title: meta?.title ?? project.title,
       updatedAt: project.updated_at,
       workflowVersion: project.workflow_version,

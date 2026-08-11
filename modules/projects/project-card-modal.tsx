@@ -8,8 +8,12 @@ import { deleteProject } from "./actions";
 
 export type DashboardProject = {
   academicArea: string;
+  integrationSource: string | null;
+  isIntegration: boolean;
   progress: number | null;
   projectId: string;
+  referenceCount: number;
+  referencePreview: Array<{ label: string; title: string | null }>;
   stageLabel: string;
   statusLabel: string;
   title: string;
@@ -24,9 +28,13 @@ type Props = DashboardProject & {
 
 export function ProjectCardModal({
   academicArea,
+  integrationSource,
+  isIntegration,
   onSelectionChange,
   progress,
   projectId,
+  referenceCount,
+  referencePreview,
   selected,
   stageLabel,
   statusLabel,
@@ -85,8 +93,22 @@ export function ProjectCardModal({
         </button>
       </div>
       <span className="project-status">{statusLabel}</span>
+      {isIntegration ? <span className="project-origin-badge">Integração de projetos</span> : null}
       <strong>{title}</strong>
       <span className="project-card-area">{academicArea}</span>
+      {integrationSource ? <p className="project-card-origin">Integração dos projetos: {integrationSource}</p> : null}
+      <div className="project-card-references" aria-label={`${referenceCount} referências associadas`}>
+        <span>{referenceCount > 0 ? `${referenceCount} referência(s)` : "Sem referências associadas"}</span>
+        {referencePreview.length > 0 ? (
+          <ul>
+            {referencePreview.map((reference) => (
+              <li key={`${reference.label}-${reference.title ?? ""}`}>
+                {reference.label}{reference.title ? ` — ${reference.title}` : ""}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
       <div className="project-card-progress" aria-label={progress === null ? stageLabel : `${stageLabel}, ${progress}% concluído`}>
         <span>{stageLabel}</span>
         {progress !== null ? (
@@ -109,7 +131,7 @@ export function ProjectCardModal({
           style={{ left: menuPosition.left, top: menuPosition.top }}
         >
           <strong>{title}</strong>
-          <span>{academicArea} · {statusLabel}</span>
+          <span>{academicArea} · {statusLabel}{referenceCount > 0 ? ` · ${referenceCount} ref.` : ""}</span>
           <div className="project-popover-actions">
             <Link className="primary-link" href={`/dashboard/projects/${projectId}`}>Abrir</Link>
             <form
