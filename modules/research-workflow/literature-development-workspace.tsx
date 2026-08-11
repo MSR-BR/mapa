@@ -234,7 +234,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
             <div>
               <p className="section-kicker">Research Starter</p>
               <h3>Otimizar literatura</h3>
-              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. Se tudo estiver bom, você pode apenas validar e avançar.</p>
+              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. Depois da otimização, as associações específicas entre tópico e referência podem mudar. Se tudo estiver bom, você pode apenas validar e avançar.</p>
             </div>
             {showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : <button onClick={() => setShowOptimize(true)} type="button">Otimizar literatura</button>}
           </article>

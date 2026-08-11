@@ -432,6 +432,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /Ajuda em parte/);
   assert.match(workspace, /literature-optimizer-card/);
   assert.match(workspace, /Quando otimizar:/);
+  assert.match(workspace, /associações específicas entre tópico e referência podem mudar/);
   assert.match(workspace, /Se tudo estiver bom, você pode apenas validar e avançar/);
   assert.match(workspace, /requestBody\.topics = topics/);
   assert.match(workspace, /Referências encontradas e associadas/);
