@@ -460,6 +460,9 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /referenceText\(reference\)/);
   assert.match(styles, /input:not\(\[type="checkbox"\]\)/);
   assert.match(styles, /methodology-classification input\[type="checkbox"\]/);
+  assert.match(styles, /methodology-classification fieldset \{[^}]*align-items: flex-start/);
+  assert.match(styles, /methodology-classification fieldset label \{[^}]*border-radius: 0\.75rem/);
+  assert.doesNotMatch(styles, /methodology-classification fieldset label \{[^}]*border-radius: 999px/);
   assert.match(styles, /@media \(max-width: 600px\)/);
 });
 
