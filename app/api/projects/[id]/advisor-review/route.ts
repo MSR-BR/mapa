@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { toJson } from "@/modules/generation/types";
+import { claimPendingAdvisorProjects, loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import {
@@ -59,6 +60,11 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const { supabase, userId, claims } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
+  if (profile.activeRole !== "advisor") {
+    return NextResponse.json({ error: "Ative o modo orientador para validar etapas." }, { status: 403 });
+  }
+  await claimPendingAdvisorProjects(supabase);
   const reviewerEmail = claimEmail(claims as Record<string, unknown>);
   if (!reviewerEmail) {
     return NextResponse.json({ error: "Sua conta não possui e-mail confirmado para atuar como orientador." }, { status: 403 });
@@ -66,7 +72,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   const { data: project, error: projectError } = await supabase
     .from("projects")
-    .select("id, owner_id, advisor_email, workflow_version, deleted_at")
+    .select("id, owner_id, advisor_email, advisor_id, workflow_version, deleted_at")
     .eq("id", id)
     .is("deleted_at", null)
     .maybeSingle();
@@ -78,7 +84,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "A validação do orientador está disponível apenas no Mapa v2." }, { status: 409 });
   }
   const advisorEmail = normalizeAdvisorEmail(project.advisor_email);
-  if (!advisorEmail || advisorEmail !== reviewerEmail) {
+  const advisorMatches = project.advisor_id === userId || (Boolean(advisorEmail) && advisorEmail === reviewerEmail);
+  if (!advisorMatches) {
     return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de orientador." }, { status: 403 });
   }
 

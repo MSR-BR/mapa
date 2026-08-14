@@ -218,12 +218,43 @@ export type Database = {
           },
         ]
       }
+      user_profiles: {
+        Row: {
+          active_role: string
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_role: string
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_role?: string
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_pending_advisor_projects: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      set_project_advisor: {
+        Args: {
+          advisor_email_input: string | null
+          project_id_input: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

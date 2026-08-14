@@ -671,6 +671,66 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(quickStart, /advisorEmail/);
 });
 
+test("supports student/advisor profile modes and deferred advisor linking", async () => {
+  const [
+    accountMenu,
+    profileActions,
+    profilePrompt,
+    profileStorage,
+    projectActions,
+    projectAdvisorPanel,
+    dashboard,
+    projectPage,
+    advisorRoute,
+    migration,
+    styles,
+  ] = await Promise.all([
+    readProjectFile("modules/auth/account-menu.tsx"),
+    readProjectFile("modules/profile/actions.ts"),
+    readProjectFile("modules/profile/profile-mode-prompt.tsx"),
+    readProjectFile("modules/profile/storage.ts"),
+    readProjectFile("modules/projects/actions.ts"),
+    readProjectFile("modules/projects/project-advisor-panel.tsx"),
+    readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+    readProjectFile("app/api/projects/[id]/advisor-review/route.ts"),
+    readProjectFile("supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql"),
+    readProjectFile("app/globals.css"),
+  ]);
+
+  assert.match(accountMenu, /activeRole/);
+  assert.match(accountMenu, /Mudar para/);
+  assert.match(profileActions, /setActiveProfileRole/);
+  assert.match(profileActions, /claim_pending_advisor_projects/);
+  assert.match(profilePrompt, /Primeiro acesso/);
+  assert.match(profilePrompt, /Sou aluno/);
+  assert.match(profilePrompt, /Sou orientador/);
+  assert.match(profileStorage, /loadUserProfile/);
+  assert.match(profileStorage, /hasProfile: false/);
+  assert.match(dashboard, /isStudentMode/);
+  assert.match(dashboard, /advisor-mode-hero/);
+  assert.match(dashboard, /profile\.activeRole === "advisor"/);
+  assert.match(dashboard, /Projetos sob minha orientação/);
+  assert.match(projectPage, /ProjectAdvisorPanel/);
+  assert.match(projectPage, /advisorMatches && !isAdvisor/);
+  assert.match(projectPage, /Abra este projeto no modo orientador/);
+  assert.match(advisorRoute, /profile\.activeRole !== "advisor"/);
+  assert.match(advisorRoute, /project\.advisor_id === userId/);
+  assert.match(projectActions, /set_project_advisor/);
+  assert.match(projectActions, /E-mail salvo\. O vínculo será concluído/);
+  assert.match(projectAdvisorPanel, /E-mail do orientador/);
+  assert.match(projectAdvisorPanel, /Conta vinculada/);
+  assert.match(projectAdvisorPanel, /E-mail guardado/);
+  assert.match(migration, /create table if not exists public\.user_profiles/);
+  assert.match(migration, /create or replace function public\.set_project_advisor/);
+  assert.match(migration, /create or replace function public\.claim_pending_advisor_projects/);
+  assert.match(migration, /grant execute on function public\.set_project_advisor\(uuid, text\) to authenticated/);
+  assert.match(migration, /advisor_id = \(select auth\.uid\(\)\)/);
+  assert.match(styles, /profile-mode-backdrop/);
+  assert.match(styles, /account-profile-switch/);
+  assert.match(styles, /project-advisor-panel/);
+});
+
 test("uses the approved dark silver authentication shell", async () => {
   const [authLayout, styles] = await Promise.all([
     readProjectFile("app/(auth)/layout.tsx"),

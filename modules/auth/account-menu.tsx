@@ -2,17 +2,22 @@
 
 import { useEffect, useRef } from "react";
 
+import { setActiveProfileRole } from "@/modules/profile/actions";
+import { USER_PROFILE_ROLE_LABELS, type UserProfileRole } from "@/modules/profile/types";
+
 import { logout } from "./actions";
 
 type Props = {
+  activeRole: UserProfileRole;
   avatarUrl?: string;
   displayName?: string;
   email: string;
   initials: string;
 };
 
-export function AccountMenu({ avatarUrl, displayName, email, initials }: Props) {
+export function AccountMenu({ activeRole, avatarUrl, displayName, email, initials }: Props) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const nextRole: UserProfileRole = activeRole === "advisor" ? "student" : "advisor";
 
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
@@ -44,6 +49,14 @@ export function AccountMenu({ avatarUrl, displayName, email, initials }: Props) 
         <div className="account-identity">
           {displayName ? <strong>{displayName}</strong> : null}
           {email ? <span>{email}</span> : null}
+        </div>
+        <div className="account-profile-switch">
+          <span>Modo atual</span>
+          <strong>{USER_PROFILE_ROLE_LABELS[activeRole]}</strong>
+          <form action={setActiveProfileRole}>
+            <input name="role" type="hidden" value={nextRole} />
+            <button type="submit">Mudar para {USER_PROFILE_ROLE_LABELS[nextRole].toLocaleLowerCase("pt-BR")}</button>
+          </form>
         </div>
         <form action={logout}><button type="submit">Sair</button></form>
       </div>

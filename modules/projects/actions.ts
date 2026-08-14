@@ -9,9 +9,22 @@ import {
   duplicateResearchWorkflow,
 } from "@/modules/research-workflow/storage";
 
+import { normalizeAdvisorEmail } from "./advisor";
 import { requireAuthenticatedUser } from "./auth";
-import type { ProjectActionState } from "./types";
+import type { AdvisorLinkActionState, ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
+
+async function saveProjectAdvisor(
+  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  projectId: string,
+  advisorEmail: string | null,
+) {
+  const { data, error } = await supabase.rpc("set_project_advisor", {
+    advisor_email_input: advisorEmail,
+    project_id_input: projectId,
+  });
+  return error ? { error } : { linked: Boolean(data) };
+}
 
 export async function createProject(
   _previousState: ProjectActionState,
@@ -46,12 +59,29 @@ export async function createProject(
   }
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...projectData, owner_id: userId, workflow_version: useResearchMapV2 ? 2 : 1 })
+    .insert({
+      ...projectData,
+      advisor_id: null,
+      owner_id: userId,
+      workflow_version: useResearchMapV2 ? 2 : 1,
+    })
     .select("id")
     .single();
 
   if (error || !data) {
     return { message: "Não foi possível criar o projeto.", status: "error" };
+  }
+  if (projectData.advisor_email) {
+    const advisorLink = await saveProjectAdvisor(supabase, data.id, projectData.advisor_email);
+    if ("error" in advisorLink) {
+      const now = new Date().toISOString();
+      await supabase
+        .from("projects")
+        .update({ deleted_at: now, updated_at: now })
+        .eq("id", data.id)
+        .eq("owner_id", userId);
+      return { message: "Não foi possível verificar a conta do orientador.", status: "error" };
+    }
   }
 
   if (useResearchMapV2) {
@@ -95,7 +125,7 @@ export async function updateProject(
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data, error } = await supabase
     .from("projects")
-    .update({ ...result.data, updated_at: new Date().toISOString() })
+    .update({ ...result.data, advisor_id: null, updated_at: new Date().toISOString() })
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)
@@ -105,10 +135,52 @@ export async function updateProject(
   if (error || !data) {
     return { message: "Projeto não encontrado ou sem permissão.", status: "error" };
   }
+  const advisorLink = await saveProjectAdvisor(supabase, projectId, result.data.advisor_email);
+  if ("error" in advisorLink) {
+    return { message: "Não foi possível verificar a conta do orientador.", status: "error" };
+  }
 
   revalidatePath("/dashboard");
   revalidatePath(`/dashboard/projects/${projectId}`);
   return { message: "Projeto salvo.", status: "success" };
+}
+
+export async function updateProjectAdvisor(
+  _previousState: AdvisorLinkActionState,
+  formData: FormData,
+): Promise<AdvisorLinkActionState> {
+  const projectId = readProjectId(formData);
+  const rawEmail = formData.get("advisorEmail");
+  const advisorEmail = normalizeAdvisorEmail(typeof rawEmail === "string" ? rawEmail : "");
+  if (!projectId) return { message: "Projeto inválido.", status: "error", value: advisorEmail ?? "" };
+  if (advisorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advisorEmail)) {
+    return { message: "Informe um e-mail válido para o orientador.", status: "error", value: advisorEmail };
+  }
+
+  const { supabase } = await requireAuthenticatedUser();
+  const advisorLink = await saveProjectAdvisor(supabase, projectId, advisorEmail);
+  if ("error" in advisorLink) {
+    return { message: "Projeto não encontrado ou sem permissão.", status: "error", value: advisorEmail ?? "" };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  if (!advisorEmail) {
+    return { linked: false, message: "Orientador removido deste projeto.", status: "success", value: "" };
+  }
+  return advisorLink.linked
+    ? {
+      linked: true,
+      message: "Orientador vinculado à conta existente.",
+      status: "success",
+      value: advisorEmail,
+    }
+    : {
+      linked: false,
+      message: "E-mail salvo. O vínculo será concluído quando o orientador entrar com essa conta.",
+      status: "success",
+      value: advisorEmail,
+    };
 }
 
 export async function duplicateProject(formData: FormData) {

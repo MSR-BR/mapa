@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 
 import { GenerationWorkspace } from "@/modules/generation/generation-workspace";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { ProjectAdvisorPanel } from "@/modules/projects/project-advisor-panel";
 import { AdvisorReviewWorkspace } from "@/modules/research-workflow/advisor-review-workspace";
 import { FinalMapWorkspace } from "@/modules/research-workflow/final-map-workspace";
 import { LiteratureDevelopmentWorkspace } from "@/modules/research-workflow/literature-development-workspace";
@@ -32,6 +34,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const { claims, supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
   const { data: project } = await supabase
     .from("projects")
     .select(
@@ -44,14 +47,30 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   if (!project) notFound();
   const isOwner = project.owner_id === userId;
   const userEmail = claimEmail(claims as Record<string, unknown>);
-  const isAdvisor = !isOwner && Boolean(userEmail) && normalizeAdvisorEmail(project.advisor_email) === userEmail;
-  if (!isOwner && !isAdvisor) notFound();
+  const advisorMatches = !isOwner && Boolean(userEmail) && (
+    project.advisor_id === userId || normalizeAdvisorEmail(project.advisor_email) === userEmail
+  );
+  const isAdvisor = advisorMatches && profile.activeRole === "advisor";
+  if (!isOwner && !advisorMatches) notFound();
 
   const source = integrationSource(project.problem_statement);
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
     if (!workflow) notFound();
+    if (advisorMatches && !isAdvisor) {
+      return (
+        <main className="workspace-shell proposal-workspace-shell">
+          <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
+          <p className="eyebrow">Mapa da pesquisa</p>
+          <h1>{project.title}</h1>
+          <div className="inline-state advisor-mode-required" role="status">
+            <strong>Abra este projeto no modo orientador.</strong>
+            <span>Use o ícone do usuário, no topo da tela, e escolha “Mudar para orientador”.</span>
+          </div>
+        </main>
+      );
+    }
     if (isAdvisor) {
       return (
         <main className="workspace-shell proposal-workspace-shell">
@@ -76,6 +95,11 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
         <IntegrationBanner source={source} />
+        <ProjectAdvisorPanel
+          advisorEmail={project.advisor_email}
+          advisorLinked={Boolean(project.advisor_id)}
+          projectId={project.id}
+        />
         {isFinalMapStage ? (
           <FinalMapWorkspace initialWorkflow={workflow} projectId={project.id} />
         ) : isMethodologyStage ? (
@@ -105,6 +129,11 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
       <IntegrationBanner source={source} />
+      <ProjectAdvisorPanel
+        advisorEmail={project.advisor_email}
+        advisorLinked={Boolean(project.advisor_id)}
+        projectId={project.id}
+      />
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
     </main>
   );

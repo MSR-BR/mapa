@@ -1,10 +1,13 @@
 import Link from "next/link";
 
 import { AccountMenu } from "@/modules/auth/account-menu";
+import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { claims } = await requireAuthenticatedUser();
+  const { claims, supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
   const metadata = (
     claims.user_metadata && typeof claims.user_metadata === "object"
       ? claims.user_metadata
@@ -30,9 +33,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </Link>
         <nav aria-label="Navegação principal">
           <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
-          <AccountMenu avatarUrl={avatarUrl} displayName={displayName} email={email} initials={initials} />
+          <AccountMenu
+            activeRole={profile.activeRole}
+            avatarUrl={avatarUrl}
+            displayName={displayName}
+            email={email}
+            initials={initials}
+          />
         </nav>
       </header>
+      {!profile.hasProfile ? <ProfileModePrompt email={email} /> : null}
       {children}
     </div>
   );

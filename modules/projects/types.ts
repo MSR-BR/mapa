@@ -21,3 +21,12 @@ export type ProjectActionState = {
 };
 
 export const initialProjectActionState: ProjectActionState = { status: "idle" };
+
+export type AdvisorLinkActionState = {
+  linked?: boolean;
+  message?: string;
+  status: "idle" | "error" | "success";
+  value?: string;
+};
+
+export const initialAdvisorLinkActionState: AdvisorLinkActionState = { status: "idle" };
