@@ -39,7 +39,13 @@ export function validateChapterTopics(
     if (unknownObjectives.length > 0) errors.push(`O tópico ${index + 1} aponta para objetivo inexistente.`);
     const studyCaseIntro = options.chapter === "development" && index === 0 && Boolean(topic.exceptionJustification?.trim());
     if (topic.objectiveCoverage.length === 0 && !studyCaseIntro) {
-      errors.push(`O tópico ${index + 1} precisa estar ligado a pelo menos um objetivo ou justificar a apresentação do estudo de caso.`);
+      errors.push(`O tópico ${index + 1} precisa estar ligado a pelo menos um objetivo ou preencher a justificativa da apresentação do estudo de caso (*).`);
+    }
+    if (options.chapter === "development" && index === 0 && topic.objectiveCoverage.length === 0 && (topic.exceptionJustification?.trim().length ?? 0) < 10) {
+      errors.push("A justificativa da apresentação do estudo de caso no tópico 4.1 (*) precisa ter pelo menos 10 caracteres.");
+    }
+    if ((topic.studentJustification?.trim().length ?? 0) < 10) {
+      errors.push(`O tópico ${index + 1} precisa de justificativa do aluno (*) com pelo menos 10 caracteres.`);
     }
     const unknownReferences = topic.referenceIds.filter((referenceId) => !options.allowedReferenceIds.has(referenceId));
     if (unknownReferences.length > 0) errors.push(`O tópico ${index + 1} contém referência não verificada.`);

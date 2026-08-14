@@ -193,7 +193,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
               <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
             </label>
             <label className="student-justification">
-              Por que esta grande pergunta vale ser investigada?
+              Por que esta grande pergunta vale ser investigada? *
               <textarea maxLength={1000} onChange={(event) => setProblemJustification(event.target.value)} placeholder="Escreva uma justificativa breve. Ela orientará as próximas sugestões, mas continua sendo uma reflexão sua." value={problemJustification} />
             </label>
           </div>
@@ -205,7 +205,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
               <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
             </label>
             <label className="student-justification">
-              Por que este objetivo responde à problemática?
+              Por que este objetivo responde à problemática? *
               <textarea maxLength={1000} onChange={(event) => setGeneralJustification(event.target.value)} placeholder="Registre sua justificativa para não aceitar a IA automaticamente." value={generalJustification} />
             </label>
           </div>
@@ -218,7 +218,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
                   <textarea maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
                 </label>
                 <label className="student-justification">
-                  Justificativa do OE{index + 1}
+                  Justificativa do OE{index + 1} *
                   <textarea maxLength={1000} onChange={(event) => updateSpecificJustification(objective.id, event.target.value)} placeholder="Por que este objetivo é necessário para atender o objetivo geral?" value={objective.studentJustification} />
                 </label>
                 <button

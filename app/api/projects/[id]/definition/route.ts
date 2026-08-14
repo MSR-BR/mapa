@@ -51,6 +51,7 @@ const specificDraftsSchema = z.array(z.object({
 })).min(3).max(6);
 
 type DefinitionRouteStep = z.infer<typeof requestSchema>["step"];
+const MIN_STUDENT_JUSTIFICATION_LENGTH = 10;
 
 function currentElement(content: ResearchWorkflowContent, type: WorkflowElementType) {
   return content.elements.find((element) => element.type === type);
@@ -203,15 +204,38 @@ function draftContent(
 function validationErrors(content: ResearchWorkflowContent, step: DefinitionRouteStep) {
   const problem = currentElement(content, "problem_statement");
   if (!problem) return ["A problemática não foi encontrada."];
-  if (step === "problem_statement") return validateProblemStatement(problem.proposedContent);
+  if (step === "problem_statement") {
+    return [
+      ...validateProblemStatement(problem.proposedContent),
+      ...studentJustificationErrors([problem], "Preencha a justificativa da grande pergunta (*) com pelo menos 10 caracteres."),
+    ];
+  }
   const general = currentElement(content, "general_objective");
   if (!general) return ["O objetivo geral não foi encontrado."];
-  if (step === "general_objective") return validateGeneralObjective(general.proposedContent, problem.proposedContent);
+  if (step === "general_objective") {
+    return [
+      ...validateGeneralObjective(general.proposedContent, problem.proposedContent),
+      ...studentJustificationErrors([general], "Preencha a justificativa do objetivo geral (*) com pelo menos 10 caracteres."),
+    ];
+  }
   const specifics = content.elements.filter((element) => element.type === "specific_objective");
-  return validateSpecificObjectives(
-    specifics.map((element) => ({ content: element.proposedContent, id: element.id })),
-    general.proposedContent,
-  );
+  return [
+    ...validateSpecificObjectives(
+      specifics.map((element) => ({ content: element.proposedContent, id: element.id })),
+      general.proposedContent,
+    ),
+    ...specifics.flatMap((element, index) => (
+      (element.studentJustification?.trim().length ?? 0) >= MIN_STUDENT_JUSTIFICATION_LENGTH
+        ? []
+        : [`Preencha a justificativa do OE${index + 1} (*) com pelo menos 10 caracteres.`]
+    )),
+  ];
+}
+
+function studentJustificationErrors(elements: ValidatedElement[], message: string) {
+  return elements.some((element) => (element.studentJustification?.trim().length ?? 0) < MIN_STUDENT_JUSTIFICATION_LENGTH)
+    ? [message]
+    : [];
 }
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {

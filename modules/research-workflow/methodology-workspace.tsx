@@ -386,7 +386,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         <label>Procedimentos<input onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
         <label>Instrumentos<input onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
         <label>Técnicas de análise<input onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
-        <label>Justificativa<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
+        <label>Justificativa *<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
         <label>Avisos éticos ou de acesso<input onChange={(event) => setEthicsText(event.target.value)} value={ethicsText} /></label>
       </aside>
 

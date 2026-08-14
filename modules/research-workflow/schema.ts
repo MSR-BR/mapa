@@ -89,7 +89,7 @@ export const objectiveCoverageSchema = z.object({
 
 export const chapterTopicDetailSchema = z.object({
   chapter: z.enum(["literature", "development"]),
-  exceptionJustification: z.string().trim().min(10).max(500).nullable(),
+  exceptionJustification: z.string().trim().max(500).nullable(),
   generalObjectiveAligned: z.boolean(),
   objectiveCoverage: z.array(objectiveCoverageSchema).max(7),
   order: z.number().int().min(1).max(6),

@@ -419,8 +419,10 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(workspace, /Salvar rascunho/);
   assert.match(workspace, /Validar e avançar/);
   assert.match(workspace, /ManualReferencePanel/);
-  assert.match(workspace, /Por que esta grande pergunta vale ser investigada/);
+  assert.match(workspace, /Por que esta grande pergunta vale ser investigada\? \*/);
+  assert.match(workspace, /Justificativa do OE\{index \+ 1\} \*/);
   assert.match(workspace, /studentJustification/);
+  assert.match(route, /Preencha a justificativa da grande pergunta \(\*\)/);
   assert.match(workspace, /specifics\.length >= 6/);
   assert.match(validation, /INFINITIVE_OPENING/);
   assert.match(validation, /redundantes/);
@@ -470,7 +472,8 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /Otimizar literatura/);
   assert.match(workspace, /OEG/);
   assert.match(workspace, /apresentação do estudo de caso/);
-  assert.match(workspace, /Justificativa deste tópico/);
+  assert.match(workspace, /Justificativa deste tópico \*/);
+  assert.match(route, /parseSubmittedTopics/);
   assert.match(workspace, /Atende bem/);
   assert.match(workspace, /Ajuda em parte/);
   assert.match(workspace, /literature-optimizer-card/);
@@ -484,6 +487,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /referências associadas/);
   assert.match(validation, /resultados\? \(\?:encontrados/);
   assert.match(validation, /generalObjectiveId/);
+  assert.match(validation, /justificativa do aluno \(\*\)/);
   assert.match(validation, /entre três e seis/);
   assert.match(library, /KNOWLEDGE_LIBRARY_VERSION/);
   assert.match(library, /status: "suggested"/);
@@ -510,6 +514,7 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /Explicar/);
   assert.match(workspace, /Adicionar linha OEG/);
   assert.match(workspace, /moveRow/);
+  assert.match(workspace, /Justificativa \*/);
   assert.match(workspace, /methodologyMessageText/);
   assert.match(workspace, /OE\$\{index\} \(objetivo específico \$\{index\}\)/);
   assert.match(workspace, /methodologyMessageText\(finding\.message\)/);
@@ -518,8 +523,11 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(styles, /methodology-classification fieldset \{[^}]*align-items: flex-start/);
   assert.match(styles, /methodology-classification fieldset label \{[^}]*border-radius: 0\.75rem/);
   assert.match(styles, /methodology-help-popover/);
+  assert.match(styles, /definition-button\.secondary:disabled/);
   assert.doesNotMatch(styles, /methodology-classification fieldset label \{[^}]*border-radius: 999px/);
   assert.match(route, /improvementNotes/);
+  assert.match(route, /formatMethodologyPlanIssues/);
+  assert.match(route, /Justificativa metodológica \(\*\)/);
   assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(gemini, /Corrija especificamente estes avisos/);
   assert.match(gemini, /linha final para o objetivo geral/);

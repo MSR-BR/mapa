@@ -43,7 +43,7 @@ const requestSchema = z.object({
   keywords: z.array(z.string().trim().min(2).max(160)).min(1).max(10).optional(),
   revision: z.number().int().positive(),
   step: z.enum(["literature", "development"]),
-  topics: chapterTopicsInputSchema.optional(),
+  topics: z.unknown().optional(),
 });
 
 function element(content: ResearchWorkflowContent, type: ValidatedElement["type"]) {
@@ -157,6 +157,23 @@ function validateContext(workflow: ResearchWorkflow) {
   const specifics = specificObjectives(workflow.content);
   if (!discovery || !problem?.approvedContent || !general?.approvedContent || specifics.length < 3) return null;
   return { discovery, general, problem, specifics };
+}
+
+function parseSubmittedTopics(input: unknown) {
+  const parsed = chapterTopicsInputSchema.safeParse(input);
+  if (parsed.success) return { errors: [], topics: parsed.data };
+  return {
+    errors: [...new Set(parsed.error.issues.map((issue) => {
+      const [index, field] = issue.path;
+      const label = typeof index === "number" ? `Tópico ${index + 1}` : "Tópicos";
+      if (field === "title") return `${label}: informe um título entre 3 e 180 caracteres.`;
+      if (field === "referenceIds") return `${label}: confira as referências associadas.`;
+      if (field === "exceptionJustification") return `${label}: a justificativa da apresentação do estudo de caso deve ter no máximo 500 caracteres.`;
+      if (field === "studentJustification") return `${label}: a justificativa do aluno deve ter no máximo 1000 caracteres.`;
+      return `${label}: revise os campos obrigatórios.`;
+    }))],
+    topics: null,
+  };
 }
 
 async function saveWorkflow(
@@ -298,8 +315,12 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   let content = workflow.content;
   if (action === "save" || action === "validate") {
-    if (!parsed.data.topics) return NextResponse.json({ error: "Inclua os tópicos da etapa." }, { status: 400 });
-    content = replaceTopics(content, step, parsed.data.topics, workflow.sourceRevision, "user");
+    if (!parsed.data.topics) return NextResponse.json({ errors: ["Inclua os tópicos da etapa."], error: "Inclua os tópicos da etapa." }, { status: 422 });
+    const submittedTopics = parseSubmittedTopics(parsed.data.topics);
+    if (!submittedTopics.topics) {
+      return NextResponse.json({ errors: submittedTopics.errors, error: submittedTopics.errors[0] ?? "Revise os tópicos da etapa." }, { status: 422 });
+    }
+    content = replaceTopics(content, step, submittedTopics.topics, workflow.sourceRevision, "user");
   } else if (action === "regenerate") {
     const existing = topicsFromContent(content, step);
     const generated = step === "literature"

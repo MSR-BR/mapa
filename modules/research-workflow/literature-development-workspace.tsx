@@ -240,8 +240,9 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
             })}</fieldset>
             {chapter === "development" && index === 0 ? (
               <label className="case-study-note">
-                Se 4.1 for apresentação do estudo de caso
+                Se 4.1 for apresentação do estudo de caso{topic.objectiveCoverage.length === 0 ? " *" : ""}
                 <textarea
+                  aria-required={topic.objectiveCoverage.length === 0}
                   maxLength={500}
                   onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })}
                   placeholder="Explique brevemente por que este tópico apresenta o caso e não precisa se vincular diretamente a OE/OEG."
@@ -250,7 +251,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
               </label>
             ) : null}
             <label className="student-justification topic-student-justification">
-              Justificativa deste tópico
+              Justificativa deste tópico *
               <textarea maxLength={1000} onChange={(event) => updateTopic(topic.id, { studentJustification: event.target.value || null })} placeholder="Por que este tópico deve permanecer no capítulo?" value={topic.studentJustification ?? ""} />
             </label>
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>

@@ -230,7 +230,7 @@ function makeChapterTopic(
     id,
     objectiveCoverage: [{ degree: "partial", objectiveId }],
     referenceIds: ["ref-1"],
-    studentJustification: null,
+    studentJustification: "Este tópico é necessário para sustentar a proposta de pesquisa.",
     title,
     ...overrides,
   };
@@ -259,6 +259,11 @@ test("validates chapter limits, distinct titles and verified links", () => {
     topics[1],
     topics[2],
   ], options)[0], /não verificada/);
+  assert.match(validateChapterTopics([
+    { ...topics[0], studentJustification: null },
+    topics[1],
+    topics[2],
+  ], options).join(" "), /justificativa do aluno \(\*\)/);
 });
 
 test("accepts a single phrase for literature optimization searches", () => {
@@ -530,12 +535,12 @@ function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): Resear
     content: {
       activeStep: null,
       chapterTopicDetails: [
-        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, topicId: LITERATURE_1 },
-        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, topicId: LITERATURE_2 },
-        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_3 }], order: 3, topicId: LITERATURE_3 },
-        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, topicId: DEVELOPMENT_1 },
-        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, topicId: DEVELOPMENT_2 },
-        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: true, objectiveCoverage: [{ degree: "full", objectiveId: OBJECTIVE_3 }], order: 3, topicId: DEVELOPMENT_3 },
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, studentJustification: "Este tópico delimita a base teórica da pesquisa.", topicId: LITERATURE_1 },
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, studentJustification: "Este tópico sustenta a compreensão da aprendizagem mediada por tecnologias.", topicId: LITERATURE_2 },
+        { chapter: "literature", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_3 }], order: 3, studentJustification: "Este tópico conecta evidências acadêmicas às recomendações propostas.", topicId: LITERATURE_3 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_1 }], order: 1, studentJustification: "Este tópico situa o contexto de aplicação da proposta.", topicId: DEVELOPMENT_1 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: false, objectiveCoverage: [{ degree: "partial", objectiveId: OBJECTIVE_2 }], order: 2, studentJustification: "Este tópico organiza os procedimentos de análise necessários.", topicId: DEVELOPMENT_2 },
+        { chapter: "development", exceptionJustification: null, generalObjectiveAligned: true, objectiveCoverage: [{ degree: "full", objectiveId: OBJECTIVE_3 }], order: 3, studentJustification: "Este tópico sintetiza a contribuição esperada do capítulo.", topicId: DEVELOPMENT_3 },
       ],
       coherenceFindings: [],
       discovery: {

@@ -354,6 +354,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .definition-button.secondary { background: transparent; color: #40564b; }
 .definition-button.primary { border-color: var(--accent); background: var(--accent); color: white; }
 .definition-button:disabled { cursor: not-allowed; opacity: 0.48; }
+.definition-button.secondary:disabled { border-color: #d6dfda; background: #eef2f0; color: #95a39c; opacity: 1; }
+.definition-button.primary:disabled { border-color: #c5d0cb; background: #cfd9d5; color: #f8fbfa; opacity: 1; }
 .definition-summary { display: grid; gap: 0.8rem; }
 .definition-summary > div { border: 1px solid #cfddd6; border-radius: 0.9rem; padding: 1rem; background: var(--surface); }
 .definition-summary p, .definition-summary ol { margin: 0.5rem 0 0; color: #43564d; line-height: 1.55; }

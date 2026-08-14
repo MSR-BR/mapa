@@ -28,11 +28,20 @@ export const maxDuration = 120;
 
 const requestSchema = z.object({
   action: z.enum(["back", "initialize", "regenerate", "save", "validate"]),
-  classification: methodologyPlanInputSchema.shape.classification.optional(),
+  classification: z.unknown().optional(),
   revision: z.number().int().positive(),
-  rows: methodologyPlanInputSchema.shape.rows.optional(),
-  title: methodologyPlanInputSchema.shape.title.optional(),
+  rows: z.unknown().optional(),
+  title: z.unknown().optional(),
 });
+
+class MethodologyInputError extends Error {
+  errors: string[];
+
+  constructor(errors: string[]) {
+    super(errors[0] ?? "A matriz metodológica está incompleta.");
+    this.errors = errors;
+  }
+}
 
 function element(content: ResearchWorkflowContent, type: ValidatedElement["type"]) {
   return content.elements.find((item) => item.type === type);
@@ -215,11 +224,38 @@ function planFromContent(content: ResearchWorkflowContent): MethodologyPlanInput
 
 function planFromRequest(body: z.infer<typeof requestSchema>) {
   if (!body.title || !body.classification || !body.rows) throw new Error("A matriz metodológica está incompleta.");
-  return methodologyPlanInputSchema.parse({
+  const parsed = methodologyPlanInputSchema.safeParse({
     classification: body.classification,
     rows: body.rows,
     title: body.title,
   });
+  if (!parsed.success) throw new MethodologyInputError(formatMethodologyPlanIssues(parsed.error));
+  return parsed.data;
+}
+
+function formatMethodologyPlanIssues(error: z.ZodError<MethodologyPlanInput>) {
+  return [...new Set(error.issues.map((issue) => {
+    const [section, second, third] = issue.path;
+    if (section === "title") return "Título final sugerido: escreva um título entre 3 e 120 caracteres.";
+    if (section === "classification") {
+      const field = second;
+      if (field === "rationale") return "Justificativa metodológica (*): escreva pelo menos 20 caracteres.";
+      if (field === "procedures") return "Procedimentos: informe pelo menos um procedimento.";
+      if (field === "instruments") return "Instrumentos: informe pelo menos um instrumento.";
+      if (field === "analysisTechniques") return "Técnicas de análise: informe pelo menos uma técnica.";
+      return "Classificação metodológica: revise os campos obrigatórios.";
+    }
+    if (section === "rows") {
+      const rowIndex = second;
+      const field = third;
+      const label = typeof rowIndex === "number" ? `Linha ${rowIndex + 1}` : "Linha metodológica";
+      if (field === "dataCollection") return `${label} · Levantamento: descreva com pelo menos 20 caracteres.`;
+      if (field === "analysisTreatment") return `${label} · Análise/tratamento: descreva com pelo menos 20 caracteres.`;
+      if (field === "expectedResult") return `${label} · Resultado esperado: descreva com pelo menos 20 caracteres.`;
+      return `${label}: revise os campos obrigatórios.`;
+    }
+    return "Revise os campos obrigatórios da matriz metodológica.";
+  }))];
 }
 
 function validateContext(workflow: ResearchWorkflow) {
@@ -407,6 +443,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       plan = planFromRequest(parsed.data);
     }
   } catch (error) {
+    if (error instanceof MethodologyInputError) {
+      return NextResponse.json({ error: error.message, errors: error.errors }, { status: 422 });
+    }
     return NextResponse.json({ error: error instanceof Error ? error.message : "A matriz metodológica está incompleta." }, { status: 400 });
   }
 
