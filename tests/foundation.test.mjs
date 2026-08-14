@@ -511,6 +511,15 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /referenceText\(reference\)/);
   assert.match(workspace, /METHODOLOGY_HELP/);
   assert.match(workspace, /data-methodology-help/);
+  assert.match(workspace, /function ethicsTextToList/);
+  assert.match(workspace, /cleaned\.some\(\(item\) => item\.length < 10\)/);
+  assert.match(workspace, /return cleaned\.join\(", "\)/);
+  assert.match(workspace, /ethicsWarnings: ethicsTextToList\(ethicsText\)/);
+  assert.match(workspace, /Avisos éticos ou de acesso<textarea/);
+  assert.doesNotMatch(workspace, /ethicsWarnings: textToList\(ethicsText\)/);
+  assert.match(workspace, /clearValidationErrors/);
+  assert.match(workspace, /blockingMessages/);
+  assert.match(workspace, /warningFindings/);
   assert.match(workspace, /Explicar/);
   assert.match(workspace, /Adicionar linha OEG/);
   assert.match(workspace, /moveRow/);
@@ -541,6 +550,7 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(route, /Justificativa metodológica \(\*\)/);
   assert.match(route, /Objetivos metodológicos \(\*\)/);
   assert.match(route, /Avisos éticos ou de acesso/);
+  assert.match(route, /entre 10 e 400 caracteres/);
   assert.match(route, /Justificativa da linha \(\*\)/);
   assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(gemini, /Corrija especificamente estes avisos/);

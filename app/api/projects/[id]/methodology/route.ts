@@ -246,7 +246,7 @@ function formatMethodologyPlanIssues(error: z.ZodError<MethodologyPlanInput>) {
       if (field === "procedures") return "Procedimentos (*): informe pelo menos um procedimento.";
       if (field === "instruments") return "Instrumentos (*): informe pelo menos um instrumento.";
       if (field === "analysisTechniques") return "Técnicas de análise (*): informe pelo menos uma técnica.";
-      if (field === "ethicsWarnings") return "Avisos éticos ou de acesso: cada aviso deve ter pelo menos 10 caracteres ou deixe o campo em branco.";
+      if (field === "ethicsWarnings") return "Avisos éticos ou de acesso: cada aviso deve ter entre 10 e 400 caracteres, ou deixe o campo em branco.";
       return "Classificação metodológica: revise Natureza (*), Abordagem (*), Objetivos metodológicos (*), Procedimentos (*), Instrumentos (*), Técnicas de análise (*) e Justificativa (*).";
     }
     if (section === "rows") {

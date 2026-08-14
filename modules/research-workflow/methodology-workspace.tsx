@@ -124,8 +124,18 @@ function textToList(value: string) {
   return value.split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8);
 }
 
+function ethicsTextToList(value: string) {
+  return value.split(/\n+/).map((item) => item.trim()).filter(Boolean).slice(0, 6);
+}
+
 function listToText(items: string[]) {
   return items.join(", ");
+}
+
+function listToEthicsText(items: string[]) {
+  const cleaned = items.map((item) => item.trim()).filter(Boolean);
+  if (cleaned.length > 1 && cleaned.some((item) => item.length < 10)) return cleaned.join(", ");
+  return cleaned.join("\n");
 }
 
 function referenceText(reference: WorkflowReference) {
@@ -147,7 +157,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const [proceduresText, setProceduresText] = useState(() => listToText(classificationDraft(initialWorkflow).procedures));
   const [instrumentsText, setInstrumentsText] = useState(() => listToText(classificationDraft(initialWorkflow).instruments));
   const [analysisText, setAnalysisText] = useState(() => listToText(classificationDraft(initialWorkflow).analysisTechniques));
-  const [ethicsText, setEthicsText] = useState(() => listToText(classificationDraft(initialWorkflow).ethicsWarnings));
+  const [ethicsText, setEthicsText] = useState(() => listToEthicsText(classificationDraft(initialWorkflow).ethicsWarnings));
   const [rows, setRows] = useState<MethodologyRowDraft[]>(() => rowsDraft(initialWorkflow));
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -166,7 +176,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const currentClassification: ClassificationDraft = {
     ...classification,
     analysisTechniques: textToList(analysisText),
-    ethicsWarnings: textToList(ethicsText),
+    ethicsWarnings: ethicsTextToList(ethicsText),
     instruments: textToList(instrumentsText),
     procedures: textToList(proceduresText),
   };
@@ -174,6 +184,8 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const currentPlan = JSON.stringify({ classification: currentClassification, rows, title });
   const changed = savedPlan !== currentPlan;
   const findings = workflow.content.coherenceFindings.filter((finding) => finding.rule.includes("Change 013") || finding.rule.includes("metodológica"));
+  const blockingMessages = errors.length > 0 ? errors : changed ? [] : findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.message);
+  const warningFindings = findings.filter((finding) => finding.severity !== "blocking");
 
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
@@ -183,7 +195,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
     setProceduresText(listToText(nextClassification.procedures));
     setInstrumentsText(listToText(nextClassification.instruments));
     setAnalysisText(listToText(nextClassification.analysisTechniques));
-    setEthicsText(listToText(nextClassification.ethicsWarnings));
+    setEthicsText(listToEthicsText(nextClassification.ethicsWarnings));
     setRows(rowsDraft(next));
   }
 
@@ -273,7 +285,12 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
     setRows((current) => current.map((row) => row.id === id ? { ...row, ...update } : row));
   }
 
+  function clearValidationErrors() {
+    if (errors.length > 0) setErrors([]);
+  }
+
   function moveRow(index: number, direction: -1 | 1) {
+    clearValidationErrors();
     setRows((current) => {
       const destination = index + direction;
       if (destination < 0 || destination >= current.length) return current;
@@ -297,6 +314,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
 
   function addGeneralObjectiveRow() {
     if (!general || rows.some((row) => row.objectiveId === general.id)) return;
+    clearValidationErrors();
     setRows((current) => [...current, {
       analysisTreatment: "Será realizada uma síntese integrada dos dados e evidências para responder ao objetivo geral.",
       associatedTopicIds: topicIdsForObjective(general.id),
@@ -342,7 +360,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   }
 
   return (
-    <section className="methodology-workspace" aria-labelledby="methodology-title">
+    <section className="methodology-workspace" aria-labelledby="methodology-title" onChange={clearValidationErrors} onInput={clearValidationErrors}>
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
@@ -387,7 +405,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         <label>Instrumentos *<input onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
         <label>Técnicas de análise *<input onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
         <label>Justificativa *<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
-        <label>Avisos éticos ou de acesso<input onChange={(event) => setEthicsText(event.target.value)} value={ethicsText} /></label>
+        <label>Avisos éticos ou de acesso<textarea maxLength={2400} onChange={(event) => setEthicsText(event.target.value)} placeholder="Opcional. Se houver mais de um aviso, coloque um por linha." value={ethicsText} /></label>
       </aside>
 
       <div className="methodology-matrix" role="table" aria-label="Matriz metodológica por objetivo">
@@ -439,11 +457,11 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         ) : null}
       </div>
 
-      {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}
-      {findings.length > 0 ? (
+      {blockingMessages.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{blockingMessages.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}
+      {warningFindings.length > 0 ? (
         <div className="methodology-findings" role="status">
           <strong>Avisos de coerência</strong>
-          <ul>{findings.map((finding) => <li className={finding.severity} key={finding.id}>{methodologyMessageText(finding.message)}</li>)}</ul>
+          <ul>{warningFindings.map((finding) => <li className={finding.severity} key={finding.id}>{methodologyMessageText(finding.message)}</li>)}</ul>
         </div>
       ) : null}
       {message ? <p className="definition-message" role="status">{message}</p> : null}
