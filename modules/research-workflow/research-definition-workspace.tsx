@@ -11,6 +11,7 @@ import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
   initialWorkflow: ResearchWorkflow;
+  isAdvisorOwner?: boolean;
   projectId: string;
 };
 
@@ -27,7 +28,7 @@ function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
     .map((element) => ({ content: element.proposedContent, id: element.id, studentJustification: element.studentJustification ?? "" }));
 }
 
-export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Props) {
+export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [problem, setProblem] = useState(() => findElement(initialWorkflow, "problem_statement")?.proposedContent ?? "");
@@ -64,7 +65,9 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
       ? general !== currentElement?.proposedContent || generalJustification !== (currentElement?.studentJustification ?? "")
       : JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
-  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
+  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
+  const justificationLabelSuffix = isAdvisorOwner ? " (opcional)" : " *";
+  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
 
   function applyWorkflow(nextWorkflow: ResearchWorkflow) {
     setWorkflow(nextWorkflow);
@@ -179,7 +182,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
           {currentElement?.updatedBy === "user" || currentValueChanged ? "Editado por você" : "Sugestão da IA"}
         </span>
       </div>
-      <AdvisorReviewNotice workflow={workflow} />
+      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
 
       <div className="definition-source">
         <span>Origem desta etapa</span>
@@ -197,7 +200,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
               <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
             </label>
             <label className="student-justification">
-              Por que esta grande pergunta vale ser investigada? *
+              Por que esta grande pergunta vale ser investigada?{justificationLabelSuffix}
               <textarea maxLength={1000} onChange={(event) => setProblemJustification(event.target.value)} placeholder="Escreva uma justificativa breve. Ela orientará as próximas sugestões, mas continua sendo uma reflexão sua." value={problemJustification} />
             </label>
           </div>
@@ -209,7 +212,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
               <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
             </label>
             <label className="student-justification">
-              Por que este objetivo responde à problemática? *
+              Por que este objetivo responde à problemática?{justificationLabelSuffix}
               <textarea maxLength={1000} onChange={(event) => setGeneralJustification(event.target.value)} placeholder="Registre sua justificativa para não aceitar a IA automaticamente." value={generalJustification} />
             </label>
           </div>
@@ -222,7 +225,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
                   <textarea maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
                 </label>
                 <label className="student-justification">
-                  Justificativa do OE{index + 1} *
+                  Justificativa do OE{index + 1}{justificationLabelSuffix}
                   <textarea maxLength={1000} onChange={(event) => updateSpecificJustification(objective.id, event.target.value)} placeholder="Por que este objetivo é necessário para atender o objetivo geral?" value={objective.studentJustification} />
                 </label>
                 <button
@@ -269,7 +272,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );

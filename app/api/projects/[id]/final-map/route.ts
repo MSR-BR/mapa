@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { reviewFinalMapCoherence } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import {
@@ -153,11 +154,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
 
   const { supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
+  const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (parsed.data.action === "complete" && pendingAdvisorReview(workflow.content)) {
+  if (!isAdvisorOwner && parsed.data.action === "complete" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando validação do orientador." }, { status: 409 });
   }
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
@@ -198,7 +201,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   nextWorkflow = { ...workflow, content };
   content = replaceFinalMapFindings(content, buildFinalMap(nextWorkflow).findings.filter((finding) => finding.severity !== "blocking"));
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: null }),

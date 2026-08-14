@@ -122,6 +122,7 @@ export function validateMethodologyPlan(
     allowedTopicIds: Set<string>;
     generalObjective: string;
     generalObjectiveId?: string | null;
+    requireStudentJustification?: boolean;
   },
 ) {
   const parsed = methodologyPlanInputSchema.safeParse(input);
@@ -162,7 +163,7 @@ export function validateMethodologyPlan(
     const label = methodologyRowLabel(index, row, options);
     if (unknownTopics.length > 0) errors.push(`${label} aponta para tópico de capítulo inexistente.`);
     if (row.associatedTopicIds.length === 0) errors.push(`${label} precisa estar ligado a ao menos um tópico dos capítulos 2 ou 4.`);
-    if ((row.studentJustification?.trim().length ?? 0) < 10) {
+    if (options.requireStudentJustification !== false && (row.studentJustification?.trim().length ?? 0) < 10) {
       errors.push(`${label} · Justificativa da linha (*): escreva pelo menos 10 caracteres.`);
     }
     if (includesAny(row.expectedResult, [

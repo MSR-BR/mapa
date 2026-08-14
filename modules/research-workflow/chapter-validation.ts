@@ -27,6 +27,7 @@ export function validateChapterTopics(
     generalObjectiveId?: string | null;
     allowedReferenceIds: Set<string>;
     chapter: "literature" | "development";
+    requireStudentJustification?: boolean;
   },
 ) {
   const parsed = chapterTopicsInputSchema.safeParse(topics);
@@ -44,7 +45,7 @@ export function validateChapterTopics(
     if (options.chapter === "development" && index === 0 && topic.objectiveCoverage.length === 0 && (topic.exceptionJustification?.trim().length ?? 0) < 10) {
       errors.push("A justificativa da apresentação do estudo de caso no tópico 4.1 (*) precisa ter pelo menos 10 caracteres.");
     }
-    if ((topic.studentJustification?.trim().length ?? 0) < 10) {
+    if (options.requireStudentJustification !== false && (topic.studentJustification?.trim().length ?? 0) < 10) {
       errors.push(`O tópico ${index + 1} precisa de justificativa do aluno (*) com pelo menos 10 caracteres.`);
     }
     const unknownReferences = topic.referenceIds.filter((referenceId) => !options.allowedReferenceIds.has(referenceId));

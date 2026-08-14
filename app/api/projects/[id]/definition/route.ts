@@ -7,6 +7,7 @@ import {
   regenerateProblemStatement,
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
@@ -203,13 +204,13 @@ function draftContent(
   });
 }
 
-function validationErrors(content: ResearchWorkflowContent, step: DefinitionRouteStep) {
+function validationErrors(content: ResearchWorkflowContent, step: DefinitionRouteStep, options: { requireStudentJustification: boolean }) {
   const problem = currentElement(content, "problem_statement");
   if (!problem) return ["A problemática não foi encontrada."];
   if (step === "problem_statement") {
     return [
       ...validateProblemStatement(problem.proposedContent),
-      ...studentJustificationErrors([problem], "Preencha a justificativa da grande pergunta (*) com pelo menos 10 caracteres."),
+      ...studentJustificationErrors([problem], "Preencha a justificativa da grande pergunta (*) com pelo menos 10 caracteres.", options),
     ];
   }
   const general = currentElement(content, "general_objective");
@@ -217,7 +218,7 @@ function validationErrors(content: ResearchWorkflowContent, step: DefinitionRout
   if (step === "general_objective") {
     return [
       ...validateGeneralObjective(general.proposedContent, problem.proposedContent),
-      ...studentJustificationErrors([general], "Preencha a justificativa do objetivo geral (*) com pelo menos 10 caracteres."),
+      ...studentJustificationErrors([general], "Preencha a justificativa do objetivo geral (*) com pelo menos 10 caracteres.", options),
     ];
   }
   const specifics = content.elements.filter((element) => element.type === "specific_objective");
@@ -226,16 +227,17 @@ function validationErrors(content: ResearchWorkflowContent, step: DefinitionRout
       specifics.map((element) => ({ content: element.proposedContent, id: element.id })),
       general.proposedContent,
     ),
-    ...specifics.flatMap((element, index) => (
+    ...(options.requireStudentJustification ? specifics.flatMap((element, index) => (
       (element.studentJustification?.trim().length ?? 0) >= MIN_STUDENT_JUSTIFICATION_LENGTH
         ? []
         : [`Preencha a justificativa do OE${index + 1} (*) com pelo menos 10 caracteres.`]
-    )),
+    )) : []),
   ];
 }
 
-function studentJustificationErrors(elements: ValidatedElement[], message: string) {
-  return elements.some((element) => (element.studentJustification?.trim().length ?? 0) < MIN_STUDENT_JUSTIFICATION_LENGTH)
+function studentJustificationErrors(elements: ValidatedElement[], message: string, options: { requireStudentJustification: boolean }) {
+  return options.requireStudentJustification
+    && elements.some((element) => (element.studentJustification?.trim().length ?? 0) < MIN_STUDENT_JUSTIFICATION_LENGTH)
     ? [message]
     : [];
 }
@@ -248,6 +250,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   const { supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
+  const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   const discovery = workflow?.content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === discovery.selectedCandidateId);
@@ -257,7 +261,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isAdvisorOwner && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
   }
   if (workflow.content.activeStep !== parsed.data.step) {
@@ -381,7 +385,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
   }
 
-  const errors = validationErrors(content, step);
+  const errors = validationErrors(content, step, { requireStudentJustification: !isAdvisorOwner });
   if (errors.length > 0) {
     const elementIds = step === "specific_objectives"
       ? content.elements.filter((element) => element.type === "specific_objective").map((element) => element.id)
@@ -517,7 +521,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
   const targetActiveStep = content.activeStep;
-  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: step }),

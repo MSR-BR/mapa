@@ -65,20 +65,19 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const { supabase, userId } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
   const isStudentMode = profile.activeRole === "student";
+  const isAdvisorMode = profile.activeRole === "advisor";
   if (profile.activeRole === "advisor") {
     await claimPendingAdvisorProjects(supabase);
   }
   const projectColumns = "id, title, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id";
   const [{ data, error }, { data: advisedData, error: advisedError }] = await Promise.all([
-    isStudentMode
-      ? supabase
-        .from("projects")
-        .select(projectColumns)
-        .eq("owner_id", userId)
-        .is("deleted_at", null)
-        .order("updated_at", { ascending: false })
-        .limit(12)
-      : Promise.resolve({ data: [], error: null }),
+    supabase
+      .from("projects")
+      .select(projectColumns)
+      .eq("owner_id", userId)
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(12),
     profile.activeRole === "advisor"
       ? supabase
         .from("projects")
@@ -136,10 +135,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       : readClassicReferences(structure?.references_data);
     const integrationSource = project.problem_statement?.match(/^Integração dos projetos:\s*(.+)$/i)?.[1]?.trim() ?? null;
     const isIntegration = structure?.prompt_version.endsWith("-merge") || Boolean(integrationSource);
+    const showAdvisorMetadata = !(isAdvisorMode && project.owner_id === userId);
     return {
       academicArea: meta?.area ?? project.knowledge_area ?? "Área a definir",
-      advisorEmail: project.advisor_email ?? null,
-      advisorReview: workflow ? workflowAdvisorStatus(workflow) : null,
+      advisorEmail: showAdvisorMetadata ? project.advisor_email ?? null : null,
+      advisorReview: showAdvisorMetadata && workflow ? workflowAdvisorStatus(workflow) : null,
       canDelete: project.owner_id === userId,
       integrationSource,
       isIntegration,
@@ -179,9 +179,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     .map((project) => dashboardProjectById.get(project.id))
     .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
   const continuationMeta = activeProjects[0] ?? null;
-  const hasVisibleProjects = isStudentMode ? projects.length > 0 : advisorProjects.length > 0;
+  const hasVisibleProjects = projects.length > 0 || advisorProjects.length > 0;
 
-  if (isStudentMode && continueParam === "1" && resume !== "1" && continuationMeta) {
+  if (continueParam === "1" && resume !== "1" && continuationMeta) {
     redirect(`/dashboard/projects/${continuationMeta.projectId}`);
   }
 
@@ -199,11 +199,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       ) : (
         <section className="advisor-mode-hero" aria-labelledby="advisor-mode-title">
           <p className="section-kicker">Modo orientador</p>
-          <h1 id="advisor-mode-title">Projetos sob minha orientação</h1>
+          <h1 id="advisor-mode-title">Crie seus mapas e acompanhe orientações</h1>
           <p>
-            Aqui aparecem apenas os mapas vinculados ao e-mail da sua conta. Abra um projeto para comentar,
-            solicitar correção ou validar a etapa do estudante.
+            Você pode desenvolver projetos próprios sem validação externa e também revisar mapas vinculados
+            ao e-mail da sua conta.
           </p>
+          <QuickStartForm resumeDraft={resume === "1"} showAdvisorField={false} />
         </section>
       )}
 
@@ -222,7 +223,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <div className="section-heading">
           <div>
             <p className="section-kicker">Biblioteca</p>
-            <h2 id="recent-projects-title">{isStudentMode ? "Seus projetos" : "Supervisão"}</h2>
+            <h2 id="recent-projects-title">{isAdvisorMode ? "Projetos e supervisões" : "Seus projetos"}</h2>
           </div>
         </div>
 
@@ -234,42 +235,39 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ) : !hasVisibleProjects ? (
           <div className="inline-state empty-projects">
             <span className="empty-state-icon" aria-hidden="true">⌁</span>
-            <strong>{isStudentMode ? "Sua biblioteca ainda está vazia." : "Nenhum projeto vinculado ao seu e-mail."}</strong>
+            <strong>{isStudentMode ? "Sua biblioteca ainda está vazia." : "Nenhum projeto próprio ou supervisionado ainda."}</strong>
             <span>
               {isStudentMode
                 ? "Escreva uma ideia acima para criar o primeiro mapa."
-                : "Quando um estudante indicar sua conta como orientador, o projeto aparecerá aqui."}
+                : "Crie um mapa acima ou peça para um estudante indicar o e-mail da sua conta como orientador."}
             </span>
           </div>
         ) : (
           <div className="project-library-sections">
-            {isStudentMode ? (
-              <>
-                <DashboardProjectGrid
-                  description="Projetos salvos que ainda têm etapas abertas. Use esta área para continuar a construção do mapa."
-                  emptyMessage="Nenhum projeto em andamento agora."
-                  projects={activeProjects}
-                  title="Projetos em andamento"
-                  variant="active"
-                />
-                <DashboardProjectGrid
-                  allowIntegration
-                  description="Mapas finalizados. Marque dois a quatro projetos aqui para gerar uma integração."
-                  emptyMessage="Nenhum projeto concluído ainda."
-                  projects={completedProjects}
-                  title="Projetos concluídos"
-                  variant="completed"
-                />
-                <DashboardProjectGrid
-                  allowIntegration={false}
-                  description="Mapas gerados pela integração de dois ou mais projetos, mantidos separados dos originais."
-                  emptyMessage="Nenhum projeto integrado ainda."
-                  projects={integratedProjects}
-                  title="Projetos integrados"
-                  variant="integrated"
-                />
-              </>
-            ) : (
+            <DashboardProjectGrid
+              description="Projetos salvos que ainda têm etapas abertas. Use esta área para continuar a construção do mapa."
+              emptyMessage="Nenhum projeto em andamento agora."
+              projects={activeProjects}
+              title="Projetos em andamento"
+              variant="active"
+            />
+            <DashboardProjectGrid
+              allowIntegration
+              description="Mapas finalizados. Marque dois a quatro projetos aqui para gerar uma integração."
+              emptyMessage="Nenhum projeto concluído ainda."
+              projects={completedProjects}
+              title="Projetos concluídos"
+              variant="completed"
+            />
+            <DashboardProjectGrid
+              allowIntegration={false}
+              description="Mapas gerados pela integração de dois ou mais projetos, mantidos separados dos originais."
+              emptyMessage="Nenhum projeto integrado ainda."
+              projects={integratedProjects}
+              title="Projetos integrados"
+              variant="integrated"
+            />
+            {isAdvisorMode ? (
               <DashboardProjectGrid
                 allowIntegration={false}
                 description="Projetos de estudantes que informaram seu e-mail como orientador. Abra para comentar, solicitar correção ou validar a etapa."
@@ -278,7 +276,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 title="Projetos sob minha orientação"
                 variant="advisor"
               />
-            )}
+            ) : null}
           </div>
         )}
       </section>

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { generateMethodologyPlan } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
@@ -385,12 +386,14 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
 
   const { supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
+  const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   const { action } = parsed.data;
-  if (action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isAdvisorOwner && action === "validate" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
   }
   if (
@@ -426,6 +429,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           allowedTopicIds,
           generalObjective: approvedGeneral,
           generalObjectiveId: context.general.id,
+          requireStudentJustification: !isAdvisorOwner,
         }).warnings
         : [];
       plan = await generateMethodologyPlan(
@@ -467,6 +471,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       allowedTopicIds,
       generalObjective: approvedGeneral,
       generalObjectiveId: context.general.id,
+      requireStudentJustification: !isAdvisorOwner,
     });
     content = researchWorkflowContentSchema.parse({
       ...content,
@@ -482,6 +487,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     allowedTopicIds,
     generalObjective: approvedGeneral,
     generalObjectiveId: context.general.id,
+    requireStudentJustification: !isAdvisorOwner,
   });
   if (errors.length > 0) {
     content = researchWorkflowContentSchema.parse({ ...content, coherenceFindings: validationFindings(content, errors, warnings) });
@@ -498,7 +504,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     context,
   );
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" }),

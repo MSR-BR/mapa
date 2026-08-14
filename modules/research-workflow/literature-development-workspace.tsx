@@ -11,7 +11,7 @@ import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
 import type { ResearchWorkflow } from "./schema";
 
-type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
+type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
 type Chapter = "literature" | "development";
 type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
@@ -51,7 +51,7 @@ function validatedGeneralObjective(workflow: ResearchWorkflow) {
   return workflow.content.elements.find((element) => element.type === "general_objective" && element.status === "validated");
 }
 
-export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: Props) {
+export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
@@ -77,7 +77,9 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   const savedTopics = readTopics(workflow, chapter);
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
-  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
+  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
+  const justificationLabel = isAdvisorOwner ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
+  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
 
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
@@ -202,7 +204,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
         <div><p className="section-kicker">Etapa {stageNumber} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      <AdvisorReviewNotice workflow={workflow} />
+      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
 
       <aside className="coverage-panel" aria-label="Cobertura dos objetivos específicos">
         <strong>Cobertura dos objetivos</strong>
@@ -255,7 +257,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
               </label>
             ) : null}
             <label className="student-justification topic-student-justification">
-              Justificativa deste tópico *
+              {justificationLabel}
               <textarea maxLength={1000} onChange={(event) => updateTopic(topic.id, { studentJustification: event.target.value || null })} placeholder="Por que este tópico deve permanecer no capítulo?" value={topic.studentJustification ?? ""} />
             </label>
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
@@ -309,7 +311,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );

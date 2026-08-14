@@ -54,6 +54,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   if (!isOwner && !advisorMatches) notFound();
 
   const source = integrationSource(project.problem_statement);
+  const isAdvisorOwner = isOwner && profile.activeRole === "advisor";
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
@@ -95,19 +96,21 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
         <IntegrationBanner source={source} />
-        <ProjectAdvisorPanel
-          advisorEmail={project.advisor_email}
-          advisorLinked={Boolean(project.advisor_id)}
-          projectId={project.id}
-        />
+        {isAdvisorOwner ? null : (
+          <ProjectAdvisorPanel
+            advisorEmail={project.advisor_email}
+            advisorLinked={Boolean(project.advisor_id)}
+            projectId={project.id}
+          />
+        )}
         {isFinalMapStage ? (
-          <FinalMapWorkspace initialWorkflow={workflow} projectId={project.id} />
+          <FinalMapWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
         ) : isMethodologyStage ? (
-          <MethodologyWorkspace initialWorkflow={workflow} projectId={project.id} />
+          <MethodologyWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
         ) : isChapterPlanningStage ? (
-          <LiteratureDevelopmentWorkspace initialWorkflow={workflow} projectId={project.id} />
+          <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
         ) : workflow.content.discovery?.selectedCandidateId ? (
-          <ResearchDefinitionWorkspace initialWorkflow={workflow} projectId={project.id} />
+          <ResearchDefinitionWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
         ) : (
           <ProposalDiscoveryWorkspace
             autoDiscover={discover === "1"}
@@ -129,11 +132,13 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
       <IntegrationBanner source={source} />
-      <ProjectAdvisorPanel
-        advisorEmail={project.advisor_email}
-        advisorLinked={Boolean(project.advisor_id)}
-        projectId={project.id}
-      />
+      {isAdvisorOwner ? null : (
+        <ProjectAdvisorPanel
+          advisorEmail={project.advisor_email}
+          advisorLinked={Boolean(project.advisor_id)}
+          projectId={project.id}
+        />
+      )}
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
     </main>
   );

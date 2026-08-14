@@ -6,6 +6,7 @@ import {
   generateLiteratureTopics,
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadUserProfile } from "@/modules/profile/storage";
 import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { fetchResearchStarterReport } from "@/modules/research-starter/client";
@@ -230,11 +231,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const parsed = requestSchema.safeParse(normalizedRequestBody);
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
   const { supabase, userId } = await requireAuthenticatedUser();
+  const profile = await loadUserProfile(supabase, userId);
+  const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isAdvisorOwner && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
   }
   const context = validateContext(workflow);
@@ -357,7 +360,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     ...context.discovery.references.map((reference) => reference.referenceId),
     ...content.referenceArchive.map((reference) => reference.referenceId),
   ]);
-  const errors = validateChapterTopics(currentTopics, { allowedObjectiveIds, allowedReferenceIds, chapter: step, generalObjectiveId: context.general.id });
+  const errors = validateChapterTopics(currentTopics, {
+    allowedObjectiveIds,
+    allowedReferenceIds,
+    chapter: step,
+    generalObjectiveId: context.general.id,
+    requireStudentJustification: !isAdvisorOwner,
+  });
   if (step === "development") {
     errors.push(...validateCompleteObjectiveCoverage(topicsFromContent(content, "literature"), currentTopics, [...specificObjectiveIds]));
   }
@@ -387,7 +396,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" });
     const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-    const shouldWaitForAdvisor = Boolean(advisorEmail);
+    const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
     if (shouldWaitForAdvisor) {
       content = withAdvisorReviewRequest(
         researchWorkflowContentSchema.parse({ ...content, activeStep: "literature_topics" }),
@@ -414,7 +423,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
   content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" }),

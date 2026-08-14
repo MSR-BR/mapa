@@ -10,7 +10,7 @@ import type { ChapterTopicInput } from "./chapter-validation";
 import type { MethodologyPlanInput } from "./methodology-validation";
 import type { ResearchWorkflow } from "./schema";
 
-type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
+type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
 type Operation = "back" | "initialize" | "regenerate" | "save" | "validate" | null;
 type ClassificationDraft = MethodologyPlanInput["classification"];
 type MethodologyRowDraft = MethodologyPlanInput["rows"][number];
@@ -151,7 +151,7 @@ function methodologyMessageText(message: string) {
     .replace(/^A linha (\d+)/i, (_, index: string) => `OE${index} (objetivo específico ${index})`);
 }
 
-export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
+export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [title, setTitle] = useState(() => findTitle(initialWorkflow));
@@ -167,7 +167,9 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const initialized = useRef(false);
   const busy = operation !== null;
-  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
+  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
+  const rowJustificationLabel = isAdvisorOwner ? "Justificativa da linha (opcional)" : "Justificativa da linha *";
+  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");
@@ -388,7 +390,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         </div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      <AdvisorReviewNotice workflow={workflow} />
+      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
 
       <div className="methodology-title-editor">
         <label>Título final sugerido *<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
@@ -435,7 +437,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
               <label role="cell">Análise/tratamento *<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
               <label role="cell">Resultado esperado *<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
               <details className="methodology-row-note">
-                <summary>Justificativa da linha *</summary>
+                <summary>{rowJustificationLabel}</summary>
                 <textarea maxLength={1000} onChange={(event) => updateRow(row.id, { studentJustification: event.target.value || null })} placeholder="Por que esta linha metodológica é necessária?" value={row.studentJustification ?? ""} />
               </details>
               <details className="methodology-topic-links">
@@ -474,7 +476,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );
