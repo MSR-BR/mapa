@@ -239,20 +239,25 @@ function formatMethodologyPlanIssues(error: z.ZodError<MethodologyPlanInput>) {
     if (section === "title") return "Título final sugerido: escreva um título entre 3 e 120 caracteres.";
     if (section === "classification") {
       const field = second;
+      if (field === "nature") return "Natureza (*): selecione Básica ou Aplicada.";
+      if (field === "approach") return "Abordagem (*): selecione Qualitativa, Quantitativa ou Mista.";
+      if (field === "objectives") return "Objetivos metodológicos (*): selecione pelo menos uma opção.";
       if (field === "rationale") return "Justificativa metodológica (*): escreva pelo menos 20 caracteres.";
-      if (field === "procedures") return "Procedimentos: informe pelo menos um procedimento.";
-      if (field === "instruments") return "Instrumentos: informe pelo menos um instrumento.";
-      if (field === "analysisTechniques") return "Técnicas de análise: informe pelo menos uma técnica.";
-      return "Classificação metodológica: revise os campos obrigatórios.";
+      if (field === "procedures") return "Procedimentos (*): informe pelo menos um procedimento.";
+      if (field === "instruments") return "Instrumentos (*): informe pelo menos um instrumento.";
+      if (field === "analysisTechniques") return "Técnicas de análise (*): informe pelo menos uma técnica.";
+      if (field === "ethicsWarnings") return "Avisos éticos ou de acesso: cada aviso deve ter pelo menos 10 caracteres ou deixe o campo em branco.";
+      return "Classificação metodológica: revise Natureza (*), Abordagem (*), Objetivos metodológicos (*), Procedimentos (*), Instrumentos (*), Técnicas de análise (*) e Justificativa (*).";
     }
     if (section === "rows") {
       const rowIndex = second;
       const field = third;
       const label = typeof rowIndex === "number" ? `Linha ${rowIndex + 1}` : "Linha metodológica";
-      if (field === "dataCollection") return `${label} · Levantamento: descreva com pelo menos 20 caracteres.`;
-      if (field === "analysisTreatment") return `${label} · Análise/tratamento: descreva com pelo menos 20 caracteres.`;
-      if (field === "expectedResult") return `${label} · Resultado esperado: descreva com pelo menos 20 caracteres.`;
-      return `${label}: revise os campos obrigatórios.`;
+      if (field === "dataCollection") return `${label} · Levantamento (*): descreva com pelo menos 20 caracteres.`;
+      if (field === "analysisTreatment") return `${label} · Análise/tratamento (*): descreva com pelo menos 20 caracteres.`;
+      if (field === "expectedResult") return `${label} · Resultado esperado (*): descreva com pelo menos 20 caracteres.`;
+      if (field === "studentJustification") return `${label} · Justificativa da linha (*): escreva entre 10 e 1000 caracteres.`;
+      return `${label}: revise Levantamento (*), Análise/tratamento (*), Resultado esperado (*) e Justificativa da linha (*).`;
     }
     return "Revise os campos obrigatórios da matriz metodológica.";
   }))];

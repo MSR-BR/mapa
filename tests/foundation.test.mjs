@@ -514,7 +514,18 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /Explicar/);
   assert.match(workspace, /Adicionar linha OEG/);
   assert.match(workspace, /moveRow/);
+  assert.match(workspace, /Título final sugerido \*/);
+  assert.match(workspace, /Natureza \*/);
+  assert.match(workspace, /Abordagem \*/);
+  assert.match(workspace, /Objetivos metodológicos \*/);
+  assert.match(workspace, /Procedimentos \*/);
+  assert.match(workspace, /Instrumentos \*/);
+  assert.match(workspace, /Técnicas de análise \*/);
   assert.match(workspace, /Justificativa \*/);
+  assert.match(workspace, /Levantamento \*/);
+  assert.match(workspace, /Análise\/tratamento \*/);
+  assert.match(workspace, /Resultado esperado \*/);
+  assert.match(workspace, /Justificativa da linha \*/);
   assert.match(workspace, /methodologyMessageText/);
   assert.match(workspace, /OE\$\{index\} \(objetivo específico \$\{index\}\)/);
   assert.match(workspace, /methodologyMessageText\(finding\.message\)/);
@@ -528,6 +539,9 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(route, /improvementNotes/);
   assert.match(route, /formatMethodologyPlanIssues/);
   assert.match(route, /Justificativa metodológica \(\*\)/);
+  assert.match(route, /Objetivos metodológicos \(\*\)/);
+  assert.match(route, /Avisos éticos ou de acesso/);
+  assert.match(route, /Justificativa da linha \(\*\)/);
   assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(gemini, /Corrija especificamente estes avisos/);
   assert.match(gemini, /linha final para o objetivo geral/);

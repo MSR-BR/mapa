@@ -369,23 +369,23 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
       </div>
 
       <div className="methodology-title-editor">
-        <label>Título final sugerido<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
+        <label>Título final sugerido *<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
       </div>
 
       <aside className="methodology-classification" aria-label="Classificação metodológica">
         <div>
-          <label><span className="methodology-field-heading">Natureza {helpButton("nature")}</span><select onChange={(event) => setClassification((current) => ({ ...current, nature: event.target.value as ClassificationDraft["nature"] }))} value={classification.nature}><option>Aplicada</option><option>Básica</option></select></label>
-          <label><span className="methodology-field-heading">Abordagem {helpButton("approach")}</span><select onChange={(event) => setClassification((current) => ({ ...current, approach: event.target.value as ClassificationDraft["approach"] }))} value={classification.approach}><option>Qualitativa</option><option>Quantitativa</option><option>Mista</option></select></label>
+          <label><span className="methodology-field-heading">Natureza * {helpButton("nature")}</span><select onChange={(event) => setClassification((current) => ({ ...current, nature: event.target.value as ClassificationDraft["nature"] }))} value={classification.nature}><option>Aplicada</option><option>Básica</option></select></label>
+          <label><span className="methodology-field-heading">Abordagem * {helpButton("approach")}</span><select onChange={(event) => setClassification((current) => ({ ...current, approach: event.target.value as ClassificationDraft["approach"] }))} value={classification.approach}><option>Qualitativa</option><option>Quantitativa</option><option>Mista</option></select></label>
         </div>
         <fieldset>
-          <legend><span className="methodology-field-heading">Objetivos metodológicos {helpButton("objectives")}</span></legend>
+          <legend><span className="methodology-field-heading">Objetivos metodológicos * {helpButton("objectives")}</span></legend>
           {(["Exploratória", "Descritiva", "Explicativa"] as const).map((value) => (
             <label key={value}><input checked={classification.objectives.includes(value)} onChange={() => toggleClassificationObjective(value)} type="checkbox" />{value}</label>
           ))}
         </fieldset>
-        <label>Procedimentos<input onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
-        <label>Instrumentos<input onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
-        <label>Técnicas de análise<input onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
+        <label>Procedimentos *<input onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
+        <label>Instrumentos *<input onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
+        <label>Técnicas de análise *<input onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
         <label>Justificativa *<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
         <label>Avisos éticos ou de acesso<input onChange={(event) => setEthicsText(event.target.value)} value={ethicsText} /></label>
       </aside>
@@ -409,11 +409,11 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
                 </div>
                 <p>{objective?.content}</p>
               </div>
-              <label role="cell">Levantamento<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
-              <label role="cell">Análise/tratamento<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
-              <label role="cell">Resultado esperado<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
+              <label role="cell">Levantamento *<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
+              <label role="cell">Análise/tratamento *<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
+              <label role="cell">Resultado esperado *<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
               <details className="methodology-row-note">
-                <summary>Justificativa da linha</summary>
+                <summary>Justificativa da linha *</summary>
                 <textarea maxLength={1000} onChange={(event) => updateRow(row.id, { studentJustification: event.target.value || null })} placeholder="Por que esta linha metodológica é necessária?" value={row.studentJustification ?? ""} />
               </details>
               <details className="methodology-topic-links">

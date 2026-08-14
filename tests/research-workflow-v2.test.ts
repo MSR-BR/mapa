@@ -375,7 +375,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se produzir uma síntese conceitual que delimite o fenômeno investigado.",
         id: "60000000-0000-4000-8000-000000000001",
         objectiveId: OBJECTIVE_1,
-        studentJustification: null,
+        studentJustification: "A linha organiza a base documental do primeiro objetivo.",
         warnings: [],
       },
       {
@@ -385,7 +385,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se caracterizar dimensões relevantes para orientar a discussão da proposta.",
         id: "60000000-0000-4000-8000-000000000002",
         objectiveId: OBJECTIVE_2,
-        studentJustification: null,
+        studentJustification: "A linha justifica o levantamento estruturado do segundo objetivo.",
         warnings: [],
       },
       {
@@ -395,7 +395,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se formular recomendações acadêmicas alinhadas ao objetivo geral da pesquisa.",
         id: "60000000-0000-4000-8000-000000000003",
         objectiveId: OBJECTIVE_3,
-        studentJustification: null,
+        studentJustification: "A linha integra evidências para sustentar recomendações.",
         warnings: [],
       },
     ],
@@ -423,6 +423,9 @@ test("validates methodology matrix coverage and expected-result wording", () => 
       ? { ...row, expectedResult: "Foram encontrados resultados conclusivos sobre a aprendizagem." }
       : row),
   }), options).errors[0], /já tivesse sido executada/);
+  assert.match(validateMethodologyPlan(makeMethodologyPlan({
+    rows: makeMethodologyPlan().rows.map((row, index) => index === 0 ? { ...row, studentJustification: null } : row),
+  }), options).errors.join(" "), /Justificativa da linha \(\*\)/);
 });
 
 test("requires and accepts an OEG synthesis row in methodology when requested", () => {
@@ -438,7 +441,7 @@ test("requires and accepts an OEG synthesis row in methodology when requested", 
         expectedResult: "Uma síntese final capaz de responder ao objetivo geral da pesquisa.",
         id: "60000000-0000-4000-8000-000000000099",
         objectiveId: GENERAL_OBJECTIVE_ROW,
-        studentJustification: null,
+        studentJustification: "Esta linha mostra como os objetivos específicos respondem ao objetivo geral.",
         warnings: [],
       },
     ],
@@ -513,7 +516,7 @@ function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): Resear
       expectedResult: "Uma resposta integrada ao objetivo geral da pesquisa.",
       id: "60000000-0000-4000-8000-000000000004",
       objectiveId: GENERAL_ID,
-      studentJustification: null,
+      studentJustification: "Esta linha de síntese conecta a matriz ao objetivo geral.",
       warnings: [],
     },
   ];
