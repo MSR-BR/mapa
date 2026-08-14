@@ -12,6 +12,7 @@
     "supabase:verify": "node --env-file-if-exists=.env.local scripts/verify-supabase.mjs",
     "supabase:verify-rls": "node --env-file-if-exists=.env.local scripts/verify-anonymous-rls.mjs",
     "supabase:verify-authenticated-rls": "node --env-file-if-exists=.env.local scripts/verify-authenticated-rls.mjs",
+    "supabase:verify-advisor-student": "node --env-file-if-exists=.env.local --import tsx scripts/verify-advisor-student-flow.ts",
     "supabase:verify-migration-local": "sh scripts/verify-migration-local.sh",
     "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
     "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",

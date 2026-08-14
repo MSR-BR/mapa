@@ -37,6 +37,18 @@ npm run build
 
 Use `npm run check` para executar o gate completo.
 
+### Verificação aluno/orientador
+
+O fluxo completo com duas contas reais do Supabase pode ser verificado com:
+
+```bash
+npm run supabase:verify-advisor-student
+```
+
+Antes de rodar, configure `MAPA_E2E_STUDENT_EMAIL`, `MAPA_E2E_ADVISOR_EMAIL` e `MAPA_E2E_PASSWORD`
+com contas de teste controladas. Por padrão, o script apenas autentica contas existentes; para criar contas
+explicitamente fornecidas, defina `MAPA_E2E_CREATE_USERS=true`.
+
 ## Especificações
 
 O planejamento, os padrões compartilhados e as changes ficam em `.specs/`. Nenhuma change deve ser implementada sem aprovação explícita.
