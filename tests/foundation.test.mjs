@@ -158,13 +158,14 @@ test("provides persistent editing with loss protection and retry", async () => {
 });
 
 test("exports only the authenticated owner's saved structure as PDF", async () => {
-  const [route, pdf, workspace, finalWorkspace, citationHelper, prompt] = await Promise.all([
+  const [route, pdf, workspace, finalWorkspace, citationHelper, prompt, styles] = await Promise.all([
     readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
     readProjectFile("modules/export/pdf.ts"),
     readProjectFile("modules/generation/generation-workspace.tsx"),
     readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
     readProjectFile("modules/research-workflow/reference-citations.ts"),
     readProjectFile("modules/generation/prompts/structure-v1.ts"),
+    readProjectFile("app/globals.css"),
   ]);
 
   assert.match(route, /\.eq\("owner_id", userId\)/);
@@ -185,6 +186,9 @@ test("exports only the authenticated owner's saved structure as PDF", async () =
   assert.doesNotMatch(workspace, /Exportar DOCX/);
   assert.doesNotMatch(finalWorkspace, /Exportar DOCX/);
   assert.match(workspace, /Salve as alterações antes de exportar/);
+  assert.match(styles, /\.final-export-panel \{[^}]*linear-gradient\(145deg, #17221e, #0c1210\)/);
+  assert.match(styles, /\.final-export-panel a \{[^}]*linear-gradient\(135deg, #f5fff9, #b9d6ca\)/);
+  assert.match(styles, /\.final-export-panel a:hover \{[^}]*transform: translateY\(-1px\)/);
 });
 
 test("keeps the Research Starter key server-side and follows its v1 contract", async () => {
