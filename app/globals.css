@@ -423,6 +423,32 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .advisor-review-workspace .definition-button.secondary:hover:not(:disabled) { background: rgb(255 255 255 / 7%); }
 .advisor-review-workspace .definition-button.primary { border-color: #9bd9bf; background: linear-gradient(135deg, #e8f6ef, #9bd9bf); color: #0f1d18; }
 .advisor-request-button { border-color: rgb(255 185 178 / 50%) !important; color: #ffcbc6 !important; }
+.advisor-readonly-map { display: grid; gap: 1rem; border-top: 1px solid rgb(255 255 255 / 10%); padding-top: 1.15rem; }
+.advisor-readonly-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 0.9rem; }
+.advisor-readonly-heading h3 { margin: 0.15rem 0; color: #f7fff9; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -0.04em; }
+.advisor-readonly-heading span { display: block; max-width: 48rem; color: #b5c3bc; font-size: 0.84rem; line-height: 1.5; }
+.advisor-readonly-heading b { border: 1px solid rgb(155 217 191 / 26%); border-radius: 999px; padding: 0.38rem 0.62rem; background: rgb(155 217 191 / 10%); color: #9bd9bf; font-size: 0.72rem; text-transform: uppercase; }
+.advisor-readonly-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; }
+.advisor-readonly-card { display: grid; align-content: start; gap: 0.55rem; border: 1px solid rgb(255 255 255 / 11%); border-radius: 1rem; padding: 1rem; background: rgb(255 255 255 / 5%); }
+.advisor-readonly-card-wide { grid-column: 1 / -1; }
+.advisor-readonly-card > span { color: #9bd9bf; font-size: 0.72rem; font-weight: 850; letter-spacing: 0.07em; text-transform: uppercase; }
+.advisor-readonly-card h4 { margin: 0; color: #f5fff9; font-size: clamp(1rem, 2vw, 1.22rem); letter-spacing: -0.025em; }
+.advisor-readonly-card p, .advisor-readonly-card small { margin: 0; color: #d5e3dc; font-size: 0.84rem; line-height: 1.55; white-space: pre-line; }
+.advisor-readonly-card small { color: #a8b9b0; }
+.advisor-readonly-subcard { display: grid; gap: 0.35rem; border: 1px solid rgb(255 255 255 / 10%); border-radius: 0.8rem; padding: 0.75rem; background: rgb(255 255 255 / 5%); }
+.advisor-readonly-subcard strong { color: #f5fff9; }
+.advisor-readonly-list, .advisor-readonly-reference-list { display: grid; gap: 0.65rem; margin: 0; padding-left: 1.15rem; }
+.advisor-readonly-list li, .advisor-readonly-reference-list li { display: grid; gap: 0.35rem; color: #d5e3dc; }
+.advisor-readonly-list li > strong { color: #9bd9bf; }
+.advisor-readonly-list b { color: #f1fbf5; }
+.advisor-readonly-note { border-left: 3px solid rgb(155 217 191 / 42%); padding-left: 0.65rem; color: #c8d8d1 !important; }
+.advisor-readonly-note span { display: block; margin-bottom: 0.12rem; color: #9bd9bf; font-size: 0.68rem; font-weight: 850; text-transform: uppercase; }
+.advisor-readonly-references-inline { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.advisor-readonly-references-inline span { flex-basis: 100%; color: #a9cbbd; font-size: 0.68rem; font-weight: 850; text-transform: uppercase; }
+.advisor-readonly-references-inline a, .advisor-readonly-references-inline b, .advisor-readonly-reference-list a, .advisor-readonly-reference-list strong { color: #e8f6ef; font-size: 0.76rem; line-height: 1.35; }
+.advisor-readonly-references-inline a, .advisor-readonly-references-inline b { border: 1px solid rgb(255 255 255 / 10%); border-radius: 999px; padding: 0.25rem 0.45rem; background: rgb(255 255 255 / 5%); text-decoration: none; }
+.advisor-readonly-reference-list small, .advisor-readonly-reference-list em { color: #aabbb2; font-size: 0.72rem; font-style: normal; }
+.advisor-readonly-methodology li { border-top: 1px solid rgb(255 255 255 / 9%); padding-top: 0.65rem; }
 .chapter-planning { display: grid; gap: 1.35rem; margin-top: 2rem; }
 .coverage-panel { display: grid; gap: 0.65rem; border: 1px solid #c8d8d0; border-radius: 1rem; padding: 1rem; background: #f7faf8; }
 .coverage-panel > strong { color: #284e3c; }
@@ -710,6 +736,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .project-advisor-panel { grid-template-columns: 1fr; }
   .project-advisor-panel form { grid-template-columns: 1fr; }
   .project-advisor-panel button { width: 100%; }
+  .advisor-readonly-grid { grid-template-columns: 1fr; }
+  .advisor-readonly-heading { align-items: start; flex-direction: column; }
   .proposal-workspace-shell { padding-top: 1.6rem; }
   .proposal-workspace-shell h1 { max-width: 100%; overflow-wrap: anywhere; font-size: clamp(2rem, 12vw, 3.4rem); }
   .skeleton-title { height: 6rem; }

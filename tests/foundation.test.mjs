@@ -646,6 +646,11 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(advisorHelper, /withAdvisorReviewRequest/);
   assert.match(advisorHelper, /withAdvisorReviewDecision/);
   assert.match(advisorWorkspace, /Área do orientador/);
+  assert.match(advisorWorkspace, /Modo leitura/);
+  assert.match(advisorWorkspace, /Tudo que o estudante construiu/);
+  assert.match(advisorWorkspace, /AdvisorReadOnlyProject/);
+  assert.match(advisorWorkspace, /Justificativa do estudante/);
+  assert.match(advisorWorkspace, /withCitationMarkers/);
   assert.match(advisorWorkspace, /Comentários do orientador/);
   assert.match(advisorWorkspace, /Solicitar correção/);
   assert.match(advisorWorkspace, /Validar etapa/);
@@ -672,6 +677,7 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(card, /Somente o estudante pode excluir/);
   assert.match(card, /Orientador:/);
   assert.match(styles, /advisor-review-workspace/);
+  assert.match(styles, /advisor-readonly-map/);
   assert.match(styles, /project-library-section-advisor/);
   assert.match(migration, /advisor_email/);
   assert.match(migration, /projects_select_advised/);
