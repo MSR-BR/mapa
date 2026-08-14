@@ -60,6 +60,35 @@ export const definitionStepSchema = z.enum([
 
 export type DefinitionStep = z.infer<typeof definitionStepSchema>;
 
+export const advisorReviewStepSchema = z.enum([
+  "problem_statement",
+  "general_objective",
+  "specific_objectives",
+  "literature_topics",
+  "development_topics",
+  "methodology_matrix",
+  "final_map",
+]);
+
+export type AdvisorReviewStep = z.infer<typeof advisorReviewStepSchema>;
+
+export const advisorReviewSchema = z.object({
+  advisorComments: z.string().trim().max(2_000).nullable().default(null),
+  advisorEmail: z.string().trim().email().max(320).nullable().default(null),
+  advisorId: z.string().uuid().nullable().default(null),
+  id: z.string().uuid(),
+  requestedAt: z.string().datetime({ offset: true }),
+  reviewedAt: z.string().datetime({ offset: true }).nullable().default(null),
+  sourceRevision: z.number().int().positive(),
+  status: z.enum(["pending", "changes_requested", "approved"]),
+  step: advisorReviewStepSchema,
+  targetActiveStep: definitionStepSchema.nullable(),
+  targetStableState: stableWorkflowStateSchema,
+  targetState: stableWorkflowStateSchema,
+});
+
+export type AdvisorReview = z.infer<typeof advisorReviewSchema>;
+
 export const validatedElementSchema = z.object({
   approvedContent: z.string().trim().min(1).max(12_000).nullable(),
   id: z.string().uuid(),
@@ -234,6 +263,7 @@ export type ProposalDiscovery = z.infer<typeof proposalDiscoverySchema>;
 
 export const researchWorkflowContentSchema = z.object({
   activeStep: definitionStepSchema.nullable().default(null),
+  advisorReviews: z.array(advisorReviewSchema).max(120).default([]),
   chapterTopicDetails: z.array(chapterTopicDetailSchema).max(12).default([]),
   coherenceFindings: z.array(coherenceFindingSchema).max(40).default([]),
   discovery: proposalDiscoverySchema.nullable().default(null),
@@ -264,6 +294,7 @@ export type ResearchWorkflow = z.infer<typeof researchWorkflowSchema>;
 
 export const EMPTY_WORKFLOW_CONTENT: ResearchWorkflowContent = {
   activeStep: null,
+  advisorReviews: [],
   chapterTopicDetails: [],
   coherenceFindings: [],
   discovery: null,

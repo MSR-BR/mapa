@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
+import { workflowAdvisorStatus } from "@/modules/research-workflow/advisor-review";
 import { workflowDashboardMeta } from "@/modules/research-workflow/dashboard";
 import {
   researchWorkflowContentSchema,
@@ -60,16 +61,29 @@ function isWorkflowFinished(project: { status: string; workflow_version: number 
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
   const { resume, continue: continueParam } = await searchParams;
-  const { supabase } = await requireAuthenticatedUser();
-  const { data, error } = await supabase
-    .from("projects")
-    .select("id, title, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version")
-    .is("deleted_at", null)
-    .order("updated_at", { ascending: false })
-    .limit(12);
+  const { supabase, userId } = await requireAuthenticatedUser();
+  const projectColumns = "id, title, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id";
+  const [{ data, error }, { data: advisedData, error: advisedError }] = await Promise.all([
+    supabase
+      .from("projects")
+      .select(projectColumns)
+      .eq("owner_id", userId)
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(12),
+    supabase
+      .from("projects")
+      .select(projectColumns)
+      .neq("owner_id", userId)
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(12),
+  ]);
   const projects = data ?? [];
-  const projectIds = projects.map((project) => project.id);
-  const v2ProjectIds = projects.filter((project) => project.workflow_version === 2).map((project) => project.id);
+  const advisedProjects = advisedData ?? [];
+  const allProjects = [...projects, ...advisedProjects];
+  const projectIds = allProjects.map((project) => project.id);
+  const v2ProjectIds = allProjects.filter((project) => project.workflow_version === 2).map((project) => project.id);
   const [{ data: workflows }, { data: structures }] = await Promise.all([
     v2ProjectIds.length > 0
       ? supabase
@@ -101,7 +115,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     });
     return parsed.success ? [[workflow.project_id, parsed.data] as const] : [];
   }));
-  const dashboardProjects = projects.map((project) => {
+  const dashboardProjects = allProjects.map((project) => {
     const workflow = workflowByProject.get(project.id);
     const structure = structureByProject.get(project.id);
     const meta = project.workflow_version === 2 && workflow
@@ -114,8 +128,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     const isIntegration = structure?.prompt_version.endsWith("-merge") || Boolean(integrationSource);
     return {
       academicArea: meta?.area ?? project.knowledge_area ?? "Área a definir",
+      advisorEmail: project.advisor_email ?? null,
+      advisorReview: workflow ? workflowAdvisorStatus(workflow) : null,
+      canDelete: project.owner_id === userId,
       integrationSource,
       isIntegration,
+      ownerId: project.owner_id,
       progress: meta?.progress ?? null,
       projectId: project.id,
       referenceCount: references.length,
@@ -144,7 +162,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     })
     .map((project) => dashboardProjectById.get(project.id))
     .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
-  const integratedProjects = dashboardProjects.filter((project) => project.isIntegration);
+  const integratedProjects = projects
+    .map((project) => dashboardProjectById.get(project.id))
+    .filter((project): project is typeof dashboardProjects[number] => Boolean(project?.isIntegration));
+  const advisorProjects = advisedProjects
+    .map((project) => dashboardProjectById.get(project.id))
+    .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
   const continuationMeta = activeProjects[0] ?? null;
 
   if (continueParam === "1" && resume !== "1" && continuationMeta) {
@@ -181,12 +204,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </div>
         </div>
 
-        {error ? (
+        {error || advisedError ? (
           <div className="inline-state error-state" role="alert">
             <strong>Não foi possível carregar os projetos.</strong>
             <span>Tente atualizar a página em alguns instantes.</span>
           </div>
-        ) : projects.length === 0 ? (
+        ) : projects.length === 0 && advisorProjects.length === 0 ? (
           <div className="inline-state empty-projects">
             <span className="empty-state-icon" aria-hidden="true">⌁</span>
             <strong>Sua biblioteca ainda está vazia.</strong>
@@ -216,6 +239,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               projects={integratedProjects}
               title="Projetos integrados"
               variant="integrated"
+            />
+            <DashboardProjectGrid
+              allowIntegration={false}
+              description="Projetos de estudantes que informaram seu e-mail como orientador. Abra para comentar, solicitar correção ou validar a etapa."
+              emptyMessage="Nenhum projeto aguardando sua orientação."
+              projects={advisorProjects}
+              title="Projetos sob minha orientação"
+              variant="advisor"
             />
           </div>
         )}

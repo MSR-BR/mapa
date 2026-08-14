@@ -421,7 +421,7 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(route, /validating_specific_objectives/);
   assert.match(workspace, /Regenerar sugestão/);
   assert.match(workspace, /Salvar rascunho/);
-  assert.match(workspace, /Validar e avançar/);
+  assert.match(workspace, /Validar pelo estudante/);
   assert.match(workspace, /ManualReferencePanel/);
   assert.match(workspace, /Por que esta grande pergunta vale ser investigada\? \*/);
   assert.match(workspace, /Justificativa do OE\{index \+ 1\} \*/);
@@ -605,6 +605,70 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(layout, /AccountMenu/);
   assert.match(accountMenu, /document\.addEventListener\("pointerdown", closeOutside\)/);
   assert.match(accountMenu, /event\.key === "Escape"/);
+});
+
+test("adds advisor-student validation gates for every v2 step", async () => {
+  const [
+    advisorHelper,
+    advisorWorkspace,
+    advisorRoute,
+    definitionRoute,
+    chaptersRoute,
+    methodologyRoute,
+    finalMapRoute,
+    projectPage,
+    dashboard,
+    card,
+    styles,
+    migration,
+    schema,
+    quickStart,
+  ] = await Promise.all([
+    readProjectFile("modules/research-workflow/advisor-review.ts"),
+    readProjectFile("modules/research-workflow/advisor-review-workspace.tsx"),
+    readProjectFile("app/api/projects/[id]/advisor-review/route.ts"),
+    readProjectFile("app/api/projects/[id]/definition/route.ts"),
+    readProjectFile("app/api/projects/[id]/chapters/route.ts"),
+    readProjectFile("app/api/projects/[id]/methodology/route.ts"),
+    readProjectFile("app/api/projects/[id]/final-map/route.ts"),
+    readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+    readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("modules/projects/project-card-modal.tsx"),
+    readProjectFile("app/globals.css"),
+    readProjectFile("supabase/migrations/20260814203000_add_advisor_review_access.sql"),
+    readProjectFile("modules/research-workflow/schema.ts"),
+    readProjectFile("modules/projects/quick-start-form.tsx"),
+  ]);
+
+  assert.match(schema, /advisorReviewSchema/);
+  assert.match(schema, /advisorReviews/);
+  assert.match(advisorHelper, /withAdvisorReviewRequest/);
+  assert.match(advisorHelper, /withAdvisorReviewDecision/);
+  assert.match(advisorWorkspace, /Área do orientador/);
+  assert.match(advisorWorkspace, /Comentários do orientador/);
+  assert.match(advisorWorkspace, /Solicitar correção/);
+  assert.match(advisorWorkspace, /Validar etapa/);
+  assert.match(advisorRoute, /request_changes/);
+  assert.match(advisorRoute, /review\.targetState/);
+  assert.match(advisorRoute, /claimEmail/);
+  assert.match(definitionRoute, /pendingAdvisorReview/);
+  assert.match(definitionRoute, /Aguardando validação do orientador/);
+  assert.match(chaptersRoute, /Capítulo 2 validado pelo estudante/);
+  assert.match(chaptersRoute, /Capítulo 4 validado pelo estudante/);
+  assert.match(methodologyRoute, /Metodologia validada pelo estudante/);
+  assert.match(finalMapRoute, /Mapa validado pelo estudante/);
+  assert.match(projectPage, /AdvisorReviewWorkspace/);
+  assert.match(projectPage, /project\.owner_id/);
+  assert.match(dashboard, /Projetos sob minha orientação/);
+  assert.match(dashboard, /variant="advisor"/);
+  assert.match(card, /Somente o estudante pode excluir/);
+  assert.match(card, /Orientador:/);
+  assert.match(styles, /advisor-review-workspace/);
+  assert.match(styles, /project-library-section-advisor/);
+  assert.match(migration, /advisor_email/);
+  assert.match(migration, /projects_select_advised/);
+  assert.match(migration, /research_workflows_update_advised/);
+  assert.match(quickStart, /advisorEmail/);
 });
 
 test("uses the approved dark silver authentication shell", async () => {

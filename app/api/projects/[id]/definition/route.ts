@@ -7,7 +7,9 @@ import {
   regenerateProblemStatement,
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   validateGeneralObjective,
   validateProblemStatement,
@@ -254,6 +256,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
   if (workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
+  }
+  if (parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
   }
   if (workflow.content.activeStep !== parsed.data.step) {
     return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
@@ -510,7 +515,29 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     stableState = "validating_literature";
   }
 
-  const saved = await saveWorkflow(workflow, content, sourceRevision, state, stableState, supabase, userId);
+  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+  const targetActiveStep = content.activeStep;
+  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  if (shouldWaitForAdvisor) {
+    content = withAdvisorReviewRequest(
+      researchWorkflowContentSchema.parse({ ...content, activeStep: step }),
+      {
+        advisorEmail,
+        sourceRevision,
+        step,
+        transition: { targetActiveStep, targetStableState: stableState, targetState: state },
+      },
+    );
+  }
+  const saved = await saveWorkflow(
+    workflow,
+    content,
+    sourceRevision,
+    shouldWaitForAdvisor ? workflow.state : state,
+    shouldWaitForAdvisor ? workflow.stableState : stableState,
+    supabase,
+    userId,
+  );
   if (saved && step === "problem_statement") {
     const approvedProblem = currentElement(content, "problem_statement")?.approvedContent;
     const { error } = await supabase
@@ -524,6 +551,6 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }
   }
   return saved
-    ? NextResponse.json({ message: "Etapa validada.", workflow: saved })
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando validação do orientador." : "Etapa validada.", workflow: saved })
     : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
 }

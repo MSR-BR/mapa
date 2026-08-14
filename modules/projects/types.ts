@@ -8,7 +8,8 @@ export type ProjectField =
   | "problemStatement"
   | "keywords"
   | "knowledgeArea"
-  | "academicLevel";
+  | "academicLevel"
+  | "advisorEmail";
 
 export type ProjectFormValues = Record<ProjectField, string>;
 

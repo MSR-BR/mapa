@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { pendingAdvisorReview } from "./advisor-review";
+import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
 import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
@@ -62,6 +64,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
       ? general !== currentElement?.proposedContent || generalJustification !== (currentElement?.studentJustification ?? "")
       : JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
+  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
 
   function applyWorkflow(nextWorkflow: ResearchWorkflow) {
     setWorkflow(nextWorkflow);
@@ -176,6 +179,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
           {currentElement?.updatedBy === "user" || currentValueChanged ? "Editado por você" : "Sugestão da IA"}
         </span>
       </div>
+      <AdvisorReviewNotice workflow={workflow} />
 
       <div className="definition-source">
         <span>Origem desta etapa</span>
@@ -265,7 +269,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy} onClick={() => void submit("validate")} type="button">Validar e avançar</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
       </div>
     </section>
   );

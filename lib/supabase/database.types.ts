@@ -67,6 +67,8 @@ export type Database = {
       projects: {
         Row: {
           academic_level: string | null
+          advisor_email: string | null
+          advisor_id: string | null
           created_at: string
           deleted_at: string | null
           id: string
@@ -82,6 +84,8 @@ export type Database = {
         }
         Insert: {
           academic_level?: string | null
+          advisor_email?: string | null
+          advisor_id?: string | null
           created_at?: string
           deleted_at?: string | null
           id?: string
@@ -97,6 +101,8 @@ export type Database = {
         }
         Update: {
           academic_level?: string | null
+          advisor_email?: string | null
+          advisor_id?: string | null
           created_at?: string
           deleted_at?: string | null
           id?: string

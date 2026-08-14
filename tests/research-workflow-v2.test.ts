@@ -71,6 +71,7 @@ test("accepts the empty versioned workflow foundation", () => {
   assert.equal(workflow.schemaVersion, "2.0.0");
   assert.deepEqual(workflow.content, {
     activeStep: null,
+    advisorReviews: [],
     chapterTopicDetails: [],
     coherenceFindings: [],
     discovery: null,

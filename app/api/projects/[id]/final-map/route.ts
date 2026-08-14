@@ -3,12 +3,14 @@ import { z } from "zod";
 
 import { reviewFinalMapCoherence } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import {
   buildFinalMap,
   canCompleteFinalMap,
   finalMapSummary,
 } from "@/modules/research-workflow/final-map";
+import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   researchWorkflowContentSchema,
   type CoherenceFinding,
@@ -155,6 +157,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
+  if (parsed.data.action === "complete" && pendingAdvisorReview(workflow.content)) {
+    return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+  }
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
     return NextResponse.json({ error: "O mapa final ainda não pode ser revisado." }, { status: 409 });
   }
@@ -192,6 +197,29 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   content = upsertFinalMap(content, finalMapSummary(finalMap), sourceRevision);
   nextWorkflow = { ...workflow, content };
   content = replaceFinalMapFindings(content, buildFinalMap(nextWorkflow).findings.filter((finding) => finding.severity !== "blocking"));
-  const saved = await saveWorkflow(workflow, content, "completed", "completed", sourceRevision, supabase, userId);
-  return saved ? NextResponse.json({ message: "Mapa concluído.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  if (shouldWaitForAdvisor) {
+    content = withAdvisorReviewRequest(
+      researchWorkflowContentSchema.parse({ ...content, activeStep: null }),
+      {
+        advisorEmail,
+        sourceRevision,
+        step: "final_map",
+        transition: { targetActiveStep: null, targetStableState: "completed", targetState: "completed" },
+      },
+    );
+  }
+  const saved = await saveWorkflow(
+    workflow,
+    content,
+    shouldWaitForAdvisor ? workflow.state : "completed",
+    shouldWaitForAdvisor ? workflow.stableState : "completed",
+    sourceRevision,
+    supabase,
+    userId,
+  );
+  return saved
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Mapa validado pelo estudante. Aguardando validação do orientador." : "Mapa concluído.", workflow: saved })
+    : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }

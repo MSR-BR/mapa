@@ -63,6 +63,10 @@ export function QuickStartForm({ resumeDraft = false }: { resumeDraft?: boolean 
       />
 
       <input name="autoGenerate" type="hidden" value="yes" />
+      <label className="quick-start-advisor">
+        <span>E-mail do orientador</span>
+        <input maxLength={320} name="advisorEmail" placeholder="orientador@instituicao.edu" type="email" />
+      </label>
       <div className="quick-start-toolbar quick-start-toolbar-simple">
         <span>Enter para gerar · Shift + Enter para nova linha</span>
         <button disabled={pending} type="submit">

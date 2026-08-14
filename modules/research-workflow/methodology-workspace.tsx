@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { pendingAdvisorReview } from "./advisor-review";
+import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
 import type { MethodologyPlanInput } from "./methodology-validation";
 import type { ResearchWorkflow } from "./schema";
@@ -165,6 +167,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const initialized = useRef(false);
   const busy = operation !== null;
+  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");
@@ -385,6 +388,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         </div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
+      <AdvisorReviewNotice workflow={workflow} />
 
       <div className="methodology-title-editor">
         <label>Título final sugerido *<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
@@ -470,7 +474,7 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || rows.length === 0} onClick={() => void submit("validate")} type="button">Validar e avançar</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
       </div>
     </section>
   );

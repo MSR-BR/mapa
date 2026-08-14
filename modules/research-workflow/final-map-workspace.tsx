@@ -14,6 +14,8 @@ import {
   literatureExpansionText,
   withCitationMarkers,
 } from "./reference-citations";
+import { pendingAdvisorReview } from "./advisor-review";
+import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
@@ -46,6 +48,7 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
   const blockingFindings = finalMap.findings.filter((finding) => finding.severity === "blocking");
   const warningFindings = finalMap.findings.filter((finding) => finding.severity !== "blocking");
   const busy = operation !== null;
+  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
   const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
 
   function topicReferenceIds(topicIds: string[]) {
@@ -119,8 +122,9 @@ export function FinalMapWorkspace({ initialWorkflow, projectId }: Props) {
 
       <div className="final-map-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-        <button className="definition-button primary" disabled={busy || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">Concluir mapa</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">Validar pelo estudante</button>
       </div>
+      <AdvisorReviewNotice workflow={workflow} />
       <div className="final-export-panel" aria-label="Exportar mapa final">
         <div>
           <strong>{workflow.state === "completed" ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>

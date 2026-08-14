@@ -20,6 +20,7 @@ export function cloneResearchWorkflowContent(content: ResearchWorkflowContent) {
 
   const cloned = researchWorkflowContentSchema.parse({
     ...content,
+    advisorReviews: [],
     coherenceFindings: [],
     discovery: content.discovery ? {
       ...content.discovery,

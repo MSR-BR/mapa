@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { pendingAdvisorReview } from "./advisor-review";
+import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
 import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
@@ -75,6 +77,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   const savedTopics = readTopics(workflow, chapter);
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
+  const waitingForAdvisor = Boolean(pendingAdvisorReview(workflow.content));
 
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
@@ -199,6 +202,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
         <div><p className="section-kicker">Etapa {stageNumber} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
+      <AdvisorReviewNotice workflow={workflow} />
 
       <aside className="coverage-panel" aria-label="Cobertura dos objetivos específicos">
         <strong>Cobertura dos objetivos</strong>
@@ -305,7 +309,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy} onClick={() => void submit("validate")} type="button">Validar e avançar</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">Validar pelo estudante</button>
       </div>
     </section>
   );

@@ -21,7 +21,7 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
   const [{ data: project }, workflow] = await Promise.all([
     supabase
       .from("projects")
-      .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at")
+      .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, status, workflow_version, created_at, updated_at, deleted_at")
       .eq("id", id)
       .eq("owner_id", userId)
       .is("deleted_at", null)

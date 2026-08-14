@@ -6,8 +6,10 @@ import {
   generateLiteratureTopics,
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { fetchResearchStarterReport } from "@/modules/research-starter/client";
+import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   chapterTopicsInputSchema,
   validateChapterTopics,
@@ -232,6 +234,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
+  if (parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+  }
   const context = validateContext(workflow);
   if (!context) return NextResponse.json({ error: "Problemática e objetivos precisam estar validados." }, { status: 409 });
   const { action, step } = parsed.data;
@@ -381,10 +386,56 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     );
     content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" });
-    const saved = await saveWorkflow(workflow, content, "validating_development", "validating_development", sourceRevision, supabase, userId);
-    return saved ? NextResponse.json({ message: "Capítulo 2 validado.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+    const shouldWaitForAdvisor = Boolean(advisorEmail);
+    if (shouldWaitForAdvisor) {
+      content = withAdvisorReviewRequest(
+        researchWorkflowContentSchema.parse({ ...content, activeStep: "literature_topics" }),
+        {
+          advisorEmail,
+          sourceRevision,
+          step: "literature_topics",
+          transition: { targetActiveStep: "development_topics", targetStableState: "validating_development", targetState: "validating_development" },
+        },
+      );
+    }
+    const saved = await saveWorkflow(
+      workflow,
+      content,
+      shouldWaitForAdvisor ? workflow.state : "validating_development",
+      shouldWaitForAdvisor ? workflow.stableState : "validating_development",
+      sourceRevision,
+      supabase,
+      userId,
+    );
+    return saved
+      ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 2 validado pelo estudante. Aguardando validação do orientador." : "Capítulo 2 validado.", workflow: saved })
+      : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
   content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
-  const saved = await saveWorkflow(workflow, content, "validating_methodology", "validating_methodology", sourceRevision, supabase, userId);
-  return saved ? NextResponse.json({ message: "Capítulo 4 validado.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  if (shouldWaitForAdvisor) {
+    content = withAdvisorReviewRequest(
+      researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" }),
+      {
+        advisorEmail,
+        sourceRevision,
+        step: "development_topics",
+        transition: { targetActiveStep: "methodology_matrix", targetStableState: "validating_methodology", targetState: "validating_methodology" },
+      },
+    );
+  }
+  const saved = await saveWorkflow(
+    workflow,
+    content,
+    shouldWaitForAdvisor ? workflow.state : "validating_methodology",
+    shouldWaitForAdvisor ? workflow.stableState : "validating_methodology",
+    sourceRevision,
+    supabase,
+    userId,
+  );
+  return saved
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 4 validado pelo estudante. Aguardando validação do orientador." : "Capítulo 4 validado.", workflow: saved })
+    : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }

@@ -118,7 +118,7 @@ export async function duplicateProject(formData: FormData) {
   const { supabase, userId } = await requireAuthenticatedUser();
   const { data: source } = await supabase
     .from("projects")
-    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
+    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, workflow_version")
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)

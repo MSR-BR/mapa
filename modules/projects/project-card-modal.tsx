@@ -8,8 +8,12 @@ import { deleteProject } from "./actions";
 
 export type DashboardProject = {
   academicArea: string;
+  advisorEmail: string | null;
+  advisorReview: { comments: string | null; label: string; status: "approved" | "changes_requested" | "pending" } | null;
+  canDelete: boolean;
   integrationSource: string | null;
   isIntegration: boolean;
+  ownerId: string;
   progress: number | null;
   projectId: string;
   referenceCount: number;
@@ -29,6 +33,9 @@ type Props = DashboardProject & {
 
 export function ProjectCardModal({
   academicArea,
+  advisorEmail,
+  advisorReview,
+  canDelete,
   integrationSource,
   isIntegration,
   onSelectionChange,
@@ -98,6 +105,16 @@ export function ProjectCardModal({
         </button>
       </div>
       <span className="project-status">{statusLabel}</span>
+      {advisorEmail ? <span className="project-origin-badge">Orientador: {advisorEmail}</span> : null}
+      {advisorReview ? (
+        <span className={`project-advisor-badge project-advisor-badge-${advisorReview.status}`}>
+          {advisorReview.status === "pending"
+            ? `Aguardando orientador · ${advisorReview.label}`
+            : advisorReview.status === "changes_requested"
+              ? `Correção solicitada · ${advisorReview.label}`
+              : `Orientador aprovou · ${advisorReview.label}`}
+        </span>
+      ) : null}
       {isIntegration ? <span className="project-origin-badge">Integração de projetos</span> : null}
       <strong>{title}</strong>
       <span className="project-card-area">{academicArea}</span>
@@ -139,16 +156,18 @@ export function ProjectCardModal({
           <span>{academicArea} · {statusLabel}{referenceCount > 0 ? ` · ${referenceCount} ref.` : ""}</span>
           <div className="project-popover-actions">
             <Link className="primary-link" href={`/dashboard/projects/${projectId}`}>Abrir</Link>
-            <form
-              action={deleteProject}
-              onSubmit={(event) => {
-                if (!window.confirm("Excluir este projeto e todo o conteúdo gerado?")) event.preventDefault();
-              }}
-            >
-              <input name="projectId" type="hidden" value={projectId} />
-              <input name="confirmDelete" type="hidden" value="yes" />
-              <button className="danger-button" type="submit">Excluir</button>
-            </form>
+            {canDelete ? (
+              <form
+                action={deleteProject}
+                onSubmit={(event) => {
+                  if (!window.confirm("Excluir este projeto e todo o conteúdo gerado?")) event.preventDefault();
+                }}
+              >
+                <input name="projectId" type="hidden" value={projectId} />
+                <input name="confirmDelete" type="hidden" value="yes" />
+                <button className="danger-button" type="submit">Excluir</button>
+              </form>
+            ) : <span className="project-popover-note">Somente o estudante pode excluir.</span>}
           </div>
         </div>,
         document.body,

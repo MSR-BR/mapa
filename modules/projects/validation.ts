@@ -9,6 +9,7 @@ const ACADEMIC_LEVELS = new Set([
 ]);
 
 const FIELD_LIMITS = {
+  advisorEmail: 320,
   knowledgeArea: 120,
   problemStatement: 5000,
   theme: 500,
@@ -23,6 +24,7 @@ function readText(formData: FormData, name: ProjectField) {
 export function readProjectFormValues(formData: FormData): ProjectFormValues {
   return {
     academicLevel: readText(formData, "academicLevel"),
+    advisorEmail: readText(formData, "advisorEmail"),
     knowledgeArea: readText(formData, "knowledgeArea"),
     keywords: readText(formData, "keywords"),
     problemStatement: readText(formData, "problemStatement"),
@@ -63,6 +65,12 @@ export function parseProjectForm(formData: FormData) {
   if (values.academicLevel && !ACADEMIC_LEVELS.has(values.academicLevel)) {
     fieldErrors.academicLevel = "Selecione um nível acadêmico válido.";
   }
+  const advisorEmail = values.advisorEmail.trim().toLocaleLowerCase("pt-BR");
+  if (advisorEmail.length > FIELD_LIMITS.advisorEmail) {
+    fieldErrors.advisorEmail = "Use no máximo 320 caracteres.";
+  } else if (advisorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advisorEmail)) {
+    fieldErrors.advisorEmail = "Informe um e-mail válido para o orientador.";
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors, success: false as const, values };
@@ -71,6 +79,7 @@ export function parseProjectForm(formData: FormData) {
   return {
     data: {
       academic_level: values.academicLevel || null,
+      advisor_email: advisorEmail || null,
       knowledge_area: values.knowledgeArea.trim() || null,
       keywords,
       problem_statement: values.problemStatement.trim() || null,

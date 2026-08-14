@@ -23,7 +23,7 @@ type DashboardProjectGridProps = {
   emptyMessage?: string;
   projects: DashboardProject[];
   title: string;
-  variant: "active" | "completed" | "integrated";
+  variant: "active" | "advisor" | "completed" | "integrated";
 };
 
 export function DashboardProjectGrid({

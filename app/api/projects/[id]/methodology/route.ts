@@ -3,7 +3,9 @@ import { z } from "zod";
 
 import { generateMethodologyPlan } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
+import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   methodologyPlanInputSchema,
   validateMethodologyPlan,
@@ -388,6 +390,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   const { action } = parsed.data;
+  if (action === "validate" && pendingAdvisorReview(workflow.content)) {
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+  }
   if (
     workflow.state !== "validating_methodology"
     || (workflow.content.activeStep !== "methodology_matrix" && !(action === "initialize" && workflow.content.activeStep === null))
@@ -492,7 +497,28 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     sourceRevision,
     context,
   );
-  const saved = await saveWorkflow(workflow, content, "reviewing_map", "reviewing_map", sourceRevision, supabase, userId);
+  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+  const shouldWaitForAdvisor = Boolean(advisorEmail);
+  if (shouldWaitForAdvisor) {
+    content = withAdvisorReviewRequest(
+      researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" }),
+      {
+        advisorEmail,
+        sourceRevision,
+        step: "methodology_matrix",
+        transition: { targetActiveStep: null, targetStableState: "reviewing_map", targetState: "reviewing_map" },
+      },
+    );
+  }
+  const saved = await saveWorkflow(
+    workflow,
+    content,
+    shouldWaitForAdvisor ? workflow.state : "reviewing_map",
+    shouldWaitForAdvisor ? workflow.stableState : "reviewing_map",
+    sourceRevision,
+    supabase,
+    userId,
+  );
   if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 
   const finalTitle = element(content, "research_title")?.approvedContent;
@@ -506,5 +532,5 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     if (error) return NextResponse.json({ error: "A metodologia foi validada, mas o título do projeto não foi atualizado.", workflow: saved }, { status: 500 });
   }
 
-  return NextResponse.json({ message: "Metodologia validada.", workflow: saved });
+  return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando validação do orientador." : "Metodologia validada.", workflow: saved });
 }

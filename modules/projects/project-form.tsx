@@ -126,6 +126,11 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
           {errorFor("academicLevel") ? <small className="field-error" id="academicLevel-error">{errorFor("academicLevel")}</small> : null}
         </label>
       </div>
+      <label>
+        E-mail do orientador
+        <input defaultValue={project?.advisor_email ?? ""} maxLength={320} name="advisorEmail" type="email" {...fieldA11y("advisorEmail")} />
+        {errorFor("advisorEmail") ? <small className="field-error" id="advisorEmail-error">{errorFor("advisorEmail")}</small> : null}
+      </label>
       {dirty ? <p className="unsaved-indicator" role="status">Alterações não salvas</p> : null}
       {state.message ? (
         <p className={`form-message ${state.status}`} role="status">{state.message}</p>
