@@ -90,8 +90,9 @@ const generatedChapterTopicsSchema = z.object({
     objectiveCoverage: z.array(z.object({
       degree: z.enum(["partial", "full"]),
       objectiveId: z.string().uuid(),
-    })).min(1).max(6),
+    })).max(7),
     referenceIds: z.array(z.string().trim().min(1).max(120)).min(1).max(12),
+    studentJustification: z.string().trim().max(1_000).nullable().default(null),
     title: z.string().trim().min(3).max(180),
   })).min(3).max(6),
 });
@@ -113,7 +114,8 @@ const generatedMethodologyPlanSchema = z.object({
     dataCollection: z.string().trim().min(20).max(1_200),
     expectedResult: z.string().trim().min(20).max(1_000),
     objectiveId: z.string().uuid(),
-  })).min(3).max(6),
+    studentJustification: z.string().trim().max(1_000).nullable().default(null),
+  })).min(3).max(7),
   title: z.string().trim().min(3).max(120),
 });
 
@@ -169,11 +171,22 @@ function compactEvidence(report: ResearchStarterSuccess) {
 
 function compactDiscoveryEvidence(discovery: ProposalDiscovery) {
   return discovery.references.map((reference) => ({
+    abstract: reference.abstract?.slice(0, 1_500) ?? null,
     authors: reference.authors,
+    doi: reference.doi,
+    journal: reference.journal,
     referenceId: reference.referenceId,
+    source: reference.source,
     title: reference.title,
+    volumeIssuePages: reference.volumeIssuePages,
     year: reference.year,
   }));
+}
+
+function studentContextPrompt(studentContext: string[]) {
+  return studentContext.length > 0
+    ? `Reflexões/justificativas registradas pelo aluno, que devem orientar a geração sem serem copiadas literalmente: ${JSON.stringify(studentContext.slice(0, 20))}`
+    : "Não há justificativas adicionais do aluno registradas para esta geração.";
 }
 
 function assertDiscoveryReferenceIds(referenceIds: string[], discovery: ProposalDiscovery) {
@@ -354,6 +367,7 @@ export async function generateProblemCandidates(
 export async function regenerateProblemStatement(
   candidate: ProblemCandidate,
   discovery: ProposalDiscovery,
+  studentContext: string[] = [],
 ) {
   const { output } = await generateText({
     maxOutputTokens: 700,
@@ -364,7 +378,9 @@ export async function regenerateProblemStatement(
       "Comece exatamente por 'Como' ou 'De que forma' e termine com um único ponto de interrogação.",
       "Mantenha objeto, relação e recorte da proposta escolhida. Não acrescente método, instituição, população ou resultado.",
       "Use somente referenceIds presentes nas evidências.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Proposta escolhida: ${JSON.stringify(candidate)}`,
+      studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
@@ -379,6 +395,7 @@ export async function generateGeneralObjective(
   problemStatement: string,
   candidate: ProblemCandidate,
   discovery: ProposalDiscovery,
+  studentContext: string[] = [],
 ) {
   const { output } = await generateText({
     maxOutputTokens: 700,
@@ -390,8 +407,10 @@ export async function generateGeneralObjective(
       "Expresse o principal resultado intelectual pretendido, sem antecipar resultado empírico e sem ampliar o escopo.",
       "Não acrescente método, instituição, população ou recorte ausente.",
       "Use somente referenceIds presentes nas evidências.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Problemática validada: ${JSON.stringify(problemStatement)}`,
       `Proposta escolhida: ${JSON.stringify(candidate)}`,
+      studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
@@ -406,6 +425,7 @@ export async function generateSpecificObjectives(
   problemStatement: string,
   generalObjective: string,
   discovery: ProposalDiscovery,
+  studentContext: string[] = [],
 ) {
   const { output } = await generateText({
     maxOutputTokens: 2_400,
@@ -417,8 +437,10 @@ export async function generateSpecificObjectives(
       "Organize uma progressão lógica, sem impor verbos mecanicamente, sem redundâncias e sem objetivos mais amplos que o geral.",
       "Não acrescente método, instituição, população, resultado ou produto ausente no escopo validado.",
       "Use somente referenceIds presentes nas evidências.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Problemática validada: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral validado: ${JSON.stringify(generalObjective)}`,
+      studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
@@ -446,6 +468,7 @@ export async function generateLiteratureTopics(
   specificObjectives: Array<{ content: string; id: string }>,
   discovery: ProposalDiscovery,
   acceptedConcepts: string[] = [],
+  studentContext: string[] = [],
 ) {
   const { output } = await generateText({
     maxOutputTokens: 3_200,
@@ -458,10 +481,12 @@ export async function generateLiteratureTopics(
       "Relacione cada tópico a um ou mais IDs reais de objetivos específicos e indique cobertura partial ou full.",
       "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
       "Conceitos controlados aceitos são vocabulário candidato; só os inclua se forem coerentes com o tema e sustentados pelas evidências.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
       `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
       `Conceitos controlados aceitos: ${JSON.stringify(acceptedConcepts)}`,
+      studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
@@ -471,6 +496,7 @@ export async function generateLiteratureTopics(
     ...topic,
     exceptionJustification: null,
     generalObjectiveAligned: false,
+    studentJustification: null,
   }));
   assertGeneratedTopicLinks(topics, new Set(specificObjectives.map((objective) => objective.id)), discovery);
   return topics;
@@ -479,9 +505,11 @@ export async function generateLiteratureTopics(
 export async function generateDevelopmentTopics(
   problemStatement: string,
   generalObjective: string,
+  generalObjectiveId: string,
   specificObjectives: Array<{ content: string; id: string }>,
   literatureTopics: ChapterTopicInput[],
   discovery: ProposalDiscovery,
+  studentContext: string[] = [],
 ) {
   const { output } = await generateText({
     maxOutputTokens: 3_200,
@@ -490,34 +518,41 @@ export async function generateDevelopmentTopics(
     prompt: [
       "Crie exatamente quatro tópicos para o Capítulo 4 — Desenvolvimento, Estudo de Caso, Análise e Discussão, em português do Brasil.",
       "Operacionalize os objetivos específicos que não foram atendidos exclusivamente pela revisão da literatura.",
+      "Se a pesquisa for estudo de caso, o tópico 4.1 pode ser apenas a apresentação do caso, suas características e contexto; nesse caso, pode retornar objectiveCoverage=[] com exceptionJustification explicando que se trata de apresentação do estudo de caso.",
       "Derive semanticamente os títulos das ações dos objetivos sem copiá-los mecanicamente.",
       "Não use expressões como 'resultados encontrados' ou 'resultados obtidos', pois a pesquisa ainda é uma proposta.",
-      "Relacione cada tópico a um ou mais IDs reais de objetivos específicos.",
-      "O último tópico deve se relacionar diretamente ao objetivo geral e retornar generalObjectiveAligned=true; use justificativa somente se isso for metodologicamente impossível.",
+      "Relacione os demais tópicos a um ou mais IDs reais de objetivos específicos.",
+      "O objetivo geral também pode ser usado no Capítulo 4 com o ID informado como OEG; ele deve aparecer sobretudo no último tópico ou em tópico de síntese.",
+      "O último tópico deve se relacionar diretamente ao objetivo geral e retornar generalObjectiveAligned=true ou incluir o ID do objetivo geral em objectiveCoverage; use justificativa somente se isso for metodologicamente impossível.",
       "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
+      `ID do objetivo geral (OEG): ${JSON.stringify(generalObjectiveId)}`,
       `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
       `Cobertura do Capítulo 2: ${JSON.stringify(literatureTopics)}`,
+      studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
     temperature: 0.25,
   });
   const topics = generatedChapterTopicsSchema.parse(output).topics;
-  assertGeneratedTopicLinks(topics, new Set(specificObjectives.map((objective) => objective.id)), discovery);
+  assertGeneratedTopicLinks(topics, new Set([...specificObjectives.map((objective) => objective.id), generalObjectiveId]), discovery);
   return topics;
 }
 
 export async function generateMethodologyPlan(
   problemStatement: string,
   generalObjective: string,
+  generalObjectiveId: string,
   specificObjectives: Array<{ content: string; id: string }>,
   literatureTopics: ChapterTopicInput[],
   developmentTopics: ChapterTopicInput[],
   discovery: ProposalDiscovery,
   existingRows: MethodologyPlanInput["rows"] = [],
   improvementNotes: string[] = [],
+  studentContext: string[] = [],
 ) {
   const chapterTopics = [...literatureTopics, ...developmentTopics].map((topic) => ({
     chapter: literatureTopics.some((item) => item.id === topic.id) ? "Capítulo 2" : "Capítulo 4",
@@ -535,22 +570,25 @@ export async function generateMethodologyPlan(
     output: Output.object({ schema: generatedMethodologyPlanSchema }),
     prompt: [
       "Crie a matriz metodológica de uma proposta de pesquisa em português do Brasil.",
-      "A matriz deve ter exatamente uma linha para cada objetivo específico validado.",
+      "A matriz deve ter exatamente uma linha para cada objetivo específico validado e uma linha final para o objetivo geral, usando o ID informado como OEG.",
       "Para cada linha, descreva como as informações/dados serão levantados, como serão analisados/tratados e qual resultado esperado ou impacto é pretendido.",
       "Resultados esperados são contribuições, produtos intelectuais, sínteses ou impactos pretendidos. Nunca escreva achados como se a pesquisa já tivesse sido executada.",
       "Classifique a metodologia de modo editável: natureza, objetivos, abordagem, procedimentos, instrumentos, técnicas de análise e avisos éticos.",
       "A classificação deve ser coerente com os instrumentos e técnicas usados nas linhas.",
-      "Use apenas objectiveId dos objetivos específicos fornecidos e associatedTopicIds dos tópicos dos capítulos 2 e 4 fornecidos.",
+      "Use apenas objectiveId dos objetivos específicos fornecidos ou o ID do objetivo geral (OEG), e associatedTopicIds dos tópicos dos capítulos 2 e 4 fornecidos.",
       "Cada linha precisa estar ligada a pelo menos um tópico dos capítulos 2 ou 4.",
       improvementNotes.length > 0
         ? `Corrija especificamente estes avisos da versão anterior, sem repetir a mesma deficiência: ${JSON.stringify(improvementNotes)}`
         : "Se estiver regenerando, revise criticamente a coerência entre instrumentos, abordagem e técnicas antes de responder.",
       "Sugira um título final curto derivado do objetivo geral, sem copiar integralmente o objetivo.",
       "Não invente instituição, amostra, local, período, aprovação ética ou dado sensível ausente. Se houver risco ético ou de acesso, registre como aviso.",
+      "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
+      `ID do objetivo geral (OEG): ${JSON.stringify(generalObjectiveId)}`,
       `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
       `Tópicos dos capítulos: ${JSON.stringify(chapterTopics)}`,
+      studentContextPrompt(studentContext),
       `Evidências verificadas: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
@@ -558,7 +596,7 @@ export async function generateMethodologyPlan(
   });
 
   const generated = generatedMethodologyPlanSchema.parse(output);
-  const invalidObjectiveIds = generated.rows.map((row) => row.objectiveId).filter((objectiveId) => !objectiveIds.has(objectiveId));
+  const invalidObjectiveIds = generated.rows.map((row) => row.objectiveId).filter((objectiveId) => !objectiveIds.has(objectiveId) && objectiveId !== generalObjectiveId);
   if (invalidObjectiveIds.length > 0) throw new Error("A IA relacionou uma linha metodológica a objetivo inexistente.");
   const invalidTopicIds = generated.rows.flatMap((row) => row.associatedTopicIds).filter((topicId) => !topicIds.has(topicId));
   if (invalidTopicIds.length > 0) throw new Error("A IA relacionou metodologia a tópico inexistente.");

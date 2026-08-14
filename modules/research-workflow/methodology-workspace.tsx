@@ -49,6 +49,29 @@ function specificObjectives(workflow: ResearchWorkflow) {
   return workflow.content.elements.filter((element) => element.type === "specific_objective" && element.status === "validated");
 }
 
+function generalObjective(workflow: ResearchWorkflow) {
+  return workflow.content.elements.find((element) => element.type === "general_objective" && element.status === "validated");
+}
+
+function methodologyObjectives(workflow: ResearchWorkflow) {
+  const specifics = specificObjectives(workflow).map((objective, index) => ({
+    content: objective.approvedContent ?? objective.proposedContent,
+    id: objective.id,
+    label: `OE${index + 1}`,
+    type: "specific" as const,
+  }));
+  const general = generalObjective(workflow);
+  return [
+    ...specifics,
+    ...(general ? [{
+      content: general.approvedContent ?? general.proposedContent,
+      id: general.id,
+      label: "OEG",
+      type: "general" as const,
+    }] : []),
+  ];
+}
+
 function readTopics(workflow: ResearchWorkflow, chapter: "literature" | "development"): ChapterTopicInput[] {
   const type = chapter === "literature" ? "literature_topic" : "development_topic";
   const elements = new Map(workflow.content.elements.filter((element) => element.type === type).map((element) => [element.id, element]));
@@ -63,6 +86,7 @@ function readTopics(workflow: ResearchWorkflow, chapter: "literature" | "develop
         id: topic.id,
         objectiveCoverage: detail.objectiveCoverage,
         referenceIds: topic.referenceIds,
+        studentJustification: detail.studentJustification,
         title: topic.proposedContent,
       }] : [];
     });
@@ -91,6 +115,7 @@ function rowsDraft(workflow: ResearchWorkflow): MethodologyRowDraft[] {
     expectedResult: row.expectedResult,
     id: row.id,
     objectiveId: row.objectiveId,
+    studentJustification: row.studentJustification,
     warnings: row.warnings,
   }));
 }
@@ -130,7 +155,8 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const initialized = useRef(false);
   const busy = operation !== null;
-  const specifics = specificObjectives(workflow);
+  const objectives = methodologyObjectives(workflow);
+  const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");
   const developmentTopics = readTopics(workflow, "development");
   const topics = [...literatureTopics.map((topic) => ({ ...topic, chapterLabel: "Cap. 2" })), ...developmentTopics.map((topic) => ({ ...topic, chapterLabel: "Cap. 4" }))];
@@ -247,6 +273,42 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
     setRows((current) => current.map((row) => row.id === id ? { ...row, ...update } : row));
   }
 
+  function moveRow(index: number, direction: -1 | 1) {
+    setRows((current) => {
+      const destination = index + direction;
+      if (destination < 0 || destination >= current.length) return current;
+      const next = [...current];
+      [next[index], next[destination]] = [next[destination], next[index]];
+      return next;
+    });
+  }
+
+  function topicIdsForObjective(objectiveId: string) {
+    const direct = topics
+      .filter((topic) => topic.objectiveCoverage.some((coverage) => coverage.objectiveId === objectiveId))
+      .map((topic) => topic.id);
+    if (direct.length > 0) return direct.slice(0, 4);
+    if (general?.id === objectiveId) {
+      const aligned = developmentTopics.filter((topic) => topic.generalObjectiveAligned).map((topic) => topic.id);
+      if (aligned.length > 0) return aligned.slice(0, 4);
+    }
+    return topics[0] ? [topics[0].id] : [];
+  }
+
+  function addGeneralObjectiveRow() {
+    if (!general || rows.some((row) => row.objectiveId === general.id)) return;
+    setRows((current) => [...current, {
+      analysisTreatment: "Será realizada uma síntese integrada dos dados e evidências para responder ao objetivo geral.",
+      associatedTopicIds: topicIdsForObjective(general.id),
+      dataCollection: "Serão integradas as informações levantadas nos objetivos específicos e nos capítulos da proposta.",
+      expectedResult: "Uma síntese final capaz de responder ao objetivo geral da pesquisa.",
+      id: crypto.randomUUID(),
+      objectiveId: general.id,
+      studentJustification: null,
+      warnings: [],
+    }]);
+  }
+
   function toggleTopic(row: MethodologyRowDraft, topicId: string) {
     const exists = row.associatedTopicIds.includes(topicId);
     updateRow(row.id, {
@@ -328,21 +390,32 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
         <label>Avisos éticos ou de acesso<input onChange={(event) => setEthicsText(event.target.value)} value={ethicsText} /></label>
       </aside>
 
-      <div className="methodology-matrix" role="table" aria-label="Matriz metodológica por objetivo específico">
+      <div className="methodology-matrix" role="table" aria-label="Matriz metodológica por objetivo">
         <div className="methodology-matrix-head" role="row">
-          <span role="columnheader">Objetivo específico</span>
+          <span role="columnheader">Objetivo</span>
           <span role="columnheader">Levantamento</span>
           <span role="columnheader">Análise/tratamento</span>
           <span role="columnheader">Resultado esperado</span>
         </div>
         {rows.map((row, index) => {
-          const objective = specifics.find((item) => item.id === row.objectiveId);
+          const objective = objectives.find((item) => item.id === row.objectiveId);
           return (
             <article className="methodology-row" key={row.id} role="row">
-              <div className="methodology-objective" role="cell"><span>OE{index + 1}</span><p>{objective?.approvedContent}</p></div>
+              <div className="methodology-objective" role="cell">
+                <div className="methodology-objective-actions">
+                  <span>{objective?.label ?? `Linha ${index + 1}`}</span>
+                  <button aria-label={`Mover ${objective?.label ?? "linha"} para cima`} disabled={index === 0} onClick={() => moveRow(index, -1)} type="button">↑</button>
+                  <button aria-label={`Mover ${objective?.label ?? "linha"} para baixo`} disabled={index === rows.length - 1} onClick={() => moveRow(index, 1)} type="button">↓</button>
+                </div>
+                <p>{objective?.content}</p>
+              </div>
               <label role="cell">Levantamento<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
               <label role="cell">Análise/tratamento<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
               <label role="cell">Resultado esperado<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
+              <details className="methodology-row-note">
+                <summary>Justificativa da linha</summary>
+                <textarea maxLength={1000} onChange={(event) => updateRow(row.id, { studentJustification: event.target.value || null })} placeholder="Por que esta linha metodológica é necessária?" value={row.studentJustification ?? ""} />
+              </details>
               <details className="methodology-topic-links">
                 <summary>{row.associatedTopicIds.length} tópicos associados</summary>
                 {topics.map((topic) => (
@@ -361,6 +434,9 @@ export function MethodologyWorkspace({ initialWorkflow, projectId }: Props) {
             </article>
           );
         })}
+        {general && !rows.some((row) => row.objectiveId === general.id) ? (
+          <button className="add-specific-objective methodology-add-row" onClick={addGeneralObjectiveRow} type="button">+ Adicionar linha OEG</button>
+        ) : null}
       </div>
 
       {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}

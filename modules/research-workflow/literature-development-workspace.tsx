@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
 import { normalizeLiteratureSearchTerms } from "./literature-optimization";
+import { ManualReferencePanel } from "./manual-reference-panel";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; projectId: string };
@@ -38,9 +39,14 @@ function readTopics(workflow: ResearchWorkflow, chapter: Chapter): ChapterTopicI
         id: topic.id,
         objectiveCoverage: detail.objectiveCoverage,
         referenceIds: topic.referenceIds,
+        studentJustification: detail.studentJustification,
         title: topic.proposedContent,
       }] : [];
     });
+}
+
+function validatedGeneralObjective(workflow: ResearchWorkflow) {
+  return workflow.content.elements.find((element) => element.type === "general_objective" && element.status === "validated");
 }
 
 export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: Props) {
@@ -56,6 +62,11 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
   const initialized = useRef(false);
   const discovery = workflow.content.discovery;
   const specifics = workflow.content.elements.filter((element) => element.type === "specific_objective" && element.status === "validated");
+  const generalObjective = validatedGeneralObjective(workflow);
+  const objectiveChoices = [
+    ...specifics.map((objective, index) => ({ content: objective.approvedContent ?? objective.proposedContent, id: objective.id, label: `OE${index + 1}` })),
+    ...(chapter === "development" && generalObjective ? [{ content: generalObjective.approvedContent ?? generalObjective.proposedContent, id: generalObjective.id, label: "OEG" }] : []),
+  ];
   const literatureTopics = chapter === "literature" ? topics : readTopics(workflow, "literature");
   const developmentTopics = chapter === "development" ? topics : readTopics(workflow, "development");
   const references = [...(discovery?.references ?? []), ...workflow.content.referenceArchive]
@@ -126,10 +137,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
     });
   }
 
-  function toggleObjective(topic: ChapterTopicInput, objectiveId: string) {
+  function toggleObjective(topic: ChapterTopicInput, objectiveId: string, allowEmpty = false) {
     const exists = topic.objectiveCoverage.some((coverage) => coverage.objectiveId === objectiveId);
-    if (exists && topic.objectiveCoverage.length === 1) {
-      setErrors(["Cada tópico precisa permanecer ligado a pelo menos um objetivo específico."]);
+    if (exists && topic.objectiveCoverage.length === 1 && !allowEmpty) {
+      setErrors(["Cada tópico precisa permanecer ligado a pelo menos um objetivo. No Capítulo 4, apenas o 4.1 pode ficar sem vínculo quando for apresentação do estudo de caso."]);
       return;
     }
     updateTopic(topic.id, {
@@ -194,7 +205,16 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
         {specifics.map((objective, index) => (
           <div key={objective.id}><span>OE{index + 1}</span><p>{objective.approvedContent}</p><b>{objectiveCoverageStatus(objective.id, literatureTopics, developmentTopics)}</b></div>
         ))}
+        {chapter === "development" && generalObjective ? (
+          <div>
+            <span>OEG</span>
+            <p>{generalObjective.approvedContent}</p>
+            <b>{developmentTopics.some((topic) => topic.generalObjectiveAligned || topic.objectiveCoverage.some((coverage) => coverage.objectiveId === generalObjective.id)) ? "Incluído no Capítulo 4" : "Ainda não indicado"}</b>
+          </div>
+        ) : null}
       </aside>
+
+      <ManualReferencePanel onWorkflow={applyWorkflow} projectId={projectId} workflow={workflow} />
 
       {workflow.content.knowledgeSuggestions.some((suggestion) => suggestion.status === "suggested") && chapter === "literature" ? (
         <aside className="knowledge-suggestions">
@@ -213,16 +233,32 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, projectId }: P
           <article className="chapter-topic-editor" key={topic.id}>
             <div className="chapter-topic-order"><span>{chapterNumber}.{index + 1}</span><button aria-label={`Mover ${topic.title} para cima`} disabled={index === 0} onClick={() => moveTopic(index, -1)} type="button">↑</button><button aria-label={`Mover ${topic.title} para baixo`} disabled={index === topics.length - 1} onClick={() => moveTopic(index, 1)} type="button">↓</button></div>
             <label>Título do tópico<input maxLength={180} onChange={(event) => updateTopic(topic.id, { title: event.target.value })} value={topic.title} /></label>
-            <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. Use “Atende bem” quando o tópico cobre o objetivo de modo central; use “Ajuda em parte” quando ele apenas contribui e precisa ser complementado por outros tópicos.</p>{specifics.map((objective, objectiveIndex) => {
+            <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. OEG = objetivo geral. Use “Atende bem” quando o tópico cobre o objetivo de modo central; use “Ajuda em parte” quando ele apenas contribui e precisa ser complementado por outros tópicos.</p>{objectiveChoices.map((objective, objectiveIndex) => {
               const coverage = topic.objectiveCoverage.find((item) => item.objectiveId === objective.id);
-              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id)} type="checkbox" /> OE{objectiveIndex + 1}</label>{coverage && chapter === "literature" ? <select aria-label={`Cobertura do objetivo ${objectiveIndex + 1}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{COVERAGE_DEGREE_LABELS.partial}</option><option value="full">{COVERAGE_DEGREE_LABELS.full}</option></select> : null}</div>;
+              const label = objective.label;
+              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage && chapter === "literature" ? <select aria-label={`Cobertura do objetivo ${objectiveIndex + 1}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{COVERAGE_DEGREE_LABELS.partial}</option><option value="full">{COVERAGE_DEGREE_LABELS.full}</option></select> : null}</div>;
             })}</fieldset>
+            {chapter === "development" && index === 0 ? (
+              <label className="case-study-note">
+                Se 4.1 for apresentação do estudo de caso
+                <textarea
+                  maxLength={500}
+                  onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })}
+                  placeholder="Explique brevemente por que este tópico apresenta o caso e não precisa se vincular diretamente a OE/OEG."
+                  value={topic.exceptionJustification ?? ""}
+                />
+              </label>
+            ) : null}
+            <label className="student-justification topic-student-justification">
+              Justificativa deste tópico
+              <textarea maxLength={1000} onChange={(event) => updateTopic(topic.id, { studentJustification: event.target.value || null })} placeholder="Por que este tópico deve permanecer no capítulo?" value={topic.studentJustification ?? ""} />
+            </label>
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
-            {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
+            {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral (OEG)</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
             <button className="remove-topic" disabled={topics.length <= 3} onClick={() => setTopics((current) => current.filter((item) => item.id !== topic.id))} type="button">Remover tópico</button>
           </article>
         ))}
-        <button className="add-specific-objective" disabled={topics.length >= 6 || specifics.length === 0} onClick={() => setTopics((current) => [...current, { exceptionJustification: null, generalObjectiveAligned: false, id: crypto.randomUUID(), objectiveCoverage: [{ degree: chapter === "literature" ? "partial" : "full", objectiveId: specifics[0].id }], referenceIds: [], title: "Novo tópico" }])} type="button">+ Adicionar tópico</button>
+        <button className="add-specific-objective" disabled={topics.length >= 6 || objectiveChoices.length === 0} onClick={() => setTopics((current) => [...current, { exceptionJustification: null, generalObjectiveAligned: false, id: crypto.randomUUID(), objectiveCoverage: [{ degree: chapter === "literature" ? "partial" : "full", objectiveId: objectiveChoices[0].id }], referenceIds: [], studentJustification: null, title: "Novo tópico" }])} type="button">+ Adicionar tópico</button>
       </div>
 
       {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></div> : null}

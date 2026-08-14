@@ -19,6 +19,10 @@ import {
 } from "@/modules/research-workflow/schema";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
+import {
+  discoveryWithWorkflowReferences,
+  studentContextNotes,
+} from "@/modules/research-workflow/workflow-references";
 
 export const maxDuration = 120;
 
@@ -52,6 +56,7 @@ function chapterTopics(content: ResearchWorkflowContent, chapter: "literature" |
         id: topic.id,
         objectiveCoverage: detail.objectiveCoverage,
         referenceIds: topic.referenceIds,
+        studentJustification: detail.studentJustification,
         title: topic.proposedContent,
       }] : [];
     });
@@ -67,7 +72,8 @@ function methodSummary(row: MethodologyPlanInput["rows"][number]) {
     `Levantamento: ${row.dataCollection}`,
     `Análise/tratamento: ${row.analysisTreatment}`,
     `Resultado esperado: ${row.expectedResult}`,
-  ].join("\n");
+    row.studentJustification ? `Justificativa do aluno: ${row.studentJustification}` : "",
+  ].filter(Boolean).join("\n");
 }
 
 function sameClassification(left: MethodologyClassification | null, right: MethodologyPlanInput["classification"]) {
@@ -94,6 +100,7 @@ function sameRow(left: MethodologyRow | undefined, right: MethodologyPlanInput["
     expectedResult: left.expectedResult,
     id: left.id,
     objectiveId: left.objectiveId,
+    studentJustification: left.studentJustification,
     warnings: left.warnings,
   };
   return JSON.stringify(current) === JSON.stringify(right);
@@ -142,6 +149,7 @@ function replaceMethodology(
       revision: previous ? previous.revision + 1 : 1,
       sourceRevision,
       status: statusFor(actor, previous?.proposedContent === summary, previous),
+      studentJustification: previous?.studentJustification ?? null,
       type: "methodology_mapping",
       updatedBy: actor,
     };
@@ -154,6 +162,7 @@ function replaceMethodology(
     revision: oldTitle ? oldTitle.revision + 1 : 1,
     sourceRevision,
     status: statusFor(actor, oldTitle?.proposedContent === input.title, oldTitle),
+    studentJustification: oldTitle?.studentJustification ?? null,
     type: "research_title",
     updatedBy: actor,
   };
@@ -193,12 +202,13 @@ function planFromContent(content: ResearchWorkflowContent): MethodologyPlanInput
     rows: content.methodologyRows.map((row) => ({
       analysisTreatment: row.analysisTreatment,
       associatedTopicIds: row.associatedTopicIds,
-      dataCollection: row.dataCollection,
-      expectedResult: row.expectedResult,
-      id: row.id,
-      objectiveId: row.objectiveId,
-      warnings: row.warnings,
-    })),
+        dataCollection: row.dataCollection,
+        expectedResult: row.expectedResult,
+        id: row.id,
+        objectiveId: row.objectiveId,
+        studentJustification: row.studentJustification,
+        warnings: row.warnings,
+      })),
     title,
   });
 }
@@ -307,7 +317,14 @@ function approveMethodology(
       ...content.traceLinks.filter((link) => !methodIds.has(link.toElementId) && link.toElementId !== title.id),
       { fromElementId: generalId, rule: "O título final deriva do objetivo geral validado.", sourceRevision, toElementId: title.id },
       ...content.methodologyRows.flatMap((row) => [
-        { fromElementId: row.objectiveId, rule: "A matriz metodológica operacionaliza o objetivo específico.", sourceRevision, toElementId: row.id },
+        {
+          fromElementId: row.objectiveId,
+          rule: row.objectiveId === generalId
+            ? "A matriz metodológica sintetiza o objetivo geral."
+            : "A matriz metodológica operacionaliza o objetivo específico.",
+          sourceRevision,
+          toElementId: row.id,
+        },
         ...row.associatedTopicIds.map((topicId) => ({
           fromElementId: topicId,
           rule: "O tópico de capítulo informa a decisão metodológica.",
@@ -362,15 +379,17 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           allowedObjectiveIds,
           allowedTopicIds,
           generalObjective: approvedGeneral,
+          generalObjectiveId: context.general.id,
         }).warnings
         : [];
       plan = await generateMethodologyPlan(
         approvedProblem,
         approvedGeneral,
+        context.general.id,
         context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
         context.literature,
         context.development,
-        context.discovery,
+        discoveryWithWorkflowReferences(context.discovery, workflow.content),
         workflow.content.methodologyRows.map((row) => ({
           analysisTreatment: row.analysisTreatment,
           associatedTopicIds: row.associatedTopicIds,
@@ -378,9 +397,11 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           expectedResult: row.expectedResult,
           id: row.id,
           objectiveId: row.objectiveId,
+          studentJustification: row.studentJustification,
           warnings: row.warnings,
         })),
         improvementNotes,
+        studentContextNotes(workflow.content),
       );
     } else {
       plan = planFromRequest(parsed.data);
@@ -396,6 +417,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       allowedObjectiveIds,
       allowedTopicIds,
       generalObjective: approvedGeneral,
+      generalObjectiveId: context.general.id,
     });
     content = researchWorkflowContentSchema.parse({
       ...content,
@@ -410,6 +432,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     allowedObjectiveIds,
     allowedTopicIds,
     generalObjective: approvedGeneral,
+    generalObjectiveId: context.general.id,
   });
   if (errors.length > 0) {
     content = researchWorkflowContentSchema.parse({ ...content, coherenceFindings: validationFindings(content, errors, warnings) });

@@ -68,6 +68,7 @@ export const validatedElementSchema = z.object({
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
+  studentJustification: z.string().trim().max(1_000).nullable().default(null),
   type: workflowElementTypeSchema,
   updatedBy: z.enum(["ai", "user", "system"]),
 });
@@ -90,8 +91,9 @@ export const chapterTopicDetailSchema = z.object({
   chapter: z.enum(["literature", "development"]),
   exceptionJustification: z.string().trim().min(10).max(500).nullable(),
   generalObjectiveAligned: z.boolean(),
-  objectiveCoverage: z.array(objectiveCoverageSchema).min(1).max(6),
+  objectiveCoverage: z.array(objectiveCoverageSchema).max(7),
   order: z.number().int().min(1).max(6),
+  studentJustification: z.string().trim().max(1_000).nullable().default(null),
   topicId: z.string().uuid(),
 });
 
@@ -134,6 +136,7 @@ export const methodologyRowSchema = z.object({
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
+  studentJustification: z.string().trim().max(1_000).nullable().default(null),
   updatedBy: z.enum(["ai", "user", "system"]),
   warnings: z.array(z.string().trim().min(1).max(500)).max(6),
 });
@@ -161,11 +164,15 @@ export const coherenceFindingSchema = z.object({
 export type CoherenceFinding = z.infer<typeof coherenceFindingSchema>;
 
 export const discoveryReferenceSchema = z.object({
+  abstract: z.string().trim().max(5_000).nullable().default(null),
   authors: z.array(z.string().trim().min(1).max(160)).max(8),
   doi: z.string().trim().max(240).nullable(),
+  journal: z.string().trim().max(240).nullable().default(null),
   referenceId: z.string().trim().min(1).max(120),
+  source: z.enum(["manual", "research_starter"]).default("research_starter"),
   title: z.string().trim().min(1).max(500).nullable(),
   url: z.string().url().max(1_000).nullable(),
+  volumeIssuePages: z.string().trim().max(240).nullable().default(null),
   year: z.number().int().min(1400).max(2200).nullable(),
 });
 
@@ -217,7 +224,7 @@ export const proposalDiscoverySchema = z.object({
   generatedAt: z.string().datetime({ offset: true }),
   interpreted: interpretedDiscoverySchema,
   originalPrompt: z.string().trim().min(8).max(5_000),
-  references: z.array(discoveryReferenceSchema).min(1).max(20),
+  references: z.array(discoveryReferenceSchema).min(1).max(80),
   reportId: z.string().trim().min(1).max(160),
   selectedCandidateId: z.string().uuid().nullable(),
   warnings: z.array(z.string().trim().min(1).max(500)).max(12),
@@ -234,7 +241,7 @@ export const researchWorkflowContentSchema = z.object({
   elements: z.array(validatedElementSchema).max(120).default([]),
   knowledgeSuggestions: z.array(knowledgeSuggestionSchema).max(20).default([]),
   methodologyClassification: methodologyClassificationSchema.nullable().default(null),
-  methodologyRows: z.array(methodologyRowSchema).max(6).default([]),
+  methodologyRows: z.array(methodologyRowSchema).max(7).default([]),
   referenceArchive: z.array(discoveryReferenceSchema).max(100).default([]),
   traceLinks: z.array(traceLinkSchema).max(240).default([]),
 });

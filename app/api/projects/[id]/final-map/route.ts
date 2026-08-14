@@ -76,6 +76,7 @@ function upsertFinalMap(content: ResearchWorkflowContent, summary: string, sourc
     revision: existing ? existing.revision + 1 : 1,
     sourceRevision,
     status: "validated",
+    studentJustification: existing?.studentJustification ?? null,
     type: "final_map",
     updatedBy: "system",
   };

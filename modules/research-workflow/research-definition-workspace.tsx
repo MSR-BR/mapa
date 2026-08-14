@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { ManualReferencePanel } from "./manual-reference-panel";
 import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
   projectId: string;
 };
 
-type ObjectiveDraft = { id: string; content: string };
+type ObjectiveDraft = { id: string; content: string; studentJustification: string };
 type Operation = "back" | "regenerate" | "save" | "validate" | null;
 
 function findElement(workflow: ResearchWorkflow, type: ValidatedElement["type"]) {
@@ -21,7 +22,7 @@ function findElement(workflow: ResearchWorkflow, type: ValidatedElement["type"])
 function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
   return workflow.content.elements
     .filter((element) => element.type === "specific_objective")
-    .map((element) => ({ content: element.proposedContent, id: element.id }));
+    .map((element) => ({ content: element.proposedContent, id: element.id, studentJustification: element.studentJustification ?? "" }));
 }
 
 export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Props) {
@@ -29,6 +30,8 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [problem, setProblem] = useState(() => findElement(initialWorkflow, "problem_statement")?.proposedContent ?? "");
   const [general, setGeneral] = useState(() => findElement(initialWorkflow, "general_objective")?.proposedContent ?? "");
+  const [problemJustification, setProblemJustification] = useState(() => findElement(initialWorkflow, "problem_statement")?.studentJustification ?? "");
+  const [generalJustification, setGeneralJustification] = useState(() => findElement(initialWorkflow, "general_objective")?.studentJustification ?? "");
   const [specifics, setSpecifics] = useState<ObjectiveDraft[]>(() => specificDrafts(initialWorkflow));
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -50,11 +53,13 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
     ? workflow.content.elements.filter((element) => element.type === "specific_objective").flatMap((element) => element.referenceIds)
     : currentElement?.referenceIds.length ? currentElement.referenceIds : candidate?.referenceIds ?? [];
   const referenceIdSet = new Set(currentReferenceIds);
-  const references = discovery?.references.filter((reference) => referenceIdSet.has(reference.referenceId)) ?? [];
+  const allReferences = [...(discovery?.references ?? []), ...workflow.content.referenceArchive]
+    .filter((reference, index, all) => all.findIndex((item) => item.referenceId === reference.referenceId) === index);
+  const references = allReferences.filter((reference) => referenceIdSet.has(reference.referenceId));
   const currentValueChanged = step === "problem_statement"
-    ? problem !== currentElement?.proposedContent
+    ? problem !== currentElement?.proposedContent || problemJustification !== (currentElement?.studentJustification ?? "")
     : step === "general_objective"
-      ? general !== currentElement?.proposedContent
+      ? general !== currentElement?.proposedContent || generalJustification !== (currentElement?.studentJustification ?? "")
       : JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
 
@@ -62,6 +67,8 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
     setWorkflow(nextWorkflow);
     setProblem(findElement(nextWorkflow, "problem_statement")?.proposedContent ?? "");
     setGeneral(findElement(nextWorkflow, "general_objective")?.proposedContent ?? "");
+    setProblemJustification(findElement(nextWorkflow, "problem_statement")?.studentJustification ?? "");
+    setGeneralJustification(findElement(nextWorkflow, "general_objective")?.studentJustification ?? "");
     setSpecifics(specificDrafts(nextWorkflow));
   }
 
@@ -78,6 +85,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
           content: step === "problem_statement" ? problem : step === "general_objective" ? general : undefined,
           objectives: step === "specific_objectives" ? specifics : undefined,
           revision: workflow.revision,
+          studentJustification: step === "problem_statement" ? problemJustification : step === "general_objective" ? generalJustification : undefined,
           step,
         }),
         headers: { "Content-Type": "application/json" },
@@ -106,6 +114,10 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
 
   function updateSpecific(id: string, value: string) {
     setSpecifics((current) => current.map((objective) => objective.id === id ? { ...objective, content: value } : objective));
+  }
+
+  function updateSpecificJustification(id: string, value: string) {
+    setSpecifics((current) => current.map((objective) => objective.id === id ? { ...objective, studentJustification: value } : objective));
   }
 
   if (!step) {
@@ -170,19 +182,33 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
         {sourceValues.filter(Boolean).map((value) => <p key={value}>{value}</p>)}
       </div>
 
+      <ManualReferencePanel onWorkflow={applyWorkflow} projectId={projectId} workflow={workflow} />
+
       <div className="definition-editor">
         {step === "problem_statement" ? (
-          <label>
-            Grande pergunta da pesquisa
-            <textarea maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
-            <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
-          </label>
+          <div className="definition-editor-with-note">
+            <label>
+              Grande pergunta da pesquisa
+              <textarea maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
+              <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
+            </label>
+            <label className="student-justification">
+              Por que esta grande pergunta vale ser investigada?
+              <textarea maxLength={1000} onChange={(event) => setProblemJustification(event.target.value)} placeholder="Escreva uma justificativa breve. Ela orientará as próximas sugestões, mas continua sendo uma reflexão sua." value={problemJustification} />
+            </label>
+          </div>
         ) : step === "general_objective" ? (
-          <label>
-            Objetivo geral
-            <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
-            <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
-          </label>
+          <div className="definition-editor-with-note">
+            <label>
+              Objetivo geral
+              <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+              <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
+            </label>
+            <label className="student-justification">
+              Por que este objetivo responde à problemática?
+              <textarea maxLength={1000} onChange={(event) => setGeneralJustification(event.target.value)} placeholder="Registre sua justificativa para não aceitar a IA automaticamente." value={generalJustification} />
+            </label>
+          </div>
         ) : (
           <div className="specific-objective-list">
             {specifics.map((objective, index) => (
@@ -190,6 +216,10 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
                 <label>
                   Objetivo específico {index + 1}
                   <textarea maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
+                </label>
+                <label className="student-justification">
+                  Justificativa do OE{index + 1}
+                  <textarea maxLength={1000} onChange={(event) => updateSpecificJustification(objective.id, event.target.value)} placeholder="Por que este objetivo é necessário para atender o objetivo geral?" value={objective.studentJustification} />
                 </label>
                 <button
                   aria-label={`Remover objetivo específico ${index + 1}`}
@@ -202,7 +232,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, projectId }: Prop
             <button
               className="add-specific-objective"
               disabled={specifics.length >= 6}
-              onClick={() => setSpecifics((current) => [...current, { content: "", id: crypto.randomUUID() }])}
+              onClick={() => setSpecifics((current) => [...current, { content: "", id: crypto.randomUUID(), studentJustification: "" }])}
               type="button"
             >+ Adicionar objetivo</button>
           </div>

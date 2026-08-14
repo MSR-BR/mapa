@@ -309,13 +309,35 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .definition-source { display: grid; gap: 0.45rem; border-left: 3px solid #7aac96; padding: 0.9rem 1rem; background: rgb(235 246 240 / 68%); }
 .definition-source > span, .definition-summary span { color: var(--accent); font-size: 0.68rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
 .definition-source p { margin: 0; color: #3f564b; line-height: 1.5; }
+.manual-reference-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.65rem; align-items: center; border: 1px solid #c8d8d0; border-radius: 1rem; padding: 0.85rem 1rem; background: rgb(255 255 255 / 62%); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 4%); }
+.manual-reference-panel span { color: var(--accent); font-size: 0.68rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+.manual-reference-panel p { margin: 0.2rem 0 0; color: #65776e; font-size: 0.78rem; line-height: 1.45; }
+.manual-reference-add { display: grid; width: 2.45rem; height: 2.45rem; place-items: center; border: 1px solid #95b5a6; border-radius: 0.75rem; background: #edf7f2; color: var(--accent); font: inherit; font-size: 1.35rem; font-weight: 850; line-height: 1; cursor: pointer; }
+.manual-reference-add:hover { border-color: var(--accent); background: #e2f1ea; }
+.manual-reference-message, .manual-reference-list { grid-column: 1 / -1; }
+.manual-reference-message { margin: 0; border-radius: 0.65rem; padding: 0.55rem 0.7rem; background: #edf7f2; color: #285f45; font-size: 0.76rem; font-weight: 750; }
+.manual-reference-list { border-top: 1px solid #e0e9e4; padding-top: 0.55rem; }
+.manual-reference-list summary { color: #35614d; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
+.manual-reference-list ul { display: grid; gap: 0.35rem; margin: 0.55rem 0 0; padding-left: 1.1rem; color: #5e7067; font-size: 0.74rem; }
+.manual-reference-backdrop { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: clamp(1rem, 4vw, 2rem); background: rgb(13 26 20 / 48%); backdrop-filter: blur(8px); }
+.manual-reference-modal { display: grid; gap: 0.75rem; width: min(100%, 40rem); max-height: min(90vh, 48rem); overflow: auto; border: 1px solid #b8ccc2; border-radius: 1.2rem; padding: clamp(1rem, 3vw, 1.5rem); background: #ffffff; box-shadow: 0 2rem 5rem rgb(20 35 29 / 28%); }
+.manual-reference-modal h3 { margin: 0.2rem 0 0; color: #172820; font-size: clamp(1.25rem, 3vw, 1.7rem); letter-spacing: -0.04em; }
+.manual-reference-modal p:not(.section-kicker) { margin: 0.2rem 0 0; color: #65766e; font-size: 0.82rem; line-height: 1.5; }
+.manual-reference-modal label { display: grid; gap: 0.35rem; color: #52645b; font-size: 0.74rem; font-weight: 850; }
+.manual-reference-modal input, .manual-reference-modal textarea { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.72rem; padding: 0.72rem 0.85rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
+.manual-reference-modal textarea { min-height: 5.5rem; resize: vertical; line-height: 1.5; }
+.manual-reference-modal label:nth-of-type(5) textarea { min-height: 8rem; }
+.manual-reference-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; border-top: 1px solid #e0e9e4; padding-top: 0.85rem; }
 .definition-editor { border: 1px solid #c7d7cf; border-radius: 1.2rem; padding: clamp(1.1rem, 3vw, 1.6rem); background: var(--surface); box-shadow: 0 1rem 3rem rgb(20 35 29 / 6%); }
+.definition-editor-with-note { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr); gap: 1rem; align-items: start; }
 .definition-editor label { display: grid; gap: 0.55rem; color: #24372e; font-size: 0.82rem; font-weight: 800; }
 .definition-editor textarea { width: 100%; min-height: 8.5rem; border: 1px solid #b9cbc2; border-radius: 0.85rem; padding: 0.9rem; resize: vertical; background: #fbfdfc; color: var(--foreground); font: inherit; font-size: 1rem; line-height: 1.55; }
 .definition-editor textarea:focus { border-color: #4c8d70; outline: 3px solid rgb(76 141 112 / 14%); }
 .definition-editor small { color: #72827a; font-size: 0.72rem; font-weight: 500; }
+.student-justification { border: 1px solid #d8e4de; border-radius: 0.95rem; padding: 0.8rem; background: #f7faf8; color: #50645b; }
+.student-justification textarea { min-height: 7rem; background: #ffffff; font-size: 0.86rem; }
 .specific-objective-list { display: grid; gap: 1rem; }
-.specific-objective-row { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 0.75rem; }
+.specific-objective-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.58fr) auto; align-items: end; gap: 0.75rem; }
 .specific-objective-row textarea { min-height: 6.5rem; }
 .specific-objective-row > button, .add-specific-objective { border: 1px solid #bdccc5; border-radius: 0.7rem; padding: 0.65rem 0.8rem; background: transparent; color: #52655b; font: inherit; font-size: 0.75rem; font-weight: 750; cursor: pointer; }
 .specific-objective-row > button:disabled, .add-specific-objective:disabled { cursor: not-allowed; opacity: 0.42; }
@@ -354,14 +376,18 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .chapter-topic-order button { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; border: 1px solid #c2d1ca; border-radius: 0.45rem; background: transparent; color: #4d6358; cursor: pointer; }
 .chapter-topic-order button:disabled { opacity: 0.3; }
 .chapter-topic-editor > label { display: grid; gap: 0.4rem; color: #52645b; font-size: 0.72rem; font-weight: 800; }
-.chapter-topic-editor > label input, .general-alignment > input, .literature-optimizer input { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.7rem; padding: 0.7rem 0.8rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
+.chapter-topic-editor > label input, .chapter-topic-editor > label textarea, .general-alignment > input, .literature-optimizer input { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.7rem; padding: 0.7rem 0.8rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
+.chapter-topic-editor > label textarea { min-height: 5.2rem; resize: vertical; line-height: 1.45; }
 .chapter-topic-editor fieldset { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0.6rem; border: 0; margin: 0; padding: 0; }
 .chapter-topic-editor legend { width: 100%; margin-bottom: 0.3rem; color: #52645b; font-size: 0.7rem; font-weight: 800; }
 .objective-coverage-help { width: 100%; margin: -0.2rem 0 0.1rem; color: #6a7b73; font-size: 0.72rem; line-height: 1.45; }
 .chapter-topic-editor fieldset > div { display: flex; align-items: center; gap: 0.3rem; border: 1px solid #d2ddd7; border-radius: 999px; padding: 0.3rem 0.5rem; font-size: 0.72rem; }
 .chapter-topic-editor fieldset label { display: flex; align-items: center; gap: 0.3rem; }
 .chapter-topic-editor select { border: 0; background: transparent; color: #52645b; font: inherit; font-size: 0.68rem; }
-.topic-reference-picker, .general-alignment { grid-column: 2; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
+.topic-reference-picker, .general-alignment, .case-study-note, .topic-student-justification { grid-column: 2; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
+.case-study-note { border-color: #e4d8aa; background: #fffcef; color: #67571d; }
+.case-study-note textarea { min-height: 5.5rem; background: #ffffff; }
+.topic-student-justification { background: #f7faf8; }
 .topic-reference-picker summary { color: #35614d; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
 .topic-reference-picker label { display: flex; align-items: start; gap: 0.45rem; margin-top: 0.5rem; color: #5f7168; font-size: 0.72rem; line-height: 1.35; }
 .chapter-topic-editor input[type="checkbox"], .general-alignment input[type="checkbox"], .topic-reference-picker input[type="checkbox"], .methodology-classification input[type="checkbox"], .methodology-topic-links input[type="checkbox"] { flex: 0 0 auto; width: 1rem; min-width: 1rem; height: 1rem; margin-top: 0.1rem; border-radius: 0.25rem; padding: 0; accent-color: var(--accent); }
@@ -415,14 +441,19 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .methodology-matrix-head { display: grid; grid-template-columns: 0.8fr repeat(3, 1fr); gap: 0.75rem; padding: 0 1rem; color: var(--accent); font-size: 0.68rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
 .methodology-row { display: grid; grid-template-columns: 0.8fr repeat(3, 1fr); gap: 0.75rem; padding: 1rem; }
 .methodology-objective { display: grid; align-content: start; gap: 0.55rem; border-right: 1px solid #e0e9e4; padding-right: 0.75rem; }
+.methodology-objective-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 .methodology-objective span { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border-radius: 50%; background: #e3f1ea; color: #296149; font-size: 0.72rem; font-weight: 900; }
+.methodology-objective button { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; border: 1px solid #c2d1ca; border-radius: 0.45rem; background: transparent; color: #4d6358; font: inherit; cursor: pointer; }
+.methodology-objective button:disabled { cursor: not-allowed; opacity: 0.32; }
 .methodology-objective p { margin: 0; color: #4d6057; font-size: 0.78rem; line-height: 1.45; }
-.methodology-topic-links { grid-column: 1 / -1; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
-.methodology-topic-links summary { color: #35614d; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.methodology-topic-links, .methodology-row-note { grid-column: 1 / -1; border-top: 1px solid #e0e9e4; padding-top: 0.7rem; }
+.methodology-topic-links summary, .methodology-row-note summary { color: #35614d; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.methodology-row-note textarea { margin-top: 0.55rem; min-height: 5rem; background: #ffffff; font-size: 0.86rem; }
 .methodology-topic-links label { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: start; gap: 0.35rem 0.45rem; margin-top: 0.5rem; color: #5f7168; font-size: 0.72rem; line-height: 1.35; }
 .methodology-topic-links span { color: var(--accent); font-weight: 850; }
 .methodology-topic-links strong { color: #33493f; font-size: 0.76rem; }
 .methodology-topic-links small { grid-column: 3; color: #73857d; font-size: 0.66rem; line-height: 1.35; }
+.methodology-add-row { margin-top: 0.2rem; }
 .methodology-findings { border: 1px solid #d8c990; border-radius: 0.9rem; padding: 0.9rem 1rem; background: #fffcef; color: #67571d; }
 .methodology-findings ul { margin: 0.55rem 0 0; padding-left: 1.2rem; }
 .methodology-findings .blocking { color: #8a3027; }
@@ -613,6 +644,12 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .definition-progress span:last-child { border-bottom: 0; }
   .methodology-progress { grid-template-columns: 1fr; }
   .definition-heading { align-items: start; flex-direction: column; gap: 1rem; }
+  .manual-reference-panel { grid-template-columns: minmax(0, 1fr) auto; padding: 0.85rem; }
+  .manual-reference-backdrop { align-items: end; padding: 0.75rem; }
+  .manual-reference-modal { max-height: 92vh; border-radius: 1rem; }
+  .manual-reference-actions { align-items: stretch; flex-direction: column; }
+  .manual-reference-actions .definition-button { width: 100%; }
+  .definition-editor-with-note { grid-template-columns: 1fr; }
   .specific-objective-row { grid-template-columns: 1fr; }
   .specific-objective-row > button { justify-self: start; }
   .definition-actions { align-items: stretch; flex-direction: column; }
@@ -623,7 +660,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .knowledge-suggestions p { grid-column: 1 / -1; }
   .chapter-topic-editor { grid-template-columns: 1fr; }
   .chapter-topic-order { grid-template-columns: auto auto auto; justify-content: start; }
-  .chapter-topic-editor fieldset, .topic-reference-picker, .general-alignment, .remove-topic { grid-column: 1; }
+  .chapter-topic-editor fieldset, .topic-reference-picker, .general-alignment, .case-study-note, .topic-student-justification, .remove-topic { grid-column: 1; }
   .literature-optimizer form { align-items: stretch; flex-direction: column; }
   .workflow-references-panel { padding: 0.9rem; }
   .chapter-complete-grid { grid-template-columns: 1fr; }

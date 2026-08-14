@@ -22,15 +22,24 @@ import {
 } from "@/modules/research-workflow/schema";
 import { collectDependentElementTypes } from "@/modules/research-workflow/state-machine";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+import {
+  discoveryWithWorkflowReferences,
+  studentContextNotes,
+} from "@/modules/research-workflow/workflow-references";
 
 export const maxDuration = 120;
 
 const requestSchema = z.object({
   action: z.enum(["back", "regenerate", "save", "validate"]),
   content: z.string().optional(),
-  objectives: z.array(z.object({ id: z.string().uuid(), content: z.string() })).optional(),
+  objectives: z.array(z.object({
+    content: z.string(),
+    id: z.string().uuid(),
+    studentJustification: z.string().optional().nullable(),
+  })).optional(),
   revision: z.number().int().positive(),
   step: z.enum(["problem_statement", "general_objective", "specific_objectives"]),
+  studentJustification: z.string().optional().nullable(),
 });
 
 const problemDraftSchema = z.string().trim().max(500);
@@ -38,6 +47,7 @@ const generalDraftSchema = z.string().trim().max(700);
 const specificDraftsSchema = z.array(z.object({
   id: z.string().uuid(),
   content: z.string().trim().max(700),
+  studentJustification: z.string().trim().max(1_000).nullable().default(null),
 })).min(3).max(6);
 
 type DefinitionRouteStep = z.infer<typeof requestSchema>["step"];
@@ -53,7 +63,7 @@ function archiveElement(content: ResearchWorkflowContent, element: ValidatedElem
 function upsertElement(
   content: ResearchWorkflowContent,
   input: Pick<ValidatedElement, "id" | "proposedContent" | "referenceIds" | "status" | "type" | "updatedBy">
-    & { approvedContent?: string | null; sourceRevision: number },
+    & { approvedContent?: string | null; sourceRevision: number; studentJustification?: string | null },
 ) {
   const existing = content.elements.find((element) => element.id === input.id);
   const next: ValidatedElement = {
@@ -64,6 +74,7 @@ function upsertElement(
     revision: existing ? existing.revision + 1 : 1,
     sourceRevision: input.sourceRevision,
     status: input.status,
+    studentJustification: input.studentJustification === undefined ? existing?.studentJustification ?? null : input.studentJustification,
     type: input.type,
     updatedBy: input.updatedBy,
   };
@@ -152,6 +163,7 @@ function draftContent(
         referenceIds: existing?.referenceIds ?? [],
         sourceRevision,
         status: existing?.approvedContent === objective.content ? "validated" : "edited",
+        studentJustification: objective.studentJustification,
         type: "specific_objective",
         updatedBy: "user",
       });
@@ -182,6 +194,7 @@ function draftContent(
     referenceIds: existing.referenceIds,
     sourceRevision,
     status: existing.approvedContent === value ? "validated" : "edited",
+    studentJustification: (body.studentJustification ?? "").trim() || null,
     type,
     updatedBy: "user",
   });
@@ -259,7 +272,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   let content: ResearchWorkflowContent;
   try {
-    content = action === "regenerate" ? workflow.content : draftContent(workflow, step, parsed.data);
+    content = draftContent(workflow, step, parsed.data);
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Conteúdo inválido." }, { status: 400 });
   }
@@ -274,9 +287,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (action === "regenerate") {
     const problem = currentElement(content, "problem_statement");
     const general = currentElement(content, "general_objective");
+    const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
+    const studentContext = studentContextNotes(content);
     if (!problem) return NextResponse.json({ error: "Problemática não encontrada." }, { status: 409 });
     if (step === "problem_statement") {
-      const generated = await regenerateProblemStatement(candidate, discovery);
+      const generated = await regenerateProblemStatement(candidate, generationDiscovery, studentContext);
       const existing = currentElement(content, "problem_statement")!;
       content = upsertElement(content, {
         approvedContent: null,
@@ -285,11 +300,12 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         referenceIds: generated.referenceIds,
         sourceRevision: workflow.sourceRevision,
         status: "suggested",
+        studentJustification: existing.studentJustification,
         type: "problem_statement",
         updatedBy: "ai",
       });
     } else if (step === "general_objective") {
-      const generated = await generateGeneralObjective(problem.proposedContent, candidate, discovery);
+      const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
       const existing = general;
       content = upsertElement(content, {
         approvedContent: null,
@@ -298,12 +314,13 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         referenceIds: generated.referenceIds,
         sourceRevision: workflow.sourceRevision,
         status: "suggested",
+        studentJustification: existing?.studentJustification ?? null,
         type: "general_objective",
         updatedBy: "ai",
       });
     } else {
       if (!general) return NextResponse.json({ error: "Objetivo geral não encontrado." }, { status: 409 });
-      const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, discovery);
+      const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
       const existing = content.elements.filter((element) => element.type === "specific_objective");
       for (const [index, objective] of generated.entries()) {
         content = upsertElement(content, {
@@ -313,6 +330,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
           referenceIds: objective.referenceIds,
           sourceRevision: workflow.sourceRevision,
           status: "suggested",
+          studentJustification: existing[index]?.studentJustification ?? null,
           type: "specific_objective",
           updatedBy: "ai",
         });
@@ -374,7 +392,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       type: "problem_statement",
       updatedBy: problem.updatedBy === "ai" ? "ai" : "user",
     });
-    const generated = await generateGeneralObjective(problem.proposedContent, candidate, discovery);
+    const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
+    const studentContext = studentContextNotes(content);
+    const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
     const existingGeneral = currentElement(content, "general_objective");
     const generalId = existingGeneral?.id ?? crypto.randomUUID();
     content = upsertElement(content, {
@@ -384,6 +404,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       referenceIds: generated.referenceIds,
       sourceRevision,
       status: "suggested",
+      studentJustification: existingGeneral?.studentJustification ?? null,
       type: "general_objective",
       updatedBy: "ai",
     });
@@ -411,7 +432,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       type: "general_objective",
       updatedBy: general.updatedBy === "ai" ? "ai" : "user",
     });
-    const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, discovery);
+    const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
+    const studentContext = studentContextNotes(content);
+    const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
     const existingSpecifics = content.elements.filter((element) => element.type === "specific_objective");
     const specificIds: string[] = [];
     for (const [index, objective] of generated.entries()) {
@@ -424,6 +447,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         referenceIds: objective.referenceIds,
         sourceRevision,
         status: "suggested",
+        studentJustification: existingSpecifics[index]?.studentJustification ?? null,
         type: "specific_objective",
         updatedBy: "ai",
       });

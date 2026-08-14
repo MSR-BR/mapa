@@ -216,6 +216,7 @@ test("accepts three to six stable specific objectives and detects redundancy", (
 const OBJECTIVE_1 = "10000000-0000-4000-8000-000000000001";
 const OBJECTIVE_2 = "10000000-0000-4000-8000-000000000002";
 const OBJECTIVE_3 = "10000000-0000-4000-8000-000000000003";
+const GENERAL_OBJECTIVE_ROW = "10000000-0000-4000-8000-000000000099";
 
 function makeChapterTopic(
   id: string,
@@ -229,6 +230,7 @@ function makeChapterTopic(
     id,
     objectiveCoverage: [{ degree: "partial", objectiveId }],
     referenceIds: ["ref-1"],
+    studentJustification: null,
     title,
     ...overrides,
   };
@@ -307,6 +309,26 @@ test("blocks premature results and requires a justified final Chapter 4 topic", 
   assert.deepEqual(validateChapterTopics(valid, options), []);
 });
 
+test("allows a case-study introduction and OEG coverage in Chapter 4", () => {
+  const topics = [
+    makeChapterTopic("30000000-0000-4000-8000-000000000011", "Apresentação do estudo de caso", OBJECTIVE_1, {
+      exceptionJustification: "O tópico descreve o caso, suas características e seu contexto antes da análise.",
+      objectiveCoverage: [],
+    }),
+    makeChapterTopic("30000000-0000-4000-8000-000000000012", "Procedimentos vinculados ao primeiro objetivo", OBJECTIVE_1),
+    makeChapterTopic("30000000-0000-4000-8000-000000000013", "Síntese articulada ao objetivo geral", GENERAL_OBJECTIVE_ROW, {
+      generalObjectiveAligned: true,
+      objectiveCoverage: [{ degree: "full", objectiveId: GENERAL_OBJECTIVE_ROW }],
+    }),
+  ];
+  assert.deepEqual(validateChapterTopics(topics, {
+    allowedObjectiveIds: new Set([OBJECTIVE_1, GENERAL_OBJECTIVE_ROW]),
+    allowedReferenceIds: new Set(["ref-1"]),
+    chapter: "development",
+    generalObjectiveId: GENERAL_OBJECTIVE_ROW,
+  }), []);
+});
+
 test("reports objective coverage states and blocks uncovered objectives", () => {
   const literature = [
     makeChapterTopic("40000000-0000-4000-8000-000000000001", "Base teórica", OBJECTIVE_1),
@@ -348,6 +370,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se produzir uma síntese conceitual que delimite o fenômeno investigado.",
         id: "60000000-0000-4000-8000-000000000001",
         objectiveId: OBJECTIVE_1,
+        studentJustification: null,
         warnings: [],
       },
       {
@@ -357,6 +380,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se caracterizar dimensões relevantes para orientar a discussão da proposta.",
         id: "60000000-0000-4000-8000-000000000002",
         objectiveId: OBJECTIVE_2,
+        studentJustification: null,
         warnings: [],
       },
       {
@@ -366,6 +390,7 @@ function makeMethodologyPlan(overrides: Partial<MethodologyPlanInput> = {}): Met
         expectedResult: "Espera-se formular recomendações acadêmicas alinhadas ao objetivo geral da pesquisa.",
         id: "60000000-0000-4000-8000-000000000003",
         objectiveId: OBJECTIVE_3,
+        studentJustification: null,
         warnings: [],
       },
     ],
@@ -393,6 +418,39 @@ test("validates methodology matrix coverage and expected-result wording", () => 
       ? { ...row, expectedResult: "Foram encontrados resultados conclusivos sobre a aprendizagem." }
       : row),
   }), options).errors[0], /já tivesse sido executada/);
+});
+
+test("requires and accepts an OEG synthesis row in methodology when requested", () => {
+  const basePlan = makeMethodologyPlan();
+  const planWithGeneral: MethodologyPlanInput = {
+    ...basePlan,
+    rows: [
+      ...basePlan.rows,
+      {
+        analysisTreatment: "As evidências dos objetivos específicos serão integradas em uma síntese interpretativa.",
+        associatedTopicIds: ["50000000-0000-4000-8000-000000000002"],
+        dataCollection: "Serão retomadas as informações consolidadas nas etapas anteriores do desenho metodológico.",
+        expectedResult: "Uma síntese final capaz de responder ao objetivo geral da pesquisa.",
+        id: "60000000-0000-4000-8000-000000000099",
+        objectiveId: GENERAL_OBJECTIVE_ROW,
+        studentJustification: null,
+        warnings: [],
+      },
+    ],
+  };
+  const options = {
+    allowedObjectiveIds: new Set([OBJECTIVE_1, OBJECTIVE_2, OBJECTIVE_3]),
+    allowedTopicIds: new Set([
+      "40000000-0000-4000-8000-000000000001",
+      "50000000-0000-4000-8000-000000000001",
+      "50000000-0000-4000-8000-000000000002",
+    ]),
+    generalObjective: "Analisar a influência da inteligência artificial na aprendizagem no ensino superior.",
+    generalObjectiveId: GENERAL_OBJECTIVE_ROW,
+  };
+
+  assert.deepEqual(validateMethodologyPlan(planWithGeneral, options).errors, []);
+  assert.match(validateMethodologyPlan(basePlan, options).errors.join(" "), /objetivo geral \(OEG\)/i);
 });
 
 test("warns about uncertain methodology compatibility without blocking", () => {
@@ -432,6 +490,7 @@ function validatedElement(id: string, type: ValidatedElement["type"], approvedCo
     revision: 1,
     sourceRevision: 1,
     status: "validated",
+    studentJustification: null,
     type,
     updatedBy: "user",
   };
@@ -440,6 +499,19 @@ function validatedElement(id: string, type: ValidatedElement["type"], approvedCo
 function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): ResearchWorkflow {
   const candidates = Array.from({ length: 6 }, (_, index) => makeCandidate(index + 1));
   const methodologyPlan = makeMethodologyPlan();
+  const methodologyRowsInput: MethodologyPlanInput["rows"] = [
+    ...methodologyPlan.rows,
+    {
+      analysisTreatment: "As sínteses dos objetivos específicos serão integradas para responder ao objetivo geral.",
+      associatedTopicIds: [DEVELOPMENT_3],
+      dataCollection: "Serão reunidas as evidências consolidadas nos objetivos específicos e nos capítulos da proposta.",
+      expectedResult: "Uma resposta integrada ao objetivo geral da pesquisa.",
+      id: "60000000-0000-4000-8000-000000000004",
+      objectiveId: GENERAL_ID,
+      studentJustification: null,
+      warnings: [],
+    },
+  ];
   const methodologyClassification: MethodologyClassification = {
     ...methodologyPlan.classification,
     revision: 1,
@@ -447,7 +519,7 @@ function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): Resear
     status: "validated",
     updatedBy: "ai",
   };
-  const methodologyRows: MethodologyRow[] = methodologyPlan.rows.map((row) => ({
+  const methodologyRows: MethodologyRow[] = methodologyRowsInput.map((row) => ({
     ...row,
     revision: 1,
     sourceRevision: 1,
@@ -522,6 +594,7 @@ function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): Resear
         { fromElementId: OBJECTIVE_1, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[0].id },
         { fromElementId: OBJECTIVE_2, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[1].id },
         { fromElementId: OBJECTIVE_3, rule: "Objetivo específico orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyRows[2].id },
+        { fromElementId: GENERAL_ID, rule: "Objetivo geral orienta linha metodológica de síntese.", sourceRevision: 1, toElementId: methodologyRows[3].id },
         { fromElementId: GENERAL_ID, rule: "Objetivo geral sustenta o título final.", sourceRevision: 1, toElementId: TITLE_ID },
       ],
     },

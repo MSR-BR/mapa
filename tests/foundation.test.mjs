@@ -399,13 +399,16 @@ test("implements Change 010 with one persisted discovery and six selectable prop
 });
 
 test("implements Change 011 with editable and versioned problem and objectives", async () => {
-  const [route, workspace, validation, schema, gemini, page] = await Promise.all([
+  const [route, workspace, validation, schema, gemini, page, referenceRoute, referencePanel, workflowReferences] = await Promise.all([
     readProjectFile("app/api/projects/[id]/definition/route.ts"),
     readProjectFile("modules/research-workflow/research-definition-workspace.tsx"),
     readProjectFile("modules/research-workflow/definition-validation.ts"),
     readProjectFile("modules/research-workflow/schema.ts"),
     readProjectFile("modules/generation/gemini.ts"),
     readProjectFile("app/dashboard/projects/[id]/page.tsx"),
+    readProjectFile("app/api/projects/[id]/references/route.ts"),
+    readProjectFile("modules/research-workflow/manual-reference-panel.tsx"),
+    readProjectFile("modules/research-workflow/workflow-references.ts"),
   ]);
 
   assert.match(route, /\.eq\("revision", workflow\.revision\)/);
@@ -415,6 +418,9 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(workspace, /Regenerar sugestão/);
   assert.match(workspace, /Salvar rascunho/);
   assert.match(workspace, /Validar e avançar/);
+  assert.match(workspace, /ManualReferencePanel/);
+  assert.match(workspace, /Por que esta grande pergunta vale ser investigada/);
+  assert.match(workspace, /studentJustification/);
   assert.match(workspace, /specifics\.length >= 6/);
   assert.match(validation, /INFINITIVE_OPENING/);
   assert.match(validation, /redundantes/);
@@ -422,7 +428,21 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(schema, /elementVersionSchema/);
   assert.match(gemini, /Crie exatamente um objetivo geral/);
   assert.match(gemini, /Crie exatamente quatro objetivos específicos/);
+  assert.match(gemini, /referências externas manuais/);
   assert.match(page, /ResearchDefinitionWorkspace/);
+  assert.match(referenceRoute, /source: "manual"/);
+  assert.match(referenceRoute, /referenceArchive/);
+  assert.match(referenceRoute, /\.eq\("owner_id", ownerId\)/);
+  assert.match(referenceRoute, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(referencePanel, /Nova referência externa/);
+  assert.match(referencePanel, /Título/);
+  assert.match(referencePanel, /Autores/);
+  assert.match(referencePanel, /Revista/);
+  assert.match(referencePanel, /Volume, ano, páginas/);
+  assert.match(referencePanel, /Abstract/);
+  assert.match(referencePanel, /DOI/);
+  assert.match(workflowReferences, /studentContextNotes/);
+  assert.match(workflowReferences, /discoveryWithWorkflowReferences/);
 });
 
 test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", async () => {
@@ -441,9 +461,16 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /fetchResearchStarterReport/);
   assert.match(route, /topics: undefined/);
   assert.match(route, /referenceArchive/);
+  assert.match(route, /discoveryWithWorkflowReferences/);
+  assert.match(route, /studentContextNotes/);
+  assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(route, /\.eq\("revision", workflow\.revision\)/);
   assert.match(route, /validateCompleteObjectiveCoverage/);
+  assert.match(workspace, /ManualReferencePanel/);
   assert.match(workspace, /Otimizar literatura/);
+  assert.match(workspace, /OEG/);
+  assert.match(workspace, /apresentação do estudo de caso/);
+  assert.match(workspace, /Justificativa deste tópico/);
   assert.match(workspace, /Atende bem/);
   assert.match(workspace, /Ajuda em parte/);
   assert.match(workspace, /literature-optimizer-card/);
@@ -456,6 +483,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /para cima/);
   assert.match(workspace, /referências associadas/);
   assert.match(validation, /resultados\? \(\?:encontrados/);
+  assert.match(validation, /generalObjectiveId/);
   assert.match(validation, /entre três e seis/);
   assert.match(library, /KNOWLEDGE_LIBRARY_VERSION/);
   assert.match(library, /status: "suggested"/);
@@ -463,6 +491,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(schema, /knowledgeSuggestions/);
   assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 2/);
   assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 4/);
+  assert.match(gemini, /ID do objetivo geral \(OEG\)/);
   assert.match(page, /LiteratureDevelopmentWorkspace/);
 });
 
@@ -479,6 +508,8 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /METHODOLOGY_HELP/);
   assert.match(workspace, /data-methodology-help/);
   assert.match(workspace, /Explicar/);
+  assert.match(workspace, /Adicionar linha OEG/);
+  assert.match(workspace, /moveRow/);
   assert.match(workspace, /methodologyMessageText/);
   assert.match(workspace, /OE\$\{index\} \(objetivo específico \$\{index\}\)/);
   assert.match(workspace, /methodologyMessageText\(finding\.message\)/);
@@ -489,7 +520,9 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(styles, /methodology-help-popover/);
   assert.doesNotMatch(styles, /methodology-classification fieldset label \{[^}]*border-radius: 999px/);
   assert.match(route, /improvementNotes/);
+  assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(gemini, /Corrija especificamente estes avisos/);
+  assert.match(gemini, /linha final para o objetivo geral/);
   assert.match(styles, /@media \(max-width: 600px\)/);
 });
 

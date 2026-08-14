@@ -105,6 +105,7 @@ export function topicsFromContent(content: ResearchWorkflowContent, chapter: "li
         label: chapter === "literature" ? `2.${detail.order}` : `4.${detail.order}`,
         objectiveCoverage: detail.objectiveCoverage,
         referenceIds: topic.referenceIds,
+        studentJustification: detail.studentJustification,
         title: topic.approvedContent ?? topic.proposedContent,
       }];
     });
@@ -234,6 +235,10 @@ function deterministicFindings(
   const general = element(content, "general_objective");
   const specifics = elements(content, "specific_objective").filter((item) => item.status === "validated");
   const allowedObjectiveIds = new Set(specifics.map((item) => item.id));
+  const developmentObjectiveIds = new Set([
+    ...allowedObjectiveIds,
+    ...(general ? [general.id] : []),
+  ]);
   const allowedReferenceIds = new Set(context.references.map((reference) => reference.referenceId));
   const topicIds = new Set([...context.literatureTopics, ...context.developmentTopics].map((topic) => topic.id));
   const problemText = approved(problem);
@@ -296,7 +301,12 @@ function deterministicFindings(
     rule: "Change 014: capítulo 2",
     severity: "blocking",
   })));
-  findings.push(...validateChapterTopics(context.developmentTopics, { ...chapterOptions, chapter: "development" }).map((message) => makeFinding(message, {
+  findings.push(...validateChapterTopics(context.developmentTopics, {
+    allowedObjectiveIds: developmentObjectiveIds,
+    allowedReferenceIds,
+    chapter: "development",
+    generalObjectiveId: general?.id ?? null,
+  }).map((message) => makeFinding(message, {
     elementIds: context.developmentTopics.map((topic) => topic.id),
     resolution: "Volte ao Capítulo 4 e ajuste a cobertura ou o alinhamento.",
     rule: "Change 014: capítulo 4",
@@ -335,6 +345,7 @@ function deterministicFindings(
         expectedResult: row.expectedResult,
         id: row.id,
         objectiveId: row.objectiveId,
+        studentJustification: row.studentJustification,
         warnings: row.warnings,
       })),
       title: approved(context.title),
@@ -351,6 +362,7 @@ function deterministicFindings(
         allowedObjectiveIds,
         allowedTopicIds: topicIds,
         generalObjective: generalText,
+        generalObjectiveId: general?.id ?? null,
       });
       findings.push(...methodology.errors.map((message) => makeFinding(message, {
         elementIds: content.methodologyRows.map((row) => row.id),
@@ -379,9 +391,9 @@ function deterministicFindings(
   const unknownReferences = content.elements.flatMap((item) => item.referenceIds.map((referenceId) => ({ elementId: item.id, referenceId })))
     .filter((item) => !allowedReferenceIds.has(item.referenceId));
   if (unknownReferences.length > 0) {
-    findings.push(makeFinding("Há referências associadas que não vieram do Research Starter.", {
+    findings.push(makeFinding("Há referências associadas que não estão na literatura otimizada nem nas referências externas salvas.", {
       elementIds: unknownReferences.map((item) => item.elementId),
-      resolution: "Remova a referência desconhecida ou otimize novamente a literatura.",
+      resolution: "Remova a referência desconhecida, otimize novamente a literatura ou adicione a fonte como referência externa.",
       rule: "Change 014: referências verificáveis",
       severity: "blocking",
     }));

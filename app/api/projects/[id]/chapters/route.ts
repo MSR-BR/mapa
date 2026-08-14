@@ -29,6 +29,10 @@ import {
   normalizeLiteratureSearchTerms,
 } from "@/modules/research-workflow/literature-optimization";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+import {
+  discoveryWithWorkflowReferences,
+  studentContextNotes,
+} from "@/modules/research-workflow/workflow-references";
 
 export const maxDuration = 120;
 
@@ -64,6 +68,7 @@ function topicsFromContent(content: ResearchWorkflowContent, chapter: "literatur
         id: topic.id,
         objectiveCoverage: detail.objectiveCoverage,
         referenceIds: topic.referenceIds,
+        studentJustification: detail.studentJustification,
         title: topic.proposedContent,
       }] : [];
     });
@@ -94,6 +99,7 @@ function replaceTopics(
       revision: previous ? previous.revision + 1 : 1,
       sourceRevision,
       status: previous?.approvedContent === topic.title ? "validated" : actor === "ai" ? "suggested" : "edited",
+      studentJustification: previous?.studentJustification ?? null,
       type,
       updatedBy: actor,
     };
@@ -104,6 +110,7 @@ function replaceTopics(
     generalObjectiveAligned: topic.generalObjectiveAligned,
     objectiveCoverage: topic.objectiveCoverage,
     order: index + 1,
+    studentJustification: topic.studentJustification,
     topicId: topic.id,
   }));
   return researchWorkflowContentSchema.parse({
@@ -118,7 +125,12 @@ function replaceTopics(
   });
 }
 
-function addTraceLinks(content: ResearchWorkflowContent, chapter: "literature" | "development", sourceRevision: number) {
+function addTraceLinks(
+  content: ResearchWorkflowContent,
+  chapter: "literature" | "development",
+  sourceRevision: number,
+  generalObjectiveId?: string | null,
+) {
   const topics = topicsFromContent(content, chapter);
   return researchWorkflowContentSchema.parse({
     ...content,
@@ -126,7 +138,9 @@ function addTraceLinks(content: ResearchWorkflowContent, chapter: "literature" |
       ...content.traceLinks,
       ...topics.flatMap((topic) => topic.objectiveCoverage.map((coverage) => ({
         fromElementId: coverage.objectiveId,
-        rule: chapter === "literature"
+        rule: coverage.objectiveId === generalObjectiveId
+          ? "O tópico se articula ao objetivo geral no Capítulo 4."
+          : chapter === "literature"
           ? `O tópico fundamenta o objetivo específico com cobertura ${coverage.degree}.`
           : "O tópico operacionaliza o objetivo específico no Capítulo 4.",
         sourceRevision,
@@ -178,8 +192,9 @@ async function generatedLiteratureTopics(
     context.problem.approvedContent!,
     context.general.approvedContent!,
     context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
-    context.discovery,
+    discoveryWithWorkflowReferences(context.discovery, content),
     acceptedConcepts,
+    studentContextNotes(content),
   );
   return generated.map((topic) => ({ ...topic, id: crypto.randomUUID() }));
 }
@@ -292,9 +307,11 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       : (await generateDevelopmentTopics(
           context.problem.approvedContent!,
           context.general.approvedContent!,
+          context.general.id,
           context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
           topicsFromContent(content, "literature"),
-          context.discovery,
+          discoveryWithWorkflowReferences(context.discovery, content),
+          studentContextNotes(content),
         )).map((topic) => ({ ...topic, id: crypto.randomUUID() }));
     const stable = generated.map((topic, index) => ({ ...topic, id: existing[index]?.id ?? topic.id }));
     content = replaceTopics(content, step, stable, workflow.sourceRevision, "ai");
@@ -306,14 +323,17 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const currentTopics = topicsFromContent(content, step);
-  const allowedObjectiveIds = new Set(context.specifics.map((item) => item.id));
+  const specificObjectiveIds = new Set(context.specifics.map((item) => item.id));
+  const allowedObjectiveIds = step === "development"
+    ? new Set([...specificObjectiveIds, context.general.id])
+    : specificObjectiveIds;
   const allowedReferenceIds = new Set([
     ...context.discovery.references.map((reference) => reference.referenceId),
     ...content.referenceArchive.map((reference) => reference.referenceId),
   ]);
-  const errors = validateChapterTopics(currentTopics, { allowedObjectiveIds, allowedReferenceIds, chapter: step });
+  const errors = validateChapterTopics(currentTopics, { allowedObjectiveIds, allowedReferenceIds, chapter: step, generalObjectiveId: context.general.id });
   if (step === "development") {
-    errors.push(...validateCompleteObjectiveCoverage(topicsFromContent(content, "literature"), currentTopics, [...allowedObjectiveIds]));
+    errors.push(...validateCompleteObjectiveCoverage(topicsFromContent(content, "literature"), currentTopics, [...specificObjectiveIds]));
   }
   if (errors.length > 0) return NextResponse.json({ errors: [...new Set(errors)], error: "Revise a cobertura antes de avançar." }, { status: 422 });
 
@@ -327,14 +347,16 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       ? { ...item, approvedContent: item.proposedContent, revision: item.revision + 1, sourceRevision, status: "validated" }
       : item),
   });
-  content = addTraceLinks(content, step, sourceRevision);
+  content = addTraceLinks(content, step, sourceRevision, context.general.id);
   if (step === "literature") {
     const generated = await generateDevelopmentTopics(
       context.problem.approvedContent!,
       context.general.approvedContent!,
+      context.general.id,
       context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
       currentTopics,
-      context.discovery,
+      discoveryWithWorkflowReferences(context.discovery, content),
+      studentContextNotes(content),
     );
     content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" });
