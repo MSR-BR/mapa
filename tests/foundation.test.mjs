@@ -701,6 +701,8 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(accountMenu, /activeRole/);
   assert.match(accountMenu, /Mudar para/);
   assert.match(profileActions, /setActiveProfileRole/);
+  assert.match(profileActions, /insert\(\{ active_role: role, created_at: now, updated_at: now, user_id: userId \}\)/);
+  assert.match(profileActions, /redirect\("\/dashboard"\)/);
   assert.match(profileActions, /claim_pending_advisor_projects/);
   assert.match(profilePrompt, /Primeiro acesso/);
   assert.match(profilePrompt, /Sou aluno/);
