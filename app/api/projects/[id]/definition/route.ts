@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import {
   generateGeneralObjective,
   generateSpecificObjectives,
@@ -8,7 +9,7 @@ import {
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
 import { loadUserProfile } from "@/modules/profile/storage";
-import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
+import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
@@ -249,7 +250,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const { claims, supabase, userId } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
   const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
@@ -529,6 +530,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         advisorEmail,
         sourceRevision,
         step,
+        studentEmail: claimEmail(claims as Record<string, unknown>),
         transition: { targetActiveStep, targetStableState: stableState, targetState: state },
       },
     );
@@ -553,6 +555,17 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (error) {
       return NextResponse.json({ error: "A problemática foi validada, mas o resumo do projeto não foi atualizado.", workflow: saved }, { status: 500 });
     }
+  }
+  const submittedReview = shouldWaitForAdvisor ? pendingAdvisorReview(content) : null;
+  if (saved && submittedReview) {
+    await notifyAdvisorOfReviewRequest({
+      actorEmail: claimEmail(claims as Record<string, unknown>),
+      advisorEmail,
+      projectId: id,
+      reviewId: submittedReview.id,
+      step: submittedReview.step,
+      supabase,
+    });
   }
   return saved
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando validação do orientador." : "Etapa validada.", workflow: saved })

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import { generateMethodologyPlan } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
 import { loadUserProfile } from "@/modules/profile/storage";
-import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
+import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
@@ -385,7 +386,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const { claims, supabase, userId } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
   const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
@@ -512,6 +513,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
         advisorEmail,
         sourceRevision,
         step: "methodology_matrix",
+        studentEmail: claimEmail(claims as Record<string, unknown>),
         transition: { targetActiveStep: null, targetStableState: "reviewing_map", targetState: "reviewing_map" },
       },
     );
@@ -536,6 +538,18 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       .eq("owner_id", userId)
       .eq("workflow_version", 2);
     if (error) return NextResponse.json({ error: "A metodologia foi validada, mas o título do projeto não foi atualizado.", workflow: saved }, { status: 500 });
+  }
+
+  const submittedReview = shouldWaitForAdvisor ? pendingAdvisorReview(content) : null;
+  if (submittedReview) {
+    await notifyAdvisorOfReviewRequest({
+      actorEmail: claimEmail(claims as Record<string, unknown>),
+      advisorEmail,
+      projectId: id,
+      reviewId: submittedReview.id,
+      step: submittedReview.step,
+      supabase,
+    });
   }
 
   return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando validação do orientador." : "Metodologia validada.", workflow: saved });

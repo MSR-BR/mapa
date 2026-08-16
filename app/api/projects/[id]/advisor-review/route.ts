@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import {
+  sendProjectNotification,
+} from "@/lib/email/project-notifications";
 import { toJson } from "@/modules/generation/types";
 import { claimPendingAdvisorProjects, loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import {
+  ADVISOR_REVIEW_LABELS,
   pendingAdvisorReview,
   withAdvisorReviewComment,
   withAdvisorReviewDecision,
@@ -72,7 +76,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   const { data: project, error: projectError } = await supabase
     .from("projects")
-    .select("id, owner_id, advisor_email, advisor_id, workflow_version, deleted_at")
+    .select("id, owner_id, advisor_email, advisor_id, title, workflow_version, deleted_at")
     .eq("id", id)
     .is("deleted_at", null)
     .maybeSingle();
@@ -140,7 +144,25 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const saved = await saveWorkflow(workflow, content, state, stableState, supabase, project.owner_id);
-  return saved
-    ? NextResponse.json({ message, workflow: saved })
-    : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+  if (!saved) {
+    return NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+  }
+
+  const kind = parsed.data.action === "approve"
+    ? "advisor_approved"
+    : parsed.data.action === "request_changes"
+      ? "advisor_requested_changes"
+      : "advisor_comment";
+  await sendProjectNotification({
+    actorEmail: reviewerEmail,
+    comment: comments,
+    idempotencyKey: `${kind}-${review.id}-${saved.revision}`,
+    kind,
+    projectId: id,
+    projectTitle: project.title,
+    recipientEmail: review.studentEmail,
+    stepLabel: ADVISOR_REVIEW_LABELS[review.step],
+  });
+
+  return NextResponse.json({ message, workflow: saved });
 }

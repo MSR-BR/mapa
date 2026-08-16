@@ -82,6 +82,7 @@ export const advisorReviewSchema = z.object({
   sourceRevision: z.number().int().positive(),
   status: z.enum(["pending", "changes_requested", "approved"]),
   step: advisorReviewStepSchema,
+  studentEmail: z.string().trim().email().max(320).nullable().default(null),
   targetActiveStep: definitionStepSchema.nullable(),
   targetStableState: stableWorkflowStateSchema,
   targetState: stableWorkflowStateSchema,

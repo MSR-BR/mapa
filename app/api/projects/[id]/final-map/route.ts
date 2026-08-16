@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import { reviewFinalMapCoherence } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
 import { loadUserProfile } from "@/modules/profile/storage";
-import { loadProjectAdvisorEmail } from "@/modules/projects/advisor";
+import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import {
   buildFinalMap,
@@ -153,7 +154,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const { claims, supabase, userId } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
   const isAdvisorOwner = profile.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
@@ -209,6 +210,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
         advisorEmail,
         sourceRevision,
         step: "final_map",
+        studentEmail: claimEmail(claims as Record<string, unknown>),
         transition: { targetActiveStep: null, targetStableState: "completed", targetState: "completed" },
       },
     );
@@ -222,6 +224,17 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     supabase,
     userId,
   );
+  const submittedReview = shouldWaitForAdvisor ? pendingAdvisorReview(content) : null;
+  if (saved && submittedReview) {
+    await notifyAdvisorOfReviewRequest({
+      actorEmail: claimEmail(claims as Record<string, unknown>),
+      advisorEmail,
+      projectId: id,
+      reviewId: submittedReview.id,
+      step: submittedReview.step,
+      supabase,
+    });
+  }
   return saved
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Mapa validado pelo estudante. Aguardando validação do orientador." : "Mapa concluído.", workflow: saved })
     : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });

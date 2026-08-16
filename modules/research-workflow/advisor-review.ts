@@ -47,6 +47,7 @@ export function withAdvisorReviewRequest(
     advisorEmail: string | null;
     sourceRevision: number;
     step: AdvisorReviewStep;
+    studentEmail: string | null;
     transition: AdvisorTransition;
   },
 ) {
@@ -64,6 +65,7 @@ export function withAdvisorReviewRequest(
     sourceRevision: input.sourceRevision,
     status: "pending",
     step: input.step,
+    studentEmail: input.studentEmail,
     targetActiveStep: input.transition.targetActiveStep,
     targetStableState: input.transition.targetStableState,
     targetState: input.transition.targetState,
