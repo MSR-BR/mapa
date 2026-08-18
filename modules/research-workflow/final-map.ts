@@ -203,17 +203,22 @@ function traceEdges(content: ResearchWorkflowContent): FinalMapEdge[] {
   }));
 }
 
-function referenceEdges(references: DiscoveryReference[], content: ResearchWorkflowContent, candidate: ProblemCandidate | null): FinalMapEdge[] {
+function referenceEdges(
+  references: DiscoveryReference[],
+  content: ResearchWorkflowContent,
+  candidate: ProblemCandidate | null,
+  nodeIds: Set<string>,
+): FinalMapEdge[] {
   const referenceIds = new Set(references.map((reference) => reference.referenceId));
   const edges: FinalMapEdge[] = [];
   if (candidate) {
     for (const referenceId of candidate.referenceIds) {
-      if (referenceIds.has(referenceId)) edges.push({ from: `reference:${referenceId}`, label: "sustenta proposta", to: candidate.id });
+      if (referenceIds.has(referenceId) && nodeIds.has(candidate.id)) edges.push({ from: `reference:${referenceId}`, label: "sustenta proposta", to: candidate.id });
     }
   }
   for (const item of content.elements) {
     for (const referenceId of item.referenceIds) {
-      if (referenceIds.has(referenceId)) edges.push({ from: `reference:${referenceId}`, label: "evidência verificável", to: item.id });
+      if (referenceIds.has(referenceId) && nodeIds.has(item.id)) edges.push({ from: `reference:${referenceId}`, label: "evidência verificável", to: item.id });
     }
   }
   return edges;
@@ -432,7 +437,7 @@ export function buildFinalMap(workflow: ResearchWorkflow): FinalMap {
     ...(candidate ? [{ from: promptId, label: "originou proposta escolhida", to: candidate.id }] : []),
     ...(candidate && problemStatement ? [{ from: candidate.id, label: "foi validada como problemática", to: problemStatement.id }] : []),
     ...traceEdges(content),
-    ...referenceEdges(references, content, candidate),
+    ...referenceEdges(references, content, candidate, new Set(nodes.map((item) => item.id))),
   ];
   const graphProblems = graphIssues(nodes, edges);
   const storedFindings = content.coherenceFindings.filter((finding) => !finding.rule.startsWith("Change 014"));

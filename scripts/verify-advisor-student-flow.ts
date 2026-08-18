@@ -79,6 +79,9 @@ const shouldCreateMissingUsers = process.env.MAPA_E2E_CREATE_USERS === "true";
 function createSupabaseClient() {
   return createClient<Database>(supabaseUrl, publishableKey, {
     auth: { autoRefreshToken: false, persistSession: false },
+    // O fluxo E2E usa apenas Auth e Data API. O runner local pode estar em Node 20,
+    // que não fornece WebSocket nativo; não abrimos canais Realtime neste script.
+    realtime: { transport: class {} as never },
   });
 }
 
@@ -300,7 +303,7 @@ function buildCompleteContent(projectId: string): ResearchWorkflowContent {
       },
     ],
     methodologyClassification: {
-      analysisTechniques: ["Estatística descritiva", "Análise temática", "Triangulação mista"],
+      analysisTechniques: ["Estatística descritiva (frequências, médias e desvio padrão)", "Análise documental", "Análise temática", "Triangulação mista"],
       approach: "Mista",
       ethicsWarnings: ["Será necessário consentimento informado dos estudantes e responsáveis quando aplicável."],
       instruments: ["Questionários", "Roteiro de observação", "Testes de compreensão"],
@@ -329,7 +332,7 @@ function buildCompleteContent(projectId: string): ResearchWorkflowContent {
         warnings: [],
       },
       {
-        analysisTreatment: "O planejamento será analisado documentalmente quanto ao alinhamento entre conceitos, sensores, atividades e objetivos didáticos.",
+        analysisTreatment: "O planejamento será analisado por análise documental, com matriz de categorias para verificar o alinhamento entre conceitos, sensores, atividades e objetivos didáticos.",
         associatedTopicIds: [literatureIds[1], developmentIds[1]],
         dataCollection: "Serão organizados planos de aula, roteiros de experimento e registros de preparação das atividades com Arduino.",
         expectedResult: "Espera-se produzir uma sequência de atividades coerente com os conceitos de Física selecionados.",
@@ -377,7 +380,6 @@ function buildCompleteContent(projectId: string): ResearchWorkflowContent {
       ...specificIds.map((specificId) => ({ fromElementId: generalId, rule: "O objetivo específico contribui para o objetivo geral.", sourceRevision: 1, toElementId: specificId })),
       ...literatureIds.map((topicId, index) => ({ fromElementId: specificIds[index], rule: "O objetivo específico orienta tópico de literatura.", sourceRevision: 1, toElementId: topicId })),
       ...developmentIds.slice(1).map((topicId, index) => ({ fromElementId: specificIds[index + 1], rule: "O objetivo específico orienta tópico de desenvolvimento.", sourceRevision: 1, toElementId: topicId })),
-      ...methodologyIds.map((methodologyId, index) => ({ fromElementId: index === 3 ? generalId : specificIds[index], rule: "O objetivo orienta linha metodológica.", sourceRevision: 1, toElementId: methodologyId })),
     ],
   });
 
@@ -468,7 +470,9 @@ async function saveWorkflow(
   sourceRevision = workflow.sourceRevision,
 ) {
   const nextRevision = workflow.revision + 1;
-  const updatedAt = new Date().toISOString();
+  // A margem evita que o relógio do runner fique alguns milissegundos atrás
+  // do `created_at` gravado pelo Postgres na criação do workflow.
+  const updatedAt = new Date(Date.now() + 5_000).toISOString();
   const saved = await requireData(
     "Atualização do workflow",
     await actor.client
