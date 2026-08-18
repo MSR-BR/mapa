@@ -22,12 +22,13 @@ export async function loadUserProfile(
     .select("active_role")
     .eq("user_id", userId)
     .maybeSingle(),
-    supabase.from("legal_consents").select("terms_version").eq("user_id", userId).maybeSingle(),
+    supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId),
   ]);
 
-  return isUserProfileRole(data?.active_role)
-    ? { activeRole: data.active_role, hasLegalConsent: Boolean(consent?.terms_version), hasProfile: true }
-    : { activeRole: "student", hasLegalConsent: Boolean(consent?.terms_version), hasProfile: false };
+  const activeRole = isUserProfileRole(data?.active_role) ? data.active_role : "student";
+  const hasLegalConsent = Array.isArray(consent) && consent.some((item) => item.profile_role === activeRole && Boolean(item.terms_version));
+  // Keep the first-access shape explicit: hasProfile: false when no role row exists.
+  return { activeRole, hasLegalConsent, hasProfile: isUserProfileRole(data?.active_role) };
 }
 
 export async function claimPendingAdvisorProjects(supabase: SupabaseClient<Database>) {

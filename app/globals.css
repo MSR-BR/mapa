@@ -121,7 +121,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .account-profile-switch form { margin-top: 0.25rem; }
 .account-menu-panel button { width: 100%; min-height: 2.5rem; padding: 0.5rem 0.75rem; border-radius: 0.55rem; text-align: left; }
 .account-menu-panel button:hover { background: var(--soft-surface); color: var(--foreground); }
-.profile-mode-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: clamp(1rem, 4vw, 2rem); background: rgb(9 17 14 / 58%); backdrop-filter: blur(10px); }
+.profile-mode-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: clamp(1rem, 4vw, 2rem); overflow: auto; background: rgb(9 17 14 / 58%); backdrop-filter: blur(10px); }
+.legal-consent-backdrop { align-items: center; }
 .profile-mode-card { display: grid; width: min(100%, 38rem); gap: 1rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 1.5rem; padding: clamp(1.25rem, 5vw, 2rem); background: linear-gradient(145deg, #17221e, #0c1210); box-shadow: 0 2rem 6rem rgb(7 17 13 / 34%); color: white; }
 .profile-mode-card h2 { max-width: 12ch; margin: 0; color: white; font-size: clamp(2rem, 7vw, 3.15rem); line-height: 0.96; letter-spacing: -0.06em; }
 .profile-mode-card p:not(.section-kicker) { margin: 0; color: #b5c3bc; line-height: 1.6; }
@@ -138,6 +139,9 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .legal-consent-scroll p { margin:.35rem 0; color:var(--muted); font-size:.88rem; line-height:1.5; }
 .legal-version { font-size:.76rem; }
 .legal-consent-card form { display:grid; gap:.85rem; }
+.legal-consent-card { max-height: calc(100vh - 2rem); overflow:auto; }
+.legal-accept-button,.legal-support-button { min-height:3rem; border:0; border-radius:.8rem; padding:.75rem 1.1rem; background:var(--accent); color:#fff; font:inherit; font-weight:800; cursor:pointer; }
+.legal-accept-button:disabled,.legal-support-button:disabled { opacity:.6; cursor:wait; }
 .legal-checkbox { display:flex; gap:.6rem; align-items:flex-start; color:var(--foreground); font-size:.85rem; line-height:1.4; }
 .legal-checkbox input { margin-top:.2rem; accent-color:var(--accent); }
 .legal-links { display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem 1.2rem; padding:1.25rem 1rem 1.5rem; color:var(--muted); font-size:.75rem; }
@@ -147,6 +151,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .legal-dialog { position:relative; max-height:90vh; overflow:auto; }
 .dialog-close { position:absolute; top:.7rem; right:.8rem; border:0; background:transparent; color:var(--foreground); font-size:1.8rem; cursor:pointer; }
 .legal-dialog a { color:var(--accent); font-weight:700; }
+.support-email { display:block; overflow-wrap:anywhere; }
 .support-form { display:grid; gap:.65rem; }
 .support-form input,.support-form textarea { width:100%; border:1px solid var(--border); border-radius:.65rem; padding:.7rem .8rem; background:#fbfdfc; color:var(--foreground); font:inherit; }
 .support-form textarea { min-height:7rem; resize:vertical; }

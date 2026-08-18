@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           accepted_at: string
           created_at: string
+          profile_role: "student" | "advisor"
           terms_version: string
           updated_at: string
           user_id: string
@@ -25,6 +26,7 @@ export type Database = {
         Insert: {
           accepted_at?: string
           created_at?: string
+          profile_role?: "student" | "advisor"
           terms_version: string
           updated_at?: string
           user_id: string
@@ -33,6 +35,7 @@ export type Database = {
           accepted_at?: string
           created_at?: string
           terms_version?: string
+          profile_role?: "student" | "advisor"
           updated_at?: string
           user_id?: string
         }
