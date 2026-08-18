@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { LegalLinks } from "@/modules/legal/legal-links";
 import { PublicStartForm } from "@/modules/projects/public-start-form";
 
 export default async function Home() {
@@ -16,6 +17,7 @@ export default async function Home() {
         <h1 id="page-title">O que você quer desenvolver?</h1>
         <PublicStartForm />
       </section>
+      <LegalLinks />
     </main>
   );
 }
