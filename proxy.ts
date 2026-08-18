@@ -2,6 +2,25 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { updateSession } from "@/lib/supabase/proxy";
 
+function createNonce() {
+  return btoa(crypto.randomUUID());
+}
+
+function buildContentSecurityPolicy(nonce: string) {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com`,
+    "connect-src 'self' https://aeaweherkrqmlqnxsmib.supabase.co https://www.google-analytics.com https://analytics.google.com",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "style-src 'self' 'unsafe-inline'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+  ].join("; ");
+}
+
 export async function proxy(request: NextRequest) {
   const hostname = request.nextUrl.hostname;
   if (hostname === "mapadapesquisa.vercel.app" || hostname.endsWith("mapadapesquisa.vercel.app")) {
@@ -22,7 +41,16 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  return updateSession(request);
+  if (process.env.NODE_ENV !== "production") return updateSession(request);
+
+  const nonce = createNonce();
+  const contentSecurityPolicy = buildContentSecurityPolicy(nonce);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);
+  const response = await updateSession(request, requestHeaders);
+  response.headers.set("Content-Security-Policy", contentSecurityPolicy);
+  return response;
 }
 
 export const config = {

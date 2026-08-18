@@ -47,6 +47,9 @@ if (!/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=/.test(publicEnv)) {
 }
 
 const migrationFiles = trackedFiles.filter((file) => file.startsWith("supabase/migrations/") && file.endsWith(".sql"));
+const advisorHardening = migrationFiles
+  .map((file) => contents.get(file) ?? "")
+  .join("\n");
 const createdTables = [];
 for (const file of migrationFiles) {
   const text = contents.get(file) ?? "";
@@ -58,6 +61,11 @@ const missingRls = createdTables.filter(({ table }) => {
 });
 if (missingRls.length === 0) pass("supabase-rls", `${createdTables.length} tabelas públicas criadas pelas migrations têm RLS habilitado.`);
 else fail("supabase-rls", `Tabelas sem RLS detectadas: ${missingRls.map(({ table }) => table).join(", ")}`);
+if (advisorHardening.includes("restrict_advisor_workflow_update_trigger")) {
+  pass("advisor-rls", "Atualizações diretas do orientador são limitadas por trigger transacional.");
+} else {
+  fail("advisor-rls", "Não foi encontrada a proteção de UPDATE do workflow do orientador.");
+}
 
 const projectApiRoutes = trackedFiles.filter((file) => /^app\/api\/projects\/.*\/route\.ts$/.test(file));
 const unguardedProjectRoutes = projectApiRoutes.filter((file) => {
@@ -67,7 +75,7 @@ const unguardedProjectRoutes = projectApiRoutes.filter((file) => {
 if (unguardedProjectRoutes.length === 0) pass("api-auth", `${projectApiRoutes.length} rotas de projeto exigem autenticação no servidor.`);
 else fail("api-auth", `Rotas de projeto sem requireAuthenticatedUser: ${unguardedProjectRoutes.join(", ")}`);
 
-const dangerousHtml = trackedFiles.filter((file) => (contents.get(file) ?? "").includes("dangerouslySetInnerHTML"));
+const dangerousHtml = trackedFiles.filter((file) => file !== "scripts/audit-security.mjs" && (contents.get(file) ?? "").includes("dangerouslySetInnerHTML"));
 if (dangerousHtml.length === 1 && dangerousHtml[0] === "app/home.html/page.tsx") {
   pass("xss", "Único uso de HTML bruto está limitado ao JSON-LD estático da landing page.");
 } else if (dangerousHtml.length === 0) pass("xss", "Nenhum uso de HTML bruto foi encontrado.");
@@ -84,12 +92,17 @@ if (proxy.includes('request.nextUrl.pathname.startsWith("/api/")') && proxy.incl
   pass("csrf", "Origem explícita cross-site é rejeitada para mutações da API no proxy.");
 } else warn("csrf", "Não foi encontrada uma guarda explícita de origem no proxy.");
 
+if (proxy.includes("Content-Security-Policy") && proxy.includes("nonce-")) {
+  pass("csp", "CSP dinâmica com nonce é emitida pelo proxy.");
+} else {
+  warn("csp", "CSP dinâmica com nonce ainda não foi encontrada.");
+}
+
 if ((contents.get("app/dashboard/layout.tsx") ?? "").includes("index: false") && (contents.get("app/robots.ts") ?? "").includes("/dashboard/")) {
   pass("privacy-indexing", "Dashboard e rotas privadas estão fora de indexação.");
 } else fail("privacy-indexing", "Revisar robots e metadata das áreas privadas.");
 
 warn("remote-verification", "Verificação RLS remota e fluxo E2E dependem de credenciais de teste e acesso à API Supabase; não são inferidos por esta auditoria estática.");
-warn("csp", "Content-Security-Policy não foi aplicado porque o app usa scripts inline controlados (JSON-LD/consentimento); revisar em uma change dedicada após instrumentação com nonce.");
 
 const failures = findings.filter((finding) => finding.status === "fail");
 console.log(JSON.stringify({ generatedAt: new Date().toISOString(), filesScanned: trackedFiles.length, findings }, null, 2));

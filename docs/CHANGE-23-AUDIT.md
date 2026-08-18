@@ -1,7 +1,7 @@
 # Change 23 — Auditoria geral e segurança
 
 Data da auditoria: 18/08/2026  
-Versão liberada após a change: `v18082026.6`
+Versão liberada após a change: `v18082026.7`
 
 ## Escopo
 
@@ -12,6 +12,8 @@ Auditoria estática do repositório, revisão das rotas de API, autenticação, 
 - Desativado o header `X-Powered-By`.
 - Adicionados `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` e `X-DNS-Prefetch-Control`.
 - Adicionada rejeição de uma origem explicitamente cross-site nas mutações `/api/*`, antes da atualização da sessão Supabase.
+- Criada migration com trigger transacional que limita o orientador à revisão pendente, preservando o conteúdo acadêmico do estudante.
+- Aplicada CSP dinâmica com nonce para JSON-LD, hidratação Next e Google Analytics consentido.
 - Adicionado rate limiting por origem/IP para endpoints públicos que consomem recursos externos:
   - sugestões de prompt: 15 solicitações por minuto;
   - suporte: 5 mensagens por hora.
@@ -42,10 +44,9 @@ As migrations locais não puderam ser executadas porque o Docker do ambiente nã
 
 ## Riscos residuais e próximos controles
 
-1. **P2 — atualização do workflow pelo orientador no Data API.** A policy de `UPDATE` de `research_workflows` permite que um orientador autenticado vinculado atualize a linha inteira. A aplicação restringe a operação por schema, revisão otimista e ações (`approve`, `request_changes`, `save_comment`), mas uma chamada direta à Data API poderia tentar alterar outros campos. O endurecimento correto exige uma RPC/trigger transacional que permita somente a mutação da revisão do orientador; fica registrado para uma change específica de banco, pois substituir a policy sem essa RPC quebraria a validação atual.
-2. **P2 — CSP.** Não foi adicionado `Content-Security-Policy` nesta change porque o app ainda usa scripts inline controlados (JSON-LD e consentimento de analytics). Aplicar CSP com nonce deve ser feito junto com a migração desses scripts para evitar bloquear a landing page ou o consentimento.
-3. **P2 — verificação remota/E2E.** O fluxo completo aluno–orientador precisa ser executado com `MAPA_E2E_STUDENT_EMAIL`, `MAPA_E2E_ADVISOR_EMAIL` e `MAPA_E2E_PASSWORD` configurados. Essas variáveis não estavam disponíveis no ambiente desta execução; nenhuma senha foi criada ou inferida.
-4. **P3 — limite distribuído.** O rate limiting implementado é por instância Vercel. Para proteção forte contra abuso, complementar com limite no Vercel WAF/Resend e observabilidade de produção.
+1. **P2 — verificação remota/E2E.** O fluxo completo aluno–orientador precisa ser executado com `MAPA_E2E_STUDENT_EMAIL`, `MAPA_E2E_ADVISOR_EMAIL` e `MAPA_E2E_PASSWORD` configurados. Essas variáveis não estavam disponíveis no ambiente desta execução; nenhuma senha foi criada ou inferida.
+2. **P2 — aplicação da migration remota.** A migration de endurecimento está no repositório, mas o conector Supabase devolveu `permission denied` para aplicar DDL nesta sessão. Ela precisa ser aplicada no SQL Editor do projeto antes de considerar o RLS endurecido em produção.
+3. **P3 — publicação da regra global.** A regra global de sugestões foi preparada no Vercel Firewall em modo de observação (`100/60s` por IP, excedente apenas em log). A publicação exige revisão de tráfego e publicação explícita no painel/CLI. O plano atual recusou a regra equivalente para suporte; o limitador da aplicação continua ativo nesse endpoint.
 
 ## Decisão
 

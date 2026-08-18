@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { LegalLinks } from "@/modules/legal/legal-links";
@@ -30,10 +31,11 @@ const structuredData = {
   provider: { "@type": "Organization", name: "Mapa da Pesquisa", url: "https://mapadapesquisa.com.br" },
 };
 
-export default function PublicLandingPage() {
+export default async function PublicLandingPage() {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <main className="landing-page">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} nonce={nonce} type="application/ld+json" />
       <header className="landing-header">
         <Link className="landing-brand" href="/"><span className="brand-mark" aria-hidden="true">MP</span><span>Mapa da Pesquisa</span></Link>
         <Link className="landing-login" href="/login">Entrar</Link>

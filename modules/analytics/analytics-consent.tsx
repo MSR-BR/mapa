@@ -7,7 +7,7 @@ import { trackAnalyticsEvent, type AnalyticsEventName } from "./analytics";
 
 const CONSENT_KEY = "mapa.analytics-consent.v1";
 
-export function AnalyticsConsent({ measurementId }: { measurementId: string }) {
+export function AnalyticsConsent({ measurementId, nonce }: { measurementId: string; nonce?: string }) {
   const [choice, setChoice] = useState<"accepted" | "rejected" | null>(null);
   useEffect(() => {
     const stored = window.localStorage.getItem(CONSENT_KEY);
@@ -33,7 +33,7 @@ export function AnalyticsConsent({ measurementId }: { measurementId: string }) {
     setChoice(value);
   }
   return <>
-    {choice === "accepted" ? <GoogleAnalytics measurementId={measurementId} /> : null}
+    {choice === "accepted" ? <GoogleAnalytics measurementId={measurementId} nonce={nonce} /> : null}
     {choice === null ? <aside aria-label="Preferências de privacidade" className="analytics-consent"><strong>Privacidade e métricas</strong><p>Usamos métricas agregadas para melhorar o Mapa. Não enviamos prompts, projetos ou e-mails ao Google.</p><div><button onClick={() => choose("rejected")} type="button">Recusar</button><button className="analytics-consent-accept" onClick={() => choose("accepted")} type="button">Aceitar métricas</button></div></aside> : null}
   </>;
 }
