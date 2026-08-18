@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "regions": ["gru1"]
+  "regions": ["gru1"],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://mapadapesquisa.com.br/$1",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "mapadapesquisa.vercel.app" }]
+    }
+  ]
 }
