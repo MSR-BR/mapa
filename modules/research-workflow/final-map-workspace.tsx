@@ -123,7 +123,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
 
       <div className="final-map-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+        <button className="definition-button primary" data-analytics-event="stage_complete" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
       </div>
       {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
       <div className="final-export-panel" aria-label="Exportar mapa final">
@@ -132,7 +132,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           <span>{workflow.state === "completed" ? "PDF com referências cruzadas e avisos preservados." : "O PDF indicará que o mapa ainda é rascunho e manterá bloqueios/avisos visíveis."}</span>
         </div>
         <div>
-          <a href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`}>Exportar PDF</a>
+        <a data-analytics-event="export_pdf" href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`}>Exportar PDF</a>
         </div>
       </div>
 

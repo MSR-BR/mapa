@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { ResearchPromptInput } from "./research-prompt-input";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
@@ -18,6 +19,7 @@ export function PublicStartForm() {
     const formData = new FormData(event.currentTarget);
     const prompt = String(formData.get("prompt") ?? "").trim();
     if (!prompt) return;
+    trackAnalyticsEvent("cta_start_map");
 
     localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify({
       prompt,

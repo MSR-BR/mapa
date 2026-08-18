@@ -7,6 +7,7 @@ import {
   initialAuthActionState,
   type AuthActionState,
 } from "./types";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 type AuthFormProps = {
   action: (
@@ -68,7 +69,7 @@ export function AuthForm({
           {state.message}
         </p>
       ) : null}
-      <button disabled={pending} type="submit">
+      <button data-analytics-event="login" disabled={pending} onClick={() => trackAnalyticsEvent("login")} type="submit">
         {pending ? "Aguarde…" : submitLabel}
       </button>
       {alternateHref && alternateLabel ? (

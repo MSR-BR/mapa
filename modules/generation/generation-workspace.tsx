@@ -230,7 +230,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <span aria-hidden="true">✦</span>
           <h3>Transforme o briefing em uma estrutura acadêmica</h3>
           <p>A geração acontece somente quando você pedir e usa no máximo 20 referências por execução.</p>
-          <button className="primary-action" disabled={busy} onClick={() => void generate()} type="button">{busy ? "Gerando…" : "Gerar estrutura"}</button>
+          <button className="primary-action" data-analytics-event="stage_start" disabled={busy} onClick={() => void generate()} type="button">{busy ? "Gerando…" : "Gerar estrutura"}</button>
         </div>
       ) : (
         <div className="research-editor">
@@ -248,7 +248,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               {dirty ? (
                 <button disabled type="button">Exportar PDF</button>
               ) : (
-                <a href={`/api/projects/${projectId}/exports/pdf`}>Exportar PDF</a>
+                <a data-analytics-event="export_pdf" href={`/api/projects/${projectId}/exports/pdf`}>Exportar PDF</a>
               )}
             </div>
           </div>

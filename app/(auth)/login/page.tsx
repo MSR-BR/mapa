@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className="auth-divider"><span>ou</span></div>
           <form action={loginWithGoogle}>
             <input name="next" type="hidden" value={safeNext(next)} />
-            <button className="google-auth-button" type="submit">
+            <button className="google-auth-button" data-analytics-event="login" type="submit">
               <span aria-hidden="true" className="google-mark">G</span>
               Continuar com Google
             </button>

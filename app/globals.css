@@ -30,6 +30,12 @@ body {
 .public-hero .brand-mark { margin-bottom: 0.5rem; }
 .public-hero h1 { max-width: 14ch; font-size: clamp(3rem, 9vw, 6.5rem); }
 .public-start-form { text-align: left; }
+.analytics-consent { position:fixed; z-index:200; right:1rem; bottom:1rem; display:grid; width:min(calc(100% - 2rem),24rem); gap:.55rem; padding:1rem; border:1px solid var(--border); border-radius:1rem; background:#fff; box-shadow:0 1rem 3rem rgb(20 35 29 / 18%); }
+.analytics-consent strong { color:var(--foreground); font-size:.9rem; }
+.analytics-consent p { margin:0; color:var(--muted); font-size:.78rem; line-height:1.45; }
+.analytics-consent > div { display:flex; justify-content:flex-end; gap:.5rem; }
+.analytics-consent button { min-height:2.3rem; border:1px solid var(--border); border-radius:.6rem; padding:.45rem .7rem; background:#fff; color:var(--foreground); font:inherit; font-size:.78rem; font-weight:750; cursor:pointer; }
+.analytics-consent .analytics-consent-accept { border-color:var(--accent); background:var(--accent); color:#fff; }
 .landing-page { min-height:100vh; background:linear-gradient(155deg,#f8fbf9 0%,#eef5f1 52%,#e5f0ea 100%); color:var(--foreground); }
 .landing-header { display:flex; align-items:center; justify-content:space-between; width:min(100%,78rem); margin:0 auto; padding:1.25rem clamp(1rem,5vw,4rem); }
 .landing-brand { display:inline-flex; align-items:center; gap:.7rem; color:var(--foreground); font-weight:800; text-decoration:none; }
