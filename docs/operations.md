@@ -2,16 +2,16 @@
 
 ## Ambiente
 
-- Produção: `https://mapadapesquisa.vercel.app`
+- Produção: `https://mapadapesquisa.com.br`
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.
 
 ## Autenticação e domínio canônico
 
-- `NEXT_PUBLIC_APP_URL` na Vercel: `https://mapadapesquisa.vercel.app`.
-- Site URL no Supabase Auth: `https://mapadapesquisa.vercel.app`.
-- Redirect URL permitida no Supabase Auth: `https://mapadapesquisa.vercel.app/auth/callback`.
+- `NEXT_PUBLIC_APP_URL` na Vercel: `https://mapadapesquisa.com.br`.
+- Site URL no Supabase Auth: `https://mapadapesquisa.com.br`.
+- Redirect URL permitida no Supabase Auth: `https://mapadapesquisa.com.br/auth/callback`.
 - `https://mapa-gray-two.vercel.app` deve responder com redirecionamento permanente para o domínio canônico.
 - Depois de alterar qualquer domínio, validar o fluxo completo “tema → login → callback → geração”; uma Site URL correta sem a Redirect URL permitida faz o Supabase descartar o callback PKCE solicitado.
 

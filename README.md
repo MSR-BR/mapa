@@ -6,7 +6,7 @@ Plataforma web para apoiar o planejamento inicial de pesquisas científicas, TCC
 
 As Changes 001 a 006 estão concluídas. O MVP possui autenticação, projetos e briefing no Supabase, geração acadêmica com Research Starter + Gemini, editor persistente, exportações DOCX/PDF e deployment validado na Vercel.
 
-Produção: <https://mapadapesquisa.vercel.app>
+Produção: <https://mapadapesquisa.com.br>
 
 ## Requisitos
 

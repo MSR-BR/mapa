@@ -287,9 +287,9 @@ test("sanitizes auth callback destinations", async () => {
 test("documents the canonical authentication callback required in production", async () => {
   const operations = await readProjectFile("docs/operations.md");
 
-  assert.match(operations, /NEXT_PUBLIC_APP_URL.*https:\/\/mapadapesquisa\.vercel\.app/);
-  assert.match(operations, /Site URL no Supabase Auth.*https:\/\/mapadapesquisa\.vercel\.app/);
-  assert.match(operations, /Redirect URL permitida.*https:\/\/mapadapesquisa\.vercel\.app\/auth\/callback/);
+  assert.match(operations, /NEXT_PUBLIC_APP_URL.*https:\/\/mapadapesquisa\.com\.br/);
+  assert.match(operations, /Site URL no Supabase Auth.*https:\/\/mapadapesquisa\.com\.br/);
+  assert.match(operations, /Redirect URL permitida.*https:\/\/mapadapesquisa\.com\.br\/auth\/callback/);
 });
 
 test("derives project ownership from verified claims", async () => {
