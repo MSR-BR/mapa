@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { AccountMenu } from "@/modules/auth/account-menu";
 import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
@@ -6,6 +7,8 @@ import { loadUserProfile } from "@/modules/profile/storage";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { LegalConsentGate } from "@/modules/legal/legal-consent-gate";
 import { LegalLinks } from "@/modules/legal/legal-links";
+
+export const metadata: Metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { claims, supabase, userId } = await requireAuthenticatedUser();

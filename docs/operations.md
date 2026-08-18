@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v18082026.1` (tag Git correspondente)
+- Versão pública: `v18082026.2` (tag Git correspondente)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.

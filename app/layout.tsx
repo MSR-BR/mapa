@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mapa da Pesquisa",
+  metadataBase: new URL("https://mapadapesquisa.com.br"),
+  title: { default: "Mapa da Pesquisa", template: "%s | Mapa da Pesquisa" },
   description: "Planejamento estruturado para projetos de pesquisa acadêmica.",
+  alternates: { canonical: "/" },
+  openGraph: { title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica.", locale: "pt_BR", siteName: "Mapa da Pesquisa", type: "website" },
+  twitter: { card: "summary", title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica." },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
