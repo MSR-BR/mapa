@@ -103,9 +103,9 @@ Concluir a comunicação entre estudantes e orientadores, formalizar termos e su
 
 ### Submudanças
 
-1. Definir convenção compatível com GitHub/SemVer: `MAJOR.MINOR.PATCH` e data de build opcional.
+1. Definir convenção de release compatível com o GitHub: `vDDMMAAAA.N`, por exemplo `v18082026.1` (primeira publicação do dia).
 2. Exibir versão discreta no rodapé público e em páginas de suporte, sem poluir o dashboard.
-3. Derivar a versão de uma única fonte (package/release metadata), evitando divergência.
+3. Derivar a versão de uma única fonte (`NEXT_PUBLIC_APP_VERSION`), mantendo o mesmo valor na tag Git.
 4. Atualizar changelog/release note a cada publicação relevante.
 
 ## Change 23 — Auditoria geral e segurança
