@@ -29,8 +29,10 @@ export const LEGAL_CONTENT = {
   credits: {
     title: "Créditos e desenvolvedores",
     paragraphs: [
-      "Desenvolvido por Sergio França — Departamento de Engenharia Civil, Universidade Federal Fluminense. E-mail: sfranca@id.uff.br. Página pessoal: doutoradosg.uff.br/docente/sergio-luiz-braga-frança.",
-      "Mario Reis — Instituto de Física, Universidade Federal Fluminense. E-mail: marioreis@id.uff.br. Página pessoal: profmarioreis.wordpress.com.",
+      "Sergio França",
+      "Departamento de Engenharia Civil · Universidade Federal Fluminense",
+      "Mario Reis",
+      "Instituto de Física · Universidade Federal Fluminense",
     ],
   },
 } as const;

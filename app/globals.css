@@ -152,6 +152,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .dialog-close { position:absolute; top:.7rem; right:.8rem; border:0; background:transparent; color:var(--foreground); font-size:1.8rem; cursor:pointer; }
 .legal-dialog a { color:var(--accent); font-weight:700; }
 .support-email { display:block; overflow-wrap:anywhere; }
+.credits-links { display:grid; gap:.65rem; margin-top:.35rem; }
 .support-form { display:grid; gap:.65rem; }
 .support-form input,.support-form textarea { width:100%; border:1px solid var(--border); border-radius:.65rem; padding:.7rem .8rem; background:#fbfdfc; color:var(--foreground); font:inherit; }
 .support-form textarea { min-height:7rem; resize:vertical; }
