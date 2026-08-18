@@ -10,6 +10,11 @@ import {
 
 const COLORS = { gold: "#9A7418", muted: "#626B72", navy: "#203748", text: "#1C2428" };
 const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
+const APP_URL = "https://mapadapesquisa.com.br";
+
+function addAppAttribution(doc: PDFKit.PDFDocument, x: number, y: number) {
+  doc.fillColor("#176B4D").font("Helvetica").fontSize(7.5).text("Criado com Mapa da Pesquisa · mapadapesquisa.com.br", x, y, { link: APP_URL, underline: true });
+}
 
 function ensureSpace(doc: PDFKit.PDFDocument, height: number) {
   if (doc.y + height > doc.page.height - 84) doc.addPage();
@@ -34,6 +39,7 @@ export async function createPdfExport(input: ExportDocumentInput) {
   doc.fillColor(COLORS.muted).font("Helvetica-Oblique").fontSize(12).text("Estrutura acadêmica para revisão", { align: "center" });
   doc.moveDown(6);
   doc.font("Helvetica").fontSize(10).text(`Versão ${input.revision} · Exportado em ${dateLabel}`, { align: "center" });
+  addAppAttribution(doc, 72, doc.y + 14);
 
   doc.addPage();
   doc.fillColor(COLORS.navy).font("Helvetica-Bold").fontSize(18).text("Informações do projeto");
@@ -107,10 +113,11 @@ export async function createPdfExport(input: ExportDocumentInput) {
   for (let index = range.start; index < range.start + range.count; index += 1) {
     doc.switchToPage(index);
     doc.page.margins.bottom = 0;
+    addAppAttribution(doc, 72, doc.page.height - 48);
     doc.fillColor(COLORS.muted).font("Helvetica").fontSize(7.5).text(
       `Versão ${input.revision} · Revisar antes do uso · ${dateLabel} · Página ${index + 1} de ${range.count}`,
       72,
-      doc.page.height - 48,
+      doc.page.height - 36,
       { align: "right", lineBreak: false, width: doc.page.width - 144 },
     );
   }
@@ -174,6 +181,7 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   doc.fillColor(COLORS.muted).font("Helvetica-Oblique").fontSize(11).text(input.draft ? "Rascunho explicitamente identificado" : "Versão concluída", { align: "center" });
   doc.moveDown(4);
   doc.font("Helvetica").fontSize(9.5).text(`Workflow v2 - Revisão ${input.revision} - Exportado em ${dateLabel}`, { align: "center" });
+  addAppAttribution(doc, 64, doc.y + 14);
 
   doc.addPage();
   addFinalMapHeading(doc, "Etapa 1. Problemática da pesquisa");
@@ -188,9 +196,10 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   for (const [index, row] of finalMap.methodologyRows.entries()) {
     ensureSpace(doc, 155);
     const objective = finalMap.specificObjectives.find((item) => item.id === row.objectiveId);
+    const objectiveLabel = row.objectiveId === finalMap.generalObjective?.id ? "OEG" : `OE${index + 1}`;
     doc.roundedRect(doc.x, doc.y, doc.page.width - doc.page.margins.left - doc.page.margins.right, 1, 1).fill("#DDE9E3");
     doc.moveDown(0.55);
-    doc.fillColor(COLORS.navy).font("Helvetica-Bold").fontSize(11).text(`OE${index + 1}: ${finalMapText(objective)}`, { lineGap: 3 });
+    doc.fillColor(COLORS.navy).font("Helvetica-Bold").fontSize(11).text(`${objectiveLabel}: ${finalMapText(objective ?? finalMap.generalObjective)}`, { lineGap: 3 });
     doc.moveDown(0.25);
     doc.fillColor(COLORS.text).font("Helvetica-Bold").fontSize(9.4).text("Levantamento:", { continued: true });
     doc.font("Helvetica").text(` ${row.dataCollection}`, { lineGap: 3 });
@@ -238,10 +247,11 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   for (let index = range.start; index < range.start + range.count; index += 1) {
     doc.switchToPage(index);
     doc.page.margins.bottom = 0;
+    addAppAttribution(doc, 64, doc.page.height - 44);
     doc.fillColor(COLORS.muted).font("Helvetica").fontSize(7.5).text(
       `${input.draft ? "Rascunho" : "Versão concluída"} - Revisar antes do uso - ${dateLabel} - Página ${index + 1} de ${range.count}`,
       64,
-      doc.page.height - 44,
+      doc.page.height - 32,
       { align: "right", lineBreak: false, width: doc.page.width - 128 },
     );
   }
