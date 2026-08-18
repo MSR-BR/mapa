@@ -4,6 +4,8 @@ import { AccountMenu } from "@/modules/auth/account-menu";
 import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
 import { loadUserProfile } from "@/modules/profile/storage";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { LegalConsentGate } from "@/modules/legal/legal-consent-gate";
+import { LegalLinks } from "@/modules/legal/legal-links";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { claims, supabase, userId } = await requireAuthenticatedUser();
@@ -43,7 +45,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </nav>
       </header>
       {!profile.hasProfile ? <ProfileModePrompt email={email} /> : null}
+      {profile.hasProfile && !profile.hasLegalConsent ? <LegalConsentGate /> : null}
       {children}
+      <LegalLinks />
     </div>
   );
 }

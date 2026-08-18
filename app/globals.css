@@ -130,6 +130,26 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .profile-mode-options button:hover { border-color: rgb(145 218 189 / 44%); background: rgb(145 218 189 / 10%); }
 .profile-mode-options strong { color: #f4fbf7; font-size: 1rem; }
 .profile-mode-options span { color: #aebdb5; font-size: 0.84rem; line-height: 1.45; }
+.legal-consent-card,.legal-dialog { display:grid; width:min(100%,40rem); gap:1rem; border:1px solid #b8ccc2; border-radius:1.25rem; padding:clamp(1.2rem,4vw,2rem); background:#fff; color:var(--foreground); box-shadow:0 2rem 5rem rgb(20 35 29 / 24%); }
+.legal-consent-card h2,.legal-dialog h2 { margin:0; font-size:clamp(1.8rem,5vw,2.6rem); letter-spacing:-.05em; }
+.legal-consent-card > p:not(.section-kicker),.legal-dialog p { margin:0; color:var(--muted); line-height:1.55; }
+.legal-consent-scroll { max-height:min(42vh,22rem); overflow:auto; padding-right:.5rem; }
+.legal-consent-scroll h3 { margin:1rem 0 .35rem; color:var(--foreground); }
+.legal-consent-scroll p { margin:.35rem 0; color:var(--muted); font-size:.88rem; line-height:1.5; }
+.legal-version { font-size:.76rem; }
+.legal-consent-card form { display:grid; gap:.85rem; }
+.legal-checkbox { display:flex; gap:.6rem; align-items:flex-start; color:var(--foreground); font-size:.85rem; line-height:1.4; }
+.legal-checkbox input { margin-top:.2rem; accent-color:var(--accent); }
+.legal-links { display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem 1.2rem; padding:1.25rem 1rem 1.5rem; color:var(--muted); font-size:.75rem; }
+.legal-links button { border:0; padding:0; background:transparent; color:var(--accent); cursor:pointer; font:inherit; text-decoration:underline; }
+.legal-links span { width:100%; text-align:center; }
+.legal-dialog-backdrop { position:fixed; z-index:120; inset:0; display:grid; place-items:center; padding:1rem; background:rgb(9 17 14 / 58%); backdrop-filter:blur(10px); }
+.legal-dialog { position:relative; max-height:90vh; overflow:auto; }
+.dialog-close { position:absolute; top:.7rem; right:.8rem; border:0; background:transparent; color:var(--foreground); font-size:1.8rem; cursor:pointer; }
+.legal-dialog a { color:var(--accent); font-weight:700; }
+.support-form { display:grid; gap:.65rem; }
+.support-form input,.support-form textarea { width:100%; border:1px solid var(--border); border-radius:.65rem; padding:.7rem .8rem; background:#fbfdfc; color:var(--foreground); font:inherit; }
+.support-form textarea { min-height:7rem; resize:vertical; }
 .workspace-shell { width: min(100%, 76rem); margin: 0 auto; padding: clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 .narrow-workspace { width: min(100%, 54rem); }
 .workspace-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }

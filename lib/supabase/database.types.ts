@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      legal_consents: {
+        Row: {
+          accepted_at: string
+          created_at: string
+          terms_version: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          created_at?: string
+          terms_version: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          created_at?: string
+          terms_version?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generation_jobs: {
         Row: {
           attempt_count: number
