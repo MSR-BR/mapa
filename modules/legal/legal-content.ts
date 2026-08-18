@@ -27,7 +27,7 @@ export const LEGAL_CONTENT = {
     ],
   },
   credits: {
-    title: "Créditos e desenvolvedores",
+    title: "Créditos",
     paragraphs: [
       "Sergio França",
       "Departamento de Engenharia Civil · Universidade Federal Fluminense",
