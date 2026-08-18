@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
 
 import { suggestResearchPrompts } from "@/modules/generation/gemini";
+import { checkRateLimit, getRequestClientKey } from "@/lib/security/rate-limit";
 
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
+  const rate = checkRateLimit(getRequestClientKey(request, "prompt-suggestions"), 15, 60_000);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "Muitas solicitações. Tente novamente em instantes." },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } },
+    );
+  }
   const body: unknown = await request.json().catch(() => null);
   const prompt = body && typeof body === "object" && "prompt" in body
     ? String(body.prompt).trim()
