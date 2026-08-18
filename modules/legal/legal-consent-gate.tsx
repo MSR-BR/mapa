@@ -1,7 +1,12 @@
+"use client";
+
+import { useActionState } from "react";
+
 import { acceptLegalTerms } from "./legal-consent-actions";
 import { LEGAL_CONTENT, LEGAL_TERMS_VERSION } from "./legal-content";
 
-export function LegalConsentGate() {
+export function LegalConsentGate({ activeRole }: { activeRole: "student" | "advisor" }) {
+  const [state, action, pending] = useActionState(acceptLegalTerms, null);
   return (
     <div className="profile-mode-backdrop legal-consent-backdrop" role="presentation">
       <section aria-labelledby="legal-consent-title" aria-modal="true" className="legal-consent-card" role="dialog">
@@ -15,9 +20,11 @@ export function LegalConsentGate() {
           {LEGAL_CONTENT.privacy.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           <p className="legal-version">Versão {LEGAL_TERMS_VERSION}</p>
         </div>
-        <form action={acceptLegalTerms}>
+        <form action={action}>
+          <input name="profileRole" type="hidden" value={activeRole} />
           <label className="legal-checkbox"><input name="accepted" required type="checkbox" /> Li e aceito os Termos de uso e a Política de privacidade.</label>
-          <button className="primary-button legal-accept-button" type="submit">Aceitar e continuar</button>
+          <button className="primary-button legal-accept-button" disabled={pending} type="submit">{pending ? "Registrando…" : "Aceitar e continuar"}</button>
+          {state?.error ? <p className="legal-form-error" role="alert">{state.error}</p> : null}
         </form>
       </section>
     </div>
