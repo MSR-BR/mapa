@@ -9,6 +9,11 @@
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.
 
+## E-mail de suporte
+
+- Formulário interno: mensagens são enviadas via Resend para `marioreis@id.uff.br` e `sfranca@id.uff.br`.
+- Pendente (Change 034): configurar o recebimento de mensagens enviadas diretamente para `suporte@mapadapesquisa.com.br` e seu encaminhamento automático para os dois destinatários institucionais.
+
 ## Autenticação e domínio canônico
 
 - `NEXT_PUBLIC_APP_URL` na Vercel: `https://mapadapesquisa.com.br`.

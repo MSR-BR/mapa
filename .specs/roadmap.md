@@ -30,6 +30,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 031 | Recuperação do callback Google | Concluída | Código OAuth recebido na URL raiz é trocado por sessão e retorna ao dashboard; falhas preservam o destino e o rascunho. |
 | 032 | Retomada pós-login e início recolhido | Concluída | O rascunho autenticado aguarda o aceite legal, segue direto para a descoberta em cards e o dashboard oferece roteiro rápido e construção avançada recolhidos por padrão; textos legais atualizados. |
 | 033 | Distribuição do suporte para a equipe | Concluída | Mensagens enviadas por suporte@mapadapesquisa.com.br chegam aos e-mails institucionais de Mario Reis e Sérgio França; o reply-to continua sendo o e-mail informado pelo usuário. |
+| 034 | Recebimento direto em suporte@mapadapesquisa.com.br | Pendente | Configurar o recebimento de mensagens enviadas diretamente ao endereço de suporte e o encaminhamento automático para `marioreis@id.uff.br` e `sfranca@id.uff.br`; não confundir com o formulário interno do app, já coberto pela Change 033. |
 
 ## Marcos
 
