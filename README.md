@@ -1,5 +1,7 @@
 # Mapa da Pesquisa
 
+O Mapa da Pesquisa começa com cinco perguntas para formular a situação-problema e uma escolha de produto acadêmico: TCC, monografia, dissertação, tese, artigo de evento ou artigo de periódico. A seleção orienta o aprofundamento da IA, enquanto o Research Starter fornece referências verificáveis para revisão do estudante e do orientador.
+
 Plataforma web para apoiar o planejamento inicial de pesquisas científicas, TCCs, dissertações e teses.
 
 ## Estado

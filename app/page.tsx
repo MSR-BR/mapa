@@ -5,6 +5,12 @@ import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
 import { PublicStartForm } from "@/modules/projects/public-start-form";
 
+export const metadata = {
+  title: "Comece seu mapa de pesquisa",
+  description: "Responda cinco perguntas para formular a situação-problema, escolha TCC, monografia, dissertação, tese ou artigo e comece um mapa de pesquisa.",
+  alternates: { canonical: "/" },
+};
+
 export default async function Home() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();

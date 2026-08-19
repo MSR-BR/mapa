@@ -23,6 +23,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 015 | Transição e entrega do v2 | Implantada em produção | Legado preservado, dashboard/exportações atualizados, CPD e smoke público concluídos; pendente apenas validação autenticada real. |
 | 025 | Entrada estruturada da situação-problema | Concluída | Cinco perguntas orientadas substituem o prompt único, preservam o briefing no workflow e chegam à descoberta com compatibilidade legada. |
 | 026 | Tipo de produto e níveis de aprofundamento | Concluída | Seleção de TCC, monografia, dissertação, tese e artigos, com guia auxiliar aplicado às instruções da IA em todas as etapas. |
+| 027 | SEO, landing page e indexação pública | Concluída | Metadados, dados estruturados, textos públicos, sitemap, robots e documentação alinhados às entradas estruturadas e aos produtos acadêmicos. |
 
 ## Marcos
 

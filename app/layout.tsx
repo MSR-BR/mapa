@@ -17,10 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mapadapesquisa.com.br"),
   title: { default: "Mapa da Pesquisa", template: "%s | Mapa da Pesquisa" },
-  description: "Planejamento estruturado para projetos de pesquisa acadêmica.",
+  description: "Formule a situação-problema em cinco perguntas, escolha o produto acadêmico e construa um mapa de pesquisa com IA, Research Starter e validação humana.",
+  keywords: ["mapa da pesquisa", "situação-problema", "projeto de pesquisa", "TCC", "monografia", "dissertação", "tese", "revisão da literatura", "Research Starter"],
   alternates: { canonical: "/" },
-  openGraph: { title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica.", locale: "pt_BR", siteName: "Mapa da Pesquisa", type: "website" },
-  twitter: { card: "summary", title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica." },
+  openGraph: { title: "Mapa da Pesquisa | Da situação-problema ao projeto", description: "Cinco perguntas, seis produtos acadêmicos e um mapa de pesquisa revisável com referências verificáveis.", locale: "pt_BR", siteName: "Mapa da Pesquisa", type: "website", images: [{ url: "/brand/mapa-da-pesquisa-wordmark.png", alt: "Mapa da Pesquisa" }] },
+  twitter: { card: "summary", title: "Mapa da Pesquisa", description: "Formule, escolha o nível e construa seu projeto de pesquisa." },
   icons: {
     icon: "/brand/mapa-da-pesquisa-app-icon.png",
     shortcut: "/brand/mapa-da-pesquisa-app-icon.png",
