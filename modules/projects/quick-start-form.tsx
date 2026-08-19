@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 import { ResearchActivityIcon } from "../generation/research-activity-icon";
 import { createProject } from "./actions";
@@ -17,12 +17,17 @@ import {
   type ResearchIntakeDraft,
 } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
+import { ResearchPromptInput } from "./research-prompt-input";
+
+type StartMode = "quick" | "advanced" | null;
 
 export function QuickStartForm({
+  canResume = true,
   resumeDraft = false,
   showAdvisorField = true,
   showResearchType = false,
 }: {
+  canResume?: boolean;
   resumeDraft?: boolean;
   showAdvisorField?: boolean;
   showResearchType?: boolean;
@@ -31,17 +36,18 @@ export function QuickStartForm({
   const resumeSubmitPending = useRef(false);
   const pendingDraftRead = useRef(false);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
-  const [resumeMode, setResumeMode] = useState<"quick" | "advanced" | null>(null);
-  const [pendingPrompt, setPendingPrompt] = useState("");
+  const [mode, setMode] = useState<StartMode>(null);
+  const [quickPrompt, setQuickPrompt] = useState("");
+  const [clientError, setClientError] = useState("");
   const [state, formAction, pending] = useActionState(
     createProject,
     initialProjectActionState,
   );
 
   useEffect(() => {
-    // Recover the fresh draft even if an auth callback drops resume=1.
-    // It is cleared only by the successful project page.
-    if (pendingDraftRead.current || !formRef.current) return;
+    // Wait for the profile/terms gate to finish before auto-submitting. This
+    // prevents the draft action from racing with the first-access consent.
+    if (!canResume || (!resumeDraft && mode !== null) || pendingDraftRead.current || !formRef.current) return;
     pendingDraftRead.current = true;
     try {
       const raw = localStorage.getItem(PENDING_PROJECT_KEY);
@@ -52,14 +58,14 @@ export function QuickStartForm({
       if (fresh && draft.intake && typeof draft.intake === "object") {
         resumeSubmitPending.current = true;
         queueMicrotask(() => {
-          setResumeMode("advanced");
+          setMode("advanced");
           setIntake({ ...EMPTY_RESEARCH_INTAKE, ...(draft.intake as Partial<ResearchIntakeDraft>) });
         });
       } else if (fresh && typeof draft.prompt === "string") {
         resumeSubmitPending.current = true;
         queueMicrotask(() => {
-          setResumeMode("quick");
-          setPendingPrompt(draft.prompt as string);
+          setMode("quick");
+          setQuickPrompt(draft.prompt as string);
           setIntake(researchIntakeFromPrompt(draft.prompt as string));
         });
       }
@@ -67,34 +73,107 @@ export function QuickStartForm({
     } catch {
       localStorage.removeItem(PENDING_PROJECT_KEY);
     }
-  }, [resumeDraft]);
+  }, [canResume, mode, resumeDraft]);
 
   useEffect(() => {
-    if (
-      !resumeSubmitPending.current
-      || !isCompleteResearchIntake(intake)
-      || (showResearchType && resumeMode !== "quick" && !hasResearchProductType(intake))
-      || !formRef.current
-    ) return;
+    if (!resumeSubmitPending.current || !formRef.current || !mode) return;
+    if (mode === "quick" && quickPrompt.trim().length < 10) return;
+    if (mode === "advanced" && (!isCompleteResearchIntake(intake) || (showResearchType && !hasResearchProductType(intake)))) return;
     resumeSubmitPending.current = false;
     formRef.current.requestSubmit();
-  }, [intake, resumeMode, showResearchType]);
+  }, [intake, mode, quickPrompt, showResearchType]);
+
+  function handleQuickEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== "Enter" || event.shiftKey) return;
+    event.preventDefault();
+    event.currentTarget.form?.requestSubmit();
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    setClientError("");
+    if (!mode) {
+      event.preventDefault();
+      setClientError("Escolha Roteiro rápido ou Construção avançada para começar.");
+      return;
+    }
+    if (mode === "quick" && quickPrompt.trim().length < 10) {
+      event.preventDefault();
+      setClientError("Escreva pelo menos uma frase para iniciar o roteiro rápido.");
+      return;
+    }
+    if (mode === "advanced" && (!isCompleteResearchIntake(intake) || (showResearchType && !hasResearchProductType(intake)))) {
+      event.preventDefault();
+      setClientError(showResearchType && !hasResearchProductType(intake)
+        ? "Escolha o tipo de produto acadêmico antes de iniciar o mapa."
+        : "Preencha os cinco campos para formular a situação-problema.");
+    }
+  }
+
+  function toggleMode(nextMode: Exclude<StartMode, null>) {
+    setMode((current) => current === nextMode ? null : nextMode);
+    setClientError("");
+  }
 
   return (
-    <form action={formAction} className="quick-start-form" ref={formRef}>
-      <ResearchIntakeForm onChange={setIntake} showResearchType={showResearchType && resumeMode !== "quick"} value={intake} />
+    <form action={formAction} className="quick-start-form" onSubmit={handleSubmit} ref={formRef}>
+      <div className="public-mode-stack dashboard-mode-stack">
+        <section className={`public-mode-card ${mode === "quick" ? "is-open" : ""}`}>
+          <button
+            aria-controls="dashboard-quick-research-mode"
+            aria-expanded={mode === "quick"}
+            className="public-mode-toggle"
+            onClick={() => toggleMode("quick")}
+            type="button"
+          >
+            <span>
+              <small>Opção 1</small>
+              <strong>Roteiro rápido</strong>
+              <em>Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.</em>
+            </span>
+            <span aria-hidden="true" className="public-mode-chevron">{mode === "quick" ? "−" : "+"}</span>
+          </button>
+          {mode === "quick" ? (
+            <div className="public-mode-content" id="dashboard-quick-research-mode">
+              <ResearchPromptInput id="dashboard-quick-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} value={quickPrompt} />
+              <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
+            </div>
+          ) : null}
+        </section>
+
+        <section className={`public-mode-card ${mode === "advanced" ? "is-open" : ""}`}>
+          <button
+            aria-controls="dashboard-advanced-research-mode"
+            aria-expanded={mode === "advanced"}
+            className="public-mode-toggle"
+            onClick={() => toggleMode("advanced")}
+            type="button"
+          >
+            <span>
+              <small>Opção 2 · recomendado</small>
+              <strong>Construção avançada</strong>
+              <em>Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.</em>
+            </span>
+            <span aria-hidden="true" className="public-mode-chevron">{mode === "advanced" ? "−" : "+"}</span>
+          </button>
+          {mode === "advanced" ? (
+            <div className="public-mode-content" id="dashboard-advanced-research-mode">
+              <ResearchIntakeForm onChange={setIntake} showResearchType={showResearchType} value={intake} />
+            </div>
+          ) : null}
+        </section>
+      </div>
 
       <input name="autoGenerate" type="hidden" value="yes" />
-      <input name="legacyPromptMode" type="hidden" value={resumeMode === "quick" ? "yes" : "no"} />
-      {resumeMode === "quick" ? <input name="prompt" type="hidden" value={pendingPrompt} /> : null}
+      <input name="legacyPromptMode" type="hidden" value={mode === "quick" ? "yes" : "no"} />
       {showAdvisorField ? (
         <label className="quick-start-advisor">
           <span>E-mail do orientador</span>
           <input maxLength={320} name="advisorEmail" placeholder="orientador@instituicao.edu" type="email" />
         </label>
       ) : null}
+      {clientError ? <p className="research-intake-error" role="alert">{clientError}</p> : null}
       <div className="quick-start-toolbar quick-start-toolbar-simple">
-        <span>Enter para gerar · Shift + Enter para nova linha</span>
+        <span>{mode === "quick" ? "Enter para gerar · Shift + Enter para nova linha" : mode === "advanced" ? "Responda às cinco perguntas · Enter na pergunta final para continuar" : "Abra uma opção para começar"}</span>
         <button disabled={pending} type="submit">
           {pending ? "Iniciando…" : "Gerar mapa"}
           <span aria-hidden="true">→</span>

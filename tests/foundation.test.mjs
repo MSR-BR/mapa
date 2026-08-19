@@ -21,13 +21,16 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 });
 
 test("requests login only after the public central execution", async () => {
-  const [home, publicStart, loginPage, signupPage, authActions, quickStart] = await Promise.all([
+  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("modules/projects/public-start-form.tsx"),
     readProjectFile("app/(auth)/login/page.tsx"),
     readProjectFile("app/(auth)/signup/page.tsx"),
     readProjectFile("modules/auth/actions.ts"),
     readProjectFile("modules/projects/quick-start-form.tsx"),
+    readProjectFile("modules/legal/legal-content.ts"),
+    readProjectFile("modules/legal/legal-links.tsx"),
+    readProjectFile("app/dashboard/page.tsx"),
   ]);
 
   assert.doesNotMatch(home, /href="\/login"/);
@@ -51,6 +54,14 @@ test("requests login only after the public central execution", async () => {
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
   assert.match(quickStart, /pendingDraftRead/);
   assert.match(quickStart, /hasResearchProductType/);
+  assert.match(quickStart, /Roteiro rápido/);
+  assert.match(quickStart, /Construção avançada/);
+  assert.match(quickStart, /canResume/);
+  assert.match(dashboard, /canResume=\{profile\.hasLegalConsent\}/);
+  assert.match(legalContent, /com apoio do orientador da pesquisa/);
+  assert.match(legalContent, /no uso do aplicativo/);
+  assert.match(legalLinks, /Sérgio França, D\.Sc\./);
+  assert.match(legalLinks, /Escola de Engenharia/);
   assert.match(quickStart, /if \(!fresh\) localStorage\.removeItem/);
   assert.doesNotMatch(quickStart, /localStorage\.removeItem\(PENDING_PROJECT_KEY\);\n    }\n  } catch/);
   assert.match(await readProjectFile("modules/projects/pending-project-cleanup.tsx"), /successful project page|localStorage\.removeItem/);

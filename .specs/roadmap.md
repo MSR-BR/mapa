@@ -28,6 +28,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 029 | Recuperação do briefing após autenticação | Concluída | Rascunho preservado até a criação ser confirmada, com recuperação mesmo se o callback perder o parâmetro de retorno. |
 | 030 | Roteiro rápido e construção avançada | Concluída | Prompt livre com sugestões e entrada estruturada coexistem em cards recolhíveis, com persistência segura nos dois caminhos. |
 | 031 | Recuperação do callback Google | Concluída | Código OAuth recebido na URL raiz é trocado por sessão e retorna ao dashboard; falhas preservam o destino e o rascunho. |
+| 032 | Retomada pós-login e início recolhido | Concluída | O rascunho autenticado aguarda o aceite legal, segue direto para a descoberta em cards e o dashboard oferece roteiro rápido e construção avançada recolhidos por padrão; textos legais atualizados. |
 
 ## Marcos
 
