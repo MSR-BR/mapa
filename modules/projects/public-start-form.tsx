@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, researchIntakeSchema, type ResearchIntakeDraft } from "./research-intake";
+import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeSchema, type ResearchIntakeDraft } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
 import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
@@ -19,7 +19,7 @@ export function PublicStartForm() {
   function continueToLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const parsed = researchIntakeSchema.safeParse(intake);
-    if (!parsed.success) {
+    if (!parsed.success || !isCompleteResearchIntake(intake)) {
       setError("Preencha os cinco campos para formular a situação-problema.");
       return;
     }

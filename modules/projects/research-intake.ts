@@ -6,7 +6,7 @@ import {
   type ResearchProductType,
 } from "@/modules/research-workflow/research-level-guidance";
 
-export const researchIntakeFieldSchema = z.string().trim().min(10).max(2_000);
+export const researchIntakeFieldSchema = z.string().trim().min(1).max(2_000);
 
 export const researchIntakeSchema = z.object({
   problemContext: researchIntakeFieldSchema,
@@ -95,7 +95,7 @@ export function parseResearchIntakeJson(raw: FormDataEntryValue | null) {
   try {
     const parsed = JSON.parse(raw) as unknown;
     const result = researchIntakeSchema.safeParse(parsed);
-    return result.success ? result.data : null;
+    return result.success && isCompleteResearchIntake(result.data) ? result.data : null;
   } catch {
     return null;
   }
