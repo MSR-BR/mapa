@@ -41,7 +41,7 @@ Concluir a comunicação entre estudantes e orientadores, formalizar termos e su
 2. Exigir aceite na primeira entrada, registrando versão, data e usuário; bloquear uso autenticado até aceitar.
 3. Incluir nos termos o recebimento de e-mails transacionais, uso de IA/Research Starter, armazenamento de projetos e responsabilidade de revisão pelo usuário.
 4. Redigir privacidade com dados coletados, finalidade, retenção, compartilhamento com provedores, direitos do titular e contato.
-5. Criar suporte `suporte@mapadapesquisa.com.br`, encaminhando mensagens para `mario.reis.junior@gmail.com` via Resend/rota segura; validar antiabuso e limite de envio.
+5. Criar suporte `suporte@mapadapesquisa.com.br`, encaminhando mensagens para `marioreis@id.uff.br` e `sfranca@id.uff.br` via Resend/rota segura; validar antiabuso e limite de envio.
 6. Incluir créditos: Sergio Luiz Braga França (com link institucional informado) e Mario Reis, seguindo os dados já usados no projeto TERMO.
 7. Adicionar logo da UFF somente com ativo autorizado e texto alternativo; não incorporar imagem de terceiros sem licença.
 8. Registrar versão dos documentos e exibir “atualizado em”.

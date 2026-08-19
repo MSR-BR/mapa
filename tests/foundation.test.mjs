@@ -21,7 +21,7 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 });
 
 test("requests login only after the public central execution", async () => {
-  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard] = await Promise.all([
+  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard, supportRoute] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("modules/projects/public-start-form.tsx"),
     readProjectFile("app/(auth)/login/page.tsx"),
@@ -31,6 +31,7 @@ test("requests login only after the public central execution", async () => {
     readProjectFile("modules/legal/legal-content.ts"),
     readProjectFile("modules/legal/legal-links.tsx"),
     readProjectFile("app/dashboard/page.tsx"),
+    readProjectFile("app/api/support/route.ts"),
   ]);
 
   assert.doesNotMatch(home, /href="\/login"/);
@@ -62,6 +63,9 @@ test("requests login only after the public central execution", async () => {
   assert.match(legalContent, /no uso do aplicativo/);
   assert.match(legalLinks, /Sérgio França, D\.Sc\./);
   assert.match(legalLinks, /Escola de Engenharia/);
+  assert.match(supportRoute, /marioreis@id\.uff\.br/);
+  assert.match(supportRoute, /sfranca@id\.uff\.br/);
+  assert.match(supportRoute, /to: SUPPORT_RECIPIENTS/);
   assert.match(quickStart, /if \(!fresh\) localStorage\.removeItem/);
   assert.doesNotMatch(quickStart, /localStorage\.removeItem\(PENDING_PROJECT_KEY\);\n    }\n  } catch/);
   assert.match(await readProjectFile("modules/projects/pending-project-cleanup.tsx"), /successful project page|localStorage\.removeItem/);

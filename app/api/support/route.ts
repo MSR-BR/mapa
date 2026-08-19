@@ -9,6 +9,11 @@ const supportSchema = z.object({
   subject: z.string().trim().min(3).max(180),
 });
 
+export const SUPPORT_RECIPIENTS = [
+  "marioreis@id.uff.br",
+  "sfranca@id.uff.br",
+] as const;
+
 export async function POST(request: Request) {
   const rate = checkRateLimit(getRequestClientKey(request, "support"), 5, 60 * 60_000);
   if (!rate.allowed) {
@@ -29,7 +34,7 @@ export async function POST(request: Request) {
       reply_to: parsed.data.email,
       subject: `[Suporte Mapa] ${parsed.data.subject}`,
       text: `Contato: ${parsed.data.email}\n\n${parsed.data.message}`,
-      to: ["mario.reis.junior@gmail.com"],
+      to: SUPPORT_RECIPIENTS,
     }),
   });
   if (!response.ok) return NextResponse.json({ error: "Não foi possível enviar a mensagem agora." }, { status: 502 });
