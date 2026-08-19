@@ -8,7 +8,7 @@ import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
-import { formatResearchProductGuidance, type ResearchProductType } from "@/modules/research-workflow/research-level-guidance";
+import { formatResearchProductGuidance, researchProductTypeSchema, type ResearchProductType } from "@/modules/research-workflow/research-level-guidance";
 import type { ResearchIntake } from "@/modules/projects/research-intake";
 import { methodologyPlanInputSchema, type MethodologyPlanInput } from "@/modules/research-workflow/methodology-validation";
 import type { FinalMap } from "@/modules/research-workflow/final-map";
@@ -42,7 +42,7 @@ const interpretedResearchRequestSchema = z.object({
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
-  researchType: z.string().trim().min(2).max(40).nullable().default(null),
+  researchType: researchProductTypeSchema.nullable().default(null),
   researchGuidance: z.string().trim().max(8_000).nullable().default(null),
   title: z.string().trim().min(3).max(80),
 });
@@ -185,6 +185,12 @@ function compactDiscoveryEvidence(discovery: ProposalDiscovery) {
     volumeIssuePages: reference.volumeIssuePages,
     year: reference.year,
   }));
+}
+
+function researchDepthInstruction(discovery: ProposalDiscovery) {
+  return discovery.interpreted.researchGuidance
+    ? `Guia de aprofundamento do produto selecionado — aplique-a nesta etapa sem inventar escopo: ${discovery.interpreted.researchGuidance}`
+    : "";
 }
 
 function studentContextPrompt(studentContext: string[]) {
@@ -391,6 +397,7 @@ export async function regenerateProblemStatement(
       "Mantenha objeto, relação e recorte da proposta escolhida. Não acrescente método, instituição, população ou resultado.",
       "Use somente referenceIds presentes nas evidências.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Proposta escolhida: ${JSON.stringify(candidate)}`,
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
@@ -420,6 +427,7 @@ export async function generateGeneralObjective(
       "Não acrescente método, instituição, população ou recorte ausente.",
       "Use somente referenceIds presentes nas evidências.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Problemática validada: ${JSON.stringify(problemStatement)}`,
       `Proposta escolhida: ${JSON.stringify(candidate)}`,
       studentContextPrompt(studentContext),
@@ -450,6 +458,7 @@ export async function generateSpecificObjectives(
       "Não acrescente método, instituição, população, resultado ou produto ausente no escopo validado.",
       "Use somente referenceIds presentes nas evidências.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Problemática validada: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral validado: ${JSON.stringify(generalObjective)}`,
       studentContextPrompt(studentContext),
@@ -494,6 +503,7 @@ export async function generateLiteratureTopics(
       "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
       "Conceitos controlados aceitos são vocabulário candidato; só os inclua se forem coerentes com o tema e sustentados pelas evidências.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
       `Objetivos específicos: ${JSON.stringify(specificObjectives)}`,
@@ -538,6 +548,7 @@ export async function generateDevelopmentTopics(
       "O último tópico deve se relacionar diretamente ao objetivo geral e retornar generalObjectiveAligned=true ou incluir o ID do objetivo geral em objectiveCoverage; use justificativa somente se isso for metodologicamente impossível.",
       "Use somente referenceIds presentes nas evidências e associe ao menos uma referência verificável por tópico.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
       `ID do objetivo geral (OEG): ${JSON.stringify(generalObjectiveId)}`,
@@ -595,6 +606,7 @@ export async function generateMethodologyPlan(
       "Sugira um título final curto derivado do objetivo geral, sem copiar integralmente o objetivo.",
       "Não invente instituição, amostra, local, período, aprovação ética ou dado sensível ausente. Se houver risco ético ou de acesso, registre como aviso.",
       "Considere referências externas manuais como evidências fornecidas pelo aluno; use especialmente título e abstract.",
+      researchDepthInstruction(discovery),
       `Problemática: ${JSON.stringify(problemStatement)}`,
       `Objetivo geral: ${JSON.stringify(generalObjective)}`,
       `ID do objetivo geral (OEG): ${JSON.stringify(generalObjectiveId)}`,

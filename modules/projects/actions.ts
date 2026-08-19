@@ -15,10 +15,19 @@ import type { AdvisorLinkActionState, ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
 import {
   composeResearchBrief,
+  hasResearchProductType,
   parseResearchIntakeJson,
   researchIntakeFromPrompt,
   type ResearchIntake,
 } from "./research-intake";
+
+function academicLevelForResearchType(type: ResearchIntake["researchType"]) {
+  if (type === "tcc") return "undergraduate" as const;
+  if (type === "monografia") return "specialization" as const;
+  if (type === "dissertacao") return "masters" as const;
+  if (type === "tese") return "doctorate" as const;
+  return "other" as const;
+}
 
 async function saveProjectAdvisor(
   supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
@@ -40,6 +49,9 @@ export async function createProject(
   const prompt = formData.get("prompt");
   const parsedIntake = parseResearchIntakeJson(formData.get("intakeJson"));
   const intake: ResearchIntake | null = parsedIntake ?? (typeof prompt === "string" && prompt.trim() ? researchIntakeFromPrompt(prompt.trim()) as ResearchIntake : null);
+  if (autoGenerate && parsedIntake && !hasResearchProductType(parsedIntake)) {
+    return { message: "Escolha o tipo de produto acadêmico antes de iniciar o mapa.", status: "error" };
+  }
   if (autoGenerate && intake) {
     formData.set("title", "Nova proposta de pesquisa");
     formData.set("problemStatement", composeResearchBrief(intake));
@@ -60,6 +72,7 @@ export async function createProject(
   if (autoGenerate) {
     projectData = {
       ...result.data,
+      academic_level: intake?.researchType ? academicLevelForResearchType(intake.researchType) : result.data.academic_level,
       problem_statement: result.data.problem_statement || result.data.title,
       title: "Nova proposta de pesquisa",
     };

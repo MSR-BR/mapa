@@ -57,6 +57,24 @@ test("suggests AI refinements while the research request is being written", asyn
   assert.match(gemini, /Não invente instituições/);
 });
 
+test("uses the structured situation-problem intake and product-depth guidance", async () => {
+  const [intakeSchema, guidance, action, gemini] = await Promise.all([
+    readProjectFile("modules/projects/research-intake.ts"),
+    readProjectFile("modules/research-workflow/research-level-guidance.ts"),
+    readProjectFile("modules/projects/actions.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+  ]);
+
+  for (const field of ["problemContext", "observedSituation", "discrepancyConsequences", "existingKnowledgeGap", "delimitationQuestion"]) {
+    assert.match(intakeSchema, new RegExp(field));
+  }
+  for (const product of ["TCC / Graduação", "Monografia / Especialização", "Dissertação / Mestrado", "Tese / Doutorado", "Artigo de evento acadêmico", "Artigo de periódico de alto impacto"]) {
+    assert.match(guidance, new RegExp(product.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  assert.match(action, /intakeJson/);
+  assert.match(gemini, /researchGuidance/);
+});
+
 test("completes Change 004 with a versioned canonical schema and anti-hallucination prompt", async () => {
   const [schema, prompt, spec] = await Promise.all([
     readProjectFile("modules/generation/schema.ts"),

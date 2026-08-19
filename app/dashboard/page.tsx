@@ -194,7 +194,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             Descreva em linguagem natural o trabalho que deseja criar. Tema, nível,
             recorte e demais orientações podem ir no mesmo prompt.
           </p>
-          <QuickStartForm resumeDraft={resume === "1"} />
+          <QuickStartForm resumeDraft={resume === "1"} showResearchType />
         </section>
       ) : (
         <section className="advisor-mode-hero" aria-labelledby="advisor-mode-title">
@@ -204,7 +204,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             Você pode desenvolver projetos próprios sem validação externa e também revisar mapas vinculados
             ao e-mail da sua conta.
           </p>
-          <QuickStartForm resumeDraft={resume === "1"} showAdvisorField={false} />
+          <QuickStartForm resumeDraft={resume === "1"} showAdvisorField={false} showResearchType />
         </section>
       )}
 

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { researchIntakeSchema } from "@/modules/projects/research-intake";
+import { researchProductTypeSchema } from "./research-level-guidance";
 
 export const RESEARCH_WORKFLOW_SCHEMA_VERSION = "2.0.0" as const;
 
@@ -215,7 +216,7 @@ export const interpretedDiscoverySchema = z.object({
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
-  researchType: z.string().trim().min(2).max(40).nullable().default(null),
+  researchType: researchProductTypeSchema.nullable().default(null),
   researchGuidance: z.string().trim().max(8_000).nullable().default(null),
   title: z.string().trim().min(3).max(80),
 });
