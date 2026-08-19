@@ -6,6 +6,7 @@ import { loadGenerationSnapshot } from "@/modules/generation/storage";
 import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { PendingProjectCleanup } from "@/modules/projects/pending-project-cleanup";
 import { ProjectAdvisorPanel } from "@/modules/projects/project-advisor-panel";
 import { AdvisorReviewWorkspace } from "@/modules/research-workflow/advisor-review-workspace";
 import { FinalMapWorkspace } from "@/modules/research-workflow/final-map-workspace";
@@ -92,6 +93,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       );
     return (
       <main className="workspace-shell proposal-workspace-shell">
+        <PendingProjectCleanup />
         <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
@@ -128,6 +130,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
 
   return (
     <main className="workspace-shell narrow-workspace">
+      <PendingProjectCleanup />
       <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>

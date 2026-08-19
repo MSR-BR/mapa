@@ -38,6 +38,11 @@ test("requests login only after the public central execution", async () => {
   assert.match(authActions, /provider: "google"/);
   assert.match(quickStart, /requestSubmit/);
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
+  assert.match(quickStart, /pendingDraftRead/);
+  assert.match(quickStart, /hasResearchProductType/);
+  assert.match(quickStart, /if \(!fresh\) localStorage\.removeItem/);
+  assert.doesNotMatch(quickStart, /localStorage\.removeItem\(PENDING_PROJECT_KEY\);\n    }\n  } catch/);
+  assert.match(await readProjectFile("modules/projects/pending-project-cleanup.tsx"), /successful project page|localStorage\.removeItem/);
 });
 
 test("suggests AI refinements while the research request is being written", async () => {

@@ -11,6 +11,7 @@ import {
 } from "./public-start-form";
 import {
   EMPTY_RESEARCH_INTAKE,
+  hasResearchProductType,
   isCompleteResearchIntake,
   researchIntakeFromPrompt,
   type ResearchIntakeDraft,
@@ -28,6 +29,7 @@ export function QuickStartForm({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const resumeSubmitPending = useRef(false);
+  const pendingDraftRead = useRef(false);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
   const [state, formAction, pending] = useActionState(
     createProject,
@@ -35,7 +37,10 @@ export function QuickStartForm({
   );
 
   useEffect(() => {
-    if (!resumeDraft || !formRef.current) return;
+    // Recover the fresh draft even if an auth callback drops resume=1.
+    // It is cleared only by the successful project page.
+    if (pendingDraftRead.current || !formRef.current) return;
+    pendingDraftRead.current = true;
     try {
       const raw = localStorage.getItem(PENDING_PROJECT_KEY);
       if (!raw) return;
@@ -49,17 +54,22 @@ export function QuickStartForm({
         resumeSubmitPending.current = true;
         queueMicrotask(() => setIntake(researchIntakeFromPrompt(draft.prompt as string)));
       }
-      localStorage.removeItem(PENDING_PROJECT_KEY);
+      if (!fresh) localStorage.removeItem(PENDING_PROJECT_KEY);
     } catch {
       localStorage.removeItem(PENDING_PROJECT_KEY);
     }
   }, [resumeDraft]);
 
   useEffect(() => {
-    if (!resumeSubmitPending.current || !isCompleteResearchIntake(intake) || !formRef.current) return;
+    if (
+      !resumeSubmitPending.current
+      || !isCompleteResearchIntake(intake)
+      || (showResearchType && !hasResearchProductType(intake))
+      || !formRef.current
+    ) return;
     resumeSubmitPending.current = false;
     formRef.current.requestSubmit();
-  }, [intake]);
+  }, [intake, showResearchType]);
 
   return (
     <form action={formAction} className="quick-start-form" ref={formRef}>
