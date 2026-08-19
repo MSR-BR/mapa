@@ -11,7 +11,16 @@ export const metadata = {
   alternates: { canonical: "/" },
 };
 
-export default async function Home() {
+function safeOAuthDestination(value: string | undefined) {
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard?resume=1";
+}
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ code?: string; next?: string }> }) {
+  const { code, next } = await searchParams;
+  if (code) {
+    redirect(`/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(safeOAuthDestination(next))}`);
+  }
+
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (data?.claims?.sub) redirect("/dashboard?continue=1");

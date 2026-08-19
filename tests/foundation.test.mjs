@@ -16,6 +16,8 @@ test("keeps the branded foundation and locale in the App Router", async () => {
   assert.match(page, /O que você quer desenvolver\?/);
   assert.doesNotMatch(page, /Comece pela ideia/);
   assert.match(page, /PublicStartForm/);
+  assert.match(page, /auth\/callback\?code=/);
+  assert.match(page, /dashboard\?resume=1/);
 });
 
 test("requests login only after the public central execution", async () => {
@@ -44,6 +46,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(authActions, /emailRedirectTo:.*encodeURIComponent\(next\)/);
   assert.match(authActions, /signInWithOAuth/);
   assert.match(authActions, /provider: "google"/);
+  assert.match(await readProjectFile("app/auth/callback/route.ts"), /error=google/);
   assert.match(quickStart, /requestSubmit/);
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
   assert.match(quickStart, /pendingDraftRead/);

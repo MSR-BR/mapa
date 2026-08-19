@@ -17,5 +17,5 @@ export async function GET(request: Request) {
     if (!error) return NextResponse.redirect(new URL(next, url.origin));
   }
 
-  return NextResponse.redirect(new URL("/login?error=confirmation", url.origin));
+  return NextResponse.redirect(new URL(`/login?error=google&next=${encodeURIComponent(next)}`, url.origin));
 }
