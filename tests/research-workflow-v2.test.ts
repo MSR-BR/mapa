@@ -78,6 +78,7 @@ test("accepts the empty versioned workflow foundation", () => {
     elementVersions: [],
     elements: [],
     knowledgeSuggestions: [],
+    initialBriefing: null,
     methodologyClassification: null,
     methodologyRows: [],
     referenceArchive: [],

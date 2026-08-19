@@ -59,7 +59,7 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
   }
 
   try {
-    const discovery = await discoverResearchProposals(project);
+    const discovery = await discoverResearchProposals(project, workflow.content.initialBriefing);
     const completedAt = new Date().toISOString();
     const content = { ...workflow.content, discovery };
     const { data: saved, error: saveError } = await supabase

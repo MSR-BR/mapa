@@ -13,6 +13,12 @@ import { normalizeAdvisorEmail } from "./advisor";
 import { requireAuthenticatedUser } from "./auth";
 import type { AdvisorLinkActionState, ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
+import {
+  composeResearchBrief,
+  parseResearchIntakeJson,
+  researchIntakeFromPrompt,
+  type ResearchIntake,
+} from "./research-intake";
 
 async function saveProjectAdvisor(
   supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
@@ -32,10 +38,11 @@ export async function createProject(
 ): Promise<ProjectActionState> {
   const autoGenerate = formData.get("autoGenerate") === "yes";
   const prompt = formData.get("prompt");
-  if (autoGenerate && typeof prompt === "string" && prompt.trim()) {
-    const normalizedPrompt = prompt.trim();
-    formData.set("title", normalizedPrompt.slice(0, 160));
-    formData.set("problemStatement", normalizedPrompt.slice(0, 5_000));
+  const parsedIntake = parseResearchIntakeJson(formData.get("intakeJson"));
+  const intake: ResearchIntake | null = parsedIntake ?? (typeof prompt === "string" && prompt.trim() ? researchIntakeFromPrompt(prompt.trim()) as ResearchIntake : null);
+  if (autoGenerate && intake) {
+    formData.set("title", "Nova proposta de pesquisa");
+    formData.set("problemStatement", composeResearchBrief(intake));
   }
   const result = parseProjectForm(formData);
   if (!result.success) {
@@ -86,7 +93,7 @@ export async function createProject(
 
   if (useResearchMapV2) {
     try {
-      await createResearchWorkflow(supabase, userId, data.id);
+      await createResearchWorkflow(supabase, userId, data.id, intake);
     } catch (workflowError) {
       const now = new Date().toISOString();
       await supabase

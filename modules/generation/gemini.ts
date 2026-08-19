@@ -8,6 +8,8 @@ import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
+import { formatResearchProductGuidance, type ResearchProductType } from "@/modules/research-workflow/research-level-guidance";
+import type { ResearchIntake } from "@/modules/projects/research-intake";
 import { methodologyPlanInputSchema, type MethodologyPlanInput } from "@/modules/research-workflow/methodology-validation";
 import type { FinalMap } from "@/modules/research-workflow/final-map";
 import {
@@ -40,6 +42,8 @@ const interpretedResearchRequestSchema = z.object({
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
+  researchType: z.string().trim().min(2).max(40).nullable().default(null),
+  researchGuidance: z.string().trim().max(8_000).nullable().default(null),
   title: z.string().trim().min(3).max(80),
 });
 
@@ -261,8 +265,10 @@ export async function broadenResearchQuery(
 
 export async function interpretResearchRequest(
   project: ResearchRequestInput,
-  options: { replacementKeywords?: string[] } = {},
+  options: { replacementKeywords?: string[]; initialBriefing?: ResearchIntake | null } = {},
 ) {
+  const researchType = options.initialBriefing?.researchType ?? null;
+  const researchGuidance = formatResearchProductGuidance(researchType as ResearchProductType | null);
   const prompt = [
     "Interprete o pedido de pesquisa sem inventar informações.",
     "Produza um título curto e acadêmico, com no máximo 80 caracteres.",
@@ -275,6 +281,10 @@ export async function interpretResearchRequest(
     "Identifique a área do conhecimento. Se ela estiver explícita, preserve-a e retorne knowledgeAreaProposed=false.",
     "Se a área não estiver explícita, proponha a mais adequada e retorne knowledgeAreaProposed=true.",
     "Quando houver palavras-chave fornecidas pelo usuário, trate-as como orientação prioritária para a consulta.",
+    ...(researchGuidance ? [
+      "Respeite o tipo de produto acadêmico selecionado ao resumir o pedido e propor o título; não aumente o escopo apenas para cumprir o nível.",
+      `Guia de aprofundamento do produto: ${researchGuidance}`,
+    ] : []),
     ...(options.replacementKeywords?.length
       ? [
           "As novas palavras-chave abaixo substituem o foco anterior da pesquisa.",
@@ -310,6 +320,8 @@ export async function interpretResearchRequest(
     knowledgeAreaProposed: output.knowledgeAreaProposed,
     keywords: [...new Set(output.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 10),
     researchQuery: output.researchQuery.trim(),
+    researchType,
+    researchGuidance,
     title: output.title.trim(),
   });
 }

@@ -8,6 +8,7 @@ import {
 import type { Project } from "@/modules/projects/types";
 import { fetchResearchStarterReport } from "@/modules/research-starter/client";
 import { proposalDiscoverySchema, type InterpretedDiscovery } from "./schema";
+import type { ResearchIntake } from "@/modules/projects/research-intake";
 
 async function fetchVerifiedLiterature(
   project: Project,
@@ -55,11 +56,11 @@ async function fetchVerifiedLiterature(
   return { interpreted: activeInterpretation, report };
 }
 
-export async function discoverResearchProposals(project: Project) {
+export async function discoverResearchProposals(project: Project, initialBriefing: ResearchIntake | null = null) {
   const originalPrompt = project.problem_statement?.trim() || project.theme?.trim() || project.title.trim();
   if (originalPrompt.length < 8) throw new Error("O tema da pesquisa é muito curto.");
 
-  const initialInterpretation = await interpretResearchRequest(project);
+  const initialInterpretation = await interpretResearchRequest(project, { initialBriefing });
   const { interpreted, report } = await fetchVerifiedLiterature(project, initialInterpretation);
   const candidates = await generateProblemCandidates(originalPrompt, interpreted, report);
 

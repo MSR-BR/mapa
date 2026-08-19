@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { researchIntakeSchema } from "@/modules/projects/research-intake";
+
 export const RESEARCH_WORKFLOW_SCHEMA_VERSION = "2.0.0" as const;
 
 export const workflowStateSchema = z.enum([
@@ -213,6 +215,8 @@ export const interpretedDiscoverySchema = z.object({
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
   researchQuery: z.string().trim().min(8).max(240),
+  researchType: z.string().trim().min(2).max(40).nullable().default(null),
+  researchGuidance: z.string().trim().max(8_000).nullable().default(null),
   title: z.string().trim().min(3).max(80),
 });
 
@@ -271,6 +275,7 @@ export const researchWorkflowContentSchema = z.object({
   elementVersions: z.array(elementVersionSchema).max(300).default([]),
   elements: z.array(validatedElementSchema).max(120).default([]),
   knowledgeSuggestions: z.array(knowledgeSuggestionSchema).max(20).default([]),
+  initialBriefing: researchIntakeSchema.nullable().default(null),
   methodologyClassification: methodologyClassificationSchema.nullable().default(null),
   methodologyRows: z.array(methodologyRowSchema).max(7).default([]),
   referenceArchive: z.array(discoveryReferenceSchema).max(100).default([]),
@@ -302,6 +307,7 @@ export const EMPTY_WORKFLOW_CONTENT: ResearchWorkflowContent = {
   elementVersions: [],
   elements: [],
   knowledgeSuggestions: [],
+  initialBriefing: null,
   methodologyClassification: null,
   methodologyRows: [],
   referenceArchive: [],

@@ -9,18 +9,26 @@ import {
   PENDING_PROJECT_KEY,
   PENDING_PROJECT_MAX_AGE_MS,
 } from "./public-start-form";
-import { ResearchPromptInput } from "./research-prompt-input";
+import {
+  EMPTY_RESEARCH_INTAKE,
+  isCompleteResearchIntake,
+  researchIntakeFromPrompt,
+  type ResearchIntakeDraft,
+} from "./research-intake";
+import { ResearchIntakeForm } from "./research-intake-form";
 
 export function QuickStartForm({
   resumeDraft = false,
   showAdvisorField = true,
+  showResearchType = false,
 }: {
   resumeDraft?: boolean;
   showAdvisorField?: boolean;
+  showResearchType?: boolean;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const resumeSubmitPending = useRef(false);
-  const [prompt, setPrompt] = useState("");
+  const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
   const [state, formAction, pending] = useActionState(
     createProject,
     initialProjectActionState,
@@ -34,10 +42,12 @@ export function QuickStartForm({
       const draft = JSON.parse(raw) as Record<string, unknown>;
       const savedAt = typeof draft.savedAt === "number" ? draft.savedAt : 0;
       const fresh = Date.now() - savedAt <= PENDING_PROJECT_MAX_AGE_MS;
-      if (fresh && typeof draft.prompt === "string") {
+      if (fresh && draft.intake && typeof draft.intake === "object") {
         resumeSubmitPending.current = true;
-        const savedPrompt = draft.prompt.slice(0, 5_000);
-        queueMicrotask(() => setPrompt(savedPrompt));
+        queueMicrotask(() => setIntake({ ...EMPTY_RESEARCH_INTAKE, ...(draft.intake as Partial<ResearchIntakeDraft>) }));
+      } else if (fresh && typeof draft.prompt === "string") {
+        resumeSubmitPending.current = true;
+        queueMicrotask(() => setIntake(researchIntakeFromPrompt(draft.prompt as string)));
       }
       localStorage.removeItem(PENDING_PROJECT_KEY);
     } catch {
@@ -46,27 +56,14 @@ export function QuickStartForm({
   }, [resumeDraft]);
 
   useEffect(() => {
-    if (!resumeSubmitPending.current || !prompt || !formRef.current) return;
+    if (!resumeSubmitPending.current || !isCompleteResearchIntake(intake) || !formRef.current) return;
     resumeSubmitPending.current = false;
     formRef.current.requestSubmit();
-  }, [prompt]);
+  }, [intake]);
 
   return (
     <form action={formAction} className="quick-start-form" ref={formRef}>
-      <label className="sr-only" htmlFor="quick-project-title">
-        Título provisório ou pergunta de pesquisa
-      </label>
-      <ResearchPromptInput
-        id="quick-project-title"
-        onChange={setPrompt}
-        onEnter={(event) => {
-          if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            event.currentTarget.form?.requestSubmit();
-          }
-        }}
-        value={prompt}
-      />
+      <ResearchIntakeForm onChange={setIntake} showResearchType={showResearchType} value={intake} />
 
       <input name="autoGenerate" type="hidden" value="yes" />
       {showAdvisorField ? (

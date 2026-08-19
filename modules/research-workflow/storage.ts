@@ -3,6 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database, Json } from "@/lib/supabase/database.types";
+import type { ResearchIntake } from "@/modules/projects/research-intake";
 import { cloneResearchWorkflowContent } from "./clone";
 import {
   EMPTY_WORKFLOW_CONTENT,
@@ -59,11 +60,12 @@ export async function createResearchWorkflow(
   supabase: SupabaseClient<Database>,
   ownerId: string,
   projectId: string,
+  initialBriefing: ResearchIntake | null = null,
 ) {
   const { data, error } = await supabase
     .from("research_workflows")
     .insert({
-      content: EMPTY_WORKFLOW_CONTENT as unknown as Json,
+      content: { ...EMPTY_WORKFLOW_CONTENT, initialBriefing } as unknown as Json,
       owner_id: ownerId,
       project_id: projectId,
       schema_version: RESEARCH_WORKFLOW_SCHEMA_VERSION,
