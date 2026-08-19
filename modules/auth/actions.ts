@@ -65,9 +65,10 @@ export async function signUp(
   }
 
   const supabase = await createClient();
+  const next = readSafeDestination(formData);
   const { data, error } = await supabase.auth.signUp({
     email,
-    options: { emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent("/dashboard?continue=1")}` },
+    options: { emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(next)}` },
     password,
   });
 
@@ -78,7 +79,7 @@ export async function signUp(
     };
   }
 
-  if (data.session) redirect("/dashboard?continue=1");
+  if (data.session) redirect(next);
 
   return {
     message: "Se o cadastro puder ser concluído, enviaremos uma confirmação por e-mail.",

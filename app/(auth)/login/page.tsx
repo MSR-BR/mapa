@@ -9,6 +9,7 @@ function safeNext(value: string | undefined) {
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
+  const destination = safeNext(next);
   const googleAuthEnabled = process.env.GOOGLE_AUTH_ENABLED === "true";
   return (
     <>
@@ -19,14 +20,14 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         action={login}
         alternateHref="/forgot-password"
         alternateLabel="Esqueci minha senha"
-        hiddenFields={{ next: safeNext(next) }}
+        hiddenFields={{ next: destination }}
         submitLabel="Entrar"
       />
       {googleAuthEnabled ? (
         <>
           <div className="auth-divider"><span>ou</span></div>
           <form action={loginWithGoogle}>
-            <input name="next" type="hidden" value={safeNext(next)} />
+            <input name="next" type="hidden" value={destination} />
             <button className="google-auth-button" data-analytics-event="login" type="submit">
               <span aria-hidden="true" className="google-mark">G</span>
               Continuar com Google
@@ -34,7 +35,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </form>
         </>
       ) : null}
-      <p className="auth-footer">Ainda não possui conta? <Link href="/signup">Criar conta</Link></p>
+      <p className="auth-footer">Ainda não possui conta? <Link href={`/signup?next=${encodeURIComponent(destination)}`}>Criar conta</Link></p>
     </>
   );
 }

@@ -19,10 +19,11 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 });
 
 test("requests login only after the public central execution", async () => {
-  const [home, publicStart, loginPage, authActions, quickStart] = await Promise.all([
+  const [home, publicStart, loginPage, signupPage, authActions, quickStart] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("modules/projects/public-start-form.tsx"),
     readProjectFile("app/(auth)/login/page.tsx"),
+    readProjectFile("app/(auth)/signup/page.tsx"),
     readProjectFile("modules/auth/actions.ts"),
     readProjectFile("modules/projects/quick-start-form.tsx"),
   ]);
@@ -33,7 +34,11 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /login\?next=/);
   assert.match(loginPage, /hiddenFields/);
   assert.match(loginPage, /Continuar com Google/);
+  assert.match(loginPage, /signup\?next=/);
+  assert.match(signupPage, /hiddenFields/);
+  assert.match(signupPage, /login\?next=/);
   assert.match(authActions, /readSafeDestination/);
+  assert.match(authActions, /emailRedirectTo:.*encodeURIComponent\(next\)/);
   assert.match(authActions, /signInWithOAuth/);
   assert.match(authActions, /provider: "google"/);
   assert.match(quickStart, /requestSubmit/);

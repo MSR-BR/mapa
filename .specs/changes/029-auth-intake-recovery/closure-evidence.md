@@ -6,4 +6,6 @@
   feita por `PendingProjectCleanup` na página do projeto.
 - Rascunhos expirados ou inválidos continuam sendo descartados com segurança.
 - Verificações executadas: `npm run typecheck`, `npm run lint` e `npm test`.
-- Versão liberada: `v19082026.1`.
+- O destino `resume=1` também é preservado ao escolher cadastro, confirmação por
+  e-mail ou retorno para o login.
+- Versão liberada: `v19082026.2`.
