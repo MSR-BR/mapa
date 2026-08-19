@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 
+import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
 
 export const metadata: Metadata = {
@@ -37,7 +38,9 @@ export default async function PublicLandingPage() {
     <main className="landing-page">
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} nonce={nonce} type="application/ld+json" />
       <header className="landing-header">
-        <Link className="landing-brand" href="/"><span className="brand-mark" aria-hidden="true">MP</span><span>Mapa da Pesquisa</span></Link>
+        <Link className="landing-brand" href="/" aria-label="Mapa da Pesquisa">
+          <BrandLogo variant="wordmark" priority />
+        </Link>
         <Link className="landing-login" href="/login">Entrar</Link>
       </header>
       <section className="landing-hero" aria-labelledby="landing-title">

@@ -22,8 +22,9 @@ export const metadata: Metadata = {
   openGraph: { title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica.", locale: "pt_BR", siteName: "Mapa da Pesquisa", type: "website" },
   twitter: { card: "summary", title: "Mapa da Pesquisa", description: "Planejamento estruturado para projetos de pesquisa acadêmica." },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/brand/mapa-da-pesquisa-app-icon.png",
+    shortcut: "/brand/mapa-da-pesquisa-app-icon.png",
+    apple: "/brand/mapa-da-pesquisa-app-icon.png",
   },
 };
 

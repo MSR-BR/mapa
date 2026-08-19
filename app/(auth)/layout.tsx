@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { BrandLogo } from "@/modules/branding/brand-logo";
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className="auth-shell">
@@ -8,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <section className="auth-stage">
         <div className="auth-intro">
           <Link className="auth-wordmark" href="/">
-            <span className="auth-wordmark-icon" aria-hidden="true">M</span>
+            <BrandLogo variant="app-icon" decorative priority />
             <span>Mapa da Pesquisa</span>
           </Link>
           <div className="auth-intro-copy">
@@ -19,7 +21,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div className="auth-card-wrap">
           <section className="auth-card">
-            <Link className="auth-brand" href="/" aria-label="Voltar ao início">MP</Link>
+            <Link className="auth-brand" href="/" aria-label="Voltar ao início">
+              <BrandLogo variant="app-icon" decorative priority />
+            </Link>
             {children}
           </section>
         </div>

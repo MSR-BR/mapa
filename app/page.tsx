@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
 import { PublicStartForm } from "@/modules/projects/public-start-form";
 
@@ -12,7 +13,7 @@ export default async function Home() {
   return (
     <main className="public-home">
       <section className="quick-start public-hero" aria-labelledby="page-title">
-        <div className="brand-mark" aria-hidden="true">MP</div>
+        <BrandLogo variant="mark" className="public-hero-logo" decorative priority />
         <p className="eyebrow">Mapa da Pesquisa</p>
         <h1 id="page-title">O que você quer desenvolver?</h1>
         <PublicStartForm />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { AccountMenu } from "@/modules/auth/account-menu";
+import { BrandLogo } from "@/modules/branding/brand-logo";
 import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
 import { loadUserProfile } from "@/modules/profile/storage";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
@@ -33,8 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="app-shell">
       <header className="app-header">
         <Link className="app-brand" href="/dashboard">
-          <span className="app-brand-mark" aria-hidden="true">M</span>
-          <span>Mapa da Pesquisa</span>
+          <BrandLogo variant="wordmark" priority />
         </Link>
         <nav aria-label="Navegação principal">
           <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
