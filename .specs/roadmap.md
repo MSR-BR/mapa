@@ -26,6 +26,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 027 | SEO, landing page e indexação pública | Concluída | Metadados, dados estruturados, textos públicos, sitemap, robots e documentação alinhados às entradas estruturadas e aos produtos acadêmicos. |
 | 028 | Compatibilidade de rascunhos legados | Concluída | Recuperação de prompts antigos sem perder a validação mínima da nova entrada estruturada. |
 | 029 | Recuperação do briefing após autenticação | Concluída | Rascunho preservado até a criação ser confirmada, com recuperação mesmo se o callback perder o parâmetro de retorno. |
+| 030 | Roteiro rápido e construção avançada | Concluída | Prompt livre com sugestões e entrada estruturada coexistem em cards recolhíveis, com persistência segura nos dois caminhos. |
 
 ## Marcos
 

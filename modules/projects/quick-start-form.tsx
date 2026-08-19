@@ -31,6 +31,8 @@ export function QuickStartForm({
   const resumeSubmitPending = useRef(false);
   const pendingDraftRead = useRef(false);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
+  const [resumeMode, setResumeMode] = useState<"quick" | "advanced" | null>(null);
+  const [pendingPrompt, setPendingPrompt] = useState("");
   const [state, formAction, pending] = useActionState(
     createProject,
     initialProjectActionState,
@@ -49,10 +51,17 @@ export function QuickStartForm({
       const fresh = Date.now() - savedAt <= PENDING_PROJECT_MAX_AGE_MS;
       if (fresh && draft.intake && typeof draft.intake === "object") {
         resumeSubmitPending.current = true;
-        queueMicrotask(() => setIntake({ ...EMPTY_RESEARCH_INTAKE, ...(draft.intake as Partial<ResearchIntakeDraft>) }));
+        queueMicrotask(() => {
+          setResumeMode("advanced");
+          setIntake({ ...EMPTY_RESEARCH_INTAKE, ...(draft.intake as Partial<ResearchIntakeDraft>) });
+        });
       } else if (fresh && typeof draft.prompt === "string") {
         resumeSubmitPending.current = true;
-        queueMicrotask(() => setIntake(researchIntakeFromPrompt(draft.prompt as string)));
+        queueMicrotask(() => {
+          setResumeMode("quick");
+          setPendingPrompt(draft.prompt as string);
+          setIntake(researchIntakeFromPrompt(draft.prompt as string));
+        });
       }
       if (!fresh) localStorage.removeItem(PENDING_PROJECT_KEY);
     } catch {
@@ -64,18 +73,20 @@ export function QuickStartForm({
     if (
       !resumeSubmitPending.current
       || !isCompleteResearchIntake(intake)
-      || (showResearchType && !hasResearchProductType(intake))
+      || (showResearchType && resumeMode !== "quick" && !hasResearchProductType(intake))
       || !formRef.current
     ) return;
     resumeSubmitPending.current = false;
     formRef.current.requestSubmit();
-  }, [intake, showResearchType]);
+  }, [intake, resumeMode, showResearchType]);
 
   return (
     <form action={formAction} className="quick-start-form" ref={formRef}>
-      <ResearchIntakeForm onChange={setIntake} showResearchType={showResearchType} value={intake} />
+      <ResearchIntakeForm onChange={setIntake} showResearchType={showResearchType && resumeMode !== "quick"} value={intake} />
 
       <input name="autoGenerate" type="hidden" value="yes" />
+      <input name="legacyPromptMode" type="hidden" value={resumeMode === "quick" ? "yes" : "no"} />
+      {resumeMode === "quick" ? <input name="prompt" type="hidden" value={pendingPrompt} /> : null}
       {showAdvisorField ? (
         <label className="quick-start-advisor">
           <span>E-mail do orientador</span>

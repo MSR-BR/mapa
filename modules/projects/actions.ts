@@ -46,8 +46,9 @@ export async function createProject(
   formData: FormData,
 ): Promise<ProjectActionState> {
   const autoGenerate = formData.get("autoGenerate") === "yes";
+  const legacyPromptMode = formData.get("legacyPromptMode") === "yes";
   const prompt = formData.get("prompt");
-  const parsedIntake = parseResearchIntakeJson(formData.get("intakeJson"));
+  const parsedIntake = legacyPromptMode ? null : parseResearchIntakeJson(formData.get("intakeJson"));
   const intake: ResearchIntake | null = parsedIntake ?? (typeof prompt === "string" && prompt.trim() ? researchIntakeFromPrompt(prompt.trim()) as ResearchIntake : null);
   if (autoGenerate && parsedIntake && !hasResearchProductType(parsedIntake)) {
     return { message: "Escolha o tipo de produto acadêmico antes de iniciar o mapa.", status: "error" };

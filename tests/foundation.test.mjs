@@ -32,6 +32,9 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /localStorage\.setItem/);
   assert.match(publicStart, /savedAt: Date\.now\(\)/);
   assert.match(publicStart, /login\?next=/);
+  assert.match(publicStart, /Roteiro rápido/);
+  assert.match(publicStart, /Construção avançada/);
+  assert.match(publicStart, /ResearchPromptInput/);
   assert.match(loginPage, /hiddenFields/);
   assert.match(loginPage, /Continuar com Google/);
   assert.match(loginPage, /signup\?next=/);
@@ -82,6 +85,7 @@ test("uses the structured situation-problem intake and product-depth guidance", 
     assert.match(guidance, new RegExp(product.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
   assert.match(action, /intakeJson/);
+  assert.match(action, /legacyPromptMode/);
   assert.match(gemini, /researchGuidance/);
 });
 
