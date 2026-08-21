@@ -50,7 +50,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {!profile.hasProfile ? <ProfileModePrompt email={email} /> : null}
       {profile.hasProfile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} /> : null}
       {children}
-      <LegalLinks />
+      <LegalLinks defaultEmail={email} />
     </div>
   );
 }

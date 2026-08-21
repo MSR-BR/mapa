@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
+import { isBugReportAdminEmail } from "@/modules/bug-reports/config";
 import { setActiveProfileRole } from "@/modules/profile/actions";
 import { USER_PROFILE_ROLE_LABELS, type UserProfileRole } from "@/modules/profile/types";
 
@@ -58,6 +60,7 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
             <button type="submit">Mudar para {USER_PROFILE_ROLE_LABELS[nextRole].toLocaleLowerCase("pt-BR")}</button>
           </form>
         </div>
+        {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
         <form action={logout}><button type="submit">Sair</button></form>
       </div>
     </details>

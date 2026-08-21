@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v21082026.2` (21/08/2026; ajuste de paridade da home)
+- Versão pública: `v21082026.3` (21/08/2026; relatos de problemas e triagem privada)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -13,6 +13,14 @@
 
 - Formulário interno: mensagens são enviadas via Resend para `marioreis@id.uff.br` e `sfranca@id.uff.br`.
 - Recebimento direto: mensagens enviadas para `suporte@mapadapesquisa.com.br` entram pelo Resend Receiving e são encaminhadas pela rota `/api/inbound/resend` para os dois destinatários institucionais. A rota exige `RESEND_WEBHOOK_SECRET`, valida a assinatura do webhook e usa uma chave idempotente baseada no ID da mensagem recebida.
+
+## Relatos de problemas
+
+- O botão **Relatar problema** aparece na home e nas áreas autenticadas, abrindo um formulário em modal que também registra a etapa, endereço da página, navegador e, opcionalmente, uma captura de tela.
+- Os relatos são gravados em `public.bug_reports`, com RLS: o remetente autenticado vê somente os próprios registros; a triagem é restrita a `marioreis@id.uff.br` e `sfranca@id.uff.br`.
+- Capturas são armazenadas no bucket privado `bug-report-attachments`; não há URL pública. A área `/admin/bugs` gera links assinados temporários para a equipe autorizada.
+- A notificação transacional usa Resend e `notificacao@mapadapesquisa.com.br`, com `reply-to` do endereço informado pelo usuário. Se o envio estiver indisponível, o relato continua salvo e pode ser triado no painel.
+- O endpoint limita cinco envios por hora por IP, rejeita arquivos acima de 5 MB e aceita somente PNG, JPEG e WebP. Não incluir senhas, tokens ou chaves em relatos.
 
 ## Autenticação e domínio canônico
 

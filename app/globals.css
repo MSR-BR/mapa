@@ -220,6 +220,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .account-profile-switch form { margin-top: 0.25rem; }
 .account-menu-panel button { width: 100%; min-height: 2.5rem; padding: 0.5rem 0.75rem; border-radius: 0.55rem; text-align: left; }
 .account-menu-panel button:hover { background: var(--soft-surface); color: var(--foreground); }
+.account-menu-admin-link { display: block; margin: .15rem .25rem .35rem; border-radius: .55rem; padding: .55rem .5rem; color: var(--accent); font-size: .78rem; font-weight: 800; text-decoration: none; }
+.account-menu-admin-link:hover { background: var(--soft-surface); }
 .profile-mode-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: clamp(1rem, 4vw, 2rem); overflow: auto; background: rgb(9 17 14 / 58%); backdrop-filter: blur(10px); }
 .legal-consent-backdrop { align-items: center; }
 .profile-mode-card { display: grid; width: min(100%, 38rem); gap: 1rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 1.5rem; padding: clamp(1.25rem, 5vw, 2rem); background: linear-gradient(145deg, #17221e, #0c1210); box-shadow: 0 2rem 6rem rgb(7 17 13 / 34%); color: white; }
@@ -263,6 +265,48 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .support-form { display:grid; gap:.65rem; }
 .support-form input,.support-form textarea { width:100%; border:1px solid var(--border); border-radius:.65rem; padding:.7rem .8rem; background:#fbfdfc; color:var(--foreground); font:inherit; }
 .support-form textarea { min-height:7rem; resize:vertical; }
+.bug-report-form { display:grid; gap:.7rem; }
+.bug-report-form label { display:grid; gap:.35rem; color:var(--foreground); font-size:.78rem; font-weight:750; }
+.bug-report-form label > span { color:var(--muted); }
+.bug-report-form input,.bug-report-form textarea { width:100%; border:1px solid var(--border); border-radius:.7rem; padding:.72rem .8rem; background:#fbfdfc; color:var(--foreground); font:inherit; }
+.bug-report-form textarea { min-height:8rem; resize:vertical; }
+.bug-report-form input:focus,.bug-report-form textarea:focus { border-color:var(--accent); outline:3px solid rgb(23 107 77 / 12%); }
+.bug-report-intro { margin:0 0 .15rem!important; font-size:.86rem; }
+.bug-report-status { margin:0!important; border-radius:.65rem; padding:.65rem .75rem; font-size:.8rem; }
+.bug-report-status.success { background:#edf6f1; color:#285c47!important; }
+.bug-report-status.error { background:#fff1f0; color:#8a2922!important; }
+.bug-report-honeypot { position:absolute!important; width:1px!important; height:1px!important; overflow:hidden!important; clip:rect(0 0 0 0)!important; white-space:nowrap!important; }
+.bug-admin-list { width:min(100%,78rem); }
+.bug-admin-toolbar { display:flex; align-items:end; justify-content:space-between; gap:1.25rem; margin-bottom:1.5rem; }
+.bug-admin-toolbar h1 { max-width:none; margin:0; font-size:clamp(2rem,5vw,3.4rem); }
+.bug-admin-toolbar p:not(.section-kicker) { margin:.45rem 0 0; color:var(--muted); line-height:1.5; }
+.bug-admin-toolbar label,.bug-admin-actions label { display:grid; gap:.35rem; color:var(--muted); font-size:.74rem; font-weight:800; }
+.bug-admin-toolbar select,.bug-admin-actions select,.bug-admin-actions textarea { min-height:2.6rem; border:1px solid var(--border); border-radius:.65rem; padding:.55rem .7rem; background:#fff; color:var(--foreground); font:inherit; }
+.bug-admin-cards { display:grid; gap:1rem; }
+.bug-admin-card { display:grid; gap:1rem; border:1px solid var(--border); border-left:4px solid #d9e4de; border-radius:1rem; padding:1.1rem; background:#fff; box-shadow:0 .75rem 2rem rgb(20 35 29 / 6%); }
+.bug-admin-card.status-new { border-left-color:#b79a38; }
+.bug-admin-card.status-in_review { border-left-color:#4387a4; }
+.bug-admin-card.status-fixed,.bug-admin-card.status-closed { border-left-color:#2e8a63; }
+.bug-admin-card header { display:flex; align-items:start; justify-content:space-between; gap:1rem; }
+.bug-admin-card h2 { margin:.2rem 0 0; color:var(--foreground); font-size:1.25rem; letter-spacing:-.03em; }
+.bug-admin-badge { display:inline-flex; min-height:1.8rem; align-items:center; border-radius:999px; padding:.3rem .6rem; font-size:.72rem; font-weight:850; white-space:nowrap; }
+.bug-admin-badge.priority-low { background:#eef3f1; color:#5e7067; }
+.bug-admin-badge.priority-normal { background:#edf6f1; color:#285c47; }
+.bug-admin-badge.priority-high { background:#fff5df; color:#76580e; }
+.bug-admin-badge.priority-urgent { background:#fff0ef; color:#8a2922; }
+.bug-admin-card dl { display:flex; flex-wrap:wrap; gap:.8rem 1.5rem; margin:0; }
+.bug-admin-card dl div { display:grid; gap:.2rem; }
+.bug-admin-card dt { color:var(--muted); font-size:.7rem; font-weight:800; text-transform:uppercase; }
+.bug-admin-card dd { margin:0; color:var(--foreground); font-size:.82rem; }
+.bug-admin-card a { color:var(--accent); font-weight:750; }
+.bug-admin-message { margin:0; white-space:pre-wrap; color:var(--foreground); line-height:1.55; }
+.bug-admin-card details { border-top:1px solid var(--border); padding-top:.75rem; color:var(--muted); font-size:.78rem; }
+.bug-admin-card details p { margin:.4rem 0 0; }
+.bug-admin-actions { display:grid; grid-template-columns:minmax(8rem,.7fr) minmax(8rem,.7fr) minmax(14rem,2fr) auto; align-items:end; gap:.65rem; border-top:1px solid var(--border); padding-top:.85rem; }
+.bug-admin-actions textarea { min-height:2.6rem; resize:vertical; }
+.bug-admin-actions button { min-height:2.6rem; white-space:nowrap; }
+.bug-admin-empty { border:1px dashed var(--border); border-radius:1rem; padding:2rem; color:var(--muted); text-align:center; }
+@media (max-width:700px) { .bug-admin-toolbar { align-items:stretch; flex-direction:column; } .bug-admin-actions { grid-template-columns:1fr 1fr; } .bug-admin-notes { grid-column:1 / -1; } .bug-admin-actions button { grid-column:1 / -1; } }
 .workspace-shell { width: min(100%, 76rem); margin: 0 auto; padding: clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 .narrow-workspace { width: min(100%, 54rem); }
 .workspace-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; }

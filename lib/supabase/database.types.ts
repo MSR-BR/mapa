@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      bug_reports: {
+        Row: {
+          admin_notes: string | null
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
+          attachment_type: string | null
+          browser: string | null
+          created_at: string
+          id: string
+          message: string
+          page_url: string | null
+          priority: string
+          project_id: string | null
+          reporter_email: string
+          reporter_id: string | null
+          resolved_at: string | null
+          stage: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
+          browser?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          page_url?: string | null
+          priority?: string
+          project_id?: string | null
+          reporter_email: string
+          reporter_id?: string | null
+          resolved_at?: string | null
+          stage?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
+          browser?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          page_url?: string | null
+          priority?: string
+          project_id?: string | null
+          reporter_email?: string
+          reporter_id?: string | null
+          resolved_at?: string | null
+          stage?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bug_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_consents: {
         Row: {
           accepted_at: string
@@ -271,6 +348,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_bug_report_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       claim_pending_advisor_projects: {
         Args: Record<PropertyKey, never>
         Returns: number

@@ -18,7 +18,7 @@
     "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",
     "exports:verify": "node --import tsx scripts/verify-exports.ts",
     "security:audit": "node scripts/audit-security.mjs",
-    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts",
+    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test && npm run exports:verify && npm run build"
