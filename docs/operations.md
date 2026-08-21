@@ -99,3 +99,13 @@ O plano Free não oferece ao responsável o mesmo fluxo de restauração diária
   da identidade UFF foi confirmada pelo professor responsável na C037.
 - Encerramento técnico registrado em commit limpo; a tag `v21082026.1` e o smoke
   autenticado foram confirmados.
+
+## Encerramento da Change 041
+
+- Versão pública `v21082026.3`, commit `06947d8` e tag Git correspondente.
+- Migration `20260821153000_create_bug_reports.sql` aplicada no Supabase remoto.
+- Deployment Vercel `dpl_4PNAfR5vVay4WDKpxqQ8UJ2AWmKy` está READY e aliasado ao
+  domínio canônico.
+- Smoke público confirmado: home e `/api/health` retornam `200`; robots
+  bloqueia `/admin/`; o HTML da home contém os modos `Mapa Avançado`,
+  `Mapa Rápido` e o link `Relatar problema`.

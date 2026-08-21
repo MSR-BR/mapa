@@ -1,6 +1,6 @@
 # Evidências de encerramento — Change 041
 
-Data prevista de encerramento: 21/08/2026.
+Data de encerramento: 21/08/2026.
 
 ## Implementação
 
@@ -16,17 +16,22 @@ Data prevista de encerramento: 21/08/2026.
 
 ## Verificações
 
-- `npm test` — a registrar após a validação final.
-- `npm run lint` — a registrar após a validação final.
-- `npm run typecheck` — a registrar após a validação final.
-- `npm run build` — a registrar após a validação final.
-- `npx supabase migration list` — a registrar após a aplicação remota.
-- Smoke de produção e confirmação do recebimento via Resend — a registrar sem
-  incluir conteúdo sensível nesta evidência.
+- `npm test` — 63 testes aprovados.
+- `npm run lint` — aprovado, sem erros ou avisos.
+- `npm run typecheck` — aprovado.
+- `npm run build` — aprovado localmente e no build de produção da Vercel.
+- `npx supabase migration list` — migration `20260821153000` aplicada no remoto.
+- `npx supabase db push` — concluído sem alterar migrations anteriores.
+- Deploy Vercel `dpl_4PNAfR5vVay4WDKpxqQ8UJ2AWmKy` — READY e aliasado a
+  `https://mapadapesquisa.com.br`.
+- Smoke HTTP: home, `/api/health` e `/robots.txt` respondem no domínio
+  canônico; o build expõe `/api/bug-reports` e `/admin/bugs`.
+- A verificação local que requer Docker não foi executada porque o daemon
+  Docker não estava acessível neste ambiente; a migration foi aplicada e
+  validada no banco remoto pela CLI autenticada.
 
 ## Decisão operacional
 
 Se o Resend estiver indisponível, o endpoint confirma apenas o salvamento do
 relato e o painel continua sendo a fonte de triagem. O usuário recebe uma
 mensagem explícita para não enviar credenciais ou chaves.
-

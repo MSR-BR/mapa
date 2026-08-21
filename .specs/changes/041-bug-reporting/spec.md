@@ -1,6 +1,6 @@
 # Change 041 — Relatos de problemas e triagem privada
 
-**Estado:** Em validação em 21/08/2026.
+**Estado:** Concluída em 21/08/2026.
 
 ## Objetivo
 
@@ -52,4 +52,3 @@ e permanecer disponíveis em uma fila de triagem simples.
 - Suíte de testes, typecheck, lint e build aprovados.
 - Smoke da home, modal e rota administrativa concluído.
 - Documentação e versão `v21082026.3` atualizadas.
-
