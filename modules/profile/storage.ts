@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/lib/supabase/database.types";
 
+import { LEGAL_TERMS_VERSION } from "@/modules/legal/legal-content";
 import { isUserProfileRole, type UserProfileRole } from "./types";
 
 export type UserProfile = {
@@ -26,7 +27,7 @@ export async function loadUserProfile(
   ]);
 
   const activeRole = isUserProfileRole(data?.active_role) ? data.active_role : "student";
-  const hasLegalConsent = Array.isArray(consent) && consent.some((item) => item.profile_role === activeRole && Boolean(item.terms_version));
+  const hasLegalConsent = Array.isArray(consent) && consent.some((item) => item.profile_role === activeRole && item.terms_version === LEGAL_TERMS_VERSION);
   // Keep the first-access shape explicit: hasProfile: false when no role row exists.
   return { activeRole, hasLegalConsent, hasProfile: isUserProfileRole(data?.active_role) };
 }

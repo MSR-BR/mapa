@@ -21,7 +21,7 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 });
 
 test("requests login only after the public central execution", async () => {
-  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard, supportRoute] = await Promise.all([
+  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard, supportRoute, profileStorage] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("modules/projects/public-start-form.tsx"),
     readProjectFile("app/(auth)/login/page.tsx"),
@@ -32,6 +32,7 @@ test("requests login only after the public central execution", async () => {
     readProjectFile("modules/legal/legal-links.tsx"),
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("app/api/support/route.ts"),
+    readProjectFile("modules/profile/storage.ts"),
   ]);
 
   assert.doesNotMatch(home, /href="\/login"/);
@@ -59,10 +60,19 @@ test("requests login only after the public central execution", async () => {
   assert.match(quickStart, /Construção avançada/);
   assert.match(quickStart, /canResume/);
   assert.match(dashboard, /canResume=\{profile\.hasLegalConsent\}/);
-  assert.match(legalContent, /com apoio do orientador da pesquisa/);
+  assert.match(legalContent, /com apoio do orientador/);
   assert.match(legalContent, /no uso do aplicativo/);
-  assert.match(legalLinks, /Sérgio França, D\.Sc\./);
+  assert.match(legalContent, /Como estudante/);
+  assert.match(legalContent, /Como orientador/);
+  assert.match(legalContent, /Research Starter/);
+  assert.match(legalContent, /até 30 dias/);
+  assert.match(profileStorage, /terms_version === LEGAL_TERMS_VERSION/);
+  assert.match(legalLinks, /Sérgio França/);
   assert.match(legalLinks, /Escola de Engenharia/);
+  assert.match(legalLinks, /aria-labelledby="legal-dialog-title"/);
+  assert.match(legalLinks, /closeOnEscape/);
+  assert.match(legalLinks, /Universidade Federal Fluminense/);
+  assert.match(legalLinks, /\/brand\/uff-logo\.png/);
   assert.match(supportRoute, /marioreis@id\.uff\.br/);
   assert.match(supportRoute, /sfranca@id\.uff\.br/);
   assert.match(supportRoute, /to: SUPPORT_RECIPIENTS/);
@@ -401,7 +411,7 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
   ]);
 
   assert.match(home, /redirect\("\/dashboard\?continue=1"\)/);
-  assert.match(dashboard, /Qual seu tema de pesquisa\?/);
+  assert.match(dashboard, /Vamos construir o mapa da sua pesquisa\?/);
   assert.match(dashboard, /Continue de onde parou/);
   assert.match(dashboard, /continueParam === "1"/);
   assert.match(dashboard, /Projetos em andamento/);
@@ -418,6 +428,8 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
   assert.match(quickStart, /createProject/);
   assert.doesNotMatch(quickStart, /Abrir configurações iniciais/);
   assert.match(quickStart, /autoGenerate/);
+  assert.match(quickStart, /Mapa Avançado/);
+  assert.match(quickStart, /Mapa Rápido/);
   assert.match(discovery, /Escolha um caminho para a pesquisa/);
   assert.match(discovery, /Mais próxima do seu pedido/);
   assert.match(discovery, /Research Starter/);

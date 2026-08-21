@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BrandLogo } from "@/modules/branding/brand-logo";
+import { LegalLinks } from "@/modules/legal/legal-links";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,6 +29,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </section>
         </div>
       </section>
+      <LegalLinks />
     </main>
   );
 }

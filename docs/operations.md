@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v19082026.6` (tag Git correspondente)
+- Versão pública: `v21082026.1` (21/08/2026; tag Git anotada em commit limpo)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -12,7 +12,7 @@
 ## E-mail de suporte
 
 - Formulário interno: mensagens são enviadas via Resend para `marioreis@id.uff.br` e `sfranca@id.uff.br`.
-- Pendente (Change 034): configurar o recebimento de mensagens enviadas diretamente para `suporte@mapadapesquisa.com.br` e seu encaminhamento automático para os dois destinatários institucionais.
+- Recebimento direto: mensagens enviadas para `suporte@mapadapesquisa.com.br` entram pelo Resend Receiving e são encaminhadas pela rota `/api/inbound/resend` para os dois destinatários institucionais. A rota exige `RESEND_WEBHOOK_SECRET`, valida a assinatura do webhook e usa uma chave idempotente baseada no ID da mensagem recebida.
 
 ## Autenticação e domínio canônico
 
@@ -20,6 +20,7 @@
 - Site URL no Supabase Auth: `https://mapadapesquisa.com.br`.
 - Redirect URL permitida no Supabase Auth: `https://mapadapesquisa.com.br/auth/callback`.
 - `https://mapa-gray-two.vercel.app` deve responder com redirecionamento permanente para o domínio canônico.
+- `www.mapadapesquisa.com.br` não é publicado nesta fase; o domínio raiz é o único endereço canônico.
 - Depois de alterar qualquer domínio, validar o fluxo completo “tema → login → callback → geração”; uma Site URL correta sem a Redirect URL permitida faz o Supabase descartar o callback PKCE solicitado.
 
 ## Custos e limites
@@ -70,3 +71,23 @@ O plano Free não oferece ao responsável o mesmo fluxo de restauração diária
 3. Usuário autenticado abre o próprio projeto.
 4. DOCX e PDF retornam `200`, MIME correto e `Content-Disposition: attachment`.
 5. Arquivo real abre/renderiza e corresponde à versão indicada na interface.
+
+## Fechamento operacional do piloto — C039
+
+- CPD técnico de 21/08/2026 aprovado: lint, typecheck, 61 testes, exportação
+  PDF e build de produção.
+- Integrações verificadas com acesso de rede: Supabase, RLS anônimo e
+  autenticado, fluxo aluno–orientador, Research Starter e Gemini.
+- Produção verificada: `https://mapadapesquisa.com.br/` e `/api/health`
+  respondem `200`; headers de segurança, robots, sitemap e redirect do host
+  Vercel antigo estão ativos.
+- Deployment verificado: `dpl_Ad18s4KuZXyaAucG7Rdtp7Ci8EBP` (Ready), com o
+  domínio raiz associado ao projeto `mapadapesquisa`.
+- A validação local das migrations foi aprovada com Docker Desktop. O conector
+  MCP de advisors permanece sem permissão, mas a auditoria equivalente foi
+  executada pela CLI autenticada; os RPCs `SECURITY DEFINER` estão acessíveis
+  somente a usuários autenticados. A proteção contra senhas vazadas foi
+  retirada do escopo por ser recurso pago do Supabase, e a autorização de uso
+  da identidade UFF foi confirmada pelo professor responsável na C037.
+- Encerramento técnico registrado em commit limpo; a tag `v21082026.1` e o smoke
+  autenticado foram confirmados.

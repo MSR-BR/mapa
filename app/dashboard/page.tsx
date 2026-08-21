@@ -189,10 +189,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     <main className="workspace-shell dashboard-home">
       {isStudentMode ? (
         <section className="quick-start" aria-labelledby="quick-start-title">
-          <h1 id="quick-start-title">Qual seu tema de pesquisa?</h1>
+          <h1 id="quick-start-title">Vamos construir o mapa da sua pesquisa?</h1>
           <p className="quick-start-summary">
-            Descreva em linguagem natural o trabalho que deseja criar. Tema, nível,
-            recorte e demais orientações podem ir no mesmo prompt.
+            Defina e organize os tópicos fundamentais da pesquisa de forma lógica,
+            integrada e metodologicamente coerente.
           </p>
           <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showResearchType />
         </section>

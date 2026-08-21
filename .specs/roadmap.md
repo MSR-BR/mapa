@@ -30,7 +30,12 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 031 | Recuperação do callback Google | Concluída | Código OAuth recebido na URL raiz é trocado por sessão e retorna ao dashboard; falhas preservam o destino e o rascunho. |
 | 032 | Retomada pós-login e início recolhido | Concluída | O rascunho autenticado aguarda o aceite legal, segue direto para a descoberta em cards e o dashboard oferece roteiro rápido e construção avançada recolhidos por padrão; textos legais atualizados. |
 | 033 | Distribuição do suporte para a equipe | Concluída | Mensagens enviadas por suporte@mapadapesquisa.com.br chegam aos e-mails institucionais de Mario Reis e Sérgio França; o reply-to continua sendo o e-mail informado pelo usuário. |
-| 034 | Recebimento direto em suporte@mapadapesquisa.com.br | Pendente | Configurar o recebimento de mensagens enviadas diretamente ao endereço de suporte e o encaminhamento automático para `marioreis@id.uff.br` e `sfranca@id.uff.br`; não confundir com o formulário interno do app, já coberto pela Change 033. |
+| 034 | Recebimento direto em suporte@mapadapesquisa.com.br | Concluída | Resend Receiving, MX, webhook e endpoint verificados; mensagem externa encaminhada com sucesso para `marioreis@id.uff.br` e `sfranca@id.uff.br`. |
+| 035 | Teste E2E aluno–orientador | Concluída | Runner autenticado executou o fluxo de perfis, vínculo, leitura supervisionada, correção, aprovações, mapa final e referências em projeto temporário; limpeza confirmada. |
+| 036 | Auditoria Supabase e segurança residual | Concluída | Migrations remotas e locais, grants das funções SECURITY DEFINER, RLS remoto autenticado/anônimo, rate limiting, Firewall publicado em modo observação, advisor via CLI, build e smoke aprovados; a indisponibilidade do conector MCP não bloqueia a auditoria equivalente. |
+| 037 | Revisão legal e autorização do responsável | Concluída | Termos, privacidade, consentimento por papel, créditos, contatos e acessibilidade revisados; autorização de uso confirmada pelo professor responsável da UFF. |
+| 038 | Domínio `www` | Concluída | Domínio raiz confirmado como único endereço público; hosts técnicos antigos redirecionam para ele e `www` foi deliberadamente não publicado. |
+| 039 | Fechamento operacional do piloto | Concluída | CPD técnico, E2E, domínio, integrações, segurança de aplicação, exportações, Docker local, smoke, commit limpo e tag `v21082026.1` aprovados. |
 
 ## Marcos
 

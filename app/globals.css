@@ -36,7 +36,11 @@ body {
 .public-start-form { text-align: left; }
 .public-mode-stack { display: grid; gap: 0.75rem; }
 .public-mode-card { overflow: hidden; border: 1px solid rgb(255 255 255 / 12%); border-radius: 1rem; background: rgb(255 255 255 / 3%); }
-.public-mode-card.is-open { border-color: rgb(143 208 177 / 45%); background: rgb(255 255 255 / 5%); }
+.public-mode-card-advanced { background: linear-gradient(145deg, rgb(45 119 86 / 32%), rgb(24 66 49 / 42%)); }
+.public-mode-card-quick { background: linear-gradient(145deg, rgb(31 80 61 / 38%), rgb(17 39 30 / 50%)); }
+.public-mode-card.is-open { border-color: rgb(143 208 177 / 45%); }
+.public-mode-card-advanced.is-open { background: linear-gradient(145deg, rgb(55 143 103 / 38%), rgb(27 82 59 / 54%)); }
+.public-mode-card-quick.is-open { background: linear-gradient(145deg, rgb(37 99 75 / 44%), rgb(15 49 36 / 58%)); }
 .public-mode-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; border: 0; padding: 1rem 1.05rem; background: transparent; color: #f4fbf7; font: inherit; text-align: left; cursor: pointer; }
 .public-mode-toggle:hover { background: rgb(255 255 255 / 4%); }
 .public-mode-toggle > span:first-child { display: grid; gap: 0.25rem; }
@@ -248,6 +252,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .legal-dialog a { color:var(--accent); font-weight:700; }
 .support-email { display:block; overflow-wrap:anywhere; }
 .credits-links { display:grid; gap:.65rem; margin-top:.35rem; }
+.credits-institution { display:flex; align-items:center; width:fit-content; border:1px solid #b8ccc2; border-radius:.8rem; padding:.55rem .75rem; background:#f1f8f4; }
+.credits-uff-logo { display:block; width:min(100%,17rem); height:auto; }
 .credits-people { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
 .credits-people article { display:grid; gap:.65rem; padding:1.1rem; border:1px solid var(--border); border-radius:1rem; background:var(--soft-surface); }
 .credits-people h3 { margin:0; color:var(--foreground); font-size:1.2rem; }
