@@ -36,6 +36,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 037 | Revisão legal e autorização do responsável | Concluída | Termos, privacidade, consentimento por papel, créditos, contatos e acessibilidade revisados; autorização de uso confirmada pelo professor responsável da UFF. |
 | 038 | Domínio `www` | Concluída | Domínio raiz confirmado como único endereço público; hosts técnicos antigos redirecionam para ele e `www` foi deliberadamente não publicado. |
 | 039 | Fechamento operacional do piloto | Concluída | CPD técnico, E2E, domínio, integrações, segurança de aplicação, exportações, Docker local, smoke, commit limpo e tag `v21082026.1` aprovados. |
+| 040 | Paridade dos modos de entrada na home | Concluída | Home alinhada ao dashboard, com Mapa Avançado recomendado, Mapa Rápido recolhido e contraste visual entre os cards. |
 
 ## Marcos
 

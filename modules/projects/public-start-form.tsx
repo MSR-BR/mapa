@@ -87,30 +87,7 @@ export function PublicStartForm() {
   return (
     <form className="quick-start-form public-start-form" onSubmit={continueToLogin}>
       <div className="public-mode-stack">
-        <section className={`public-mode-card ${mode === "quick" ? "is-open" : ""}`}>
-          <button
-            aria-controls="quick-research-mode"
-            aria-expanded={mode === "quick"}
-            className="public-mode-toggle"
-            onClick={() => { setMode(mode === "quick" ? "advanced" : "quick"); setError(""); }}
-            type="button"
-          >
-            <span>
-              <small>Opção 1</small>
-              <strong>Roteiro rápido</strong>
-              <em>Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.</em>
-            </span>
-            <span aria-hidden="true" className="public-mode-chevron">{mode === "quick" ? "−" : "+"}</span>
-          </button>
-          {mode === "quick" ? (
-            <div className="public-mode-content" id="quick-research-mode">
-              <ResearchPromptInput id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} value={quickPrompt} />
-              <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
-            </div>
-          ) : null}
-        </section>
-
-        <section className={`public-mode-card ${mode === "advanced" ? "is-open" : ""}`}>
+        <section className={`public-mode-card public-mode-card-advanced ${mode === "advanced" ? "is-open" : ""}`}>
           <button
             aria-controls="advanced-research-mode"
             aria-expanded={mode === "advanced"}
@@ -119,8 +96,8 @@ export function PublicStartForm() {
             type="button"
           >
             <span>
-              <small>Opção 2 · recomendado</small>
-              <strong>Construção avançada</strong>
+              <small>Opção 1 · recomendado</small>
+              <strong>Mapa Avançado</strong>
               <em>Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.</em>
             </span>
             <span aria-hidden="true" className="public-mode-chevron">{mode === "advanced" ? "−" : "+"}</span>
@@ -128,6 +105,29 @@ export function PublicStartForm() {
           {mode === "advanced" ? (
             <div className="public-mode-content" id="advanced-research-mode">
               <ResearchIntakeForm onChange={setIntake} showResearchType value={intake} />
+            </div>
+          ) : null}
+        </section>
+
+        <section className={`public-mode-card public-mode-card-quick ${mode === "quick" ? "is-open" : ""}`}>
+          <button
+            aria-controls="quick-research-mode"
+            aria-expanded={mode === "quick"}
+            className="public-mode-toggle"
+            onClick={() => { setMode(mode === "quick" ? "advanced" : "quick"); setError(""); }}
+            type="button"
+          >
+            <span>
+              <small>Opção 2</small>
+              <strong>Mapa Rápido</strong>
+              <em>Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.</em>
+            </span>
+            <span aria-hidden="true" className="public-mode-chevron">{mode === "quick" ? "−" : "+"}</span>
+          </button>
+          {mode === "quick" ? (
+            <div className="public-mode-content" id="quick-research-mode">
+              <ResearchPromptInput id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} value={quickPrompt} />
+              <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
             </div>
           ) : null}
         </section>

@@ -39,8 +39,11 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /localStorage\.setItem/);
   assert.match(publicStart, /savedAt: Date\.now\(\)/);
   assert.match(publicStart, /login\?next=/);
-  assert.match(publicStart, /Roteiro rápido/);
-  assert.match(publicStart, /Construção avançada/);
+  assert.match(publicStart, /Mapa Avançado/);
+  assert.match(publicStart, /Mapa Rápido/);
+  assert.match(publicStart, /public-mode-card-advanced/);
+  assert.match(publicStart, /public-mode-card-quick/);
+  assert.match(publicStart, /useState<"quick" \| "advanced">\("advanced"\)/);
   assert.match(publicStart, /ResearchPromptInput/);
   assert.match(loginPage, /hiddenFields/);
   assert.match(loginPage, /Continuar com Google/);
