@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { startRequest } from "@/lib/observability/request-context";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { fetchResearchStarterReport } from "@/modules/research-starter/client";
 import type { ResearchStarterRequest } from "@/modules/research-starter/types";
@@ -7,6 +8,7 @@ import type { ResearchStarterRequest } from "@/modules/research-starter/types";
 const LEVELS = new Set(["last-5-years", "last-10-years"]);
 
 export async function POST(request: Request) {
+  const requestContext = startRequest(request);
   await requireAuthenticatedUser();
 
   const input: unknown = await request.json().catch(() => null);
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
   };
 
   try {
-    const report = await fetchResearchStarterReport(reportRequest);
+    const report = await fetchResearchStarterReport(reportRequest, { requestId: requestContext.requestId });
     return NextResponse.json(report, { headers: { "Cache-Control": "private, no-store" } });
   } catch {
     return NextResponse.json({ error: "Não foi possível gerar o relatório inicial." }, { status: 502 });

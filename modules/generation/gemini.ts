@@ -49,7 +49,7 @@ const interpretedResearchRequestSchema = z.object({
 
 const promptSuggestionsSchema = z.object({
   suggestions: z.array(z.object({
-    kind: z.enum(["tema", "formulacao"]),
+    kind: z.enum(["tema", "formulacao", "recorte"]),
     text: z.string().trim().min(12).max(500),
   })).min(2).max(3),
 });
@@ -216,6 +216,7 @@ export async function suggestResearchPrompts(prompt: string) {
       "Cada sugestão deve ser um pedido completo que possa substituir o texto atual no campo.",
       "Inclua pelo menos uma sugestão de tema: um recorte relevante e coerente com a intenção já escrita.",
       "Inclua pelo menos uma sugestão de formulação: reescreva o pedido com maior precisão acadêmica.",
+      "Inclua uma terceira sugestão de recorte: indique como delimitar a investigação sem inventar contexto.",
       "Quando houver informação suficiente, explicite objeto, relação investigada, contexto ou população.",
       "Não invente instituições, locais, períodos, populações ou métodos não indicados pelo usuário.",
       "Não responda ao tema e não crie a estrutura da pesquisa; apenas aprimore o pedido.",
@@ -338,11 +339,7 @@ export async function generateProblemCandidates(
   report: ResearchStarterSuccess,
 ): Promise<ProblemCandidate[]> {
   const evidence = compactEvidence(report);
-  const { output } = await generateText({
-    maxOutputTokens: 4_500,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedProblemCandidatesSchema }),
-    prompt: [
+  const prompt = [
       "Crie exatamente seis propostas acadêmicas distintas para o Mapa da Pesquisa.",
       "Escreva em português do Brasil.",
       "A proposta 1 deve ter kind=exact e ser a correspondência mais fiel possível ao pedido, sem trocar seu objeto central.",
@@ -357,29 +354,56 @@ export async function generateProblemCandidates(
       `Pedido original: ${JSON.stringify(originalPrompt.slice(0, 5_000))}`,
       `Interpretação: ${JSON.stringify(interpreted)}`,
       `Evidências verificadas: ${JSON.stringify(evidence)}`,
-    ].join("\n"),
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingBudget: 0 },
-      } satisfies GoogleLanguageModelOptions,
-    },
-    temperature: 0.35,
-  });
+    ];
+  let lastError: unknown = null;
 
-  const candidates = output.candidates.map((candidate) => ({
-    ...candidate,
-    id: crypto.randomUUID(),
-    keywords: [...new Set(candidate.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 5),
-    referenceIds: [...new Set(candidate.referenceIds.map((referenceId) => referenceId.trim()).filter(Boolean))].slice(0, 12),
-  }));
-  const parsed = problemCandidatesSchema.parse(candidates);
-  const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
-  const unknownReferenceIds = parsed.flatMap((candidate) => candidate.referenceIds)
-    .filter((referenceId) => !allowedReferenceIds.has(referenceId));
-  if (unknownReferenceIds.length > 0) {
-    throw new Error(`Referências não verificadas: ${[...new Set(unknownReferenceIds)].join(", ")}`);
+  // A resposta estruturada pode falhar por um detalhe formal (ordem, abertura da
+  // pergunta ou uma referência digitada incorretamente). Uma segunda chamada de
+  // reparo evita transformar um desvio pontual da IA em falha definitiva do mapa.
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const { output } = await generateText({
+        maxOutputTokens: 4_500,
+        model: getGoogleProvider()(GENERATION_MODEL),
+        output: Output.object({ schema: generatedProblemCandidatesSchema }),
+        prompt: [
+          ...prompt,
+          ...(attempt === 2 ? [
+            "A tentativa anterior foi rejeitada por validação formal.",
+            "Releia cada regra antes de responder: devolva seis itens na ordem 1,2,3,4,5,6; o primeiro kind=exact e os outros kind=alternative; todas as perguntas começam literalmente por Como ou De que forma; use somente IDs de referência presentes nas evidências.",
+          ] : []),
+        ].join("\n"),
+        providerOptions: {
+          google: {
+            thinkingConfig: { thinkingBudget: 0 },
+          } satisfies GoogleLanguageModelOptions,
+        },
+        temperature: attempt === 1 ? 0.35 : 0.15,
+      });
+
+      const candidates = output.candidates.map((candidate) => ({
+        ...candidate,
+        id: crypto.randomUUID(),
+        keywords: [...new Set(candidate.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 5),
+        referenceIds: [...new Set(candidate.referenceIds.map((referenceId) => referenceId.trim()).filter(Boolean))].slice(0, 12),
+      }));
+      const parsed = problemCandidatesSchema.parse(candidates);
+      const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
+      const unknownReferenceIds = parsed.flatMap((candidate) => candidate.referenceIds)
+        .filter((referenceId) => !allowedReferenceIds.has(referenceId));
+      if (unknownReferenceIds.length > 0) {
+        throw new Error(`Referências não verificadas: ${[...new Set(unknownReferenceIds)].join(", ")}`);
+      }
+      return parsed;
+    } catch (error) {
+      lastError = error;
+    }
   }
-  return parsed;
+
+  if (lastError instanceof Error && lastError.message.includes("Referências não verificadas")) {
+    throw lastError;
+  }
+  throw new Error("A IA não devolveu seis propostas válidas.");
 }
 
 export async function regenerateProblemStatement(

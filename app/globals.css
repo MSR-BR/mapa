@@ -497,6 +497,10 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .proposal-empty p { color: var(--muted); }
 .proposal-empty button, .proposal-error button { border: 0; border-radius: 0.75rem; padding: 0.7rem 1rem; background: var(--accent); color: white; font: inherit; font-weight: 750; cursor: pointer; }
 .proposal-error { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #e2aaa4; border-radius: 0.9rem; padding: 0.9rem 1rem; background: #fff3f1; color: #7f3029; }
+.proposal-error > div { display: grid; gap: 0.28rem; }
+.proposal-error strong { color: #702a24; }
+.proposal-error span, .proposal-error small { line-height: 1.45; }
+.proposal-error small { color: #92544c; font-size: 0.78rem; }
 .proposal-selected-card { display: grid; gap: 0.9rem; border: 1px solid #70a58e; border-radius: 1.25rem; padding: clamp(1.5rem, 4vw, 2.25rem); background: linear-gradient(145deg, #ffffff, #edf7f2); box-shadow: 0 1.2rem 3.5rem rgb(20 35 29 / 9%); }
 .proposal-selected-card > span:first-child { width: fit-content; border-radius: 999px; padding: 0.3rem 0.55rem; background: #176b4d; color: white; font-size: 0.68rem; font-weight: 850; letter-spacing: 0.05em; text-transform: uppercase; }
 .proposal-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
@@ -788,7 +792,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .quick-start-advisor input::placeholder { color: #7f8e87; }
 .quick-start-advisor input:focus { border-color: rgb(145 218 189 / 45%); outline: 3px solid rgb(145 218 189 / 12%); }
 .prompt-suggestions { display: grid; gap: 0.6rem; margin: 0.85rem 0 0; border-top: 1px solid rgb(255 255 255 / 10%); padding: 0.85rem 0.25rem 0; }
-.prompt-suggestions > p { margin: 0; color: #9fb0a8; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em; }
+.prompt-suggestions > p { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0; color: #9fb0a8; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em; }
+.prompt-suggestions > p small { color: #8fd0b1; font-size: 0.68rem; font-weight: 650; }
 .prompt-suggestion-list { display: grid; gap: 0.45rem; }
 .prompt-suggestion-list button { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 0.65rem; width: 100%; border: 1px solid rgb(255 255 255 / 9%); border-radius: 0.75rem; padding: 0.62rem 0.7rem; background: rgb(255 255 255 / 4%); color: #dce7e1; font: inherit; font-size: 0.82rem; line-height: 1.4; text-align: left; cursor: pointer; }
 .prompt-suggestion-list button:hover { border-color: rgb(145 218 189 / 34%); background: rgb(145 218 189 / 8%); color: white; }

@@ -69,7 +69,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   if (profile.activeRole === "advisor") {
     await claimPendingAdvisorProjects(supabase);
   }
-  const projectColumns = "id, title, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id";
+  const projectColumns = "id, title, theme, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id";
   const [{ data, error }, { data: advisedData, error: advisedError }] = await Promise.all([
     supabase
       .from("projects")
@@ -128,7 +128,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     const workflow = workflowByProject.get(project.id);
     const structure = structureByProject.get(project.id);
     const meta = project.workflow_version === 2 && workflow
-      ? workflowDashboardMeta(workflow, { area: project.knowledge_area, title: project.title })
+      ? workflowDashboardMeta(workflow, {
+        area: project.knowledge_area,
+        problemStatement: project.problem_statement,
+        theme: project.theme,
+        title: project.title,
+      })
       : null;
     const references = workflow
       ? workflowReferences(workflow.content)

@@ -6,7 +6,7 @@ import { LegalLinks } from "@/modules/legal/legal-links";
 import { PublicStartForm } from "@/modules/projects/public-start-form";
 
 export const metadata = {
-  title: "Comece seu mapa de pesquisa",
+  title: "Mapa da Pesquisa | Comece seu mapa",
   description: "Responda cinco perguntas para formular a situação-problema, escolha TCC, monografia, dissertação, tese ou artigo e comece um mapa de pesquisa.",
   alternates: { canonical: "/" },
 };
@@ -30,7 +30,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       <section className="quick-start public-hero" aria-labelledby="page-title">
         <BrandLogo variant="mark" className="public-hero-logo" decorative priority />
         <p className="eyebrow">Mapa da Pesquisa</p>
-        <h1 id="page-title">O que você quer desenvolver?</h1>
+        <h1 id="page-title">Vamos construir o mapa da sua pesquisa?</h1>
+        <p className="public-hero-summary">
+          Defina e organize os tópicos fundamentais da pesquisa de forma lógica, integrada e metodologicamente coerente.
+        </p>
         <PublicStartForm />
       </section>
       <LegalLinks />

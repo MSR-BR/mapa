@@ -12,6 +12,13 @@ export type WorkflowDashboardMeta = {
   title: string;
 };
 
+type DashboardTitleFallback = {
+  area?: string | null;
+  problemStatement?: string | null;
+  theme?: string | null;
+  title: string;
+};
+
 const STAGE_LABELS: Record<WorkflowState, string> = {
   choosing_problem: "Escolha da proposta",
   completed: "Mapa final concluído",
@@ -60,7 +67,14 @@ export function workflowStageLabel(workflow: ResearchWorkflow) {
   return STAGE_LABELS[workflow.state] ?? "Em construção";
 }
 
-export function workflowDashboardTitle(workflow: ResearchWorkflow, fallbackTitle: string) {
+function compactDashboardTitle(value: string) {
+  const compact = value.replace(/\s+/g, " ").trim();
+  if (compact.length <= 96) return compact;
+  return `${compact.slice(0, 93).replace(/[ ,;:.!?-]+$/, "")}...`;
+}
+
+export function workflowDashboardTitle(workflow: ResearchWorkflow, fallback: DashboardTitleFallback | string) {
+  const normalizedFallback: DashboardTitleFallback = typeof fallback === "string" ? { title: fallback } : fallback;
   const content = workflow.content;
   const title = approved(findElement(content, "research_title"));
   if (title) return title;
@@ -71,8 +85,15 @@ export function workflowDashboardTitle(workflow: ResearchWorkflow, fallbackTitle
   const interpretedTitle = content.discovery?.interpreted.title.trim();
   if (interpretedTitle) return interpretedTitle;
 
-  if (fallbackTitle && !/^nova proposta de pesquisa$/i.test(fallbackTitle.trim())) return fallbackTitle;
-  return "Mapa em construção";
+  if (normalizedFallback.title && !/^(nova proposta de pesquisa|mapa em construção)$/i.test(normalizedFallback.title.trim())) {
+    return compactDashboardTitle(normalizedFallback.title);
+  }
+
+  const projectContext = [normalizedFallback.theme, normalizedFallback.problemStatement, content.discovery?.originalPrompt]
+    .find((value) => typeof value === "string" && value.trim().length >= 8);
+  if (projectContext) return compactDashboardTitle(projectContext);
+
+  return "Projeto de pesquisa sem título";
 }
 
 export function workflowDashboardArea(workflow: ResearchWorkflow, fallbackArea: string | null | undefined) {
@@ -83,11 +104,11 @@ export function workflowDashboardArea(workflow: ResearchWorkflow, fallbackArea: 
   return proposed ? `${area} (proposta pela IA)` : area;
 }
 
-export function workflowDashboardMeta(workflow: ResearchWorkflow, fallback: { area?: string | null; title: string }): WorkflowDashboardMeta {
+export function workflowDashboardMeta(workflow: ResearchWorkflow, fallback: DashboardTitleFallback): WorkflowDashboardMeta {
   return {
     area: workflowDashboardArea(workflow, fallback.area),
     progress: workflowProgress(workflow),
     stageLabel: workflowStageLabel(workflow),
-    title: workflowDashboardTitle(workflow, fallback.title),
+    title: workflowDashboardTitle(workflow, fallback),
   };
 }

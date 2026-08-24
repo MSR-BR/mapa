@@ -20,6 +20,8 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [errorStage, setErrorStage] = useState<string | null>(null);
+  const [briefingPreserved, setBriefingPreserved] = useState(false);
   const autoTriggered = useRef(false);
   const discovery = workflow.content.discovery;
   const selectedCandidate = discovery?.candidates.find(
@@ -30,15 +32,24 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   async function discover() {
     setOperation("discovering");
     setMessage(null);
+    setErrorStage(null);
     try {
-      const response = await fetch(`/api/projects/${projectId}/discover`, { method: "POST" });
-      const payload = await response.json() as { error?: string; workflow?: ResearchWorkflow };
+      const response = await fetch(`/api/projects/${projectId}/discover`, {
+        method: "POST",
+        signal: AbortSignal.timeout(110_000),
+      });
+      const payload = await response.json() as { error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow };
       if (!response.ok || !payload.workflow) {
+        setErrorStage(payload.stage ?? null);
+        setBriefingPreserved(payload.preservedBriefing ?? true);
         throw new Error(payload.error || "Não foi possível buscar propostas.");
       }
       setWorkflow(payload.workflow);
+      setBriefingPreserved(false);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Não foi possível buscar propostas.");
+      setMessage(error instanceof DOMException && error.name === "TimeoutError"
+        ? "A busca demorou mais que o esperado. Tente novamente; seu briefing foi preservado."
+        : error instanceof Error ? error.message : "Não foi possível buscar propostas.");
     } finally {
       setOperation(null);
     }
@@ -134,12 +145,17 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
 
       {message ? (
         <div className="proposal-error" role="alert">
-          <span>{message}</span>
+          <div>
+            <strong>Não foi possível concluir a descoberta</strong>
+            <span>{message}</span>
+            {errorStage ? <small>Etapa: {errorStage === "literature" ? "busca bibliográfica" : errorStage === "proposals" ? "formação dos cards" : "interpretação do briefing"}.</small> : null}
+            {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
+          </div>
           <button disabled={busy} onClick={() => void discover()} type="button">Tentar novamente</button>
         </div>
       ) : null}
 
-      {!discovery && !busy ? (
+      {!discovery && !busy && !message ? (
         <div className="proposal-empty">
           <span aria-hidden="true">✦</span>
           <h3>Encontre a problemática mais promissora</h3>

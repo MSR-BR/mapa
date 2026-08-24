@@ -15,10 +15,11 @@
     "supabase:verify-advisor-student": "node --env-file-if-exists=.env.local --import tsx scripts/verify-advisor-student-flow.ts",
     "supabase:verify-migration-local": "sh scripts/verify-migration-local.sh",
     "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
+    "research-proposals:verify": "node --conditions=react-server --env-file-if-exists=.env.local --import tsx scripts/verify-proposal-discovery.ts",
     "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",
     "exports:verify": "node --import tsx scripts/verify-exports.ts",
     "security:audit": "node scripts/audit-security.mjs",
-    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts",
+    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test && npm run exports:verify && npm run build"
@@ -34,6 +35,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "resend": "^6.9.2",
+    "server-only": "^0.0.1",
     "zod": "4.4.3"
   },
   "devDependencies": {

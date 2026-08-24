@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { logOperationalFailure, startRequest } from "@/lib/observability/request-context";
 import {
   broadenResearchQuery,
   GENERATION_MODEL,
@@ -18,6 +19,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 export const maxDuration = 120;
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const requestContext = startRequest(request);
   const { id } = await context.params;
   const body: unknown = await request.json().catch(() => null);
   const idempotencyKey = body && typeof body === "object" && "idempotencyKey" in body
@@ -113,7 +115,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       maxTopPapers: 10,
       publicationInterval: { kind: "last-5-years" },
       topic: interpreted.researchQuery,
-    });
+    }, { requestId: requestContext.requestId });
     if (report.references.length === 0) {
       console.warn("research_starter_retry_broader_interval", {
         projectId: id,
@@ -127,7 +129,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         maxTopPapers: 10,
         publicationInterval: { kind: "last-10-years" },
         topic: interpreted.researchQuery,
-      });
+      }, { requestId: requestContext.requestId });
     }
     if (report.references.length === 0) {
       const broaderQuery = await broadenResearchQuery(
@@ -145,7 +147,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
           maxTopPapers: 10,
           publicationInterval: { kind: "last-10-years" },
           topic: broaderQuery,
-        });
+        }, { requestId: requestContext.requestId });
         if (report.references.length > 0) {
           interpretedProject = { ...interpretedProject, theme: broaderQuery };
           const { error: broaderQuerySaveError } = await supabase
@@ -194,10 +196,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       : error instanceof Error && error.message.includes("Referências não verificadas")
         ? "unverified-references"
         : "generation-failed";
-    console.error("generation_job_failed", {
+    logOperationalFailure("generation_job_failed", requestContext, {
       errorCode,
       jobId: job.id,
-      message: error instanceof Error ? error.message : "unknown-error",
       projectId: id,
     });
     const now = new Date().toISOString();

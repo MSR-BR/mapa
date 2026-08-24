@@ -38,6 +38,14 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 039 | Fechamento operacional do piloto | Concluída | CPD técnico, E2E, domínio, integrações, segurança de aplicação, exportações, Docker local, smoke, commit limpo e tag `v21082026.1` aprovados. |
 | 040 | Paridade dos modos de entrada na home | Concluída | Home alinhada ao dashboard, com Mapa Avançado recomendado, Mapa Rápido recolhido e contraste visual entre os cards. |
 | 041 | Relatos de problemas e triagem privada | Concluída | Formulário na home e no app, anexos privados, RLS por usuário, notificação Resend e painel de triagem restrito à equipe. Migration, testes e produção aprovados. |
+| 042 | Mapa Rápido com sugestões resilientes | Concluída | Sugestões locais aparecem enquanto o usuário digita, refinamento por IA continua quando disponível e o fluxo rápido mantém alternativas de tema, formulação e recorte sem bloquear o início. |
+| 043 | Descoberta de propostas resiliente | Concluída | Research Starter e Gemini têm tratamento de respostas inválidas, retry transitório, normalização de referências, limite de tempo, retry de cards e diagnóstico por etapa; o briefing é preservado. |
+| 044 | Validação final do pipeline Gemini + Research Starter | Concluída | Smokes reais do Gemini, Research Starter e descoberta, E2E autenticado aluno–orientador, exportação PDF, testes, lint, typecheck, build, deploy e smoke público aprovados. |
+| 045 | Observabilidade e manutenção pós-piloto | Concluída | Correlation ID, logs operacionais sanitizados, health check sem cache, runbook, testes e smoke público aprovados; produção em `v23082026.4`. |
+| 046 | PDF final conforme modelo acadêmico e registro CBL | Concluída | PDF final reorganizado no formato do modelo fornecido, com capítulos 1–5, referências cruzadas, link do aplicativo, registro CBL/ISBN e código de barras incorporado; produção em `v23082026.5`. |
+| 047 | Conclusão, impactos e agenda de pesquisa | Concluída | PDF final diferencia resultados esperados, explicita impactos potenciais, oportunidades derivadas da literatura e recomendações relacionadas ao tema, objetivos e referências. |
+| 048 | Recuperação de senha e retorno seguro | Concluída | Link de recuperação usa confirmação OTP segura, preserva destinos internos e mantém compatibilidade com callbacks antigos. |
+| 049 | Auditoria final e encerramento operacional | Concluída | Código, Supabase, integrações, segurança, exportações, domínio, produção e CPD revalidados; versão final publicada em `v23082026.8`. |
 
 ## Marcos
 

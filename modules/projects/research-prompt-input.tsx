@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 type PromptSuggestion = {
-  kind: "tema" | "formulacao";
+  kind: "tema" | "formulacao" | "recorte";
   text: string;
 };
 
@@ -14,7 +14,37 @@ type ResearchPromptInputProps = {
   value: string;
 };
 
-const MINIMUM_SUGGESTION_LENGTH = 18;
+const MINIMUM_SUGGESTION_LENGTH = 8;
+const AI_SUGGESTION_LENGTH = 18;
+
+function cleanPromptForSuggestion(prompt: string) {
+  const cleaned = prompt
+    .replace(/\s+/g, " ")
+    .replace(/^(?:eu\s+)?(?:quero|preciso|gostaria de|crie|criar|elabore|elaborar|desenvolva|desenvolver|fazer|faça)\s+/i, "")
+    .replace(/^(?:um|uma)\s+(?:roteiro|plano|projeto|pesquisa|estudo)\s+(?:de|sobre)\s+/i, "")
+    .replace(/[.!?]+$/, "")
+    .trim();
+
+  return (cleaned || prompt.trim()).slice(0, 220);
+}
+
+function buildLocalPromptSuggestions(prompt: string): PromptSuggestion[] {
+  const subject = cleanPromptForSuggestion(prompt);
+  return [
+    {
+      kind: "tema",
+      text: `Tema de pesquisa: ${subject}, com delimitação de contexto, público e período relevantes.`,
+    },
+    {
+      kind: "formulacao",
+      text: `Investigar ${subject}, com foco na relação central e nas evidências que sustentam a situação-problema.`,
+    },
+    {
+      kind: "recorte",
+      text: `Analisar ${subject} para identificar padrões, lacunas da literatura e implicações para a pesquisa.`,
+    },
+  ];
+}
 
 export function ResearchPromptInput({
   id,
@@ -27,12 +57,17 @@ export function ResearchPromptInput({
   const [loadingPrompt, setLoadingPrompt] = useState("");
   const lastRequestedPrompt = useRef("");
   const normalizedPrompt = value.trim();
-  const visibleSuggestions = suggestionsForPrompt === normalizedPrompt ? suggestions : [];
-  const loading = loadingPrompt === normalizedPrompt;
+  const localSuggestions = normalizedPrompt.length >= MINIMUM_SUGGESTION_LENGTH
+    ? buildLocalPromptSuggestions(normalizedPrompt)
+    : [];
+  const visibleSuggestions = suggestionsForPrompt === normalizedPrompt && suggestions.length > 0
+    ? suggestions
+    : localSuggestions;
+  const loading = normalizedPrompt.length >= AI_SUGGESTION_LENGTH && loadingPrompt === normalizedPrompt;
 
   useEffect(() => {
     const prompt = value.trim();
-    if (prompt.length < MINIMUM_SUGGESTION_LENGTH) return;
+    if (prompt.length < AI_SUGGESTION_LENGTH) return;
 
     const controller = new AbortController();
     const timeout = window.setTimeout(async () => {
@@ -82,28 +117,35 @@ export function ResearchPromptInput({
         rows={3}
         value={value}
       />
-      {loading || visibleSuggestions.length > 0 ? (
+      {visibleSuggestions.length > 0 ? (
         <div className="prompt-suggestions" aria-live="polite">
-          <p>{loading ? "Pensando em como aprimorar seu pedido…" : "Sugestões para consolidar o mapa"}</p>
-          {!loading ? (
-            <div className="prompt-suggestion-list">
-              {visibleSuggestions.map((suggestion) => (
-                <button
-                  key={`${suggestion.kind}-${suggestion.text}`}
-                  onClick={() => {
-                    onChange(suggestion.text);
-                    setSuggestions([]);
-                    setSuggestionsForPrompt("");
-                    lastRequestedPrompt.current = suggestion.text.trim();
-                  }}
-                  type="button"
-                >
-                  <span>{suggestion.kind === "tema" ? "Tema" : "Formulação"}</span>
-                  {suggestion.text}
-                </button>
-              ))}
-            </div>
-          ) : null}
+          <p>
+            Sugestões para consolidar o mapa
+            {loading ? <small>Refinando com IA…</small> : null}
+          </p>
+          <div className="prompt-suggestion-list">
+            {visibleSuggestions.map((suggestion) => (
+              <button
+                key={`${suggestion.kind}-${suggestion.text}`}
+                onClick={() => {
+                  onChange(suggestion.text);
+                  setSuggestions([]);
+                  setSuggestionsForPrompt("");
+                  lastRequestedPrompt.current = suggestion.text.trim();
+                }}
+                type="button"
+              >
+                <span>
+                  {suggestion.kind === "tema"
+                    ? "Tema"
+                    : suggestion.kind === "recorte"
+                      ? "Recorte"
+                      : "Formulação"}
+                </span>
+                {suggestion.text}
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
     </>

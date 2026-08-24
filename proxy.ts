@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { attachRequestId, getRequestId } from "@/lib/observability/request-context";
 import { updateSession } from "@/lib/supabase/proxy";
 
 function createNonce() {
@@ -22,10 +23,11 @@ function buildContentSecurityPolicy(nonce: string) {
 }
 
 export async function proxy(request: NextRequest) {
+  const requestId = getRequestId(request);
   const hostname = request.nextUrl.hostname;
   if (hostname === "mapadapesquisa.vercel.app" || hostname.endsWith("mapadapesquisa.vercel.app")) {
     const canonical = new URL(request.nextUrl.pathname + request.nextUrl.search, "https://mapadapesquisa.com.br");
-    return NextResponse.redirect(canonical, 308);
+    return attachRequestId(NextResponse.redirect(canonical, 308), requestId);
   }
 
   // Browser requests include Origin on mutating fetches. Reject an explicit
@@ -37,11 +39,13 @@ export async function proxy(request: NextRequest) {
   ) {
     const origin = request.headers.get("origin");
     if (origin && origin !== request.nextUrl.origin) {
-      return NextResponse.json({ error: "Origem não permitida." }, { status: 403 });
+      return attachRequestId(NextResponse.json({ error: "Origem não permitida." }, { status: 403 }), requestId);
     }
   }
 
-  if (process.env.NODE_ENV !== "production") return updateSession(request);
+  if (process.env.NODE_ENV !== "production") {
+    return attachRequestId(await updateSession(request), requestId);
+  }
 
   const nonce = createNonce();
   const contentSecurityPolicy = buildContentSecurityPolicy(nonce);
@@ -50,7 +54,7 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);
   const response = await updateSession(request, requestHeaders);
   response.headers.set("Content-Security-Policy", contentSecurityPolicy);
-  return response;
+  return attachRequestId(response, requestId);
 }
 
 export const config = {

@@ -109,3 +109,115 @@ O plano Free não oferece ao responsável o mesmo fluxo de restauração diária
 - Smoke público confirmado: home e `/api/health` retornam `200`; robots
   bloqueia `/admin/`; o HTML da home contém os modos `Mapa Avançado`,
   `Mapa Rápido` e o link `Relatar problema`.
+
+## Encerramento da Change 042
+
+- O Mapa Rápido exibe três sugestões locais a partir de oito caracteres, sem
+  depender de rede ou de uma resposta do Gemini para mostrar alternativas.
+- Sugestões de IA continuam sendo solicitadas a partir de 18 caracteres e
+  substituem as sugestões locais somente quando retornam com sucesso.
+- As alternativas são classificadas como Tema, Formulação ou Recorte e podem
+  ser selecionadas para continuar a edição do pedido.
+- O fallback não inventa instituições, períodos, populações ou métodos; apenas
+  reorganiza o texto informado e explicita uma delimitação para revisão do
+  usuário.
+- Versão pública atualizada para `v23082026.1`.
+
+## Encerramento da Change 043
+
+- A descoberta de propostas limita o tempo total da busca e repete somente falhas
+  transitórias do Research Starter, sem duplicar chamadas indefinidamente.
+- Respostas bibliográficas são normalizadas antes do schema: URLs inválidas viram
+  campos nulos, abstracts dos artigos de topo são preservados e IDs inválidos não
+  entram nos cards.
+- A formação dos seis cards possui uma segunda tentativa com instruções de reparo
+  para ordem, tipo da proposta, abertura da pergunta e referências verificadas.
+- A API identifica a etapa da falha, informa se a tentativa é repetível e confirma
+  que o briefing continua salvo; a interface oferece retry sem exibir um estado vazio
+  concorrente.
+- Versão pública atualizada para `v23082026.2`.
+
+## Encerramento da Change 044
+
+- Gemini validado após a recarga de créditos, com saída estruturada compatível
+  com o schema 1.0.0.
+- Research Starter validado com referências retornadas e normalizadas.
+- Descoberta real validada com três sugestões rápidas, seis propostas (uma
+  exata e cinco alternativas) e vinte referências no relatório.
+- Fluxo E2E autenticado aluno–orientador aprovado: vínculo, leitura,
+  comentário, correção, aprovações, conclusão e três referências no mapa final.
+- PDF, 65 testes, typecheck, lint, build e `git diff --check` aprovados.
+- O smoke isolado usa `--conditions=react-server` e `server-only` declarado
+  como dependência para reproduzir corretamente o ambiente Server Component.
+- Versão pública `v23082026.3` publicada no deployment Vercel
+  `dpl_L4CE1edxVRYNJ66y26yygMozthCm`, aliasado a
+  `https://mapadapesquisa.com.br`. Home, `/api/health`, `robots.txt`, sitemap
+  e redirecionamento do host Vercel antigo retornaram o resultado esperado.
+
+## Change 045 — Observabilidade e manutenção pós-piloto
+
+Durante a operação, use o valor do cabeçalho `x-request-id` para correlacionar
+uma resposta do navegador com os logs da função. O proxy gera um UUID seguro
+quando o cliente não fornece um identificador válido e propaga o valor também
+em redirecionamentos e rejeições de origem.
+
+`GET /api/health` é um diagnóstico sanitizado e sem cache. Ele retorna a versão
+pública, o estado geral (`ok`, `degraded` ou `down`) e apenas `configured` ou
+`not_configured` para Supabase, Gemini, Research Starter e Resend. A ausência
+de configuração crítica do Supabase retorna `503`; a ausência de um provedor
+opcional retorna `200` com `degraded`, permitindo que o monitor diferencie uma
+falha total de uma função opcional indisponível.
+
+Os logs operacionais usam JSON e não devem conter prompts, documentos, e-mails,
+tokens, chaves ou corpos de respostas. Em falhas de geração, filtre por
+`event=generation_job_failed`, `requestId` e `errorCode`; o conteúdo interno da
+exceção não é enviado ao log.
+
+### Encerramento da Change 045
+
+- Versão pública: `v23082026.4`.
+- Deployment Vercel: `dpl_BykSZAGLg9R3sCbQCJm42WBa35BA` (READY), aliasado a
+  `https://mapadapesquisa.com.br`.
+- Smoke público aprovado em 23/08/2026: home e `/api/health` retornaram HTTP
+  200; `x-health-status: ok`, `cache-control: no-store` e `x-request-id` foram
+  observados.
+- `/api/health` confirmou Supabase, Gemini, Research Starter e Resend como
+  `configured`, sem expor valores de ambiente.
+- CPD técnico: lint, typecheck, 70 testes, build e `git diff --check` aprovados.
+
+## Change 046 — PDF final conforme modelo acadêmico e registro CBL
+
+O PDF final do fluxo v2 segue a organização do modelo acadêmico fornecido: introdução,
+revisão da literatura, metodologia, estudo de caso/análise e discussão, conclusão e
+recomendações, além das referências. As citações cruzadas permanecem no corpo do texto
+e as referências continuam vinculadas ao Research Starter.
+
+Ao final, o documento informa que foi produzido pelo Mapa da Pesquisa, contém um link
+clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
+`978-65-01-44943-2` com o código de barras fornecido pelo responsável.
+
+### Encerramento da Change 046
+
+- PDF visualmente revisado após renderização: capa com marca, hierarquia de capítulos,
+  referências e página final de registro sem sobreposição.
+- Exportação DOCX permanece indisponível; o fluxo oferece PDF conforme a decisão do
+  projeto de entregar apenas esse formato neste momento.
+- Versão de código: `v23082026.5`.
+
+## Changes 047–049 — Conclusão, recuperação de senha e auditoria final
+
+- O PDF final agora registra o produto acadêmico escolhido, sua orientação de
+  profundidade, impactos potenciais, oportunidades derivadas da literatura e
+  recomendações futuras. As relações com tema, objetivo e referências mantêm os
+  marcadores `[Rxx]` quando há evidência associada.
+- O fallback dos cards do dashboard não retorna mais “Mapa em construção” para
+  projetos com briefing: usa o título, tema, problemática ou pedido original de
+  forma compacta e legível.
+- A home pública usa o texto “Vamos construir o mapa da sua pesquisa?” e mantém
+  a descrição metodológica alinhada ao dashboard.
+- Recuperação de senha usa `/auth/confirm` com `token_hash`/`type=recovery`,
+  destino interno validado e compatibilidade com links antigos no callback.
+- Auditoria final: `npm run lint`, `npm run typecheck`, `npm test`,
+  `npm run exports:verify`, `npm run security:audit`, build, smoke de produção,
+  redirects, health check, assets e `git diff --check` aprovados.
+- Versão final publicada: `v23082026.8` em `https://mapadapesquisa.com.br`.

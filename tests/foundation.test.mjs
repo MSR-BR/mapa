@@ -13,7 +13,8 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 
   assert.match(layout, /<html lang="pt-BR"/);
   assert.match(layout, /title: "Mapa da Pesquisa"/);
-  assert.match(page, /O que você quer desenvolver\?/);
+  assert.match(page, /Vamos construir o mapa da sua pesquisa\?/);
+  assert.match(page, /Defina e organize os tópicos fundamentais da pesquisa/);
   assert.doesNotMatch(page, /Comece pela ideia/);
   assert.match(page, /PublicStartForm/);
   assert.match(page, /auth\/callback\?code=/);
@@ -94,11 +95,106 @@ test("suggests AI refinements while the research request is being written", asyn
   assert.match(input, /Crie um roteiro de tese de mestrado/);
   assert.match(input, /650/);
   assert.match(input, /Sugestões para consolidar o mapa/);
+  assert.match(input, /MINIMUM_SUGGESTION_LENGTH = 8/);
+  assert.match(input, /buildLocalPromptSuggestions/);
   assert.match(input, /Tema/);
   assert.match(input, /Formulação/);
+  assert.match(input, /Recorte/);
   assert.match(route, /suggestResearchPrompts/);
   assert.match(gemini, /exatamente 3 sugestões curtas/);
+  assert.match(gemini, /terceira sugestão de recorte/);
   assert.match(gemini, /Não invente instituições/);
+});
+
+test("makes proposal discovery resilient to Research Starter and Gemini deviations", async () => {
+  const [route, service, client, workspace, version] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/discover/route.ts"),
+    readProjectFile("modules/research-workflow/discovery-service.ts"),
+    readProjectFile("modules/research-starter/client.ts"),
+    readProjectFile("modules/research-workflow/proposal-discovery-workspace.tsx"),
+    readProjectFile("lib/app-version.ts"),
+  ]);
+
+  assert.match(route, /preservedBriefing/);
+  assert.match(route, /briefing-too-short/);
+  assert.match(route, /proposal-shape-invalid/);
+  assert.match(route, /research-starter-unavailable/);
+  assert.match(route, /gemini-quota-exhausted/);
+  assert.match(service, /normalizeReferences/);
+  assert.match(service, /safeUrl/);
+  assert.match(service, /DISCOVERY_DEADLINE_MS/);
+  assert.match(service, /broadenResearchQuery/);
+  assert.match(service, /prepayment credits are depleted/);
+  assert.match(client, /DEFAULT_MAX_ATTEMPTS/);
+  assert.match(client, /AbortSignal\.timeout/);
+  assert.match(client, /temporary-unavailable/);
+  assert.match(workspace, /Seu briefing continua salvo/);
+  assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
+  assert.match(version, /v23082026\.8/);
+});
+
+test("registers Change 044 production pipeline verification", async () => {
+  const [roadmap, spec, evidence, packageJson, version] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/044-production-pipeline-verification/spec.md"),
+    readProjectFile(".specs/changes/044-production-pipeline-verification/closure-evidence.md"),
+    readProjectFile("package.json"),
+    readProjectFile("lib/app-version.ts"),
+  ]);
+
+  assert.match(roadmap, /044 \| Validação final do pipeline Gemini \+ Research Starter \| Concluída/);
+  assert.match(spec, /exact/);
+  assert.match(spec, /supabase:verify-advisor-student/);
+  assert.match(evidence, /v23082026\.3/);
+  assert.match(packageJson, /research-proposals:verify/);
+  assert.match(packageJson, /server-only/);
+  assert.match(version, /v23082026\.8/);
+});
+
+test("registers Change 045 observability and maintenance controls", async () => {
+  const [roadmap, spec, evidence, operations, health, proxy, logger, version] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/045-observability-post-pilot/spec.md"),
+    readProjectFile(".specs/changes/045-observability-post-pilot/closure-evidence.md"),
+    readProjectFile("docs/operations.md"),
+    readProjectFile("app/api/health/route.ts"),
+    readProjectFile("proxy.ts"),
+    readProjectFile("lib/observability/request-context.ts"),
+    readProjectFile("lib/app-version.ts"),
+  ]);
+
+  assert.match(roadmap, /045 \| Observabilidade e manutenção pós-piloto \| Concluída/);
+  assert.match(spec, /x-request-id/);
+  assert.match(evidence, /sanitizados/);
+  assert.match(operations, /Change 045/);
+  assert.match(health, /X-Health-Status/);
+  assert.match(proxy, /attachRequestId/);
+  assert.match(logger, /SAFE_LOG_FIELDS/);
+  assert.match(version, /v23082026\.8/);
+});
+
+test("registers Change 046 academic PDF format and CBL registration", async () => {
+  const [roadmap, spec, evidence, pdf, route, asset, version] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/046-final-pdf-format/spec.md"),
+    readProjectFile(".specs/changes/046-final-pdf-format/closure-evidence.md"),
+    readProjectFile("modules/export/pdf.ts"),
+    readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
+    readProjectFile("public/brand/cbl-isbn-barcode.jpeg").catch(() => ""),
+    readProjectFile("lib/app-version.ts"),
+  ]);
+
+  assert.match(roadmap, /046 \| PDF final conforme modelo acadêmico e registro CBL \| Concluída/);
+  assert.match(spec, /REFERÊNCIAS/);
+  assert.match(spec, /978-65-01-44943-2/);
+  assert.match(evidence, /8 páginas/);
+  assert.match(pdf, /1 INTRODUÇÃO/);
+  assert.match(pdf, /5 CONCLUSÃO E RECOMENDAÇÕES PARA FUTURAS PESQUISAS/);
+  assert.match(pdf, /cbl-isbn-barcode\.jpeg/);
+  assert.match(pdf, /mapadapesquisa\.com\.br/);
+  assert.match(route, /Exportação em Word está temporariamente indisponível/);
+  assert.equal(asset.length > 0, true);
+  assert.match(version, /v23082026\.8/);
 });
 
 test("uses the structured situation-problem intake and product-depth guidance", async () => {
@@ -240,6 +336,9 @@ test("exports only the authenticated owner's saved structure as PDF", async () =
   assert.match(pdf, /bufferPages: true/);
   assert.match(pdf, /Referências verificadas/);
   assert.match(pdf, /Referências otimizadas com Research Starter/);
+  assert.match(pdf, /Escopo do produto acadêmico/);
+  assert.match(pdf, /Impactos potenciais/);
+  assert.match(pdf, /Oportunidades derivadas da literatura/);
   assert.match(pdf, /withCitationMarkers/);
   assert.match(pdf, /literatureExpansionText/);
   assert.match(citationHelper, /R\$\{String\(index \+ 1\)\.padStart\(2, "0"\)\}/);
@@ -276,7 +375,7 @@ test("defines an uncached health endpoint", async () => {
   const route = await readProjectFile("app/api/health/route.ts");
 
   assert.match(route, /export function GET/);
-  assert.match(route, /status: "ok"/);
+  assert.match(route, /status,/);
   assert.match(route, /"Cache-Control": "no-store"/);
 });
 
@@ -319,13 +418,14 @@ test("defines an owner-scoped projects schema with RLS", async () => {
 });
 
 test("protects the dashboard beyond the auth proxy", async () => {
-  const [dashboard, projectAuth, proxy, proxyEntry, authActions, recoveryPage] = await Promise.all([
+  const [dashboard, projectAuth, proxy, proxyEntry, authActions, recoveryPage, confirmRoute] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/auth.ts"),
     readProjectFile("lib/supabase/proxy.ts"),
     readProjectFile("proxy.ts"),
     readProjectFile("modules/auth/actions.ts"),
     readProjectFile("app/(auth)/forgot-password/page.tsx"),
+    readProjectFile("app/auth/confirm/route.ts"),
   ]);
 
   assert.match(proxy, /auth\.getClaims\(\)/);
@@ -335,8 +435,11 @@ test("protects the dashboard beyond the auth proxy", async () => {
   assert.match(projectAuth, /redirect\("\/login"\)/);
   assert.match(authActions, /signInWithPassword/);
   assert.match(authActions, /resetPasswordForEmail/);
+  assert.match(authActions, /auth\/confirm\?type=recovery/);
   assert.match(authActions, /Se o e-mail estiver cadastrado/);
   assert.match(recoveryPage, /caso o e-mail pertença a uma conta/);
+  assert.match(confirmRoute, /verifyOtp/);
+  assert.match(confirmRoute, /safeNext/);
 });
 
 test("sanitizes auth callback destinations", async () => {

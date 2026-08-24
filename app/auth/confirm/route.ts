@@ -11,6 +11,10 @@ const allowedTypes = new Set<EmailOtpType>([
   "signup",
 ]);
 
+function safeNext(value: string | null, fallback: string) {
+  return value?.startsWith("/") && !value.startsWith("//") ? value : fallback;
+}
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const tokenHash = url.searchParams.get("token_hash");
@@ -20,7 +24,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     if (!error) {
-      const destination = type === "recovery" ? "/reset-password" : "/dashboard";
+      const destination = safeNext(url.searchParams.get("next"), type === "recovery" ? "/reset-password" : "/dashboard");
       return NextResponse.redirect(new URL(destination, url.origin));
     }
   }

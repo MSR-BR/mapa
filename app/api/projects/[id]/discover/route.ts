@@ -8,6 +8,8 @@ import {
   type ResearchWorkflow,
 } from "@/modules/research-workflow/schema";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+import { DiscoveryError } from "@/modules/research-workflow/discovery-errors";
+import { ResearchStarterClientError } from "@/modules/research-starter/client";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -92,15 +94,20 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
     });
     return NextResponse.json({ workflow: nextWorkflow }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    const errorCode = error instanceof Error && error.message.includes("não encontrou referências")
-      ? "research-starter-empty"
-      : error instanceof Error && error.message.includes("Referências não verificadas")
-        ? "unverified-references"
-        : "proposal-discovery-failed";
+    const errorCode = error instanceof DiscoveryError
+      ? error.code
+      : error instanceof ResearchStarterClientError && error.code === "not-configured"
+        ? "research-starter-config"
+        : error instanceof ResearchStarterClientError
+          ? "research-starter-unavailable"
+          : "unexpected";
+    const stage = error instanceof DiscoveryError ? error.stage : "literature";
+    const retryable = error instanceof DiscoveryError ? error.retryable : true;
     console.error("proposal_discovery_failed", {
       errorCode,
       message: error instanceof Error ? error.message : "unknown-error",
       projectId: id,
+      stage,
     });
     await supabase
       .from("research_workflows")
@@ -109,10 +116,27 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       .eq("owner_id", userId)
       .eq("revision", claimRevision);
     return NextResponse.json({
-      error: errorCode === "research-starter-empty"
+      error: errorCode === "briefing-too-short"
+        ? "Descreva um pouco mais o tema da pesquisa antes de formar as propostas."
+        : errorCode === "research-starter-empty"
         ? "O Research Starter não encontrou literatura verificável. Ajuste o tema e tente novamente."
-        : "Não foi possível formar as propostas. Tente novamente.",
+        : errorCode === "research-starter-config"
+          ? "O Research Starter não está configurado neste ambiente."
+          : errorCode === "research-starter-unavailable"
+            ? "O Research Starter está temporariamente indisponível. Tente novamente em instantes."
+            : errorCode === "gemini-quota-exhausted"
+              ? "A IA está sem créditos disponíveis no momento. Recarregue a conta Gemini e tente novamente."
+              : errorCode === "gemini-unavailable"
+                ? "O serviço de IA está temporariamente indisponível. Tente novamente em instantes."
+            : errorCode === "proposal-shape-invalid"
+              ? "A IA não devolveu seis propostas válidas. Tente novamente; seu briefing foi preservado."
+              : errorCode === "unverified-references"
+                ? "A IA associou uma fonte não verificada. Tente novamente; nenhuma referência foi inventada."
+                : "Não foi possível formar as propostas. Tente novamente; seu briefing foi preservado.",
       errorCode,
-    }, { status: 502 });
+      retryable,
+      stage,
+      preservedBriefing: Boolean(workflow.content.initialBriefing),
+    }, { status: errorCode === "briefing-too-short" ? 422 : errorCode === "research-starter-config" ? 503 : 502, headers: { "Cache-Control": "private, no-store" } });
   }
 }
