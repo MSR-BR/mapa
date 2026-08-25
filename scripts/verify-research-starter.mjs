@@ -1,4 +1,4 @@
-const endpoint = "https://research-starter-six.vercel.app/api/v1/reports";
+const endpoint = "https://researchstarter.vercel.app/api/v1/reports";
 const apiKey = process.env.RESEARCH_STARTER_API_KEY;
 if (!apiKey) throw new Error("RESEARCH_STARTER_API_KEY não configurada.");
 

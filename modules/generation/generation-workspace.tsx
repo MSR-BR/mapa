@@ -162,7 +162,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
             <ol className="generation-progress">
               <li className={activeStatus === "queued" ? "current" : "done"}>Interpretando tema, recorte e nível acadêmico do prompt</li>
               <li className={activeStatus === "researching" ? "current" : activeStatus === "generating" ? "done" : ""}>
-                Buscando literatura no <a href="https://research-starter-six.vercel.app" rel="noreferrer" target="_blank">Research Starter ↗</a>
+                Buscando literatura no <a href="https://researchstarter.vercel.app" rel="noreferrer" target="_blank">Research Starter ↗</a>
               </li>
               <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências</li>
             </ol>

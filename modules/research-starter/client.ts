@@ -3,7 +3,7 @@ import "server-only";
 import { logOperationalEvent } from "@/lib/observability/request-context";
 import type { ResearchStarterRequest, ResearchStarterResponse, ResearchStarterSuccess } from "./types";
 
-const RESEARCH_STARTER_ENDPOINT = "https://research-starter-six.vercel.app/api/v1/reports";
+const RESEARCH_STARTER_ENDPOINT = "https://researchstarter.vercel.app/api/v1/reports";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_ATTEMPTS = 2;
 

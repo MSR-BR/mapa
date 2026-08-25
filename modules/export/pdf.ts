@@ -13,7 +13,7 @@ import { getResearchProductGuidance } from "@/modules/research-workflow/research
 import { objectiveCoverageLabel } from "@/modules/research-workflow/chapter-validation";
 
 const COLORS = { gold: "#9A7418", muted: "#626B72", navy: "#203748", text: "#1C2428" };
-const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
+const RESEARCH_STARTER_URL = "https://researchstarter.vercel.app";
 const APP_URL = "https://mapadapesquisa.com.br";
 const BRAND_WORDMARK_PATH = path.join(process.cwd(), "public/brand/mapa-da-pesquisa-wordmark.png");
 const CBL_BARCODE_PATH = path.join(process.cwd(), "public/brand/cbl-isbn-barcode.jpeg");
