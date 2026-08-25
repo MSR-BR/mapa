@@ -10,7 +10,7 @@ import { toJson } from "@/modules/generation/types";
 import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
-import { fetchResearchStarterReport } from "@/modules/research-starter/client";
+import { fetchResearchStarterReport, ResearchStarterClientError } from "@/modules/research-starter/client";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   chapterTopicsInputSchema,
@@ -36,6 +36,7 @@ import {
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 import {
   discoveryWithWorkflowReferences,
+  mergeReferenceArchive,
   studentContextNotes,
 } from "@/modules/research-workflow/workflow-references";
 
@@ -296,31 +297,47 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     if (step !== "literature" || !parsed.data.keywords) return NextResponse.json({ error: "Palavras-chave inválidas." }, { status: 400 });
     const searchTerms = normalizeLiteratureSearchTerms(parsed.data.keywords);
     if (searchTerms.length === 0) return NextResponse.json({ error: "Informe uma frase ou palavra-chave para otimizar a literatura." }, { status: 400 });
-    const topic = buildOptimizedResearchQuery(searchTerms);
-    let report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-5-years" }, topic });
-    if (report.references.length === 0) {
-      report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-10-years" }, topic });
+    try {
+      const topic = buildOptimizedResearchQuery(searchTerms);
+      let report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-5-years" }, topic });
+      if (report.references.length === 0) {
+        report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-10-years" }, topic });
+      }
+      if (report.references.length === 0) return NextResponse.json({ error: "Nenhuma referência verificável foi encontrada. A versão anterior foi preservada; revise as palavras-chave e tente novamente." }, { status: 422 });
+      const optimizedKeywords = buildOptimizedDiscoveryKeywords(searchTerms, report, context.discovery.interpreted.keywords);
+      const nextDiscovery = proposalDiscoverySchema.parse({
+        ...context.discovery,
+        generatedAt: new Date().toISOString(),
+        interpreted: { ...context.discovery.interpreted, keywords: optimizedKeywords, researchQuery: topic },
+        references: report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors: authors.slice(0, 8), doi, referenceId, title, url, year })),
+        reportId: report.reportId,
+        warnings: report.warnings.slice(0, 12),
+      });
+      const optimizedContext = { ...context, discovery: nextDiscovery };
+      const topics = await generatedLiteratureTopics(optimizedContext, workflow.content);
+      const archivedReferences = mergeReferenceArchive(workflow.content.referenceArchive, context.discovery.references);
+      const associatedReferenceIds = new Set(topics.flatMap((topic) => topic.referenceIds));
+      let content = replaceTopics(workflow.content, "literature", topics, workflow.sourceRevision, "ai");
+      content = researchWorkflowContentSchema.parse({
+        ...content,
+        discovery: nextDiscovery,
+        referenceArchive: archivedReferences,
+      });
+      const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+      if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba. A versão anterior foi preservada; recarregue e tente novamente." }, { status: 409 });
+      const partialNotice = report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes antes de validar." : "";
+      const manualCount = archivedReferences.filter((reference) => reference.source === "manual").length;
+      return NextResponse.json({
+        message: `Literatura otimizada no Research Starter: ${nextDiscovery.references.length} fonte(s) encontrada(s), ${associatedReferenceIds.size} associada(s) aos novos tópicos e ${archivedReferences.length} preservada(s) no arquivo (${manualCount} externa(s) adicionada(s) manualmente). As associações foram recalculadas.${partialNotice}`,
+        workflow: saved,
+      });
+    } catch (error) {
+      if (error instanceof ResearchStarterClientError) {
+        const retryMessage = error.retryable ? " Tente novamente em instantes; a versão anterior foi preservada." : " A versão anterior foi preservada.";
+        return NextResponse.json({ error: `${error.message}${retryMessage}` }, { status: error.retryable ? 503 : 502 });
+      }
+      return NextResponse.json({ error: "Não foi possível concluir a otimização da literatura. A versão anterior foi preservada; tente novamente." }, { status: 502 });
     }
-    if (report.references.length === 0) return NextResponse.json({ error: "Nenhuma referência verificável foi encontrada. A versão anterior foi preservada." }, { status: 422 });
-    const optimizedKeywords = buildOptimizedDiscoveryKeywords(searchTerms, report, context.discovery.interpreted.keywords);
-    const nextDiscovery = proposalDiscoverySchema.parse({
-      ...context.discovery,
-      generatedAt: new Date().toISOString(),
-      interpreted: { ...context.discovery.interpreted, keywords: optimizedKeywords, researchQuery: topic },
-      references: report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors: authors.slice(0, 8), doi, referenceId, title, url, year })),
-      reportId: report.reportId,
-      warnings: report.warnings.slice(0, 12),
-    });
-    const optimizedContext = { ...context, discovery: nextDiscovery };
-    const topics = await generatedLiteratureTopics(optimizedContext, workflow.content);
-    let content = replaceTopics(workflow.content, "literature", topics, workflow.sourceRevision, "ai");
-    content = researchWorkflowContentSchema.parse({
-      ...content,
-      discovery: nextDiscovery,
-      referenceArchive: [...content.referenceArchive, ...context.discovery.references].slice(-100),
-    });
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
-    return saved ? NextResponse.json({ message: "Literatura otimizada com novas referências.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
   let content = workflow.content;

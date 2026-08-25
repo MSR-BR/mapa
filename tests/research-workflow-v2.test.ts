@@ -50,6 +50,7 @@ import {
   buildOptimizedResearchQuery,
   normalizeLiteratureSearchTerms,
 } from "../modules/research-workflow/literature-optimization";
+import { mergeReferenceArchive } from "../modules/research-workflow/workflow-references";
 import { isResearchMapV2EnabledForClaims } from "../modules/research-workflow/rollout";
 import {
   createFinalMapPdfExport,
@@ -292,6 +293,36 @@ test("accepts a single phrase for literature optimization searches", () => {
   assert.equal(keywords[0], "efeito barocalorico");
   assert.equal(keywords.length >= 3, true);
   assert.equal(keywords.includes("barocaloric"), true);
+});
+
+test("preserves manual references while archiving the previous Research Starter run", () => {
+  const manual = {
+    abstract: "Resumo fornecido pelo estudante.",
+    authors: ["Autoria manual"],
+    doi: "10.0000/manual",
+    journal: "Revista manual",
+    referenceId: "manual-1",
+    source: "manual" as const,
+    title: "Fonte externa adicionada pelo estudante",
+    url: "https://example.com/manual",
+    volumeIssuePages: null,
+    year: 2025,
+  };
+  const previous = {
+    abstract: null,
+    authors: ["Autor RS"],
+    doi: null,
+    journal: null,
+    referenceId: "rs-1",
+    source: "research_starter" as const,
+    title: "Fonte anterior do Research Starter",
+    url: "https://example.com/rs-1",
+    volumeIssuePages: null,
+    year: 2024,
+  };
+  const next = mergeReferenceArchive([manual, previous], [previous, { ...previous, referenceId: "rs-2", title: "Outra fonte anterior" }]);
+  assert.deepEqual(next.map((reference) => reference.referenceId), ["manual-1", "rs-1", "rs-2"]);
+  assert.equal(next[0].source, "manual");
 });
 
 test("blocks premature results and requires a justified final Chapter 4 topic", () => {

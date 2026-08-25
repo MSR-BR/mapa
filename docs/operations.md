@@ -246,3 +246,16 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Validações executadas: testes, lint, typecheck, build, exportações, auditoria
   de segurança, verificação Supabase e E2E aluno–orientador.
 - Versão publicada: `v25082026.2`.
+
+## Change 052 — Otimização da literatura com Research Starter
+
+- **Otimizar literatura** executa uma nova busca no Research Starter com as
+  palavras-chave informadas; não é uma alteração local do texto.
+- A nova resposta só é persistida depois que há fontes verificáveis e tópicos
+  regenerados. Em falhas ou concorrência, a versão anterior permanece intacta.
+- Referências manuais ficam priorizadas no arquivo e referências da busca
+  anterior são arquivadas sem duplicatas. As associações entre tópicos e fontes
+  podem mudar e são exibidas novamente para conferência.
+- A mensagem de sucesso informa fontes encontradas, fontes associadas e fontes
+  preservadas; respostas parciais exigem revisão humana antes da validação.
+- Versão publicada: `v25082026.3`.

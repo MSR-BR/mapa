@@ -1,6 +1,6 @@
 # Change 052 — Explicação e garantia da otimização da literatura
 
-Status: planejada
+Status: concluída
 
 ## Origem
 
@@ -37,4 +37,3 @@ dos textos.
 4. O usuário consegue tentar novamente sem perder as palavras-chave.
 5. Testes cobrem resposta completa, parcial, inválida, timeout e ausência de
    fontes verificáveis.
-

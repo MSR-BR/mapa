@@ -12,6 +12,23 @@ function uniqueReferences(references: DiscoveryReference[]) {
   ));
 }
 
+/**
+ * Archives the previous discovery without allowing a new RS run to erase
+ * manually added references. Manual sources are kept first, followed by the
+ * existing archive and the previous discovery references, all de-duplicated.
+ */
+export function mergeReferenceArchive(
+  existing: DiscoveryReference[],
+  previousDiscovery: DiscoveryReference[],
+) {
+  const manual = uniqueReferences(existing.filter((reference) => reference.source === "manual"));
+  const other = uniqueReferences([
+    ...existing.filter((reference) => reference.source !== "manual"),
+    ...previousDiscovery,
+  ]);
+  return [...manual, ...other].slice(0, 100);
+}
+
 function elementLabel(element: ValidatedElement) {
   if (element.type === "problem_statement") return "Justificativa da problemática";
   if (element.type === "general_objective") return "Justificativa do objetivo geral";

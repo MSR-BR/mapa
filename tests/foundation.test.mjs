@@ -130,7 +130,7 @@ test("makes proposal discovery resilient to Research Starter and Gemini deviatio
   assert.match(client, /temporary-unavailable/);
   assert.match(workspace, /Seu briefing continua salvo/);
   assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
-  assert.match(version, /v25082026\.2/);
+  assert.match(version, /v25082026\.3/);
 });
 
 test("registers Change 044 production pipeline verification", async () => {
@@ -148,7 +148,7 @@ test("registers Change 044 production pipeline verification", async () => {
   assert.match(evidence, /v23082026\.3/);
   assert.match(packageJson, /research-proposals:verify/);
   assert.match(packageJson, /server-only/);
-  assert.match(version, /v25082026\.2/);
+  assert.match(version, /v25082026\.3/);
 });
 
 test("registers Change 045 observability and maintenance controls", async () => {
@@ -170,7 +170,7 @@ test("registers Change 045 observability and maintenance controls", async () => 
   assert.match(health, /X-Health-Status/);
   assert.match(proxy, /attachRequestId/);
   assert.match(logger, /SAFE_LOG_FIELDS/);
-  assert.match(version, /v25082026\.2/);
+  assert.match(version, /v25082026\.3/);
 });
 
 test("registers Change 046 academic PDF format and CBL registration", async () => {
@@ -194,7 +194,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
   assert.match(pdf, /mapadapesquisa\.com\.br/);
   assert.match(route, /Exportação em Word está temporariamente indisponível/);
   assert.equal(asset.length > 0, true);
-  assert.match(version, /v25082026\.2/);
+  assert.match(version, /v25082026\.3/);
 });
 
 test("uses the structured situation-problem intake and product-depth guidance", async () => {
@@ -672,6 +672,32 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(gemini, /Crie exatamente quatro tópicos para o Capítulo 4/);
   assert.match(gemini, /ID do objetivo geral \(OEG\)/);
   assert.match(page, /LiteratureDevelopmentWorkspace/);
+});
+
+test("implements Change 052 with a real Research Starter optimization and safe archive", async () => {
+  const [spec, route, workspace, references, evidence, roadmap, version] = await Promise.all([
+    readProjectFile(".specs/changes/052-literature-optimization-explanation/spec.md"),
+    readProjectFile("app/api/projects/[id]/chapters/route.ts"),
+    readProjectFile("modules/research-workflow/literature-development-workspace.tsx"),
+    readProjectFile("modules/research-workflow/workflow-references.ts"),
+    readProjectFile(".specs/changes/052-literature-optimization-explanation/closure-evidence.md"),
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile("lib/app-version.ts"),
+  ]);
+
+  assert.match(spec, /nova busca no Research Starter/);
+  assert.match(route, /fetchResearchStarterReport/);
+  assert.match(route, /mergeReferenceArchive/);
+  assert.match(route, /A versão anterior foi preservada/);
+  assert.match(route, /resultados parciais/);
+  assert.match(route, /associada\(s\) aos novos tópicos/);
+  assert.match(workspace, /nova busca no Research Starter/);
+  assert.match(workspace, /referências externas adicionadas manualmente permanecem preservadas/);
+  assert.match(workspace, /externa\(s\) preservada\(s\)/);
+  assert.match(references, /mergeReferenceArchive/);
+  assert.match(evidence, /v25082026\.3/);
+  assert.match(roadmap, /052 \| Explicação e garantia da otimização da literatura \| Concluída/);
+  assert.match(version, /v25082026\.3/);
 });
 
 test("keeps methodology controls responsive and reference-aware", async () => {
