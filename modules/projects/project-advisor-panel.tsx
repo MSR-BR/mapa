@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { updateProjectAdvisor } from "./actions";
-import { initialAdvisorLinkActionState } from "./types";
+import { initialAdvisorLinkActionState, type AdvisorLinkActionState } from "./types";
 
 type Props = {
   advisorEmail: string | null;
@@ -12,7 +12,12 @@ type Props = {
 };
 
 export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: Props) {
-  const [state, formAction, pending] = useActionState(updateProjectAdvisor, {
+  const [editing, setEditing] = useState(!advisorEmail);
+  const [state, formAction, pending] = useActionState(async (previousState: AdvisorLinkActionState, formData: FormData) => {
+    const nextState = await updateProjectAdvisor(previousState, formData);
+    if (nextState.status === "success") setEditing(!nextState.value?.trim());
+    return nextState;
+  }, {
     ...initialAdvisorLinkActionState,
     linked: advisorLinked,
     value: advisorEmail ?? "",
@@ -31,22 +36,42 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
           o Mapa guarda o e-mail e faz o vínculo quando ela for criada.
         </p>
       </div>
-      <form action={formAction}>
-        <input name="projectId" type="hidden" value={projectId} />
-        <label>
-          <span>E-mail do orientador</span>
-          <input
-            defaultValue={advisorEmail ?? ""}
-            maxLength={320}
-            name="advisorEmail"
-            placeholder="orientador@instituicao.edu"
-            type="email"
-          />
-        </label>
-        <button className="secondary-button" disabled={pending} type="submit">
-          {pending ? "Salvando…" : "Salvar orientador"}
-        </button>
-      </form>
+      {hasEmail && !editing ? (
+        <div className="project-advisor-saved">
+          <div>
+            <span className="project-advisor-saved-label">Orientador informado</span>
+            <strong>{displayedEmail}</strong>
+            <p>{linked ? "Conta vinculada ao projeto." : "E-mail guardado para vincular quando a conta existir."}</p>
+          </div>
+          <button className="secondary-button" onClick={() => setEditing(true)} type="button">
+            Alterar orientador
+          </button>
+        </div>
+      ) : (
+        <form action={formAction}>
+          <input name="projectId" type="hidden" value={projectId} />
+          <label>
+            <span>E-mail do orientador</span>
+            <input
+              defaultValue={displayedEmail}
+              maxLength={320}
+              name="advisorEmail"
+              placeholder="orientador@instituicao.edu"
+              type="email"
+            />
+          </label>
+          <div className="project-advisor-form-actions">
+            <button className="secondary-button" disabled={pending} type="submit">
+              {pending ? "Salvando…" : "Salvar orientador"}
+            </button>
+            {hasEmail ? (
+              <button className="project-advisor-cancel" disabled={pending} onClick={() => setEditing(false)} type="button">
+                Cancelar
+              </button>
+            ) : null}
+          </div>
+        </form>
+      )}
       <div className={`project-advisor-status ${hasEmail ? linked ? "linked" : "pending" : "empty"}`} role="status">
         {hasEmail
           ? linked

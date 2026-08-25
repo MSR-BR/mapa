@@ -221,3 +221,16 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
   `npm run exports:verify`, `npm run security:audit`, build, smoke de produção,
   redirects, health check, assets e `git diff --check` aprovados.
 - Versão final publicada: `v23082026.8` em `https://mapadapesquisa.com.br`.
+
+## Change 050 — Persistência do orientador
+
+- O detalhe do projeto agora reidrata o e-mail e o estado do vínculo salvos no
+  Supabase e apresenta um resumo compacto por padrão.
+- O formulário permanece fechado depois de salvar; a edição ou remoção só é
+  aberta por **Alterar orientador**, preservando também o estado pendente para
+  contas ainda não existentes.
+- Não houve alteração de schema ou migration: o comportamento usa a função
+  `set_project_advisor` e o RLS já auditados na Change 036.
+- Validações executadas: testes, lint, typecheck, build, E2E aluno–orientador,
+  exportações, segurança e smoke de produção.
+- Versão publicada: `v25082026.1`.

@@ -378,6 +378,14 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .project-advisor-panel input { width: 100%; min-height: 2.75rem; border: 1px solid #bfd0c8; border-radius: 0.75rem; padding: 0.65rem 0.8rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
 .project-advisor-panel input:focus { border-color: #79a992; outline: 3px solid rgb(23 107 77 / 12%); }
 .project-advisor-panel button { white-space: nowrap; }
+.project-advisor-form-actions { display: flex; align-items: center; gap: 0.6rem; }
+.project-advisor-cancel { border: 0; background: transparent; color: #55756a; font: inherit; font-size: 0.78rem; font-weight: 750; cursor: pointer; }
+.project-advisor-cancel:disabled { cursor: wait; opacity: 0.55; }
+.project-advisor-saved { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #c6ddd3; border-radius: 0.85rem; padding: 0.8rem 0.9rem; background: #f5fbf8; }
+.project-advisor-saved > div { display: grid; min-width: 0; gap: 0.2rem; }
+.project-advisor-saved-label { color: #55756a; font-size: 0.7rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+.project-advisor-saved strong { overflow-wrap: anywhere; color: #173a2c; font-size: 0.95rem; }
+.project-advisor-saved p { margin: 0; color: #5f6f67; font-size: 0.76rem; }
 .project-advisor-status { grid-column: 1 / -1; width: fit-content; border: 1px solid #dce9e3; border-radius: 999px; padding: 0.32rem 0.65rem; background: #f8fcfa; color: #5f6f67; font-size: 0.72rem; font-weight: 850; }
 .project-advisor-status.linked { border-color: #a6d5c0; background: #e9f7f0; color: #176b4d; }
 .project-advisor-status.pending { border-color: #d9c48d; background: #fff8e5; color: #73570e; }
@@ -917,6 +925,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .continue-project-card .primary-link { width: 100%; }
   .project-advisor-panel { grid-template-columns: 1fr; }
   .project-advisor-panel form { grid-template-columns: 1fr; }
+  .project-advisor-form-actions, .project-advisor-saved { align-items: stretch; flex-direction: column; }
   .project-advisor-panel button { width: 100%; }
   .advisor-readonly-grid { grid-template-columns: 1fr; }
   .advisor-readonly-heading { align-items: start; flex-direction: column; }

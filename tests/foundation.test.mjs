@@ -130,7 +130,7 @@ test("makes proposal discovery resilient to Research Starter and Gemini deviatio
   assert.match(client, /temporary-unavailable/);
   assert.match(workspace, /Seu briefing continua salvo/);
   assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
-  assert.match(version, /v23082026\.8/);
+  assert.match(version, /v25082026\.1/);
 });
 
 test("registers Change 044 production pipeline verification", async () => {
@@ -148,7 +148,7 @@ test("registers Change 044 production pipeline verification", async () => {
   assert.match(evidence, /v23082026\.3/);
   assert.match(packageJson, /research-proposals:verify/);
   assert.match(packageJson, /server-only/);
-  assert.match(version, /v23082026\.8/);
+  assert.match(version, /v25082026\.1/);
 });
 
 test("registers Change 045 observability and maintenance controls", async () => {
@@ -170,7 +170,7 @@ test("registers Change 045 observability and maintenance controls", async () => 
   assert.match(health, /X-Health-Status/);
   assert.match(proxy, /attachRequestId/);
   assert.match(logger, /SAFE_LOG_FIELDS/);
-  assert.match(version, /v23082026\.8/);
+  assert.match(version, /v25082026\.1/);
 });
 
 test("registers Change 046 academic PDF format and CBL registration", async () => {
@@ -194,7 +194,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
   assert.match(pdf, /mapadapesquisa\.com\.br/);
   assert.match(route, /Exportação em Word está temporariamente indisponível/);
   assert.equal(asset.length > 0, true);
-  assert.match(version, /v23082026\.8/);
+  assert.match(version, /v25082026\.1/);
 });
 
 test("uses the structured situation-problem intake and product-depth guidance", async () => {
@@ -911,6 +911,9 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(projectAdvisorPanel, /E-mail do orientador/);
   assert.match(projectAdvisorPanel, /Conta vinculada/);
   assert.match(projectAdvisorPanel, /E-mail guardado/);
+  assert.match(projectAdvisorPanel, /useState\(!advisorEmail\)/);
+  assert.match(projectAdvisorPanel, /Alterar orientador/);
+  assert.match(projectAdvisorPanel, /project-advisor-saved/);
   assert.match(migration, /create table if not exists public\.user_profiles/);
   assert.match(migration, /create or replace function public\.set_project_advisor/);
   assert.match(migration, /create or replace function public\.claim_pending_advisor_projects/);
