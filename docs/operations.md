@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v21082026.3` (21/08/2026; relatos de problemas e triagem privada)
+- Versão pública: `v25082026.5` (25/08/2026; auditoria de regressão C053)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -30,6 +30,24 @@
 - `https://mapa-gray-two.vercel.app` deve responder com redirecionamento permanente para o domínio canônico.
 - `www.mapadapesquisa.com.br` não é publicado nesta fase; o domínio raiz é o único endereço canônico.
 - Depois de alterar qualquer domínio, validar o fluxo completo “tema → login → callback → geração”; uma Site URL correta sem a Redirect URL permitida faz o Supabase descartar o callback PKCE solicitado.
+
+## Change 053 — Auditoria de regressão (25/08/2026)
+
+- A auditoria reexecutou os fluxos rápido e avançado, descoberta de propostas,
+  dashboard, autenticação, integrações, exportação e compatibilidade sem criar
+  uma nova implementação paralela às Changes 042–049.
+- Smokes públicos: `/api/health`, home, `/home.html`, `robots.txt`, `sitemap.xml`,
+  redirecionamentos dos hosts Vercel antigos, dashboard protegido e callback de
+  autenticação. O domínio `www` continua deliberadamente não publicado conforme
+  a decisão da Change 038.
+- Supabase: isolamento anônimo e autenticado, RLS de aluno–orientador e fluxo
+  E2E passaram; a verificação local que depende do Docker foi bloqueada pelo
+  socket do Docker indisponível, sem invalidar a verificação remota equivalente.
+- PDF: exportação passou, foi renderizada visualmente e confirmou capa, capítulos,
+  referências, link do aplicativo, registro CBL/ISBN e página de produção.
+- O relatório completo e a matriz de resultados estão em
+  `.specs/changes/053-report-regression-audit/closure-evidence.md`.
+- Versão publicada: `v25082026.5`.
 
 ## Custos e limites
 

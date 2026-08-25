@@ -49,7 +49,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 050 | Persistência do orientador no projeto | Concluída | Reabertura mostra o orientador salvo e só abre a edição mediante ação explícita; versão `v25082026.1`. |
 | 051 | Linguagem de cobertura dos objetivos | Concluída | Capítulos 2 e 4 usam “Atende parcialmente” e “Atende completamente”, com cobertura OE/OEG no mapa final e PDF; versão `v25082026.2`. |
 | 052 | Explicação e garantia da otimização da literatura | Concluída | Card e endpoint explicam a nova busca no Research Starter, preservam referências externas e informam as associações recalculadas; versão `v25082026.3`. |
-| 053 | Auditoria de regressão do relatório de 21–25/08 | Planejada | Revalidação rastreável dos itens já cobertos pelas Changes 042–049, sem duplicar implementações. |
+| 053 | Auditoria de regressão do relatório de 21–25/08 | Concluída | Auditoria local, E2E autenticada, integrações Gemini/Research Starter, Supabase/RLS, segurança, exportação PDF, domínio canônico, SEO, callbacks e smoke de produção aprovados; limitação do Docker local e `www` não publicado ficaram documentados; versão `v25082026.5`. |
 
 ## Marcos
 

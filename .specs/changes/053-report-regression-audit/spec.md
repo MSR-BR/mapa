@@ -1,6 +1,6 @@
 # Change 053 — Auditoria de regressão do relatório de 21–25/08
 
-Status: planejada
+Status: concluída em 25/08/2026
 
 ## Origem
 
@@ -36,4 +36,3 @@ somente o que ainda falhar e registrando evidência rastreável.
 4. A auditoria atualiza o roadmap, o runbook, a versão do rodapé e o CPD.
 5. Se nenhum defeito permanecer, a Change é encerrada sem criar uma cópia das
    Changes 042–049 já concluídas.
-
