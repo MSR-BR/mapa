@@ -234,3 +234,15 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Validações executadas: testes, lint, typecheck, build, E2E aluno–orientador,
   exportações, segurança e smoke de produção.
 - Versão publicada: `v25082026.1`.
+
+## Change 051 — Linguagem de cobertura dos objetivos
+
+- Os graus persistidos `partial` e `full` continuam compatíveis com projetos
+  existentes, mas a interface usa `Atende parcialmente` e `Atende completamente`.
+- Capítulos 2 e 4 exibem o seletor de cobertura para OE e OEG quando aplicável.
+- O mapa final, a rastreabilidade e o PDF traduzem também relações legadas que
+  ainda registravam `partial` ou `full`.
+- Não houve alteração de schema, migration ou RLS.
+- Validações executadas: testes, lint, typecheck, build, exportações, auditoria
+  de segurança, verificação Supabase e E2E aluno–orientador.
+- Versão publicada: `v25082026.2`.

@@ -16,6 +16,18 @@ export const chapterTopicInputSchema = z.object({
 export const chapterTopicsInputSchema = z.array(chapterTopicInputSchema).min(3).max(6);
 export type ChapterTopicInput = z.infer<typeof chapterTopicInputSchema>;
 
+/** Human-readable labels for the persisted objective coverage degrees. */
+export const OBJECTIVE_COVERAGE_LABELS = {
+  full: "Atende completamente",
+  partial: "Atende parcialmente",
+} as const;
+
+export type ObjectiveCoverageDegree = keyof typeof OBJECTIVE_COVERAGE_LABELS;
+
+export function objectiveCoverageLabel(degree: ObjectiveCoverageDegree) {
+  return OBJECTIVE_COVERAGE_LABELS[degree];
+}
+
 function normalized(value: string) {
   return value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 }

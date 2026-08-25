@@ -14,6 +14,7 @@ import { fetchResearchStarterReport } from "@/modules/research-starter/client";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   chapterTopicsInputSchema,
+  objectiveCoverageLabel,
   validateChapterTopics,
   validateCompleteObjectiveCoverage,
   type ChapterTopicInput,
@@ -145,7 +146,7 @@ function addTraceLinks(
         rule: coverage.objectiveId === generalObjectiveId
           ? "O tópico se articula ao objetivo geral no Capítulo 4."
           : chapter === "literature"
-          ? `O tópico fundamenta o objetivo específico com cobertura ${coverage.degree}.`
+          ? `O tópico fundamenta o objetivo específico com cobertura: ${objectiveCoverageLabel(coverage.degree)}.`
           : "O tópico operacionaliza o objetivo específico no Capítulo 4.",
         sourceRevision,
         toElementId: topic.id,

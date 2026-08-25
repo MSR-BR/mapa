@@ -47,7 +47,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 048 | Recuperação de senha e retorno seguro | Concluída | Link de recuperação usa confirmação OTP segura, preserva destinos internos e mantém compatibilidade com callbacks antigos. |
 | 049 | Auditoria final e encerramento operacional | Concluída | Código, Supabase, integrações, segurança, exportações, domínio, produção e CPD revalidados; versão final publicada em `v23082026.8`. |
 | 050 | Persistência do orientador no projeto | Concluída | Reabertura mostra o orientador salvo e só abre a edição mediante ação explícita; versão `v25082026.1`. |
-| 051 | Linguagem de cobertura dos objetivos | Planejada | Capítulos 2 e 4 usam “Atende parcialmente” e “Atende completamente”, com compatibilidade legada. |
+| 051 | Linguagem de cobertura dos objetivos | Concluída | Capítulos 2 e 4 usam “Atende parcialmente” e “Atende completamente”, com cobertura OE/OEG no mapa final e PDF; versão `v25082026.2`. |
 | 052 | Explicação e garantia da otimização da literatura | Planejada | Card explica a nova busca no Research Starter, preservação de referências externas e efeitos nas associações. |
 | 053 | Auditoria de regressão do relatório de 21–25/08 | Planejada | Revalidação rastreável dos itens já cobertos pelas Changes 042–049, sem duplicar implementações. |
 

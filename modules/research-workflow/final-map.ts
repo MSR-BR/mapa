@@ -1,4 +1,5 @@
 import {
+  objectiveCoverageLabel,
   validateChapterTopics,
   validateCompleteObjectiveCoverage,
   type ChapterTopicInput,
@@ -198,7 +199,7 @@ function graphIssues(nodes: FinalMapNode[], edges: FinalMapEdge[]) {
 function traceEdges(content: ResearchWorkflowContent): FinalMapEdge[] {
   return content.traceLinks.map((link) => ({
     from: link.fromElementId,
-    label: link.rule,
+    label: link.rule.replace(/cobertura (partial|full)\.?/gi, (_, degree: "partial" | "full") => `cobertura: ${objectiveCoverageLabel(degree)}`),
     to: link.toElementId,
   }));
 }

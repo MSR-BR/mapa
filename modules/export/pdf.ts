@@ -2,6 +2,7 @@ import PDFDocument from "pdfkit";
 import path from "node:path";
 
 import type { ExportDocumentInput, FinalMapExportInput } from "./types";
+import type { FinalMap } from "@/modules/research-workflow/final-map";
 import {
   buildReferenceCodeMap,
   citationMarkers,
@@ -9,6 +10,7 @@ import {
   withCitationMarkers,
 } from "@/modules/research-workflow/reference-citations";
 import { getResearchProductGuidance } from "@/modules/research-workflow/research-level-guidance";
+import { objectiveCoverageLabel } from "@/modules/research-workflow/chapter-validation";
 
 const COLORS = { gold: "#9A7418", muted: "#626B72", navy: "#203748", text: "#1C2428" };
 const RESEARCH_STARTER_URL = "https://research-starter-six.vercel.app";
@@ -193,6 +195,14 @@ function finalMapTopicReferenceIds(input: FinalMapExportInput, topicIds: string[
   return topics.filter((topic) => topicIds.includes(topic.id)).flatMap((topic) => topic.referenceIds);
 }
 
+function finalMapTopicCoverage(input: FinalMapExportInput, topic: FinalMap["literatureTopics"][number]) {
+  return topic.objectiveCoverage.map((coverage) => {
+    const specificIndex = input.finalMap.specificObjectives.findIndex((objective) => objective.id === coverage.objectiveId);
+    const label = coverage.objectiveId === input.finalMap.generalObjective?.id ? "OEG" : specificIndex >= 0 ? `OE${specificIndex + 1}` : "objetivo";
+    return `${label} — ${objectiveCoverageLabel(coverage.degree)}`;
+  }).join("; ");
+}
+
 export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const chunks: Buffer[] = [];
@@ -261,6 +271,7 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   }
   finalMap.literatureTopics.forEach((topic) => {
     addFinalMapSubheading(doc, `${topic.label} ${topic.title}`);
+    if (topic.objectiveCoverage.length > 0) addWrappedParagraph(doc, `Cobertura dos objetivos: ${finalMapTopicCoverage(input, topic)}.`, { indent: 12 });
     addWrappedParagraph(doc, withCitationMarkers(literatureExpansionText(topic.title, topic.referenceIds, referenceCodes), topic.referenceIds, referenceCodes), { indent: 12 });
   });
 
@@ -310,6 +321,7 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
   finalMap.developmentTopics.forEach((topic, index) => {
     const heading = index === 0 ? `${topic.label} Apresentação do estudo de caso` : `${topic.label} ${topic.title}`;
     addFinalMapSubheading(doc, heading);
+    if (topic.objectiveCoverage.length > 0) addWrappedParagraph(doc, `Cobertura dos objetivos: ${finalMapTopicCoverage(input, topic)}.`, { indent: 12 });
     addWrappedParagraph(doc, withCitationMarkers(topic.title, topic.referenceIds, referenceCodes), { indent: 12 });
   });
 

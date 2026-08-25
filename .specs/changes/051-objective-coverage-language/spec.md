@@ -1,6 +1,6 @@
 # Change 051 — Linguagem de cobertura dos objetivos nos capítulos 2 e 4
 
-Status: planejada
+Status: concluída
 
 ## Origem
 
@@ -41,3 +41,12 @@ decisão explícita.
 4. A validação impede tópicos sem objetivo quando a regra da etapa exigir
    vínculo e mantém a exceção documentada para o tópico 4.1.
 
+## Encerramento
+
+- Rótulos aprovados aplicados nos seletores dos Capítulos 2 e 4, incluindo OEG
+  quando disponível: `Atende parcialmente` e `Atende completamente`.
+- Valores persistidos continuam sendo `partial` e `full`; nenhuma migração foi
+  necessária e projetos antigos permanecem compatíveis.
+- O mapa final, a rastreabilidade e o PDF exibem a cobertura por OE/OEG com os
+  rótulos legíveis.
+- Versão publicada: `v25082026.2`.

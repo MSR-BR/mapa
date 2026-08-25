@@ -130,7 +130,7 @@ test("makes proposal discovery resilient to Research Starter and Gemini deviatio
   assert.match(client, /temporary-unavailable/);
   assert.match(workspace, /Seu briefing continua salvo/);
   assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
-  assert.match(version, /v25082026\.1/);
+  assert.match(version, /v25082026\.2/);
 });
 
 test("registers Change 044 production pipeline verification", async () => {
@@ -148,7 +148,7 @@ test("registers Change 044 production pipeline verification", async () => {
   assert.match(evidence, /v23082026\.3/);
   assert.match(packageJson, /research-proposals:verify/);
   assert.match(packageJson, /server-only/);
-  assert.match(version, /v25082026\.1/);
+  assert.match(version, /v25082026\.2/);
 });
 
 test("registers Change 045 observability and maintenance controls", async () => {
@@ -170,7 +170,7 @@ test("registers Change 045 observability and maintenance controls", async () => 
   assert.match(health, /X-Health-Status/);
   assert.match(proxy, /attachRequestId/);
   assert.match(logger, /SAFE_LOG_FIELDS/);
-  assert.match(version, /v25082026\.1/);
+  assert.match(version, /v25082026\.2/);
 });
 
 test("registers Change 046 academic PDF format and CBL registration", async () => {
@@ -194,7 +194,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
   assert.match(pdf, /mapadapesquisa\.com\.br/);
   assert.match(route, /Exportação em Word está temporariamente indisponível/);
   assert.equal(asset.length > 0, true);
-  assert.match(version, /v25082026\.1/);
+  assert.match(version, /v25082026\.2/);
 });
 
 test("uses the structured situation-problem intake and product-depth guidance", async () => {
@@ -647,8 +647,10 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /apresentação do estudo de caso/);
   assert.match(workspace, /Justificativa deste tópico \*/);
   assert.match(route, /parseSubmittedTopics/);
-  assert.match(workspace, /Atende bem/);
-  assert.match(workspace, /Ajuda em parte/);
+  assert.match(workspace, /Atende completamente/);
+  assert.match(workspace, /Atende parcialmente/);
+  assert.match(workspace, /Grau de cobertura de/);
+  assert.match(validation, /OBJECTIVE_COVERAGE_LABELS/);
   assert.match(workspace, /literature-optimizer-card/);
   assert.match(workspace, /Quando otimizar:/);
   assert.match(workspace, /associações específicas entre tópico e referência podem mudar/);

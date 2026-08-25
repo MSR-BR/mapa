@@ -16,6 +16,7 @@ import {
 } from "./reference-citations";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
+import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
@@ -188,6 +189,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
             <ol>{finalMap.literatureTopics.map((topic) => (
               <li key={topic.id}>
                 <strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}
+                {topic.objectiveCoverage.length > 0 ? <p className="topic-coverage-summary"><strong>Cobertura:</strong> {topic.objectiveCoverage.map((coverage) => `${finalMap.specificObjectives.findIndex((objective) => objective.id === coverage.objectiveId) >= 0 ? `OE${finalMap.specificObjectives.findIndex((objective) => objective.id === coverage.objectiveId) + 1}` : "objetivo"} — ${objectiveCoverageLabel(coverage.degree)}`).join("; ")}</p> : null}
                 <p className="literature-draft-text">{literatureExpansionText(topic.title, topic.referenceIds, referenceCodes)}</p>
               </li>
             ))}</ol>
@@ -197,7 +199,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           <section>
             <p className="section-kicker">Etapa 5 · Capítulo 4</p>
             <h3>Desenvolvimento / Estudo de Caso / Análise e Discussão</h3>
-            <ol>{finalMap.developmentTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}</li>)}</ol>
+            <ol>{finalMap.developmentTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}{topic.objectiveCoverage.length > 0 ? <p className="topic-coverage-summary"><strong>Cobertura:</strong> {topic.objectiveCoverage.map((coverage) => { const specificIndex = finalMap.specificObjectives.findIndex((objective) => objective.id === coverage.objectiveId); const label = coverage.objectiveId === finalMap.generalObjective?.id ? "OEG" : specificIndex >= 0 ? `OE${specificIndex + 1}` : "objetivo"; return `${label} — ${objectiveCoverageLabel(coverage.degree)}`; }).join("; ")}</p> : null}</li>)}</ol>
             {correctionButton("development")}
           </section>
 

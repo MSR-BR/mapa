@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
-import { objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
+import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
 import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
 import type { ResearchWorkflow } from "./schema";
@@ -15,11 +15,6 @@ type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; proj
 type Chapter = "literature" | "development";
 type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
-
-const COVERAGE_DEGREE_LABELS = {
-  full: "Atende bem",
-  partial: "Ajuda em parte",
-} as const;
 
 function referenceText(reference: WorkflowReference) {
   const authors = reference.authors.slice(0, 2).join(", ");
@@ -239,10 +234,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
           <article className="chapter-topic-editor" key={topic.id}>
             <div className="chapter-topic-order"><span>{chapterNumber}.{index + 1}</span><button aria-label={`Mover ${topic.title} para cima`} disabled={index === 0} onClick={() => moveTopic(index, -1)} type="button">↑</button><button aria-label={`Mover ${topic.title} para baixo`} disabled={index === topics.length - 1} onClick={() => moveTopic(index, 1)} type="button">↓</button></div>
             <label>Título do tópico<input maxLength={180} onChange={(event) => updateTopic(topic.id, { title: event.target.value })} value={topic.title} /></label>
-            <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. OEG = objetivo geral. Use “Atende bem” quando o tópico cobre o objetivo de modo central; use “Ajuda em parte” quando ele apenas contribui e precisa ser complementado por outros tópicos.</p>{objectiveChoices.map((objective, objectiveIndex) => {
+            <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. OEG = objetivo geral. Use “Atende completamente” quando o tópico cobre o objetivo de modo central; use “Atende parcialmente” quando ele contribui, mas precisa ser complementado por outros tópicos.</p>{objectiveChoices.map((objective) => {
               const coverage = topic.objectiveCoverage.find((item) => item.objectiveId === objective.id);
               const label = objective.label;
-              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage && chapter === "literature" ? <select aria-label={`Cobertura do objetivo ${objectiveIndex + 1}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{COVERAGE_DEGREE_LABELS.partial}</option><option value="full">{COVERAGE_DEGREE_LABELS.full}</option></select> : null}</div>;
+              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage ? <select aria-label={`Grau de cobertura de ${label}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{OBJECTIVE_COVERAGE_LABELS.partial}</option><option value="full">{OBJECTIVE_COVERAGE_LABELS.full}</option></select> : null}</div>;
             })}</fieldset>
             {chapter === "development" && index === 0 ? (
               <label className="case-study-note">
