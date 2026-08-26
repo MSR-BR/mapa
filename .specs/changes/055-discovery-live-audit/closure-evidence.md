@@ -12,9 +12,11 @@ Versão de código: `v26082026.3`
   `unauthorized` na chamada de descoberta.
 - O endpoint do Research Starter está acessível; a falha não é DNS ou rota.
 - Deploy de produção concluído em `https://mapadapesquisa.com.br`:
-  `dpl_5ts2QRYf5sZZsmmyqzC3PFb9wY1F` (estado `READY`).
+  `dpl_68MgpUAp7Daha5e6u4ZnBEzkXsx8` (estado `READY`).
 - Smoke checks pós-deploy: `/login` e `/api/health` responderam `200`; o
   health-check confirmou `x-health-status: ok`.
+- O deploy atual inclui a correção do Mapa Rápido e mantém o fluxo avançado;
+  o código de produção está na versão `v26082026.3`.
 - Correção pós-auditoria: o Mapa Rápido passou a preencher `title` e
   `problemStatement` no servidor antes de `parseProjectForm`; o clique em
   **Gerar mapa** não é mais rejeitado por campos clássicos ausentes.
