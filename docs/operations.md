@@ -368,3 +368,27 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
   problemática antes da validação do servidor; anteriormente o formulário era
   rejeitado com “Revise os campos indicados.”. O endpoint de sugestões continua
   opcional e não bloqueia o envio do mapa.
+
+## Change 056 — Rotação da credencial do Research Starter (26/08/2026)
+
+- A auditoria de produção confirmou que o endpoint do Research Starter estava
+  acessível, mas a credencial usada pelo Mapa retornava `401 unauthorized`.
+- A integração foi isolada com a variável de servidor
+  `RESEARCH_STARTER_MAPA_API_KEY` no Mapa. O cliente prioriza essa variável e
+  mantém `RESEARCH_STARTER_API_KEY` apenas como fallback para instalações locais
+  legadas; nenhuma chave é exposta ao navegador, ao código público ou aos logs.
+- No Research Starter, uma nova credencial singular foi configurada em
+  `RESEARCH_STARTER_API_KEY`, sem remover as configurações legadas. O serviço foi
+  publicado novamente e o alias `https://researchstarter.vercel.app` ficou
+  atualizado.
+- O Mapa foi publicado novamente com a credencial correspondente e com a
+  versão pública `v26082026.4`. O deployment de produção é
+  `dpl_6ZM7hdfXVZdvz1qqFeNTTfzymEkr`, aliasado a
+  `https://mapadapesquisa.com.br`.
+- O health público retornou `status=ok`, `version=v26082026.4` e os quatro
+  provedores como `configured`. Os logs após a publicação não registraram nova
+  chamada de descoberta nem novo `401`; a confirmação funcional final ocorre ao
+  clicar em **Tentar novamente** no projeto que manteve o briefing salvo.
+- A validação local continua exigindo uma chave própria em `.env.local`; o
+  Vercel não permite recuperar segredos sensíveis por `env pull`, portanto esse
+  arquivo não foi sobrescrito nem recebeu marcador de segredo.

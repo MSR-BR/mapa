@@ -1,6 +1,6 @@
 const endpoint = "https://researchstarter.vercel.app/api/v1/reports";
-const apiKey = process.env.RESEARCH_STARTER_API_KEY;
-if (!apiKey) throw new Error("RESEARCH_STARTER_API_KEY não configurada.");
+const apiKey = process.env.RESEARCH_STARTER_MAPA_API_KEY || process.env.RESEARCH_STARTER_API_KEY;
+if (!apiKey) throw new Error("RESEARCH_STARTER_MAPA_API_KEY não configurada.");
 
 const response = await fetch(endpoint, {
   body: JSON.stringify({

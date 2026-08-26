@@ -380,12 +380,14 @@ test("keeps the Research Starter key server-side and follows its v1 contract", a
   ]);
 
   assert.match(client, /import "server-only"/);
+  assert.match(client, /RESEARCH_STARTER_MAPA_API_KEY/);
   assert.match(client, /RESEARCH_STARTER_API_KEY/);
   assert.match(client, /\/api\/v1\/reports/);
   assert.match(route, /requireAuthenticatedUser/);
   assert.match(route, /publicationInterval: \{ kind: interval \}/);
   assert.match(verification, /maxReferences: 3/);
   assert.match(environment, /^RESEARCH_STARTER_API_KEY=$/m);
+  assert.match(environment, /^RESEARCH_STARTER_MAPA_API_KEY=$/m);
   assert.doesNotMatch(environment, /NEXT_PUBLIC_RESEARCH_STARTER/);
 });
 
