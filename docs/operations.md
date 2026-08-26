@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v26082026.5` (26/08/2026; coerência metodológica em tempo real e encerramento do projeto mais visível)
+- Versão pública: `v26082026.6` (26/08/2026; coerência metodológica em tempo real e encerramento do projeto mais visível)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -410,9 +410,9 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
   validação. O fluxo continua bloqueando o encerramento enquanto houver revisão
   do orientador ou pendências de integridade.
 - CPD local: lint, typecheck, 78 testes, verificação de exportações e build de
-  produção aprovados. A versão desta entrega é `v26082026.5`.
+  produção aprovados. A versão desta entrega é `v26082026.6`.
 - Deployment de produção: `dpl_Gz1qwjybWaG5EKqmdgqEmY4HUwfQ` (READY),
   aliasado a `https://mapadapesquisa.com.br`.
-- Smoke público: `/api/health` retornou `status=ok`, versão `v26082026.5` e os
+- Smoke público: `/api/health` retornou `status=ok`, versão `v26082026.6` e os
   quatro provedores configurados; `/login` retornou `200` com cabeçalhos de
   segurança ativos.

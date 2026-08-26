@@ -196,7 +196,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
     generalObjectiveId: general?.id,
   }), [currentClassification, general?.id, objectives, rows]);
   const warningFindings = [
-    ...findings.filter((finding) => finding.severity !== "blocking" && !finding.rule.includes("Compatibilidade metodológica")),
+    ...findings.filter((finding) => finding.severity !== "blocking" && !finding.rule.toLocaleLowerCase("pt-BR").includes("compatibilidade metodológica")),
     ...liveWarningMessages.map((message, index) => ({
       elementIds: rows.map((row) => row.id),
       id: `live-methodology-warning-${index}`,
