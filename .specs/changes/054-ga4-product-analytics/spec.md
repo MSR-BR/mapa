@@ -271,8 +271,8 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
    parâmetro livre ou valor não enumerado.
 9. A documentação de privacidade e os termos explicam analytics agregado e a
    opção de recusa.
-10. A versão do rodapé é atualizada para `v25082026.6` após a implementação e
-    validação locais; a publicação depende do deployment aprovado.
+10. A versão do rodapé é atualizada para `v25082026.6` após a implementação,
+    validação e publicação aprovadas.
 
 ## CPD desta Change
 
@@ -286,5 +286,5 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
   Supabase operacional.
 - **Próximo passo:** cadastrar as definições personalizadas e os relatórios no
   painel do GA4 e confirmar os eventos no DebugView com uma sessão de teste.
-- **Estado:** implementação local concluída; evidências de testes em
-  `closure-evidence.md`; publicação fica condicionada ao smoke de produção.
+- **Estado:** implementação, publicação e smoke de produção concluídos;
+  evidências em `closure-evidence.md`.

@@ -1,6 +1,6 @@
 # Evidências de encerramento — Change 054
 
-Data: 25/08/2026
+Data: 25/08/2026 (publicação confirmada em 26/08/2026)
 
 ## Implementação
 
@@ -26,7 +26,8 @@ Data: 25/08/2026
   não confundir o evento `literature_optimization_started` com um prefixo de
   chave Resend. A verificação remota do Supabase continua explicitamente como
   aviso operacional, pois depende de credenciais externas.
-- `git diff --check` — deve permanecer sem erros antes do commit/deploy.
+- `git diff --check` — aprovado antes do commit/deploy.
+- `npm run build` — aprovado localmente com o build de produção.
 
 ## Guardrails confirmados
 
@@ -35,6 +36,18 @@ Data: 25/08/2026
 - Recusar métricas impede o carregamento do GA4 e o envio de eventos.
 - Abandono é derivado por coorte no GA4, não por `beforeunload`.
 - Contagens exatas e auditoria operacional permanecem no Supabase.
+
+## Publicação e smoke de produção
+
+- Commit: `beefbd8`.
+- Tag Git: `v25082026.6`.
+- Deployment Vercel: `dpl_GxUjYCf3HQL7EJj1dRmTwRJ72dk3` (`Ready`).
+- Aliases confirmados: `https://mapadapesquisa.com.br/` e
+  `https://mapadapesquisa.vercel.app/`.
+- `GET https://mapadapesquisa.com.br/api/health` — HTTP 200, `x-health-status:
+  ok`.
+- Home pública — contém `Mapa Avançado`, `Mapa Rápido` e `v25082026.6`.
+- Logs de erro Vercel no intervalo de uma hora — nenhum log encontrado.
 
 ## Configuração externa pendente de confirmação operacional
 
@@ -51,5 +64,6 @@ conta responsável pelo Measurement ID `G-MKFYYRZG87`.
   de enviar conteúdo acadêmico.
 - Decisão: contrato fechado, consentimento primeiro, eventos nos callbacks de
   domínio e separação entre métricas agregadas e dados operacionais.
-- Estado: implementação local concluída na versão `v25082026.6`; deployment e
-  confirmação no DebugView dependem da publicação e da sessão de teste externa.
+- Estado: implementação e publicação concluídas na versão `v25082026.6`; falta
+  apenas confirmar as dimensões/relatórios no painel GA4 e observar uma sessão
+  de teste no DebugView.
