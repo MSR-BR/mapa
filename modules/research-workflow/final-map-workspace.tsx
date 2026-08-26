@@ -52,7 +52,18 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
   const warningFindings = finalMap.findings.filter((finding) => finding.severity !== "blocking");
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
-  const completeButtonLabel = isAdvisorOwner ? "Concluir como orientador" : "Validar pelo estudante";
+  const completeButtonLabel = workflow.state === "completed"
+    ? "Projeto encerrado"
+    : waitingForAdvisor
+      ? "Aguardando orientador"
+      : "Encerrar projeto";
+  const completionHelpText = workflow.state === "completed"
+    ? "Este mapa já foi encerrado e pode ser exportado a qualquer momento."
+    : waitingForAdvisor
+      ? "A etapa foi enviada ao orientador. O encerramento ficará disponível depois da validação dele."
+      : isAdvisorOwner
+        ? "Revise a versão final e encerre o projeto quando estiver tudo certo."
+        : "Revise a versão final e encerre o projeto para concluir o mapa.";
   const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
 
   useEffect(() => {
@@ -133,9 +144,16 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
         <span className={`definition-origin ${workflow.state === "completed" ? "" : "user"}`}>{workflow.state === "completed" ? "Versão concluída" : "Em revisão final"}</span>
       </div>
 
-      <div className="final-map-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+      <div className="final-completion-panel" aria-labelledby="final-completion-title">
+        <div className="final-completion-copy">
+          <p className="section-kicker">Encerramento do projeto</p>
+          <strong id="final-completion-title">{workflow.state === "completed" ? "Mapa concluído" : "Quando terminar a revisão, encerre o projeto aqui"}</strong>
+          <span>{completionHelpText}</span>
+        </div>
+        <div className="final-map-actions">
+          <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
+          <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+        </div>
       </div>
       {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
       <div className="final-export-panel" aria-label="Exportar mapa final">

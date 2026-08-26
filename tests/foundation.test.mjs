@@ -1021,3 +1021,19 @@ test("validates the migration locally without a paid Supabase branch", async () 
   assert.match(script, /trap cleanup/);
   assert.match(architecture, /sem branches pagas/);
 });
+
+test("keeps methodology coherence live and makes project closure discoverable", async () => {
+  const [methodology, finalMap, styles] = await Promise.all([
+    readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
+    readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
+    readProjectFile("app/globals.css"),
+  ]);
+
+  assert.match(methodology, /methodologyCompatibilityWarnings/);
+  assert.match(methodology, /atualizados enquanto você edita/);
+  assert.match(methodology, /Nenhum aviso foi detectado nos dados atuais/);
+  assert.match(methodology, /Encerramento do projeto/);
+  assert.match(finalMap, /Encerrar projeto/);
+  assert.match(finalMap, /Aguardando orientador/);
+  assert.match(styles, /\.final-completion-panel/);
+});

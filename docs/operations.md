@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v26082026.2` (26/08/2026; auditoria da descoberta, diagnóstico explícito do Research Starter e briefing rápido sem duplicação)
+- Versão pública: `v26082026.5` (26/08/2026; coerência metodológica em tempo real e encerramento do projeto mais visível)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -392,3 +392,22 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - A validação local continua exigindo uma chave própria em `.env.local`; o
   Vercel não permite recuperar segredos sensíveis por `env pull`, portanto esse
   arquivo não foi sobrescrito nem recebeu marcador de segredo.
+
+## Change 057 — Coerência metodológica em tempo real e encerramento visível (26/08/2026)
+
+- Os avisos de coerência da Etapa 6 agora são derivados dos valores que estão
+  sendo editados na tela. Alterações em levantamento, análise/tratamento,
+  classificação ou instrumentos atualizam a lista sem depender de salvar,
+  regenerar ou fazer uma nova chamada de IA.
+- Avisos persistidos da execução anterior não são reutilizados como diagnóstico
+  atual; quando a combinação editada não apresenta alertas, a interface informa
+  explicitamente **Coerência atualizada**.
+- A página final passou a exibir um painel destacado **Encerramento do projeto**
+  com o botão **Encerrar projeto**. O estado de espera do orientador e o estado
+  já concluído têm mensagens próprias, evitando a impressão de que o botão
+  desapareceu ou está disponível antes da validação necessária.
+- A própria Etapa 6 orienta que o painel de encerramento aparece após a
+  validação. O fluxo continua bloqueando o encerramento enquanto houver revisão
+  do orientador ou pendências de integridade.
+- CPD local: lint, typecheck, 78 testes, verificação de exportações e build de
+  produção aprovados. A versão desta entrega é `v26082026.5`.

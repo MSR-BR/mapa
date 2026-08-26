@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
-import type { MethodologyPlanInput } from "./methodology-validation";
+import { methodologyCompatibilityWarnings, type MethodologyPlanInput } from "./methodology-validation";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
@@ -179,19 +179,33 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   const references = [...(workflow.content.discovery?.references ?? []), ...workflow.content.referenceArchive]
     .filter((reference, index, all) => all.findIndex((item) => item.referenceId === reference.referenceId) === index);
   const referenceById = new Map(references.map((reference) => [reference.referenceId, reference]));
-  const currentClassification: ClassificationDraft = {
+  const currentClassification = useMemo<ClassificationDraft>(() => ({
     ...classification,
     analysisTechniques: textToList(analysisText),
     ethicsWarnings: ethicsTextToList(ethicsText),
     instruments: textToList(instrumentsText),
     procedures: textToList(proceduresText),
-  };
+  }), [analysisText, classification, ethicsText, instrumentsText, proceduresText]);
   const savedPlan = JSON.stringify({ classification: classificationDraft(workflow), rows: rowsDraft(workflow), title: findTitle(workflow) });
   const currentPlan = JSON.stringify({ classification: currentClassification, rows, title });
   const changed = savedPlan !== currentPlan;
   const findings = workflow.content.coherenceFindings.filter((finding) => finding.rule.includes("Change 013") || finding.rule.includes("metodológica"));
   const blockingMessages = errors.length > 0 ? errors : changed ? [] : findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.message);
-  const warningFindings = findings.filter((finding) => finding.severity !== "blocking");
+  const liveWarningMessages = useMemo(() => methodologyCompatibilityWarnings(rows, currentClassification, {
+    allowedObjectiveIds: new Set(objectives.filter((objective) => objective.type === "specific").map((objective) => objective.id)),
+    generalObjectiveId: general?.id,
+  }), [currentClassification, general?.id, objectives, rows]);
+  const warningFindings = [
+    ...findings.filter((finding) => finding.severity !== "blocking" && !finding.rule.includes("Compatibilidade metodológica")),
+    ...liveWarningMessages.map((message, index) => ({
+      elementIds: rows.map((row) => row.id),
+      id: `live-methodology-warning-${index}`,
+      message,
+      resolution: "Aviso atualizado a partir dos campos atuais; confirme ou ajuste a célula correspondente.",
+      rule: "Compatibilidade metodológica em tempo real",
+      severity: "warning" as const,
+    })),
+  ];
 
   useEffect(() => {
     setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage: "methodology" });
@@ -476,11 +490,12 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
       {blockingMessages.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{blockingMessages.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}
       {warningFindings.length > 0 ? (
         <div className="methodology-findings" role="status">
-          <strong>Avisos de coerência</strong>
+          <strong>Avisos de coerência <small>(atualizados enquanto você edita)</small></strong>
           <ul>{warningFindings.map((finding) => <li className={finding.severity} key={finding.id}>{methodologyMessageText(finding.message)}</li>)}</ul>
         </div>
-      ) : null}
+      ) : <div className="methodology-findings methodology-findings-clear" role="status"><strong>Coerência atualizada</strong><span>Nenhum aviso foi detectado nos dados atuais.</span></div>}
       {message ? <p className="definition-message" role="status">{message}</p> : null}
+      <p className="proposal-next-step">Depois de validar esta etapa, a página final exibirá o painel <strong>Encerramento do projeto</strong>, onde você poderá revisar a coerência e encerrar o mapa.</p>
 
       <div className="definition-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
