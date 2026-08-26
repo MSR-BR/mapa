@@ -411,3 +411,8 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
   do orientador ou pendências de integridade.
 - CPD local: lint, typecheck, 78 testes, verificação de exportações e build de
   produção aprovados. A versão desta entrega é `v26082026.5`.
+- Deployment de produção: `dpl_Gz1qwjybWaG5EKqmdgqEmY4HUwfQ` (READY),
+  aliasado a `https://mapadapesquisa.com.br`.
+- Smoke público: `/api/health` retornou `status=ok`, versão `v26082026.5` e os
+  quatro provedores configurados; `/login` retornou `200` com cabeçalhos de
+  segurança ativos.
