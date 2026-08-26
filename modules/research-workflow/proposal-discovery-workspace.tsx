@@ -22,6 +22,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errorStage, setErrorStage] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [briefingPreserved, setBriefingPreserved] = useState(false);
   const autoTriggered = useRef(false);
   const discovery = workflow.content.discovery;
@@ -41,6 +42,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     setOperation("discovering");
     setMessage(null);
     setErrorStage(null);
+    setErrorCode(null);
     trackAnalyticsEvent("generation_started", { stage: "discovery", source: autoDiscover ? "resume" : "dashboard", result: "started" });
     try {
       const response = await fetch(`/api/projects/${projectId}/discover`, {
@@ -50,11 +52,13 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
       const payload = await response.json() as { error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow };
       if (!response.ok || !payload.workflow) {
         setErrorStage(payload.stage ?? null);
+        setErrorCode(payload.errorCode ?? null);
         setBriefingPreserved(payload.preservedBriefing ?? true);
         throw new Error(payload.error || "Não foi possível buscar propostas.");
       }
       setWorkflow(payload.workflow);
       setBriefingPreserved(false);
+      setErrorCode(null);
       const references = payload.workflow.content.discovery?.references.length ?? 0;
       trackAnalyticsEvent("generation_completed", { stage: "discovery", result: "success", reference_count_bucket: getReferenceCountBucket(references) });
     } catch (error) {
@@ -159,7 +163,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
       {message ? (
         <div className="proposal-error" role="alert">
           <div>
-            <strong>Não foi possível concluir a descoberta</strong>
+            <strong>{errorCode === "research-starter-unauthorized" ? "A integração bibliográfica precisa ser atualizada" : "Não foi possível concluir a descoberta"}</strong>
             <span>{message}</span>
             {errorStage ? <small>Etapa: {errorStage === "literature" ? "busca bibliográfica" : errorStage === "proposals" ? "formação dos cards" : "interpretação do briefing"}.</small> : null}
             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}

@@ -71,11 +71,11 @@ export const RESEARCH_INTAKE_FIELDS = [
 ] as const;
 
 export function composeResearchBrief(intake: Pick<ResearchIntakeDraft, "problemContext" | "observedSituation" | "discrepancyConsequences" | "existingKnowledgeGap" | "delimitationQuestion">) {
-  return RESEARCH_INTAKE_FIELDS
-    .map((field) => `${field.label}: ${intake[field.name].trim()}`)
-    .join("\n\n")
-    .trim()
-    .slice(0, 5_000);
+  const values = RESEARCH_INTAKE_FIELDS.map((field) => intake[field.name].trim());
+  // Compatibility guard for quick-mode drafts created before the structured
+  // intake existed: collapse an identical answer repeated in every field.
+  if (values.length > 1 && values.every((value) => value && value === values[0])) return values[0].slice(0, 5_000);
+  return RESEARCH_INTAKE_FIELDS.map((field) => `${field.label}: ${intake[field.name].trim()}`).join("\n\n").trim().slice(0, 5_000);
 }
 
 export function researchIntakeFromPrompt(prompt: string): ResearchIntakeDraft {

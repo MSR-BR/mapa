@@ -99,7 +99,7 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       : error instanceof ResearchStarterClientError && error.code === "not-configured"
         ? "research-starter-config"
         : error instanceof ResearchStarterClientError
-          ? "research-starter-unavailable"
+          ? error.code === "unauthorized" ? "research-starter-unauthorized" : "research-starter-unavailable"
           : "unexpected";
     const stage = error instanceof DiscoveryError ? error.stage : "literature";
     const retryable = error instanceof DiscoveryError ? error.retryable : true;
@@ -122,6 +122,8 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
         ? "O Research Starter não encontrou literatura verificável. Ajuste o tema e tente novamente."
         : errorCode === "research-starter-config"
           ? "O Research Starter não está configurado neste ambiente."
+          : errorCode === "research-starter-unauthorized"
+            ? "A integração com o Research Starter recusou a credencial configurada. A equipe precisa atualizar essa integração antes de uma nova tentativa."
           : errorCode === "research-starter-unavailable"
             ? "O Research Starter está temporariamente indisponível. Tente novamente em instantes."
             : errorCode === "gemini-quota-exhausted"
@@ -137,6 +139,6 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       retryable,
       stage,
       preservedBriefing: Boolean(workflow.content.initialBriefing),
-    }, { status: errorCode === "briefing-too-short" ? 422 : errorCode === "research-starter-config" ? 503 : 502, headers: { "Cache-Control": "private, no-store" } });
+    }, { status: errorCode === "briefing-too-short" ? 422 : ["research-starter-config", "research-starter-unauthorized"].includes(errorCode) ? 503 : 502, headers: { "Cache-Control": "private, no-store" } });
   }
 }

@@ -48,8 +48,12 @@ export async function createProject(
   const autoGenerate = formData.get("autoGenerate") === "yes";
   const legacyPromptMode = formData.get("legacyPromptMode") === "yes";
   const prompt = formData.get("prompt");
+  const promptValue = typeof prompt === "string" ? prompt.trim().slice(0, 5_000) : "";
   const parsedIntake = legacyPromptMode ? null : parseResearchIntakeJson(formData.get("intakeJson"));
-  const intake: ResearchIntake | null = parsedIntake ?? (typeof prompt === "string" && prompt.trim() ? researchIntakeFromPrompt(prompt.trim()) as ResearchIntake : null);
+  // Quick mode is a single natural-language prompt. It must not be expanded
+  // into five identical intake answers, otherwise the saved briefing and the
+  // discovery screen repeat the sentence five times.
+  const intake: ResearchIntake | null = parsedIntake ?? (!legacyPromptMode && promptValue ? researchIntakeFromPrompt(promptValue) as ResearchIntake : null);
   if (autoGenerate && parsedIntake && !hasResearchProductType(parsedIntake)) {
     return { message: "Escolha o tipo de produto acadêmico antes de iniciar o mapa.", status: "error" };
   }
@@ -74,7 +78,9 @@ export async function createProject(
     projectData = {
       ...result.data,
       academic_level: intake?.researchType ? academicLevelForResearchType(intake.researchType) : result.data.academic_level,
-      problem_statement: result.data.problem_statement || result.data.title,
+      problem_statement: parsedIntake
+        ? result.data.problem_statement || result.data.title
+        : promptValue || result.data.problem_statement || result.data.title,
       title: "Nova proposta de pesquisa",
     };
   }

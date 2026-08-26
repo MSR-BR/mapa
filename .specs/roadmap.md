@@ -51,6 +51,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 052 | Explicação e garantia da otimização da literatura | Concluída | Card e endpoint explicam a nova busca no Research Starter, preservam referências externas e informam as associações recalculadas; versão `v25082026.3`. |
 | 053 | Auditoria de regressão do relatório de 21–25/08 | Concluída | Auditoria local, E2E autenticada, integrações Gemini/Research Starter, Supabase/RLS, segurança, exportação PDF, domínio canônico, SEO, callbacks e smoke de produção aprovados; limitação do Docker local e `www` não publicado ficaram documentados; versão `v25082026.5`. |
 | 054 | Instrumentação de produto e funis no GA4 | Concluída | Contrato tipado, consentimento, eventos de domínio, funis e sanitização sem PII implementados; testes locais aprovados e configuração de definições/relatórios do GA4 documentada para validação operacional. |
+| 055 | Auditoria live da descoberta e briefing rápido | Em andamento | Diagnóstico explícito de credencial Research Starter, preservação do briefing e correção da duplicação do prompt rápido; depende apenas da atualização da chave externa em produção. |
 
 ## Marcos
 

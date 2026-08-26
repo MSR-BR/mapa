@@ -119,18 +119,34 @@ test("makes proposal discovery resilient to Research Starter and Gemini deviatio
   assert.match(route, /briefing-too-short/);
   assert.match(route, /proposal-shape-invalid/);
   assert.match(route, /research-starter-unavailable/);
+  assert.match(route, /research-starter-unauthorized/);
+  assert.match(route, /credencial configurada/);
   assert.match(route, /gemini-quota-exhausted/);
   assert.match(service, /normalizeReferences/);
   assert.match(service, /safeUrl/);
   assert.match(service, /DISCOVERY_DEADLINE_MS/);
   assert.match(service, /broadenResearchQuery/);
+  assert.match(service, /compactOriginalPrompt/);
+  assert.match(service, /research-starter-unauthorized/);
   assert.match(service, /prepayment credits are depleted/);
   assert.match(client, /DEFAULT_MAX_ATTEMPTS/);
   assert.match(client, /AbortSignal\.timeout/);
   assert.match(client, /temporary-unavailable/);
   assert.match(workspace, /Seu briefing continua salvo/);
+  assert.match(workspace, /integração bibliográfica precisa ser atualizada/);
   assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
   assert.match(version, /v\d{8}\.\d+/);
+});
+
+test("keeps quick prompts compact and does not repeat them as five intake answers", async () => {
+  const [actions, intake] = await Promise.all([
+    readProjectFile("modules/projects/actions.ts"),
+    readProjectFile("modules/projects/research-intake.ts"),
+  ]);
+
+  assert.match(actions, /Quick mode is a single natural-language prompt/);
+  assert.match(actions, /promptValue \|\| result\.data\.problem_statement/);
+  assert.match(intake, /collapse an identical answer repeated in every field/);
 });
 
 test("registers Change 044 production pipeline verification", async () => {

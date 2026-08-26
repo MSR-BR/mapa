@@ -4,6 +4,7 @@ export type DiscoveryErrorCode =
   | "briefing-too-short"
   | "research-starter-empty"
   | "research-starter-config"
+  | "research-starter-unauthorized"
   | "research-starter-unavailable"
   | "gemini-quota-exhausted"
   | "gemini-unavailable"

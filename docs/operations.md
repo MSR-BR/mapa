@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v26082026.1` (26/08/2026; correção do erro 500 no login e início do mapa)
+- Versão pública: `v26082026.2` (26/08/2026; auditoria da descoberta, diagnóstico explícito do Research Starter e briefing rápido sem duplicação)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
@@ -349,3 +349,18 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Definições personalizadas e relatórios do GA4 são configuração operacional
   externa e estão documentados acima; não há PII nos parâmetros.
 - Versão de código: `v25082026.6`.
+
+## Change 055 — Auditoria live da descoberta (26/08/2026)
+
+- Gemini e Supabase foram verificados com sucesso.
+- O endpoint do Research Starter está acessível, mas a credencial de produção
+  retornou `HTTP 401 unauthorized`; a tela agora identifica esse caso como
+  integração que precisa ser atualizada, em vez de informar indisponibilidade
+  temporária.
+- O briefing permanece salvo para retry. O modo rápido não grava mais a mesma
+  frase nos cinco campos estruturados; projetos legados com essa duplicação são
+  compactados antes da interpretação.
+- Para concluir a validação live, substituir `RESEARCH_STARTER_API_KEY` no
+  ambiente Production da Vercel por uma chave válida e executar os smokes
+  novamente. O segredo não deve ser registrado em código, chat ou logs.
+- Versão de código: `v26082026.2`.

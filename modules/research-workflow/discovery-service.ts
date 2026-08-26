@@ -53,6 +53,23 @@ function safeUrl(value: string | null | undefined) {
   }
 }
 
+/**
+ * Older quick-mode projects could persist the same free-form prompt in all
+ * five intake fields. Keep those projects usable without sending a duplicated
+ * briefing to Gemini or showing the duplication back to the user.
+ */
+function compactOriginalPrompt(value: string) {
+  const parts = value
+    .split(/\n\s*\n/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => part.match(/^[^:\n]{2,100}:\s*([\s\S]+)$/)?.[1]?.trim() ?? null);
+  if (parts.length >= 3 && parts.every((part): part is string => Boolean(part)) && new Set(parts).size === 1) {
+    return parts[0];
+  }
+  return value.trim();
+}
+
 function normalizeReferences(report: ResearchStarterSuccess): DiscoveryReference[] {
   const topPapers = Array.isArray(report.topPapers) ? report.topPapers : [];
   const abstracts = new Map(
@@ -138,6 +155,13 @@ async function fetchVerifiedLiterature(
         retryable: false,
       });
     }
+    if (error instanceof ResearchStarterClientError && error.code === "unauthorized") {
+      throw new DiscoveryError("A integração com o Research Starter recusou a credencial configurada. A equipe precisa atualizar essa integração antes de uma nova tentativa.", {
+        code: "research-starter-unauthorized",
+        stage: "literature",
+        retryable: false,
+      });
+    }
     if (error instanceof ResearchStarterClientError && !error.retryable) throw error;
     throw new DiscoveryError("O Research Starter está temporariamente indisponível. Tente novamente.", {
       code: "research-starter-unavailable",
@@ -177,7 +201,7 @@ async function fetchVerifiedLiterature(
 }
 
 export async function discoverResearchProposals(project: Project, initialBriefing: ResearchIntake | null = null) {
-  const originalPrompt = project.problem_statement?.trim() || project.theme?.trim() || project.title.trim();
+  const originalPrompt = compactOriginalPrompt(project.problem_statement?.trim() || project.theme?.trim() || project.title.trim());
   if (originalPrompt.length < 8) {
     throw new DiscoveryError("O briefing da pesquisa é muito curto para formar propostas.", {
       code: "briefing-too-short",
