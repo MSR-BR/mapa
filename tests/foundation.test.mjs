@@ -130,7 +130,7 @@ test("makes proposal discovery resilient to Research Starter and Gemini deviatio
   assert.match(client, /temporary-unavailable/);
   assert.match(workspace, /Seu briefing continua salvo/);
   assert.match(workspace, /AbortSignal\.timeout\(110_000\)/);
-  assert.match(version, /v25082026\.\d+/);
+  assert.match(version, /v\d{8}\.\d+/);
 });
 
 test("registers Change 044 production pipeline verification", async () => {
@@ -148,7 +148,7 @@ test("registers Change 044 production pipeline verification", async () => {
   assert.match(evidence, /v23082026\.3/);
   assert.match(packageJson, /research-proposals:verify/);
   assert.match(packageJson, /server-only/);
-  assert.match(version, /v25082026\.\d+/);
+  assert.match(version, /v\d{8}\.\d+/);
 });
 
 test("registers Change 045 observability and maintenance controls", async () => {
@@ -170,7 +170,7 @@ test("registers Change 045 observability and maintenance controls", async () => 
   assert.match(health, /X-Health-Status/);
   assert.match(proxy, /attachRequestId/);
   assert.match(logger, /SAFE_LOG_FIELDS/);
-  assert.match(version, /v25082026\.\d+/);
+  assert.match(version, /v\d{8}\.\d+/);
 });
 
 test("registers Change 046 academic PDF format and CBL registration", async () => {
@@ -194,7 +194,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
   assert.match(pdf, /mapadapesquisa\.com\.br/);
   assert.match(route, /Exportação em Word está temporariamente indisponível/);
   assert.equal(asset.length > 0, true);
-  assert.match(version, /v25082026\.\d+/);
+  assert.match(version, /v\d{8}\.\d+/);
 });
 
 test("uses the structured situation-problem intake and product-depth guidance", async () => {
@@ -697,7 +697,7 @@ test("implements Change 052 with a real Research Starter optimization and safe a
   assert.match(references, /mergeReferenceArchive/);
   assert.match(evidence, /v25082026\.3/);
   assert.match(roadmap, /052 \| Explicação e garantia da otimização da literatura \| Concluída/);
-  assert.match(version, /v25082026\.\d+/);
+  assert.match(version, /v\d{8}\.\d+/);
 });
 
 test("keeps methodology controls responsive and reference-aware", async () => {

@@ -3,7 +3,7 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v25082026.6` (25/08/2026; instrumentação GA4 C054)
+- Versão pública: `v26082026.1` (26/08/2026; correção do erro 500 no login e início do mapa)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
