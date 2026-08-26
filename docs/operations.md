@@ -379,8 +379,8 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
   legadas; nenhuma chave é exposta ao navegador, ao código público ou aos logs.
 - No Research Starter, uma nova credencial singular foi configurada em
   `RESEARCH_STARTER_API_KEY`, sem remover as configurações legadas. O serviço foi
-  publicado novamente e o alias `https://researchstarter.vercel.app` ficou
-  atualizado.
+  publicado novamente no deployment `dpl_HWfjvgKuJhB9cbEAdVVox2XUjJ6h` e o alias
+  `https://researchstarter.vercel.app` ficou atualizado.
 - O Mapa foi publicado novamente com a credencial correspondente e com a
   versão pública `v26082026.4`. O deployment de produção é
   `dpl_6ZM7hdfXVZdvz1qqFeNTTfzymEkr`, aliasado a
