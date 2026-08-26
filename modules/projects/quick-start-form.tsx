@@ -18,6 +18,7 @@ import {
 } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
 import { ResearchPromptInput } from "./research-prompt-input";
+import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
 
 type StartMode = "quick" | "advanced" | null;
 
@@ -106,7 +107,18 @@ export function QuickStartForm({
       setClientError(showResearchType && !hasResearchProductType(intake)
         ? "Escolha o tipo de produto acadêmico antes de iniciar o mapa."
         : "Preencha os cinco campos para formular a situação-problema.");
+      return;
     }
+    const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
+    const productType = (intake.researchType || "unknown") as AnalyticsProductType;
+    const source = resumeDraft ? "resume" : "dashboard";
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: "unknown", source, entry_mode: entryMode, product_type: productType });
+    trackAnalyticsEvent(resumeDraft ? "project_resumed" : "project_start", {
+      entry_mode: entryMode,
+      product_type: productType,
+      source,
+      result: "started",
+    });
   }
 
   function toggleMode(nextMode: Exclude<StartMode, null>) {

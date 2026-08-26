@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
@@ -192,6 +193,11 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   const blockingMessages = errors.length > 0 ? errors : changed ? [] : findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.message);
   const warningFindings = findings.filter((finding) => finding.severity !== "blocking");
 
+  useEffect(() => {
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage: "methodology" });
+    trackAnalyticsEvent("stage_started", { stage: "methodology", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
+  }, [isAdvisorOwner]);
+
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
     const nextClassification = classificationDraft(next);
@@ -232,6 +238,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
     setOperation(action);
     setMessage(null);
     setErrors([]);
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage: "methodology", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student" });
     try {
       const includePlan = action === "save" || action === "validate";
       const response = await fetch(`/api/projects/${projectId}/methodology`, {
@@ -248,13 +255,16 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
       if (payload.workflow) applyWorkflow(payload.workflow);
       if (response.status === 422) {
+        trackAnalyticsEvent("stage_blocked", { stage: "methodology", stage_number: "6", result: "blocked", reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise a matriz metodológica."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
       setMessage(payload.message ?? null);
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage: "methodology", stage_number: "6", result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
       router.refresh();
     } catch (error) {
+      trackAnalyticsEvent("stage_blocked", { stage: "methodology", stage_number: "6", result: "failed", reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a metodologia.");
     } finally {
       setOperation(null);
@@ -476,7 +486,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" data-analytics-event="stage_complete" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );

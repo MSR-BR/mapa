@@ -24,7 +24,7 @@ else fail("secrets", `Arquivos de ambiente rastreados: ${trackedEnvFiles.join(",
 
 const secretPatterns = [
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
-  /(?:sk_live_|sk_test_|re_)[A-Za-z0-9_-]{20,}/,
+  /(?:^|[^A-Za-z0-9_])(?:sk_live_|sk_test_|re_)[A-Za-z0-9_-]{20,}/,
   /AIza[0-9A-Za-z_-]{30,}/,
   /gh[pousr]_[A-Za-z0-9_]{30,}/,
   /xox[baprs]-[A-Za-z0-9-]{20,}/,

@@ -75,7 +75,7 @@ export default async function PublicLandingPage() {
         <p className="eyebrow">Mapa da Pesquisa</p>
         <h1 id="landing-title">Da situação-problema ao produto acadêmico.</h1>
         <p className="landing-lede">Responda cinco perguntas, escolha entre TCC, monografia, dissertação, tese ou artigo e construa uma proposta com IA, referências do Research Starter e revisão humana em cada etapa.</p>
-        <div className="landing-actions"><Link className="landing-primary" data-analytics-event="cta_start_map" href="/">Começar um mapa</Link><Link className="landing-secondary" href="#como-funciona">Como funciona</Link></div>
+        <div className="landing-actions"><Link className="landing-primary" href="/">Começar um mapa</Link><Link className="landing-secondary" href="#como-funciona">Como funciona</Link></div>
       </section>
       <section className="landing-section" id="como-funciona" aria-labelledby="how-title">
         <p className="eyebrow">Um processo guiado</p>
@@ -105,7 +105,7 @@ export default async function PublicLandingPage() {
         <p className="eyebrow">Para cada papel</p><h2 id="audience-title">Um espaço compartilhado.</h2>
         <div className="landing-audience-grid"><article><h3>Estudante</h3><p>Construa seu mapa por etapas, salve o progresso e envie cada parte para revisão.</p></article><article><h3>Orientador</h3><p>Leia o projeto, comente e valide as etapas dos estudantes vinculados à sua orientação.</p></article></div>
       </section>
-      <section className="landing-cta" aria-labelledby="cta-title"><h2 id="cta-title">Comece com cinco respostas.</h2><p>O próximo passo é organizar a ideia que você já tem e escolher o produto que deseja entregar.</p><Link className="landing-primary" data-analytics-event="cta_start_map" href="/">Criar meu mapa</Link></section>
+      <section className="landing-cta" aria-labelledby="cta-title"><h2 id="cta-title">Comece com cinco respostas.</h2><p>O próximo passo é organizar a ideia que você já tem e escolher o produto que deseja entregar.</p><Link className="landing-primary" href="/">Criar meu mapa</Link></section>
       <LegalLinks />
     </main>
   );

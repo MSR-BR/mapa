@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import type { ResearchStructure } from "./schema";
 import { ResearchActivityIcon } from "./research-activity-icon";
 import type { GenerationSnapshot } from "./types";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
 
 type Props = {
   autoGenerate?: boolean;
@@ -34,6 +36,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   const autoTriggered = useRef(false);
 
   useEffect(() => {
+    setAnalyticsContext({ auth_state: "authenticated", source: autoGenerate ? "resume" : "dashboard" });
+  }, [autoGenerate]);
+
+  useEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
       if (!dirty || saving.current) return;
       event.preventDefault();
@@ -58,10 +64,15 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     setSnapshot((current) => ({ ...current, job: next.job }));
   }
 
-  async function generate(keywordOverrides: string[] = []) {
+  async function generate(keywordOverrides: string[] = [], operation: "generation" | "literature" = "generation") {
     if (dirty && !window.confirm("Regenerar substituirá a versão salva. Deseja continuar?")) return;
     setBusy(true);
     setMessage(null);
+    const isRetry = operation === "generation" && snapshot.job?.status === "failed";
+    trackAnalyticsEvent(isRetry ? "generation_retry" : operation === "literature" ? "literature_optimization_started" : "generation_started", {
+      stage: operation === "literature" ? "literature" : "unknown",
+      result: isRetry ? "retry" : "started",
+    });
     const idempotencyKey = crypto.randomUUID();
     const poll = window.setInterval(() => { void refresh(); }, 1_500);
     try {
@@ -77,7 +88,11 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       setDraft(next.structure);
       setDirty(false);
       setMessage("Estrutura gerada e validada.");
+      const referenceBucket = getReferenceCountBucket(next.references.length);
+      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_completed" : "generation_completed", { result: "success", reference_count_bucket: referenceBucket, stage: operation === "literature" ? "literature" : "unknown" });
     } catch (error) {
+      const reasonCode = error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response";
+      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_failed" : "generation_failed", { result: "failed", reason_code: reasonCode, stage: operation === "literature" ? "literature" : "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível gerar a estrutura.");
       await refresh();
     } finally {
@@ -99,7 +114,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       return;
     }
     setOptimizingLiterature(false);
-    void generate(keywords);
+    void generate(keywords, "literature");
   }
 
   useEffect(() => {
@@ -129,6 +144,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível salvar.");
       setDirty(false);
       setSnapshot((current) => ({ ...current, revision: payload.revision, structure: draft }));
+      trackAnalyticsEvent("project_draft_saved", { source: "dashboard", result: "success" });
       router.push("/dashboard");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível salvar.");
@@ -230,7 +246,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <span aria-hidden="true">✦</span>
           <h3>Transforme o briefing em uma estrutura acadêmica</h3>
           <p>A geração acontece somente quando você pedir e usa no máximo 20 referências por execução.</p>
-          <button className="primary-action" data-analytics-event="stage_start" disabled={busy} onClick={() => void generate()} type="button">{busy ? "Gerando…" : "Gerar estrutura"}</button>
+          <button className="primary-action" disabled={busy} onClick={() => void generate()} type="button">{busy ? "Gerando…" : "Gerar estrutura"}</button>
         </div>
       ) : (
         <div className="research-editor">
@@ -248,7 +264,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
               {dirty ? (
                 <button disabled type="button">Exportar PDF</button>
               ) : (
-                <a data-analytics-event="export_pdf" href={`/api/projects/${projectId}/exports/pdf`}>Exportar PDF</a>
+                <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf`} referenceCount={snapshot.references.length}>Exportar PDF</ExportPdfLink>
               )}
             </div>
           </div>

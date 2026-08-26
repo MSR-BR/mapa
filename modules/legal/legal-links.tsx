@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { APP_VERSION } from "@/lib/app-version";
 import { BugReportForm } from "@/modules/bug-reports/bug-report-form";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 import { LEGAL_CONTENT } from "./legal-content";
 
@@ -45,7 +46,7 @@ export function LegalLinks({ defaultEmail = "" }: { defaultEmail?: string }) {
     <nav aria-label="Informações legais" className="legal-links">
       <button onClick={() => setPanel("terms")} type="button">Termos de uso</button>
       <button onClick={() => setPanel("privacy")} type="button">Privacidade</button>
-      <button onClick={() => setPanel("support")} type="button">Suporte</button>
+      <button onClick={() => { trackAnalyticsEvent("support_opened", { source: "home" }); setPanel("support"); }} type="button">Suporte</button>
       <button onClick={() => setPanel("bug")} type="button">Relatar problema</button>
       <button onClick={() => setPanel("credits")} type="button">Créditos</button>
       <span>{APP_VERSION}</span>
@@ -77,7 +78,10 @@ export function LegalLinks({ defaultEmail = "" }: { defaultEmail?: string }) {
               const response = await fetch("/api/support", { body: JSON.stringify(Object.fromEntries(form)), headers: { "Content-Type": "application/json" }, method: "POST" });
               const payload = await response.json().catch(() => null);
               setSupportStatus(response.ok ? "Mensagem enviada. Responderemos por e-mail." : (payload?.error || "Não foi possível enviar agora."));
-              if (response.ok) formElement.reset();
+              if (response.ok) {
+                trackAnalyticsEvent("support_submitted", { source: "home", result: "success" });
+                formElement.reset();
+              }
             } catch {
               setSupportStatus("Não foi possível enviar agora.");
             } finally {

@@ -3,11 +3,65 @@
 ## Ambiente
 
 - Produção: `https://mapadapesquisa.com.br`
-- Versão pública: `v25082026.5` (25/08/2026; auditoria de regressão C053)
+- Versão pública: `v25082026.6` (25/08/2026; instrumentação GA4 C054)
 - GA4 Measurement ID: `G-MKFYYRZG87` (carregado somente após consentimento)
 - Vercel Functions: `gru1` (São Paulo), uma única região compatível com o plano Hobby.
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.
+
+## GA4 — Change 054
+
+O Measurement ID `G-MKFYYRZG87` só é carregado depois que o usuário aceita
+métricas. Ao recusar, o script e os eventos não essenciais não são carregados.
+Os eventos usam somente valores enumerados e não incluem prompt, texto
+acadêmico, e-mail, nome, UUID, comentário, resposta de provedor ou stack trace.
+
+### Eventos disponíveis
+
+`consent_choice`, `login_started`, `login_success`, `login_failed`, `logout`,
+`profile_role_selected`, `project_start`, `project_draft_saved`,
+`project_resumed`, `generation_started`, `generation_completed`,
+`generation_failed`, `generation_retry`, `proposal_viewed`,
+`proposal_selected`, `stage_started`, `stage_saved`, `stage_submitted`,
+`stage_completed`, `stage_blocked`, `stage_revision_requested`,
+`advisor_link_started`, `advisor_link_succeeded`, `advisor_link_pending`,
+`advisor_review_opened`, `advisor_approved`, `advisor_correction_requested`,
+`literature_optimization_started`, `literature_optimization_completed`,
+`literature_optimization_failed`, `project_integration_started`,
+`project_integration_completed`, `project_integration_failed`,
+`project_completed`, `export_pdf_started`, `export_pdf_completed`,
+`export_pdf_failed`, `support_opened`, `support_submitted` e
+`bug_report_submitted`.
+
+Os parâmetros são limitados a `auth_state`, `profile_role`, `source`,
+`entry_mode`, `product_type`, `stage`, `result`, `reason_code`,
+`reference_count_bucket`, `has_advisor` e `stage_number`. A camada central
+converte qualquer valor fora da lista para `unknown`.
+
+### Como acompanhar o uso
+
+No GA4, cadastrar em **Administração → Definições personalizadas → Dimensões
+personalizadas** os parâmetros `auth_state`, `profile_role`, `source`,
+`entry_mode`, `product_type`, `stage`, `result`, `reason_code`,
+`reference_count_bucket` e `has_advisor` como dimensões de evento. Não criar
+dimensões para prompts, títulos, e-mails ou identificadores.
+
+Criar os funis com as sequências:
+
+1. `login_success` → `project_start` (ativação autenticada);
+2. `project_start` → `project_completed` (conclusão em coorte de 7/30 dias);
+3. `advisor_link_succeeded` → `stage_submitted` → `advisor_approved` (validação
+   do orientador).
+
+Para “começou e não terminou”, usar uma exploração de coorte sem evento
+`beforeunload`: `project_start` sem `project_completed` em 7 ou 30 dias. A
+contagem exata por projeto continua sendo responsabilidade de uma consulta
+agregada e restrita no Supabase.
+
+O DebugView deve ser usado com uma conta de teste e consentimento aceito. A
+recusa de métricas deve gerar zero eventos no DebugView e zero cookies não
+essenciais. Os eventos de exportação distinguem início, sucesso e falha real;
+falhas de entrega de e-mail permanecem nos logs do Resend.
 
 ## E-mail de suporte
 
@@ -277,3 +331,21 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - A mensagem de sucesso informa fontes encontradas, fontes associadas e fontes
   preservadas; respostas parciais exigem revisão humana antes da validação.
 - Versão publicada: `v25082026.3`.
+
+## Change 054 — Instrumentação de produto e funis no GA4
+
+- Contrato tipado e allowlist de eventos implementados em
+  `modules/analytics/analytics.ts`; valores desconhecidos são normalizados
+  para `unknown` e nenhum conteúdo livre é enviado ao GA4.
+- Eventos conectados aos callbacks reais de autenticação, projeto, geração,
+  propostas, etapas, orientador, literatura, integração, exportação, suporte e
+  relatos de bugs.
+- Consentimento permanece obrigatório; a sessão autenticada é detectada após
+  `getSession`/callback, com proteção contra duplicidade por sessão.
+- Exportação PDF mede início, sucesso e falha após a resposta real do endpoint.
+- Testes de contrato cobrem bloqueio antes do consentimento, allowlist de
+  parâmetros e faixas de referências; o conjunto total passou com 76 testes,
+  além de lint e typecheck.
+- Definições personalizadas e relatórios do GA4 são configuração operacional
+  externa e estão documentados acima; não há PII nos parâmetros.
+- Versão de código: `v25082026.6`.

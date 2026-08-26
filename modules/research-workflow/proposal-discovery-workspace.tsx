@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = {
@@ -29,10 +30,18 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   );
   const busy = operation !== null;
 
+  useEffect(() => {
+    setAnalyticsContext({ auth_state: "authenticated", source: autoDiscover ? "resume" : "dashboard", stage: "discovery" });
+    if (discovery) {
+      trackAnalyticsEvent("proposal_viewed", { stage: "discovery", source: autoDiscover ? "resume" : "dashboard", reference_count_bucket: getReferenceCountBucket(discovery.references.length) });
+    }
+  }, [autoDiscover, discovery]);
+
   async function discover() {
     setOperation("discovering");
     setMessage(null);
     setErrorStage(null);
+    trackAnalyticsEvent("generation_started", { stage: "discovery", source: autoDiscover ? "resume" : "dashboard", result: "started" });
     try {
       const response = await fetch(`/api/projects/${projectId}/discover`, {
         method: "POST",
@@ -46,7 +55,10 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
       }
       setWorkflow(payload.workflow);
       setBriefingPreserved(false);
+      const references = payload.workflow.content.discovery?.references.length ?? 0;
+      trackAnalyticsEvent("generation_completed", { stage: "discovery", result: "success", reference_count_bucket: getReferenceCountBucket(references) });
     } catch (error) {
+      trackAnalyticsEvent("generation_failed", { stage: "discovery", result: "failed", reason_code: error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response" });
       setMessage(error instanceof DOMException && error.name === "TimeoutError"
         ? "A busca demorou mais que o esperado. Tente novamente; seu briefing foi preservado."
         : error instanceof Error ? error.message : "Não foi possível buscar propostas.");
@@ -59,6 +71,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     if (busy) return;
     setOperation("selecting");
     setMessage(null);
+    trackAnalyticsEvent("proposal_selected", { stage: "discovery", result: "started" });
     try {
       const response = await fetch(`/api/projects/${projectId}/proposal-selection`, {
         body: JSON.stringify({ candidateId }),
@@ -151,7 +164,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
             {errorStage ? <small>Etapa: {errorStage === "literature" ? "busca bibliográfica" : errorStage === "proposals" ? "formação dos cards" : "interpretação do briefing"}.</small> : null}
             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
           </div>
-          <button disabled={busy} onClick={() => void discover()} type="button">Tentar novamente</button>
+      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { stage: "discovery", result: "retry", reason_code: "provider_invalid_response" }); void discover(); }} type="button">Tentar novamente</button>
         </div>
       ) : null}
 

@@ -1,6 +1,6 @@
 # Change 054 — Instrumentação de produto e funis no GA4
 
-Status: planejada em 25/08/2026
+Status: concluída em 25/08/2026
 
 ## Origem
 
@@ -22,19 +22,21 @@ responder:
 6. se Research Starter, Gemini, otimização da literatura, PDF e suporte estão
    funcionando sem aumentar erros ou abandonar a privacidade.
 
-Esta Change define a medição. A implementação, a configuração das definições
-personalizadas e a validação no DebugView do GA4 serão executadas somente na
-Change de implementação posterior.
+Esta Change define e implementa a medição. A configuração das definições
+personalizadas e dos relatórios no painel do GA4 continua sendo uma etapa
+operacional externa, descrita no runbook, porque depende de acesso ao painel.
 
 ## Evidência técnica revisada
 
-O código atual já possui:
+O código implementado possui:
 
 - carregamento do GA4 somente depois do consentimento em
   `modules/analytics/analytics-consent.tsx`;
 - Measurement ID configurado no ambiente;
-- eventos básicos `cta_start_map`, `login`, `stage_start`, `stage_complete` e
-  `export_pdf` em `modules/analytics/analytics.ts`;
+- contrato tipado de eventos de produto, contexto e parâmetros enumerados em
+  `modules/analytics/analytics.ts`;
+- eventos emitidos nos callbacks de autenticação, projeto, geração, etapas,
+  orientador, literatura, integração, exportação, suporte e bugs;
 - textos de consentimento que proíbem enviar prompts, projetos e e-mails ao
   Google.
 
@@ -232,7 +234,7 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
 - **Retenção:** manter no GA4 somente a retenção configurada para analytics e
   no Supabase apenas os agregados operacionais necessários.
 
-## Implementação prevista
+## Implementação realizada
 
 1. Expandir `modules/analytics/analytics.ts` para aceitar um tipo fechado de
    evento e parâmetros, remover o rastreamento baseado somente em `data-*` e
@@ -251,7 +253,7 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
 7. Documentar no runbook quais perguntas devem ser respondidas pelo GA4 e
    quais dependem de agregação do Supabase.
 
-## Critérios de aceite da implementação futura
+## Critérios de aceite
 
 1. Acesso anônimo, login e troca de papel aparecem no DebugView somente após
    consentimento.
@@ -269,8 +271,8 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
    parâmetro livre ou valor não enumerado.
 9. A documentação de privacidade e os termos explicam analytics agregado e a
    opção de recusa.
-10. A versão do rodapé só é atualizada quando a implementação for concluída e
-    publicada; esta especificação, sozinha, não muda a versão de produção.
+10. A versão do rodapé é atualizada para `v25082026.6` após a implementação e
+    validação locais; a publicação depende do deployment aprovado.
 
 ## CPD desta Change
 
@@ -282,7 +284,7 @@ do Supabase, com acesso restrito, e não de uma dimensão do GA4.
 - **Decisão:** contrato tipado, parâmetros enumerados, consentimento antes do
   rastreamento, nenhum conteúdo acadêmico/PII e separação entre GA4 agregado e
   Supabase operacional.
-- **Próximo passo:** implementar os eventos e validar os três KPIs no GA4
-  DebugView, sem publicar antes da auditoria de privacidade e E2E.
-- **Estado:** especificação registrada; nenhuma alteração funcional ou de
-  produção executada nesta Change.
+- **Próximo passo:** cadastrar as definições personalizadas e os relatórios no
+  painel do GA4 e confirmar os eventos no DebugView com uma sessão de teste.
+- **Estado:** implementação local concluída; evidências de testes em
+  `closure-evidence.md`; publicação fica condicionada ao smoke de produção.

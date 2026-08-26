@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
 import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeSchema, type ResearchIntakeDraft } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
 import { ResearchPromptInput } from "./research-prompt-input";
-import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
 
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
@@ -70,7 +70,11 @@ export function PublicStartForm() {
         return;
       }
     }
-    trackAnalyticsEvent("cta_start_map");
+    const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
+    const productType = (intake.researchType || "unknown") as AnalyticsProductType;
+    setAnalyticsContext({ auth_state: "anonymous", profile_role: "unknown", source: "home", entry_mode: entryMode, product_type: productType });
+    trackAnalyticsEvent("project_start", { entry_mode: entryMode, product_type: productType, source: "home", result: "started" });
+    trackAnalyticsEvent("login_started", { source: "home" });
 
     try {
       localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify(mode === "quick"

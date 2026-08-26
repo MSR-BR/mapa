@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
@@ -69,6 +70,12 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
   const justificationLabelSuffix = isAdvisorOwner ? " (opcional)" : " *";
   const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
 
+  useEffect(() => {
+    const stage = step === "problem_statement" ? "problem" : "definition";
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage });
+    if (step) trackAnalyticsEvent("stage_started", { stage, stage_number: step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
+  }, [isAdvisorOwner, step]);
+
   function applyWorkflow(nextWorkflow: ResearchWorkflow) {
     setWorkflow(nextWorkflow);
     setProblem(findElement(nextWorkflow, "problem_statement")?.proposedContent ?? "");
@@ -84,6 +91,9 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
     setOperation(action);
     setMessage(null);
     setErrors([]);
+    const stage = step === "problem_statement" ? "problem" : "definition";
+    const stageNumber = step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3";
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: isAdvisorOwner ? "advisor" : "student" });
     try {
       const response = await fetch(`/api/projects/${projectId}/definition`, {
         body: JSON.stringify({
@@ -105,10 +115,12 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
       };
       if (payload.workflow) applyWorkflow(payload.workflow);
       if (response.status === 422) {
+        trackAnalyticsEvent("stage_blocked", { stage, stage_number: stageNumber, result: "blocked", reason_code: "validation" });
         setErrors(payload.errors ?? ["Revise o conteúdo antes de validar."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
       router.refresh();
     } catch (error) {
@@ -272,7 +284,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" data-analytics-event="stage_complete" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );

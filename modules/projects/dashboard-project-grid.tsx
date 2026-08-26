@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
 import { ProjectCardModal, type DashboardProject } from "./project-card-modal";
+import { setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 const INTEGRATION_STEPS = [
   "Preparando os projetos selecionados",
@@ -58,6 +59,8 @@ export function DashboardProjectGrid({
 
   async function integrate() {
     if (selectedIds.length < 2 || selectedIds.length > 4) return;
+    setAnalyticsContext({ auth_state: "authenticated", source: "dashboard" });
+    trackAnalyticsEvent("project_integration_started", { source: "dashboard", result: "started" });
     setIntegrating(true);
     setMessage(null);
     setProgress({ percent: 12, step: INTEGRATION_STEPS[0] });
@@ -85,10 +88,12 @@ export function DashboardProjectGrid({
         percent: 100,
         step: `Integração concluída: ${sourceTitles.join(", ")}`,
       });
+      trackAnalyticsEvent("project_integration_completed", { source: "dashboard", result: "success", reference_count_bucket: "unknown" });
       window.setTimeout(() => {
         router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
       }, 700);
     } catch (error) {
+      trackAnalyticsEvent("project_integration_failed", { source: "dashboard", result: "failed", reason_code: "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
       setIntegrating(false);
       setProgress({ percent: 0, step: INTEGRATION_STEPS[0] });

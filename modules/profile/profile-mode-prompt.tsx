@@ -1,4 +1,5 @@
 import { setActiveProfileRole } from "./actions";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 export function ProfileModePrompt({ email }: { email: string }) {
   return (
@@ -16,14 +17,14 @@ export function ProfileModePrompt({ email }: { email: string }) {
           Você poderá trocar depois pelo ícone do usuário.
         </p>
         <div className="profile-mode-options">
-          <form action={setActiveProfileRole}>
+          <form action={setActiveProfileRole} onSubmit={() => trackAnalyticsEvent("profile_role_selected", { profile_role: "student", source: "dashboard" })}>
             <input name="role" type="hidden" value="student" />
             <button type="submit">
               <strong>Sou aluno</strong>
               <span>Crio meus mapas e envio etapas para validação do orientador.</span>
             </button>
           </form>
-          <form action={setActiveProfileRole}>
+          <form action={setActiveProfileRole} onSubmit={() => trackAnalyticsEvent("profile_role_selected", { profile_role: "advisor", source: "dashboard" })}>
             <input name="role" type="hidden" value="advisor" />
             <button type="submit">
               <strong>Sou orientador</strong>

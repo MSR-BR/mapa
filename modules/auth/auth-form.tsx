@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import {
   initialAuthActionState,
@@ -36,8 +36,12 @@ export function AuthForm({
     initialAuthActionState,
   );
 
+  useEffect(() => {
+    if (state.status === "error") trackAnalyticsEvent("login_failed", { result: "failed", reason_code: "unknown" });
+  }, [state.status]);
+
   return (
-    <form action={formAction} className="auth-form">
+    <form action={formAction} className="auth-form" onSubmit={() => trackAnalyticsEvent("login_started", { source: "unknown" })}>
       {Object.entries(hiddenFields ?? {}).map(([name, value]) => (
         <input key={name} name={name} type="hidden" value={value} />
       ))}
@@ -69,7 +73,7 @@ export function AuthForm({
           {state.message}
         </p>
       ) : null}
-      <button data-analytics-event="login" disabled={pending} onClick={() => trackAnalyticsEvent("login")} type="submit">
+      <button disabled={pending} type="submit">
         {pending ? "Aguarde…" : submitLabel}
       </button>
       {alternateHref && alternateLabel ? (

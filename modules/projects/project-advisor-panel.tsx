@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 
 import { updateProjectAdvisor } from "./actions";
 import { initialAdvisorLinkActionState, type AdvisorLinkActionState } from "./types";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 type Props = {
   advisorEmail: string | null;
@@ -15,7 +16,10 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
   const [editing, setEditing] = useState(!advisorEmail);
   const [state, formAction, pending] = useActionState(async (previousState: AdvisorLinkActionState, formData: FormData) => {
     const nextState = await updateProjectAdvisor(previousState, formData);
-    if (nextState.status === "success") setEditing(!nextState.value?.trim());
+    if (nextState.status === "success") {
+      setEditing(!nextState.value?.trim());
+      trackAnalyticsEvent(nextState.linked ? "advisor_link_succeeded" : "advisor_link_pending", { profile_role: "student", source: "dashboard", has_advisor: nextState.linked ? "yes" : "unknown", reason_code: nextState.linked ? undefined : "advisor_pending" });
+    }
     return nextState;
   }, {
     ...initialAdvisorLinkActionState,
@@ -48,7 +52,7 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
           </button>
         </div>
       ) : (
-        <form action={formAction}>
+        <form action={formAction} onSubmit={() => trackAnalyticsEvent("advisor_link_started", { profile_role: "student", source: "dashboard" })}>
           <input name="projectId" type="hidden" value={projectId} />
           <label>
             <span>E-mail do orientador</span>

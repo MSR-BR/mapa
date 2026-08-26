@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -18,6 +18,8 @@ import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
 type Operation = "complete" | "go_to" | "review" | null;
@@ -53,6 +55,11 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
   const completeButtonLabel = isAdvisorOwner ? "Concluir como orientador" : "Validar pelo estudante";
   const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
 
+  useEffect(() => {
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage: "final" });
+    trackAnalyticsEvent("stage_started", { stage: "final", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(finalMap.references.length) });
+  }, [finalMap.references.length, isAdvisorOwner]);
+
   function topicReferenceIds(topicIds: string[]) {
     const topics = [...finalMap.literatureTopics, ...finalMap.developmentTopics];
     return topics.filter((topic) => topicIds.includes(topic.id)).flatMap((topic) => topic.referenceIds);
@@ -64,6 +71,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
     setOperation(action);
     setMessage(null);
     setErrors([]);
+    if (action === "complete") trackAnalyticsEvent("stage_submitted", { stage: "final", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student" });
     try {
       const response = await fetch(`/api/projects/${projectId}/final-map`, {
         body: JSON.stringify({ action, revision: workflow.revision, targetStep }),
@@ -73,11 +81,14 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
       if (payload.workflow) setWorkflow(payload.workflow);
       if (response.status === 422) {
+        trackAnalyticsEvent("stage_blocked", { stage: "final", stage_number: "6", result: "blocked", reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise as pendências antes de concluir."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o mapa final.");
       if (action === "complete") {
+        trackAnalyticsEvent("stage_completed", { stage: "final", stage_number: "6", result: "success", profile_role: isAdvisorOwner ? "advisor" : "student" });
+        trackAnalyticsEvent("project_completed", { stage: "final", result: "success", reference_count_bucket: getReferenceCountBucket(finalMap.references.length), profile_role: isAdvisorOwner ? "advisor" : "student" });
         router.push("/dashboard");
         return;
       }
@@ -124,7 +135,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
 
       <div className="final-map-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-        <button className="definition-button primary" data-analytics-event="stage_complete" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+        <button className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
       </div>
       {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
       <div className="final-export-panel" aria-label="Exportar mapa final">
@@ -133,7 +144,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           <span>{workflow.state === "completed" ? "PDF com referências cruzadas e avisos preservados." : "O PDF indicará que o mapa ainda é rascunho e manterá bloqueios/avisos visíveis."}</span>
         </div>
         <div>
-        <a data-analytics-event="export_pdf" href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`}>Exportar PDF</a>
+        <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`} referenceCount={finalMap.references.length}>Exportar PDF</ExportPdfLink>
         </div>
       </div>
 

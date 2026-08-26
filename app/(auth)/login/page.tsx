@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AuthForm } from "@/modules/auth/auth-form";
 import { login, loginWithGoogle } from "@/modules/auth/actions";
+import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 function safeNext(value: string | undefined) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard?continue=1";
@@ -27,9 +28,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       {googleAuthEnabled ? (
         <>
           <div className="auth-divider"><span>ou</span></div>
-          <form action={loginWithGoogle}>
+          <form action={loginWithGoogle} onSubmit={() => trackAnalyticsEvent("login_started", { source: "home" })}>
             <input name="next" type="hidden" value={destination} />
-            <button className="google-auth-button" data-analytics-event="login" type="submit">
+            <button className="google-auth-button" type="submit">
               <span aria-hidden="true" className="google-mark">G</span>
               Continuar com Google
             </button>

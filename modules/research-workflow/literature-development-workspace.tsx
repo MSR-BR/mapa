@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
@@ -76,6 +77,12 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
   const justificationLabel = isAdvisorOwner ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
   const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
 
+  useEffect(() => {
+    const stage = chapter === "literature" ? "literature" : "methodology";
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage });
+    trackAnalyticsEvent("stage_started", { stage, stage_number: chapter === "literature" ? "4" : "5", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
+  }, [chapter, isAdvisorOwner]);
+
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
     const nextChapter: Chapter = next.content.activeStep === "development_topics" ? "development" : "literature";
@@ -90,6 +97,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
     setOperation(action);
     setMessage(null);
     setErrors([]);
+    const stage = chapter === "literature" ? "literature" : "methodology";
+    const stageNumber = chapter === "literature" ? "4" : "5";
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: isAdvisorOwner ? "advisor" : "student" });
+    if (action === "optimize") trackAnalyticsEvent("literature_optimization_started", { stage: "literature", stage_number: "4", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
     try {
       const requestBody: Record<string, unknown> = { action, revision: workflow.revision, step: chapter, ...extra };
       if (action === "save" || action === "validate") requestBody.topics = topics;
@@ -100,15 +111,21 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
       });
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
       if (response.status === 422) {
+        trackAnalyticsEvent("stage_blocked", { stage, stage_number: stageNumber, result: "blocked", reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise esta etapa."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
       applyWorkflow(payload.workflow);
+      const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
+      const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
+      if (action === "optimize") trackAnalyticsEvent("literature_optimization_completed", { stage: "literature", result: "success", reference_count_bucket: referenceBucket });
+      else trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: referenceBucket });
       if (action === "optimize") setShowOptimize(false);
       setMessage(payload.message ?? null);
       router.refresh();
     } catch (error) {
+      trackAnalyticsEvent(action === "optimize" ? "literature_optimization_failed" : "stage_blocked", { stage, stage_number: stageNumber, result: "failed", reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
     } finally {
       setOperation(null);
@@ -306,7 +323,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" data-analytics-event="stage_complete" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+            <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );
