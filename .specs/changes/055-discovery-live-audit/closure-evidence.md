@@ -1,7 +1,7 @@
 # Evidência de auditoria — Change 055
 
 Data: 26/08/2026  
-Versão de código: `v26082026.2`
+Versão de código: `v26082026.3`
 
 ## Verificações
 
@@ -15,6 +15,9 @@ Versão de código: `v26082026.2`
   `dpl_5ts2QRYf5sZZsmmyqzC3PFb9wY1F` (estado `READY`).
 - Smoke checks pós-deploy: `/login` e `/api/health` responderam `200`; o
   health-check confirmou `x-health-status: ok`.
+- Correção pós-auditoria: o Mapa Rápido passou a preencher `title` e
+  `problemStatement` no servidor antes de `parseProjectForm`; o clique em
+  **Gerar mapa** não é mais rejeitado por campos clássicos ausentes.
 
 ## Resultado
 

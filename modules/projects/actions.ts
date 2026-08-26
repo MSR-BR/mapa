@@ -54,12 +54,15 @@ export async function createProject(
   // into five identical intake answers, otherwise the saved briefing and the
   // discovery screen repeat the sentence five times.
   const intake: ResearchIntake | null = parsedIntake ?? (!legacyPromptMode && promptValue ? researchIntakeFromPrompt(promptValue) as ResearchIntake : null);
+  if (autoGenerate && legacyPromptMode && promptValue.length < 10) {
+    return { message: "Escreva pelo menos uma frase para iniciar o roteiro rápido.", status: "error" };
+  }
   if (autoGenerate && parsedIntake && !hasResearchProductType(parsedIntake)) {
     return { message: "Escolha o tipo de produto acadêmico antes de iniciar o mapa.", status: "error" };
   }
-  if (autoGenerate && intake) {
+  if (autoGenerate) {
     formData.set("title", "Nova proposta de pesquisa");
-    formData.set("problemStatement", composeResearchBrief(intake));
+    formData.set("problemStatement", parsedIntake ? composeResearchBrief(parsedIntake) : promptValue);
   }
   const result = parseProjectForm(formData);
   if (!result.success) {

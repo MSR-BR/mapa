@@ -363,4 +363,8 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Para concluir a validação live, substituir `RESEARCH_STARTER_API_KEY` no
   ambiente Production da Vercel por uma chave válida e executar os smokes
   novamente. O segredo não deve ser registrado em código, chat ou logs.
-- Versão de código: `v26082026.2`.
+- Versão de código: `v26082026.3`.
+- Correção adicional: o Mapa Rápido agora transforma o prompt livre em título e
+  problemática antes da validação do servidor; anteriormente o formulário era
+  rejeitado com “Revise os campos indicados.”. O endpoint de sugestões continua
+  opcional e não bloqueia o envio do mapa.

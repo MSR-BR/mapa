@@ -145,6 +145,8 @@ test("keeps quick prompts compact and does not repeat them as five intake answer
   ]);
 
   assert.match(actions, /Quick mode is a single natural-language prompt/);
+  assert.match(actions, /legacyPromptMode && promptValue\.length < 10/);
+  assert.match(actions, /formData\.set\("problemStatement", parsedIntake \? composeResearchBrief\(parsedIntake\) : promptValue\)/);
   assert.match(actions, /promptValue \|\| result\.data\.problem_statement/);
   assert.match(intake, /collapse an identical answer repeated in every field/);
 });
