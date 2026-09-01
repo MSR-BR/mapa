@@ -446,6 +446,8 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   “Investigar” ou “Analisar”; a normalização do cliente também protege respostas
   antigas do provedor.
 - Versão de código desta rodada: `v26090126.1`.
+- Deployment de produção: `dpl_GL7EVTzw28m48ELC1m5WofVzC5Zc`, aliasado a
+  `https://mapadapesquisa.com.br`; `/api/health` retorna `v26090126.1`.
 
 ## Change 060 — Metodologia como Etapa 4 na interface
 
