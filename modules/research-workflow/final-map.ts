@@ -328,7 +328,7 @@ function deterministicFindings(
   if (!content.methodologyClassification || content.methodologyRows.length === 0 || !context.title) {
     findings.push(makeFinding("A matriz metodológica ou o título final não foram consolidados.", {
       elementIds: [context.title?.id ?? workflow.projectId],
-      resolution: "Volte à Etapa 6 e valide a metodologia.",
+      resolution: "Volte à Etapa 4 e valide a metodologia.",
       rule: "Change 014: metodologia consolidada",
       severity: "blocking",
     }));
@@ -359,7 +359,7 @@ function deterministicFindings(
     if (!plan.success) {
       findings.push(makeFinding("A matriz metodológica está incompleta.", {
         elementIds: content.methodologyRows.map((row) => row.id),
-        resolution: "Volte à Etapa 6 e complete as células pendentes.",
+        resolution: "Volte à Etapa 4 e complete as células pendentes.",
         rule: "Change 014: matriz metodológica",
         severity: "blocking",
       }));
@@ -372,7 +372,7 @@ function deterministicFindings(
       });
       findings.push(...methodology.errors.map((message) => makeFinding(message, {
         elementIds: content.methodologyRows.map((row) => row.id),
-        resolution: "Volte à Etapa 6 e ajuste a matriz metodológica.",
+        resolution: "Volte à Etapa 4 e ajuste a matriz metodológica.",
         rule: "Change 014: matriz metodológica",
         severity: "blocking",
       })));
@@ -388,7 +388,7 @@ function deterministicFindings(
   if (context.title && generalText && !mentionsAny(approved(context.title), generalText.split(/\s+/).filter((word) => word.length > 5).slice(0, 7))) {
     findings.push(makeFinding("O título final parece pouco conectado ao objetivo geral validado.", {
       elementIds: [context.title.id],
-      resolution: "Volte à Etapa 6 e ajuste o título final.",
+      resolution: "Volte à Etapa 4 e ajuste o título final.",
       rule: "Change 014: título final",
       severity: "warning",
     }));

@@ -216,7 +216,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
         <div><p className="section-kicker">Etapa {stageNumber} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
+      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <aside className="coverage-panel" aria-label="Cobertura dos objetivos específicos">
         <strong>Cobertura dos objetivos</strong>

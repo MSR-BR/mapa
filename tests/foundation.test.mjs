@@ -60,8 +60,8 @@ test("requests login only after the public central execution", async () => {
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
   assert.match(quickStart, /pendingDraftRead/);
   assert.match(quickStart, /hasResearchProductType/);
-  assert.match(quickStart, /Roteiro rápido/);
-  assert.match(quickStart, /Construção avançada/);
+  assert.match(quickStart, /Mapa Rápido/);
+  assert.match(quickStart, /Mapa Avançado/);
   assert.match(quickStart, /canResume/);
   assert.match(dashboard, /canResume=\{profile\.hasLegalConsent\}/);
   assert.match(legalContent, /com apoio do orientador/);
@@ -92,14 +92,14 @@ test("suggests AI refinements while the research request is being written", asyn
     readProjectFile("modules/generation/gemini.ts"),
   ]);
 
-  assert.match(input, /Crie um roteiro de tese de mestrado/);
+  assert.match(input, /Exemplo: Crie um roteiro de dissertação de mestrado/);
   assert.match(input, /650/);
   assert.match(input, /Sugestões para consolidar o mapa/);
   assert.match(input, /MINIMUM_SUGGESTION_LENGTH = 8/);
   assert.match(input, /buildLocalPromptSuggestions/);
-  assert.match(input, /Tema/);
-  assert.match(input, /Formulação/);
-  assert.match(input, /Recorte/);
+  assert.match(input, /Tema \{index \+ 1\}/);
+  assert.match(input, /normalizeSuggestionText/);
+  assert.match(gemini, /Não use os rótulos 'Tema de pesquisa', 'Investigar' ou 'Analisar'/);
   assert.match(route, /suggestResearchPrompts/);
   assert.match(gemini, /exatamente 3 sugestões curtas/);
   assert.match(gemini, /terceira sugestão de recorte/);

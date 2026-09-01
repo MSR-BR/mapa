@@ -289,7 +289,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
     if (initialized.current || initialWorkflow.state !== "validating_methodology" || initialWorkflow.content.methodologyRows.length > 0) return;
     initialized.current = true;
     void submit("initialize");
-    // Inicialização única ao entrar na Etapa 6.
+    // Inicialização única ao entrar na etapa de metodologia (4 na navegação visível).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -376,7 +376,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   if (workflow.state === "reviewing_map") {
     return (
       <section className="definition-complete methodology-complete">
-        <p className="section-kicker">Etapa 6 validada</p>
+        <p className="section-kicker">Etapa 4 validada</p>
         <h2>Matriz metodológica consolidada</h2>
         <div className="definition-summary">
           <div><span>Título da pesquisa</span><p>{workflow.content.elements.find((element) => element.type === "research_title")?.approvedContent}</p></div>
@@ -394,7 +394,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
-            <p className="section-kicker">Etapa 6</p>
+            <p className="section-kicker">Etapa 4</p>
             <h2>{operation === "initialize" || operation === "regenerate" ? "Construindo a matriz metodológica…" : "Salvando sua metodologia…"}</h2>
           </div>
         </div>
@@ -408,13 +408,13 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
 
       <div className="definition-heading">
         <div>
-          <p className="section-kicker">Etapa 6 · Metodologia</p>
+          <p className="section-kicker">Etapa 4 · Metodologia</p>
           <h2 id="methodology-title">Matriz metodológica e resultados esperados</h2>
           <p>Confirme como cada objetivo será atendido, quais dados serão levantados, como serão tratados e que contribuição se espera produzir.</p>
         </div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
+      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="methodology-title-editor">
         <label>Título final sugerido *<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>

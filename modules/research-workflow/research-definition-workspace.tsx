@@ -37,6 +37,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
   const [problemJustification, setProblemJustification] = useState(() => findElement(initialWorkflow, "problem_statement")?.studentJustification ?? "");
   const [generalJustification, setGeneralJustification] = useState(() => findElement(initialWorkflow, "general_objective")?.studentJustification ?? "");
   const [specifics, setSpecifics] = useState<ObjectiveDraft[]>(() => specificDrafts(initialWorkflow));
+  const [promotionId, setPromotionId] = useState<string | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -64,7 +65,9 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
     ? problem !== currentElement?.proposedContent || problemJustification !== (currentElement?.studentJustification ?? "")
     : step === "general_objective"
       ? general !== currentElement?.proposedContent || generalJustification !== (currentElement?.studentJustification ?? "")
-      : JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
+      : general !== (findElement(workflow, "general_objective")?.proposedContent ?? "")
+        || generalJustification !== (findElement(workflow, "general_objective")?.studentJustification ?? "")
+        || JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
   const justificationLabelSuffix = isAdvisorOwner ? " (opcional)" : " *";
@@ -83,6 +86,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
     setProblemJustification(findElement(nextWorkflow, "problem_statement")?.studentJustification ?? "");
     setGeneralJustification(findElement(nextWorkflow, "general_objective")?.studentJustification ?? "");
     setSpecifics(specificDrafts(nextWorkflow));
+    setPromotionId(null);
   }
 
   async function submit(action: Exclude<Operation, null>) {
@@ -99,7 +103,10 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
         body: JSON.stringify({
           action,
           content: step === "problem_statement" ? problem : step === "general_objective" ? general : undefined,
+          generalObjective: step === "specific_objectives" ? general : undefined,
+          generalStudentJustification: step === "specific_objectives" ? generalJustification : undefined,
           objectives: step === "specific_objectives" ? specifics : undefined,
+          promoteObjectiveId: step === "specific_objectives" ? promotionId : undefined,
           revision: workflow.revision,
           studentJustification: step === "problem_statement" ? problemJustification : step === "general_objective" ? generalJustification : undefined,
           step,
@@ -136,6 +143,15 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
 
   function updateSpecificJustification(id: string, value: string) {
     setSpecifics((current) => current.map((objective) => objective.id === id ? { ...objective, studentJustification: value } : objective));
+  }
+
+  function promoteSpecificObjective(objective: ObjectiveDraft) {
+    if (specifics.length <= 3) return;
+    setGeneral(objective.content);
+    setGeneralJustification(objective.studentJustification);
+    setPromotionId(objective.id);
+    setSpecifics((current) => current.filter((item) => item.id !== objective.id));
+    setMessage("Objetivo promovido. Revise o objetivo geral e os objetivos específicos antes de validar.");
   }
 
   if (!step) {
@@ -194,7 +210,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
           {currentElement?.updatedBy === "user" || currentValueChanged ? "Editado por você" : "Sugestão da IA"}
         </span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
+      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="definition-source">
         <span>Origem desta etapa</span>
@@ -230,6 +246,17 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
           </div>
         ) : (
           <div className="specific-objective-list">
+            <div className="definition-editor-with-note specific-general-editor">
+              <label>
+                Objetivo geral (revisável nesta etapa)
+                <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+                <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
+              </label>
+              <label className="student-justification">
+                Justificativa do objetivo geral{justificationLabelSuffix}
+                <textarea maxLength={1000} onChange={(event) => setGeneralJustification(event.target.value)} placeholder="Explique por que este objetivo responde à problemática." value={generalJustification} />
+              </label>
+            </div>
             {specifics.map((objective, index) => (
               <div className="specific-objective-row" key={objective.id}>
                 <label>
@@ -246,6 +273,12 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
                   onClick={() => setSpecifics((current) => current.filter((item) => item.id !== objective.id))}
                   type="button"
                 >Remover</button>
+                <button
+                  className="promote-specific-objective"
+                  disabled={specifics.length <= 3}
+                  onClick={() => promoteSpecificObjective(objective)}
+                  type="button"
+                >Usar como objetivo geral</button>
               </div>
             ))}
             <button

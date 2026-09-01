@@ -155,7 +155,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
         </div>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice workflow={workflow} />}
+      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
       <div className="final-export-panel" aria-label="Exportar mapa final">
         <div>
           <strong>{workflow.state === "completed" ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>

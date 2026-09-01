@@ -558,7 +558,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .student-justification { border: 1px solid #d8e4de; border-radius: 0.95rem; padding: 0.8rem; background: #f7faf8; color: #50645b; }
 .student-justification textarea { min-height: 7rem; background: #ffffff; font-size: 0.86rem; }
 .specific-objective-list { display: grid; gap: 1rem; }
-.specific-objective-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.58fr) auto; align-items: end; gap: 0.75rem; }
+.specific-objective-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.58fr) auto auto; align-items: end; gap: 0.75rem; }
 .specific-objective-row textarea { min-height: 6.5rem; }
 .specific-objective-row > button, .add-specific-objective { border: 1px solid #bdccc5; border-radius: 0.7rem; padding: 0.65rem 0.8rem; background: transparent; color: #52655b; font: inherit; font-size: 0.75rem; font-weight: 750; cursor: pointer; }
 .specific-objective-row > button:disabled, .add-specific-objective:disabled { cursor: not-allowed; opacity: 0.42; }
@@ -575,6 +575,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .advisor-review-notice span, .advisor-review-notice p { margin: 0; color: #73570e; font-size: 0.86rem; line-height: 1.45; }
 .advisor-review-notice-changes_requested { border-color: #e4b0aa; background: #fff3f1; color: #873129; }
 .advisor-review-notice-changes_requested strong, .advisor-review-notice-changes_requested span, .advisor-review-notice-changes_requested p { color: #873129; }
+.advisor-review-remind { justify-self: start; border: 1px solid #b9d4c7; border-radius: 0.72rem; padding: 0.55rem 0.75rem; background: #edf7f2; color: #246247; font: inherit; font-size: 0.75rem; font-weight: 800; cursor: pointer; }
+.advisor-review-remind:disabled { cursor: wait; opacity: 0.65; }
 .definition-references { border: 1px solid #cfddd6; border-radius: 0.9rem; padding: 0.8rem 1rem; background: rgb(255 255 255 / 55%); }
 .definition-references summary { color: #335c49; font-size: 0.8rem; font-weight: 800; cursor: pointer; }
 .definition-references ul { display: grid; gap: 0.5rem; margin: 0.8rem 0 0; padding-left: 1.2rem; color: #607168; font-size: 0.78rem; }
@@ -599,6 +601,9 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .advisor-review-status span { color: #9bd9bf; font-size: 0.76rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
 .advisor-review-status strong { color: white; font-size: 1rem; }
 .advisor-review-status-changes_requested span { color: #ffb9b2; }
+.advisor-review-reminder-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
+.advisor-review-reminder-row .definition-button.secondary { font-size: 0.75rem; }
+.advisor-review-reminder-row span { color: #9bd9bf; font-size: 0.76rem; }
 .advisor-review-summary { display: grid; gap: 0.75rem; }
 .advisor-review-summary article { display: grid; gap: 0.35rem; border: 1px solid rgb(255 255 255 / 11%); border-radius: 0.95rem; padding: 0.9rem 1rem; background: rgb(255 255 255 / 5%); }
 .advisor-review-summary span { color: #9bd9bf; font-size: 0.74rem; font-weight: 850; text-transform: uppercase; }

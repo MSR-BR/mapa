@@ -5,7 +5,7 @@ import type { Database } from "@/lib/supabase/database.types";
 import { ADVISOR_REVIEW_LABELS } from "@/modules/research-workflow/advisor-review";
 import type { AdvisorReviewStep } from "@/modules/research-workflow/schema";
 
-export type NotificationKind = "advisor_approved" | "advisor_comment" | "advisor_requested_changes" | "student_submitted";
+export type NotificationKind = "advisor_approved" | "advisor_comment" | "advisor_requested_changes" | "review_reminder" | "student_submitted";
 
 export type NotificationInput = {
   actorEmail: string | null;
@@ -36,6 +36,12 @@ const COPY: Record<NotificationKind, { action: string; heading: string; subject:
     heading: "O orientador solicitou ajustes",
     subject: "Ajustes solicitados",
     summary: "Revise o comentário do orientador, faça os ajustes e envie novamente.",
+  },
+  review_reminder: {
+    action: "Próxima ação: abrir o projeto e continuar a validação no Mapa da Pesquisa.",
+    heading: "Lembrete sobre uma etapa do projeto",
+    subject: "Lembrete de validação",
+    summary: "Uma etapa do projeto aguarda sua atenção. O conteúdo continua salvo no Mapa da Pesquisa.",
   },
   student_submitted: {
     action: "Próxima ação: abrir o projeto, revisar a etapa e validá-la ou solicitar ajustes.",

@@ -416,3 +416,56 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Smoke público: `/api/health` retornou `status=ok`, versão `v26082026.6` e os
   quatro provedores configurados; `/login` retornou `200` com cabeçalhos de
   segurança ativos.
+
+## Change 058 — Auditoria da lista de melhorias de 01/09/2026
+
+A lista foi confrontada com o código e com os artefatos publicados. Os itens abaixo
+já estavam presentes e foram confirmados: entrada estruturada, produto acadêmico e
+guia de profundidade, recuperação do briefing, cards da home e do dashboard, títulos
+dos projetos, cobertura dos objetivos nos capítulos 2 e 4, otimização da literatura,
+PDF final com registro CBL, impactos/recomendações, recuperação de senha, coerência
+em tempo real e encerramento visível. O diagnóstico do Research Starter continua
+dependente da credencial de produção e deve ser validado com uma chamada live após
+qualquer rotação de chave.
+
+Na checagem desta rodada, Gemini respondeu com o schema esperado e o Supabase foi
+confirmado no projeto `aeaweherkrqmlqnxsmib`. A credencial legada disponível no
+`.env.local` retornou `HTTP 401`; a Vercel possui `RESEARCH_STARTER_MAPA_API_KEY`
+separada em Production, mas o valor secreto não pode ser recuperado pela CLI. A
+validação funcional de produção continua sendo o único passo externo: executar uma
+nova tentativa no mapa que preservou o briefing depois de confirmar essa chave no
+Research Starter.
+
+As divergências de interface e fluxo foram transformadas nas Changes 059–062.
+
+## Change 059 — Mapa Rápido: texto de exemplo e sugestões numeradas
+
+- O placeholder agora começa por `Exemplo: Crie um roteiro de dissertação de mestrado...`.
+- As três alternativas aparecem como **Tema 1**, **Tema 2** e **Tema 3**.
+- O fallback local e a resposta da IA não exibem mais os prefixos “Tema de pesquisa”,
+  “Investigar” ou “Analisar”; a normalização do cliente também protege respostas
+  antigas do provedor.
+- Versão de código desta rodada: `v26090126.1`.
+
+## Change 060 — Metodologia como Etapa 4 na interface
+
+- A navegação mostra quatro blocos: Problemática, Objetivos, Capítulos e Metodologia.
+- Estados, overlay, página consolidada e leitura do orientador usam **Etapa 4**.
+- O identificador interno `methodology_matrix` e o `stage_number` analítico permanecem
+  compatíveis com o workflow v2 existente, evitando migração destrutiva de dados.
+
+## Change 061 — Revisão e promoção de objetivos
+
+- Na etapa de objetivos específicos, o objetivo geral fica visível e editável.
+- O usuário pode usar um objetivo específico (quando restarem pelo menos três) como
+  objetivo geral; o servidor preserva referências e justificativa, remove o OE original
+  e revalida a combinação contra a problemática.
+- Alterações do OEG invalidam apenas os descendentes que precisam ser regenerados;
+  a validação continua exigindo justificativas e de três a seis objetivos específicos.
+
+## Change 062 — Lembretes de validação aluno–orientador
+
+- O estudante vê **Reenviar aviso ao orientador** quando existe uma revisão pendente.
+- O orientador vê **Reenviar aviso ao estudante** na mesma situação.
+- O endpoint é autenticado, verifica vínculo/ownership, reutiliza o conteúdo salvo e
+  usa o Resend somente no servidor. Não cria uma nova revisão nem altera o workflow.

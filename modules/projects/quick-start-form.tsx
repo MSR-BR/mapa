@@ -94,7 +94,7 @@ export function QuickStartForm({
     setClientError("");
     if (!mode) {
       event.preventDefault();
-      setClientError("Escolha Roteiro rápido ou Construção avançada para começar.");
+      setClientError("Escolha Mapa Rápido ou Mapa Avançado para começar.");
       return;
     }
     if (mode === "quick" && quickPrompt.trim().length < 10) {

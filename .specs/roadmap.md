@@ -53,6 +53,11 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 054 | Instrumentação de produto e funis no GA4 | Concluída | Contrato tipado, consentimento, eventos de domínio, funis e sanitização sem PII implementados; testes locais aprovados e configuração de definições/relatórios do GA4 documentada para validação operacional. |
 | 055 | Auditoria live da descoberta e briefing rápido | Concluída | Diagnóstico explícito de credencial Research Starter, preservação do briefing e correção da duplicação do prompt rápido; a credencial foi rotacionada e o serviço validado na Change 056. |
 | 057 | Coerência metodológica ao editar e encerramento visível | Concluída | Avisos metodológicos recalculados a partir dos campos atuais, com estado limpo quando não há alertas; encerramento destacado na página final e orientado ao fim da Etapa 6. |
+| 058 | Auditoria da lista de melhorias de 01/09/2026 | Concluída | Itens já implementados foram confirmados; divergências de texto, numeração, revisão de objetivos e lembretes foram separadas nas Changes 059–062. |
+| 059 | Mapa Rápido: texto de exemplo e sugestões numeradas | Concluída | Placeholder alinhado ao modelo, sugestões exibidas como Tema 1–3 e linguagem genérica removida também do fallback de IA. |
+| 060 | Metodologia: numeração visível | Concluída | A navegação e os estados visíveis apresentam a Metodologia como Etapa 4, mantendo o identificador interno do workflow compatível. |
+| 061 | Revisão e promoção de objetivos | Concluída | A etapa de objetivos específicos permite revisar o objetivo geral e promover um OE para OEG, preservando referências, justificativas, validação e rastreabilidade. |
+| 062 | Lembretes de validação aluno–orientador | Concluída | Estudante e orientador podem reenviar com segurança o aviso da etapa pendente para a outra parte, sem expor credenciais ou criar uma nova revisão. |
 
 ## Marcos
 

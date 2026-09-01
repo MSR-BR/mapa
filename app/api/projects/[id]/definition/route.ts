@@ -36,11 +36,14 @@ export const maxDuration = 120;
 const requestSchema = z.object({
   action: z.enum(["back", "regenerate", "save", "validate"]),
   content: z.string().optional(),
+  generalObjective: z.string().optional(),
+  generalStudentJustification: z.string().optional().nullable(),
   objectives: z.array(z.object({
     content: z.string(),
     id: z.string().uuid(),
     studentJustification: z.string().optional().nullable(),
   })).optional(),
+  promoteObjectiveId: z.string().uuid().optional(),
   revision: z.number().int().positive(),
   step: z.enum(["problem_statement", "general_objective", "specific_objectives"]),
   studentJustification: z.string().optional().nullable(),
@@ -159,6 +162,26 @@ function draftContent(
   if (step === "specific_objectives") {
     const objectives = specificDraftsSchema.parse(body.objectives);
     let content = workflow.content;
+    const existingGeneral = currentElement(content, "general_objective");
+    const promoted = body.promoteObjectiveId
+      ? content.elements.find((element) => element.type === "specific_objective" && element.id === body.promoteObjectiveId)
+      : undefined;
+    if (existingGeneral && body.generalObjective !== undefined) {
+      const generalValue = generalDraftSchema.parse(body.generalObjective);
+      content = upsertElement(content, {
+        approvedContent: existingGeneral.approvedContent,
+        id: existingGeneral.id,
+        proposedContent: generalValue,
+        referenceIds: [...new Set([...existingGeneral.referenceIds, ...(promoted?.referenceIds ?? [])])],
+        sourceRevision,
+        status: existingGeneral.approvedContent === generalValue ? "validated" : "edited",
+        studentJustification: body.generalStudentJustification === undefined
+          ? promoted?.studentJustification ?? existingGeneral.studentJustification
+          : (body.generalStudentJustification ?? "").trim() || null,
+        type: "general_objective",
+        updatedBy: "user",
+      });
+    }
     for (const objective of objectives) {
       const existing = content.elements.find((element) => element.id === objective.id);
       content = upsertElement(content, {
@@ -228,6 +251,9 @@ function validationErrors(content: ResearchWorkflowContent, step: DefinitionRout
       specifics.map((element) => ({ content: element.proposedContent, id: element.id })),
       general.proposedContent,
     ),
+    ...(general.approvedContent !== general.proposedContent
+      ? studentJustificationErrors([general], "Preencha a justificativa do objetivo geral (*) com pelo menos 10 caracteres.", options)
+      : []),
     ...(options.requireStudentJustification ? specifics.flatMap((element, index) => (
       (element.studentJustification?.trim().length ?? 0) >= MIN_STUDENT_JUSTIFICATION_LENGTH
         ? []
@@ -502,6 +528,23 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     state = "validating_specific_objectives";
     stableState = "validating_specific_objectives";
   } else {
+    const currentGeneral = currentElement(content, "general_objective");
+    const generalWasEdited = Boolean(currentGeneral && currentGeneral.approvedContent !== currentGeneral.proposedContent);
+    if (generalWasEdited) content = markDescendantsStale(content, "general_objective");
+    const general = currentElement(content, "general_objective");
+    if (general && generalWasEdited) {
+      content = upsertElement(content, {
+        approvedContent: general.proposedContent,
+        id: general.id,
+        proposedContent: general.proposedContent,
+        referenceIds: general.referenceIds,
+        sourceRevision,
+        status: "validated",
+        studentJustification: general.studentJustification,
+        type: "general_objective",
+        updatedBy: general.updatedBy === "ai" ? "ai" : "user",
+      });
+    }
     const specifics = content.elements.filter((element) => element.type === "specific_objective");
     for (const objective of specifics) {
       content = upsertElement(content, {

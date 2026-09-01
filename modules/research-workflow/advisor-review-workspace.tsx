@@ -257,7 +257,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card advisor-readonly-card-wide">
-          <span>Etapa 6</span>
+          <span>Etapa 4 · Metodologia</span>
           <h4>Metodologia e resultados esperados</h4>
           {content.methodologyClassification ? (
             <div className="advisor-readonly-subcard">
@@ -328,6 +328,8 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
   const review = currentAdvisorReview(workflow.content);
   const [comments, setComments] = useState(review?.advisorComments ?? "");
   const [busyAction, setBusyAction] = useState<AdvisorAction | null>(null);
+  const [reminderBusy, setReminderBusy] = useState(false);
+  const [reminderMessage, setReminderMessage] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const items = useMemo(() => review ? reviewItems(workflow.content, review) : [], [review, workflow.content]);
@@ -375,6 +377,22 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
     }
   }
 
+  async function resendStudentReminder() {
+    if (!review || reminderBusy) return;
+    setReminderBusy(true);
+    setReminderMessage(null);
+    try {
+      const response = await fetch(`/api/projects/${projectId}/advisor-review/remind`, { method: "POST" });
+      const payload = await response.json() as { error?: string; message?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Não foi possível reenviar o lembrete.");
+      setReminderMessage(payload.message ?? "Lembrete enviado ao estudante.");
+    } catch (caught) {
+      setReminderMessage(caught instanceof Error ? caught.message : "Não foi possível reenviar o lembrete.");
+    } finally {
+      setReminderBusy(false);
+    }
+  }
+
   return (
     <section className="advisor-review-workspace" aria-labelledby="advisor-review-title">
       <div className="advisor-review-hero">
@@ -397,6 +415,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
             <span>{review.status === "pending" ? "Aguardando sua validação" : "Correção solicitada"}</span>
             <strong>{ADVISOR_REVIEW_LABELS[review.step]}</strong>
           </div>
+          {review.status === "pending" ? <div className="advisor-review-reminder-row"><button className="definition-button secondary" disabled={reminderBusy} onClick={() => void resendStudentReminder()} type="button">{reminderBusy ? "Enviando…" : "Reenviar aviso ao estudante"}</button>{reminderMessage ? <span role="status">{reminderMessage}</span> : null}</div> : null}
 
           <div className="advisor-review-summary">
             {items.map((item) => (

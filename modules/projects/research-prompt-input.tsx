@@ -33,17 +33,25 @@ function buildLocalPromptSuggestions(prompt: string): PromptSuggestion[] {
   return [
     {
       kind: "tema",
-      text: `Tema de pesquisa: ${subject}, com delimitação de contexto, público e período relevantes.`,
+      text: `${subject}, com delimitação de contexto, público e período relevantes.`,
     },
     {
       kind: "formulacao",
-      text: `Investigar ${subject}, com foco na relação central e nas evidências que sustentam a situação-problema.`,
+      text: `Estabeleça a relação central em ${subject}, com foco nas evidências que sustentam a situação-problema.`,
     },
     {
       kind: "recorte",
-      text: `Analisar ${subject} para identificar padrões, lacunas da literatura e implicações para a pesquisa.`,
+      text: `Delimite ${subject} para identificar padrões, lacunas da literatura e implicações para a pesquisa.`,
     },
   ];
+}
+
+function normalizeSuggestionText(value: string) {
+  return value
+    .trim()
+    .replace(/^tema\s+de\s+pesquisa\s*:\s*/i, "")
+    .replace(/^investigar\s+/i, "Estabeleça a relação central em ")
+    .replace(/^analisar\s+/i, "Delimite ");
 }
 
 export function ResearchPromptInput({
@@ -112,7 +120,7 @@ export function ResearchPromptInput({
         name="prompt"
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={onEnter}
-        placeholder="Crie um roteiro de tese de mestrado sobre o uso de inteligência artificial no ensino superior"
+        placeholder="Exemplo: Crie um roteiro de dissertação de mestrado sobre o uso de inteligência artificial no ensino superior"
         required
         rows={3}
         value={value}
@@ -124,25 +132,19 @@ export function ResearchPromptInput({
             {loading ? <small>Refinando com IA…</small> : null}
           </p>
           <div className="prompt-suggestion-list">
-            {visibleSuggestions.map((suggestion) => (
+            {visibleSuggestions.map((suggestion, index) => (
               <button
-                key={`${suggestion.kind}-${suggestion.text}`}
+                key={`${suggestion.kind}-${suggestion.text}-${index}`}
                 onClick={() => {
-                  onChange(suggestion.text);
+                  onChange(normalizeSuggestionText(suggestion.text));
                   setSuggestions([]);
                   setSuggestionsForPrompt("");
                   lastRequestedPrompt.current = suggestion.text.trim();
                 }}
                 type="button"
               >
-                <span>
-                  {suggestion.kind === "tema"
-                    ? "Tema"
-                    : suggestion.kind === "recorte"
-                      ? "Recorte"
-                      : "Formulação"}
-                </span>
-                {suggestion.text}
+                <span>Tema {index + 1}</span>
+                {normalizeSuggestionText(suggestion.text)}
               </button>
             ))}
           </div>
