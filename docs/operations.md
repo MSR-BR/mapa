@@ -471,3 +471,22 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - O orientador vê **Reenviar aviso ao estudante** na mesma situação.
 - O endpoint é autenticado, verifica vínculo/ownership, reutiliza o conteúdo salvo e
   usa o Resend somente no servidor. Não cria uma nova revisão nem altera o workflow.
+
+## Change 063 — Correção das ações de objetivos (04/09/2026)
+
+- A regressão da Change 061 foi localizada no contrato da rota de definição:
+  `promoteObjectiveId` era enviado como `null` pela tela quando nenhuma promoção
+  havia sido feita, mas o schema aceitava apenas UUID ou campo ausente. O parse
+  falhava antes de executar **Voltar**, **Salvar**, **Remover** ou **Validar**.
+- A API agora aceita `null` para compatibilidade com clientes em cache, e o
+  cliente novo omite o campo opcional. A promoção de um objetivo específico para
+  objetivo geral continua preservando referências, justificativa e a regra de
+  três a seis objetivos.
+- CPD: `npm run check` aprovado (lint, typecheck, 78 testes, `exports:verify` e
+  build). A versão pública desta correção é `v26090426.1`.
+- Deployment de produção: `dpl_8WgAsNyEEifYdMQZHVLXupNcLuF8` (READY), aliasado a
+  `https://mapadapesquisa.com.br`, publicado sem cache e a partir de um diretório
+  temporário sem `po_magico`, `.next`, `tmp` ou `node_modules`.
+- Smoke pós-deploy: `/login` retornou HTTP 200; `/api/health` retornou `status=ok`
+  com Gemini, Resend, Research Starter e Supabase configurados. A consulta de
+  logs de erro da última hora não encontrou registros.

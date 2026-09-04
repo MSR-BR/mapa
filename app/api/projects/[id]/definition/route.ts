@@ -43,7 +43,10 @@ const requestSchema = z.object({
     id: z.string().uuid(),
     studentJustification: z.string().optional().nullable(),
   })).optional(),
-  promoteObjectiveId: z.string().uuid().optional(),
+  // The client may send `null` when no objective has been promoted yet.
+  // Treat that as the absence of a promotion instead of rejecting the whole
+  // operation before the workflow action is reached.
+  promoteObjectiveId: z.string().uuid().nullable().optional(),
   revision: z.number().int().positive(),
   step: z.enum(["problem_statement", "general_objective", "specific_objectives"]),
   studentJustification: z.string().optional().nullable(),

@@ -106,7 +106,9 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
           generalObjective: step === "specific_objectives" ? general : undefined,
           generalStudentJustification: step === "specific_objectives" ? generalJustification : undefined,
           objectives: step === "specific_objectives" ? specifics : undefined,
-          promoteObjectiveId: step === "specific_objectives" ? promotionId : undefined,
+          // Omit the optional field when no promotion was made. The API also
+          // accepts null for compatibility with older cached clients.
+          promoteObjectiveId: step === "specific_objectives" ? promotionId ?? undefined : undefined,
           revision: workflow.revision,
           studentJustification: step === "problem_statement" ? problemJustification : step === "general_objective" ? generalJustification : undefined,
           step,

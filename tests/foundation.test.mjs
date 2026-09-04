@@ -615,6 +615,8 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(workspace, /Por que esta grande pergunta vale ser investigada\?\{justificationLabelSuffix\}/);
   assert.match(workspace, /Justificativa do OE\{index \+ 1\}\{justificationLabelSuffix\}/);
   assert.match(workspace, /studentJustification/);
+  assert.match(route, /promoteObjectiveId: z\.string\(\)\.uuid\(\)\.nullable\(\)\.optional\(\)/);
+  assert.match(workspace, /promotionId \?\? undefined/);
   assert.match(route, /Preencha a justificativa da grande pergunta \(\*\)/);
   assert.match(workspace, /specifics\.length >= 6/);
   assert.match(validation, /INFINITIVE_OPENING/);

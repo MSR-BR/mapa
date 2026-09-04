@@ -58,6 +58,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 060 | Metodologia: numeração visível | Concluída | A navegação e os estados visíveis apresentam a Metodologia como Etapa 4, mantendo o identificador interno do workflow compatível. |
 | 061 | Revisão e promoção de objetivos | Concluída | A etapa de objetivos específicos permite revisar o objetivo geral e promover um OE para OEG, preservando referências, justificativas, validação e rastreabilidade. |
 | 062 | Lembretes de validação aluno–orientador | Concluída | Estudante e orientador podem reenviar com segurança o aviso da etapa pendente para a outra parte, sem expor credenciais ou criar uma nova revisão. |
+| 063 | Correção das ações de objetivos | Concluída | Voltar, salvar, remover e promover objetivos aceitam a ausência de promoção sem retornar “Operação inválida”; regressão testada e publicada em produção. |
 
 ## Marcos
 
