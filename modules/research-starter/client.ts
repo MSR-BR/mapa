@@ -7,11 +7,8 @@ const RESEARCH_STARTER_ENDPOINT = "https://researchstarter.vercel.app/api/v1/rep
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_ATTEMPTS = 2;
 
-// Keep the Mapa credential isolated from legacy duplicate variables in Vercel.
-// The fallback preserves local setups that still use the original name.
 function readResearchStarterApiKey() {
-  return process.env.RESEARCH_STARTER_MAPA_API_KEY?.trim()
-    || process.env.RESEARCH_STARTER_API_KEY?.trim();
+  return process.env.RESEARCH_STARTER_MAPA_API_KEY?.trim();
 }
 
 export type ResearchStarterClientErrorCode =

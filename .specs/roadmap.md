@@ -69,7 +69,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 071 | Verificador E2E compatível com papel imutável | Concluída | A simulação aluno–orientador valida os papéis permanentes das contas de teste sem tentar atualizá-los; lint, tipos, 84 testes, build e fluxo RLS completo passaram, com limpeza do projeto temporário. |
 | 072 | Recuperação do pipeline Gemini | Concluída | Gemini 3.6 Flash restaurou saída estruturada, metodologia e título final por IA; 85 testes, build, Research Starter e smokes de produção passaram no deployment dpl_BeNtfChz7iKdcneZHyD69LhmRodY. |
 | 073 | Navegação e validação confiável das etapas | Concluída | Avanço explícito em um clique, barra Etapa/Passo navegável para trás e matriz metodológica reconciliada com objetivos reais; 88 testes, E2E autenticado e produção saudável. |
-| 074 | Homologação final do fluxo completo em produção | Concluída | Jornada aluno–revisor, papéis imutáveis, isolamento, Mapa Rápido, navegação, IA, 89 testes e produção homologados; resta apenas sincronizar a chave local do Research Starter, pois a chave publicada está válida. |
+| 074 | Homologação final do fluxo completo em produção | Concluída | Jornada aluno–revisor, papéis imutáveis, isolamento, Mapa Rápido, navegação, IA, 89 testes e produção homologados; a higiene operacional remanescente da credencial foi encerrada na Change 075. |
+| 075 | Estabilização operacional de produção | Concluída | Credencial canônica restrita a Production, smoke autenticado aprovado, Node.js 22 fixado, dependências sem vulnerabilidades conhecidas, 90 testes e deployment `dpl_A96gpBn81Z4Rfu5tqDxoRpYKACZi` validados. |
 
 ## Marcos
 
@@ -82,7 +83,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - M6: fluxo conceitual v2 aprovado — concluído.
 - M7: descoberta, problemática, objetivos, capítulos, metodologia e resultados esperados validados.
 - M8: mapa rastreável e coerente entregue — concluído.
-- M9: v2 implantado com compatibilidade legada — concluído em produção; validação autenticada real permanece como checklist operacional.
+- M9: v2 implantado com compatibilidade legada — concluído e revalidado em produção com fluxo autenticado real.
 
 ## Dependências externas
 

@@ -490,3 +490,34 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - Smoke pós-deploy: `/login` retornou HTTP 200; `/api/health` retornou `status=ok`
   com Gemini, Resend, Research Starter e Supabase configurados. A consulta de
   logs de erro da última hora não encontrou registros.
+
+## Change 075 — Estabilização operacional de produção (11/09/2026)
+
+- `RESEARCH_STARTER_MAPA_API_KEY` é a única credencial aceita pelo Mapa e
+  permanece exclusivamente no backend de Production da Vercel.
+- A variável legada `RESEARCH_STARTER_API_KEY` foi aposentada. Não copie o
+  segredo oculto de produção para `.env.local`, Preview, código, chat ou logs.
+- O smoke oficial é `npm run research-starter:verify:production`: ele autentica
+  uma conta E2E no Supabase e chama a rota publicada do Mapa, sem acessar
+  diretamente o segredo do Research Starter.
+- Uma validação direta local continua possível com uma credencial própria de
+  desenvolvimento em `RESEARCH_STARTER_MAPA_API_KEY`; ela não deve reutilizar
+  a chave de Production.
+- O runtime está fixado em Node.js `22.x`. Os postinstalls de `esbuild` e
+  `unrs-resolver`, ambos transitivos de desenvolvimento, ficam explicitamente
+  negados enquanto os binários opcionais distribuídos sustentarem lint, testes e
+  build.
+- O fechamento inclui Next.js 16.3.5, `eslint-config-next` 16.3.5, Resend 6.28,
+  Tailwind 4.3.3, PostCSS 8.5.28 e Sharp 0.35.4. O upgrade permaneceu nas versões
+  principais existentes e o `npm audit` terminou com zero vulnerabilidades.
+- `AGENTS.md` aponta futuras alterações do framework para a documentação
+  versionada distribuída em `node_modules/next/dist/docs/`.
+- O inventário final contém somente `RESEARCH_STARTER_MAPA_API_KEY` em
+  Production; a variável legada foi removida e Preview não possui a credencial.
+- Gate local: lint, tipos, 90 testes, exportação e build aprovados; scanner do
+  projeto aprovado e `npm audit` com zero vulnerabilidades.
+- Deployment final: `dpl_A96gpBn81Z4Rfu5tqDxoRpYKACZi` (READY), artefato
+  `https://mapadapesquisa-okupy0d8z-msr-brs-projects.vercel.app`, aliasado a
+  `https://mapadapesquisa.com.br`.
+- Smoke pós-deploy: domínio HTTP 200, health `status=ok`, Research Starter HTTP
+  200 com três referências e nenhum log de erro nos dez minutos inspecionados.

@@ -404,21 +404,26 @@ test("exports only the authenticated owner's saved structure as PDF", async () =
 });
 
 test("keeps the Research Starter key server-side and follows its v1 contract", async () => {
-  const [client, route, verification, environment] = await Promise.all([
+  const [client, route, verification, productionVerification, environment] = await Promise.all([
     readProjectFile("modules/research-starter/client.ts"),
     readProjectFile("app/api/research-starter/reports/route.ts"),
     readProjectFile("scripts/verify-research-starter.mjs"),
+    readProjectFile("scripts/verify-research-starter-production.mjs"),
     readProjectFile(".env.example"),
   ]);
 
   assert.match(client, /import "server-only"/);
   assert.match(client, /RESEARCH_STARTER_MAPA_API_KEY/);
-  assert.match(client, /RESEARCH_STARTER_API_KEY/);
+  assert.doesNotMatch(client, /process\.env\.RESEARCH_STARTER_API_KEY\b/);
   assert.match(client, /\/api\/v1\/reports/);
   assert.match(route, /requireAuthenticatedUser/);
   assert.match(route, /publicationInterval: \{ kind: interval \}/);
   assert.match(verification, /maxReferences: 3/);
-  assert.match(environment, /^RESEARCH_STARTER_API_KEY=$/m);
+  assert.doesNotMatch(verification, /process\.env\.RESEARCH_STARTER_API_KEY\b/);
+  assert.match(productionVerification, /MAPA_E2E_STUDENT_EMAIL/);
+  assert.match(productionVerification, /\/api\/research-starter\/reports/);
+  assert.match(productionVerification, /Cookie: cookie/);
+  assert.doesNotMatch(environment, /^RESEARCH_STARTER_API_KEY=/m);
   assert.match(environment, /^RESEARCH_STARTER_MAPA_API_KEY=$/m);
   assert.doesNotMatch(environment, /NEXT_PUBLIC_RESEARCH_STARTER/);
 });
@@ -437,6 +442,18 @@ test("uses the standard Next.js runtime expected by Vercel", async () => {
   assert.equal(manifest.scripts.dev, "next dev");
   assert.equal(manifest.scripts.build, "next build");
   assert.equal(manifest.scripts.start, "next start");
+  assert.equal(manifest.engines.node, "22.x");
+  assert.equal(manifest.dependencies.next, "16.3.5");
+  assert.equal(manifest.dependencies.resend, "^6.28.0");
+  assert.equal(manifest.devDependencies["eslint-config-next"], "16.3.5");
+  assert.equal(manifest.devDependencies["@tailwindcss/postcss"], "4.3.3");
+  assert.equal(manifest.devDependencies.tailwindcss, "4.3.3");
+  assert.equal(manifest.overrides.postcss, "8.5.28");
+  assert.equal(manifest.overrides.sharp, "0.35.4");
+  assert.deepEqual(manifest.allowScripts, {
+    esbuild: false,
+    "unrs-resolver": false,
+  });
   assert.equal(manifest.dependencies.vinext, undefined);
   assert.equal(manifest.devDependencies?.wrangler, undefined);
 });
@@ -1218,4 +1235,23 @@ test("registers Change 074 production acceptance and cross-account isolation", a
   assert.match(advisorWorkspace, /Etapa 4\/4 · Passo 1\/2 · Capítulo 3/);
   assert.match(roadmap, /074 \| Homologação final do fluxo completo em produção/);
   assert.match(spec, /gpt-5\.6-sol/);
+});
+
+test("registers Change 075 production operational stability", async () => {
+  const [roadmap, objective, closure, operations, projectState, agentRules] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/075-production-operational-stability/objective.md"),
+    readProjectFile(".specs/changes/075-production-operational-stability/closure-evidence.md"),
+    readProjectFile("docs/operations.md"),
+    readProjectFile(".specs/project-state.md"),
+    readProjectFile("AGENTS.md"),
+  ]);
+
+  assert.match(roadmap, /075 \| Estabilização operacional de produção \| Concluída/);
+  assert.match(objective, /credencial server-side do Research Starter/);
+  assert.match(closure, /gpt-5\.6-sol com raciocínio xhigh/);
+  assert.match(closure, /dpl_A96gpBn81Z4Rfu5tqDxoRpYKACZi/);
+  assert.match(operations, /research-starter:verify:production/);
+  assert.match(projectState, /RESEARCH_STARTER_MAPA_API_KEY/);
+  assert.match(agentRules, /node_modules\/next\/dist\/docs\//);
 });

@@ -11,15 +11,11 @@ function configured(...names: string[]) {
   return names.every((name) => Boolean(process.env[name]?.trim()));
 }
 
-function configuredAny(...names: string[]) {
-  return names.some((name) => Boolean(process.env[name]?.trim()));
-}
-
 export function getProviderHealth(): ProviderHealthSnapshot {
   return {
     gemini: configured("GEMINI_API_KEY") ? "configured" : "not_configured",
     resend: configured("RESEND_API_KEY") ? "configured" : "not_configured",
-    researchStarter: configuredAny("RESEARCH_STARTER_MAPA_API_KEY", "RESEARCH_STARTER_API_KEY")
+    researchStarter: configured("RESEARCH_STARTER_MAPA_API_KEY")
       ? "configured"
       : "not_configured",
     supabase: configured(

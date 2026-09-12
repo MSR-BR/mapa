@@ -30,14 +30,14 @@ test("provider health exposes only configuration state", () => {
   const previous = {
     gemini: process.env.GEMINI_API_KEY,
     resend: process.env.RESEND_API_KEY,
-    researchStarter: process.env.RESEARCH_STARTER_API_KEY,
+    researchStarter: process.env.RESEARCH_STARTER_MAPA_API_KEY,
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     projectRef: process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF,
   };
   process.env.GEMINI_API_KEY = "secret-gemini";
   process.env.RESEND_API_KEY = "secret-resend";
-  process.env.RESEARCH_STARTER_API_KEY = "secret-rs";
+  process.env.RESEARCH_STARTER_MAPA_API_KEY = "secret-rs";
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://aeaweherkrqmlqnxsmib.supabase.co";
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_test";
   process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF = "aeaweherkrqmlqnxsmib";
@@ -52,7 +52,7 @@ test("provider health exposes only configuration state", () => {
     for (const [name, value] of Object.entries({
       GEMINI_API_KEY: previous.gemini,
       RESEND_API_KEY: previous.resend,
-      RESEARCH_STARTER_API_KEY: previous.researchStarter,
+      RESEARCH_STARTER_MAPA_API_KEY: previous.researchStarter,
       NEXT_PUBLIC_SUPABASE_URL: previous.supabaseUrl,
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: previous.supabaseKey,
       NEXT_PUBLIC_SUPABASE_PROJECT_REF: previous.projectRef,
@@ -67,14 +67,14 @@ test("health endpoint returns a sanitized versioned diagnostic", async () => {
   const previous = {
     gemini: process.env.GEMINI_API_KEY,
     resend: process.env.RESEND_API_KEY,
-    researchStarter: process.env.RESEARCH_STARTER_API_KEY,
+    researchStarter: process.env.RESEARCH_STARTER_MAPA_API_KEY,
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     projectRef: process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF,
   };
   process.env.GEMINI_API_KEY = "secret-gemini";
   process.env.RESEND_API_KEY = "secret-resend";
-  process.env.RESEARCH_STARTER_API_KEY = "secret-rs";
+  process.env.RESEARCH_STARTER_MAPA_API_KEY = "secret-rs";
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://aeaweherkrqmlqnxsmib.supabase.co";
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_test";
   process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF = "aeaweherkrqmlqnxsmib";
@@ -95,7 +95,7 @@ test("health endpoint returns a sanitized versioned diagnostic", async () => {
     for (const [name, value] of Object.entries({
       GEMINI_API_KEY: previous.gemini,
       RESEND_API_KEY: previous.resend,
-      RESEARCH_STARTER_API_KEY: previous.researchStarter,
+      RESEARCH_STARTER_MAPA_API_KEY: previous.researchStarter,
       NEXT_PUBLIC_SUPABASE_URL: previous.supabaseUrl,
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: previous.supabaseKey,
       NEXT_PUBLIC_SUPABASE_PROJECT_REF: previous.projectRef,
