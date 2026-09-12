@@ -34,10 +34,29 @@
 - Revisão visual móvel em 500 px: aprovada, sem recorte ou overflow.
 - `git diff --check`: aprovado.
 
+## CPD e produção
+
+- Gate oficial `npm run check`: aprovado, incluindo lint, tipos, 96 testes,
+  exportação e build Next.js 16.3.5.
+- `npm audit --audit-level=moderate`: zero vulnerabilidades.
+- `npm run security:audit`: aprovado.
+- Commit de implementação: `d212165`.
+- Push: branch remota `codex/change-003-004` atualizada.
+- Deployment: `dpl_G8kNnBN9DayztcX1VM3U9EbuwUUU`, estado READY e alvo
+  Production.
+- Artefato:
+  `https://mapadapesquisa-46zyde7ka-msr-brs-projects.vercel.app`.
+- Domínio canônico: `https://mapadapesquisa.com.br`.
+- `/home.html`, MP4 e poster retornaram HTTP 200 em produção.
+- A landing publicada contém a seção, o CTA, o MP4 e o poster esperados.
+- A requisição parcial do vídeo retornou HTTP 206 para os bytes 0–1023.
+- `/api/health` retornou `status=ok`, com Gemini, Resend, Research Starter e
+  Supabase configurados.
+- A inspeção visual do domínio publicado foi aprovada.
+- Nenhum log de erro foi encontrado no período pós-deploy inspecionado.
+
 ## Escopo respeitado
 
 - Os vídeos das Changes 078 e 079 não foram alterados.
 - O conteúdo do MP4 recebido não foi editado nem recomprimido.
 - Nenhuma credencial, banco de dados ou configuração de produção foi alterada.
-- Nenhum commit, push ou deploy foi executado; a publicação permanece pendente
-  de solicitação de CPD.

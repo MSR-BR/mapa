@@ -29,9 +29,10 @@ A Change 081 incorporou o vídeo fornecido à landing pública logo após o hero
 adicionou acesso direto pelo botão secundário. O player usa controles nativos,
 `playsInline`, dimensões declaradas, poster real e carregamento sob demanda. O
 MP4 público preserva o hash do original; o layout foi preparado para desktop e
-celular. A aplicação em produção ainda não foi publicada com essa mudança.
+celular. A Change foi publicada no deployment
+`dpl_G8kNnBN9DayztcX1VM3U9EbuwUUU`, em estado READY e aliasado ao domínio
+canônico `https://mapadapesquisa.com.br`.
 
 ## Questões em aberto
 
-Nenhuma no escopo atual. A publicação da Change 081 depende de uma solicitação
-posterior de CPD.
+Nenhuma no escopo atual.

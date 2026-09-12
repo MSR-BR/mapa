@@ -76,7 +76,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 078 | Vídeo promocional para redes sociais | Concluída | Vídeo vertical de 15 segundos exportado em H.264 com gancho, fluxo resumido, figuras de Aluno e Orientador, logo oficial, link, QR Code validado, trilha original e pacote de publicação. |
 | 079 | Vídeo promocional premium — versão 2 | Concluída | C78 preservada; nova peça com gancho em 0,3 s, transformação visual do app, mensagem de valor, CTA premium, faixa eletrônica gerada, QR validado e pacote reproduzível. |
 | 080 | Roteiro promocional para NotebookLM | Concluída | Prompt e roteiro Brief em português estruturados para aproximadamente 60 segundos, com conteúdo exato separado da geração; nenhum vídeo ou deploy foi executado. |
-| 081 | Vídeo de apresentação na landing page | Concluída | MP4 fornecido incorporado após o hero com poster real, controles acessíveis, carregamento sob demanda, layout responsivo e regressão automatizada; produção não publicada. |
+| 081 | Vídeo de apresentação na landing page | Concluída | MP4 fornecido incorporado após o hero com poster real, controles acessíveis, carregamento sob demanda, layout responsivo e regressão automatizada; CPD validado no domínio canônico. |
 
 ## Marcos
 

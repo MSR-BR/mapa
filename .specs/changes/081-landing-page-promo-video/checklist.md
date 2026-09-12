@@ -11,3 +11,4 @@
 - [x] Rota, poster, MP4 e requisição parcial verificados localmente.
 - [x] Lint, tipos, 96 testes, build e `git diff --check` aprovados.
 - [x] Ledger, operação e memória do Pó Mágico atualizados.
+- [x] Commit, push, deployment e smoke de produção concluídos.

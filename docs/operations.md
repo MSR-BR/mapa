@@ -605,4 +605,14 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   `preload="none"`, sem autoplay.
 - O layout usa duas colunas no desktop e uma coluna no celular.
 - O arquivo mede 12.256.548 bytes e dura aproximadamente 1 min 17 s.
-- A mudança permanece local; nenhum deploy foi realizado.
+- Gate final: `npm run check` aprovado, incluindo lint, tipos, 96 testes,
+  exportação e build Next.js 16.3.5; auditoria de dependências sem
+  vulnerabilidades e scanner de segurança aprovado.
+- Commit de implementação: `d212165`, enviado à branch
+  `codex/change-003-004`.
+- Deployment: `dpl_G8kNnBN9DayztcX1VM3U9EbuwUUU` (READY), artefato
+  `https://mapadapesquisa-46zyde7ka-msr-brs-projects.vercel.app`, aliasado a
+  `https://mapadapesquisa.com.br`.
+- Smoke pós-deploy: landing, vídeo e poster HTTP 200; requisição parcial do MP4
+  HTTP 206; health `status=ok`, inspeção visual aprovada e nenhum erro nos logs
+  consultados.
