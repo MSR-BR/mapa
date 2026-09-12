@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change atual: nenhuma.
-- Changes concluídas: 001–078 conforme `.specs/roadmap.md`.
+- Changes concluídas: 001–079 conforme `.specs/roadmap.md`.
 - Changes pendentes: nenhuma.
 
 ## Decisões-chave
@@ -25,13 +25,13 @@
 
 ## Estado validado mais recente
 
-A Change 078 produziu o vídeo promocional vertical de 15 segundos em H.264,
-com 1080 × 1920, 30 fps, trilha original, logo oficial, figuras de Aluno e
-Orientador e QR Code validado para o domínio canônico. O pacote de publicação,
-quadros de controle, hashes e proveniência estão em
-`outputs/social-promo-c78/`. A aplicação em produção não foi alterada.
+A Change 079 preservou integralmente a C78 e criou a versão 2 do vídeo
+promocional. A nova peça tem gancho em 0,3 segundo, quatro atos, apresentação
+mais forte do app, faixa eletrônica profissional gerada, CTA, logo e QR Code
+validado. Os dois pacotes permanecem separados em `outputs/social-promo-c78/`
+e `outputs/social-promo-c79/`. A aplicação em produção não foi alterada.
 
 ## Questões em aberto
 
-Nenhuma. Uma nova Change depende de feedback sobre a peça ou de novo escopo
+Nenhuma. Uma nova Change depende de feedback sobre a versão 2 ou de novo escopo
 aprovado.

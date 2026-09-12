@@ -30,3 +30,8 @@ Adicionar um contrato próprio para peças audiovisuais: brief e storyboard ante
 da geração; conteúdo aberto separado de marca e texto exatos; QR Code validado
 dentro do quadro final; trilha com proveniência; inspeção visual de quadros-chave;
 metadados, hashes e arquivos de publicação registrados no encerramento.
+
+Para revisões, exigir também preservação verificável da versão anterior e uma
+auditoria de eficácia publicitária: interrupção no primeiro segundo, papel do
+produto na transformação, hierarquia da promessa, progressão sonora e força do
+CTA. Música deve ser avaliada como parte da narrativa, com fonte identificada.

@@ -567,3 +567,17 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   `outputs/social-promo-c78/`; o gerador reproduzível está em
   `scripts/generate-social-promo-c78.swift`.
 - Esta Change não alterou nem republicou a aplicação em produção.
+
+## Change 079 — Vídeo promocional premium, versão 2 (12/09/2026)
+
+- A versão 1 da C78 foi preservada sem qualquer alteração; o vídeo novo usa o
+  diretório independente `outputs/social-promo-c79/`.
+- O gancho `TRAVOU?` aparece em 0,3 segundo, seguido por problema, transformação
+  no app, benefícios e conversão. O ato central mostra Problemática, Objetivos,
+  Capítulos e Metodologia em um mockup animado.
+- A música anterior foi substituída por uma faixa eletrônica instrumental gerada
+  pelo catálogo Astral, ID `aa1ba64cd12042e89800c7356498ff40`, com fade local.
+- Logo, textos, interface e QR Code continuam determinísticos. Vision confirmou
+  o endereço `https://mapadapesquisa.com.br` dentro do quadro final.
+- O pacote inclui MP4, música-fonte, cena, capa, quatro quadros de inspeção,
+  relatório técnico, manifesto e proveniência. Não houve deploy do aplicativo.

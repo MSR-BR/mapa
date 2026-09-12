@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -1334,4 +1335,36 @@ test("registers Change 078 reproducible social promo package", async () => {
   assert.equal(report.audioTrackCount, 1);
   assert.equal(report.qrPayload, "https://mapadapesquisa.com.br");
   assert.ok(video.byteLength > 1_000_000);
+});
+
+test("registers Change 079 premium promo while preserving version 1", async () => {
+  const [roadmap, audit, generator, manifestText, reportText, videoV1, videoV2] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/079-social-promo-premium/creative-audit.md"),
+    readProjectFile("scripts/generate-social-promo-c79.swift"),
+    readProjectFile("outputs/social-promo-c79/manifest.json"),
+    readProjectFile("outputs/social-promo-c79/technical-report.json"),
+    readFile(new URL("../outputs/social-promo-c78/mapa-da-pesquisa-social-15s.mp4", import.meta.url)),
+    readFile(new URL("../outputs/social-promo-c79/mapa-da-pesquisa-social-15s-v2.mp4", import.meta.url)),
+  ]);
+  const manifest = JSON.parse(manifestText);
+  const report = JSON.parse(reportText);
+  const v1Hash = createHash("sha256").update(videoV1).digest("hex");
+
+  assert.match(roadmap, /079 \| Vídeo promocional premium — versão 2 \| Concluída/);
+  assert.match(audit, /interromper o scroll/);
+  assert.match(generator, /TRAVOU\?/);
+  assert.match(generator, /TRANSFORME SUA IDEIA/);
+  assert.match(generator, /VOCÊ/);
+  assert.match(generator, /NO CONTROLE\./);
+  assert.match(generator, /TIRE SUA PESQUISA/);
+  assert.equal(v1Hash, manifest.preservedVersion.sha256);
+  assert.equal(report.soundtrackSource, "heygen-astral-aa1ba64cd12042e89800c7356498ff40");
+  assert.equal(report.durationSeconds, 15);
+  assert.equal(report.width, 1080);
+  assert.equal(report.height, 1920);
+  assert.equal(report.frameRate, 30);
+  assert.equal(report.audioTrackCount, 1);
+  assert.equal(report.qrPayload, "https://mapadapesquisa.com.br");
+  assert.ok(videoV2.byteLength > 2_000_000);
 });

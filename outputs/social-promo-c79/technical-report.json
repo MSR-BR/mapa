@@ -1,0 +1,12 @@
+{
+  "audioTrackCount" : 1,
+  "durationSeconds" : 15,
+  "frameRate" : 30,
+  "height" : 1920,
+  "peakDBFS" : -1.8503110730543406,
+  "qrPayload" : "https://mapadapesquisa.com.br",
+  "rmsDBFS" : -20.350057930713437,
+  "soundtrackSource" : "heygen-astral-aa1ba64cd12042e89800c7356498ff40",
+  "videoCodec" : "H.264",
+  "width" : 1080
+}

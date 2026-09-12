@@ -1,0 +1,71 @@
+{
+  "change": "079",
+  "createdAt": "2026-09-12T14:50:00-03:00",
+  "preservedVersion": {
+    "change": "078",
+    "path": "../social-promo-c78/mapa-da-pesquisa-social-15s.mp4",
+    "sha256": "bd844d18ca7ee994f8b40459a10fd59173b7ea32a5f08c5ad476ccde2c5e5448"
+  },
+  "format": {
+    "audioTrackCount": 1,
+    "codec": "H.264",
+    "durationSeconds": 15,
+    "frameRate": 30,
+    "height": 1920,
+    "width": 1080
+  },
+  "qrPayload": "https://mapadapesquisa.com.br",
+  "soundtrackSource": "heygen-astral-aa1ba64cd12042e89800c7356498ff40",
+  "files": [
+    {
+      "path": "cover.png",
+      "bytes": 2449427,
+      "sha256": "7c455d0221d30e6d34fdd08aced86ce99080a0bed2d3d36c9af3a280dba1372e"
+    },
+    {
+      "path": "frame-final.png",
+      "bytes": 299241,
+      "sha256": "69e892d8dd4dc869923cb9afef56bbdf3363496445625d4bac3b6765d842f1aa"
+    },
+    {
+      "path": "frame-hook.png",
+      "bytes": 2360909,
+      "sha256": "a896eaad2ebd875f531f018cfbd0ab829d19b023cfdae76b14a8a9f9583ec970"
+    },
+    {
+      "path": "frame-product.png",
+      "bytes": 167178,
+      "sha256": "00ae991f48394b9ca5fc86168c1ff9d43b017c5091b974ad5ceb6084a41e6615"
+    },
+    {
+      "path": "frame-value.png",
+      "bytes": 161796,
+      "sha256": "8177299a5ae40a63cdafa112510f3a529934980e3be2f18c02d305773ebe69a1"
+    },
+    {
+      "path": "mapa-da-pesquisa-social-15s-v2.mp4",
+      "bytes": 5808051,
+      "sha256": "fdbbe411e0b4c22849f9d9aa05f8b2e8f8f61ff433cc8112b8861ea5f441f2c7"
+    },
+    {
+      "path": "qr-mapadapesquisa.png",
+      "bytes": 7930,
+      "sha256": "ac199b1a05775a0c643b7c01e777b48293a8f80f3f32334d10b6e7f17449a806"
+    },
+    {
+      "path": "scene-chaos.png",
+      "bytes": 1751855,
+      "sha256": "2e3948c5015fa0e11c0b2d841dc9f47dbc188558f6d46206685adae0269081da"
+    },
+    {
+      "path": "soundtrack-premium-astral.wav",
+      "bytes": 6703278,
+      "sha256": "dcb18cc4eb6d0a817f6ef6012bf2f95977c8319b8c2b1acb4953cf5099d5be82"
+    },
+    {
+      "path": "technical-report.json",
+      "bytes": 329,
+      "sha256": "8e475c35f43137595532073af1ced8cf80a0861b7aa022a2d29ad78b45a50af1"
+    }
+  ]
+}

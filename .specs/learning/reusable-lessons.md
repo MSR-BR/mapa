@@ -23,3 +23,8 @@
 10. A inspeção de quadros exportados é indispensável mesmo quando duração,
     resolução e codec passam, pois transformações de canvas podem inverter todo o
     vídeo sem provocar erro técnico.
+11. Um vídeo explicativo não se torna anúncio apenas com boa aparência: o
+    primeiro segundo precisa interromper o scroll, o produto deve protagonizar
+    uma transformação e a música precisa construir energia até o CTA.
+12. Revisões criativas devem manter a versão aprovada em diretório e hash
+    próprios; uma nova direção é uma nova entrega, não uma sobrescrita.

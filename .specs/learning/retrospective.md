@@ -64,3 +64,27 @@ link, QR Code funcional e trilha original.
 - Aprovar o vídeo somente porque os metadados técnicos estão corretos.
 - Pedir a um gerador visual que reproduza logo, texto ou QR Code.
 - Usar áudio de origem incerta quando uma trilha simples pode ser sintetizada.
+
+# Retrospectiva — Change 079
+
+## Resultado
+
+A versão 1 foi preservada e a peça foi reconstruída como anúncio de resposta
+direta: gancho em 0,3 segundo, problema reconhecível, transformação pelo app,
+benefícios claros e CTA com QR. A trilha simples foi substituída por uma faixa
+eletrônica gerada profissionalmente para publicidade.
+
+## O que funcionou
+
+- Tratar o comentário do usuário como mudança de direção, não ajuste cosmético.
+- Avaliar a peça por retenção, hierarquia, transformação e conversão.
+- Usar quadro específico de 0,3 segundo para validar o gancho.
+- Preservar a versão 1 por hash enquanto a versão 2 usa pacote independente.
+- Selecionar música sem voz por descrição comercial e registrar o ID da fonte.
+
+## O que evitar
+
+- Confundir apresentação institucional elegante com anúncio que interrompe o
+  scroll.
+- Repetir pads sintéticos simples quando ritmo e clímax são parte do pedido.
+- Sobrescrever uma versão já entregue durante uma revisão criativa.

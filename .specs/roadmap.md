@@ -74,6 +74,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 076 | Clareza dos perfis e interface contextual | Concluída | Perfis Aluno e Orientador voltaram a ser identificados explicitamente; papel permanente, controles contextuais, E2E entre contas e produção foram validados. |
 | 077 | Menu de perfil conciso | Concluída | Menu mantém somente a identificação explícita de Aluno ou Orientador; textos auxiliares, código sem uso, testes, produção e CPD foram validados. |
 | 078 | Vídeo promocional para redes sociais | Concluída | Vídeo vertical de 15 segundos exportado em H.264 com gancho, fluxo resumido, figuras de Aluno e Orientador, logo oficial, link, QR Code validado, trilha original e pacote de publicação. |
+| 079 | Vídeo promocional premium — versão 2 | Concluída | C78 preservada; nova peça com gancho em 0,3 s, transformação visual do app, mensagem de valor, CTA premium, faixa eletrônica gerada, QR validado e pacote reproduzível. |
 
 ## Marcos
 
