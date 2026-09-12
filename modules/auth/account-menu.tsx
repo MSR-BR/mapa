@@ -56,8 +56,6 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
         <div className="account-profile-switch">
           <span>Perfil da conta</span>
           <strong>{profilePresentation.profileLabel}</strong>
-          <small>Área de trabalho: {profilePresentation.workspaceLabel}</small>
-          <small>Este perfil permanece associado à conta.</small>
         </div>
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
         <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole, source: "dashboard" })}><button type="submit">Sair</button></form>

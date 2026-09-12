@@ -540,3 +540,16 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - Deployment: `dpl_AsVvML65fECUU2XfhCGaFN4anYGd` (READY), aliasado a
   `https://mapadapesquisa.com.br`; domínio HTTP 200, health `status=ok` e nenhum
   erro encontrado nos logs inspecionados.
+
+## Change 077 — Menu de perfil conciso (12/09/2026)
+
+- O menu da conta mantém somente o cabeçalho `Perfil da conta` e a identificação
+  explícita `Aluno` ou `Orientador`.
+- A descrição da área de trabalho e o aviso de permanência foram removidos, assim
+  como o campo de apresentação e o CSS que ficaram sem uso.
+- Seleção inicial, persistência e permissões dos perfis não foram alteradas.
+- Gate final: lint, tipos, 93 testes, exportação, build Next.js 16.3.5, auditoria
+  de dependências e scanner de segurança aprovados.
+- Deployment: `dpl_HiCEa53yXkM9b2AWbnHvruEJ2vb1` (READY), aliasado a
+  `https://mapadapesquisa.com.br`; domínio HTTP 200, health `status=ok` e nenhum
+  erro encontrado nos logs inspecionados.

@@ -72,6 +72,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 074 | Homologação final do fluxo completo em produção | Concluída | Jornada aluno–revisor, papéis imutáveis, isolamento, Mapa Rápido, navegação, IA, 89 testes e produção homologados; a higiene operacional remanescente da credencial foi encerrada na Change 075. |
 | 075 | Estabilização operacional de produção | Concluída | Credencial canônica restrita a Production, smoke autenticado aprovado, Node.js 22 fixado, dependências sem vulnerabilidades conhecidas, 90 testes e deployment `dpl_A96gpBn81Z4Rfu5tqDxoRpYKACZi` validados. |
 | 076 | Clareza dos perfis e interface contextual | Concluída | Perfis Aluno e Orientador voltaram a ser identificados explicitamente; papel permanente, controles contextuais, E2E entre contas e produção foram validados. |
+| 077 | Menu de perfil conciso | Concluída | Menu mantém somente a identificação explícita de Aluno ou Orientador; textos auxiliares, código sem uso, testes, produção e CPD foram validados. |
 
 ## Marcos
 

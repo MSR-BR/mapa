@@ -1092,7 +1092,8 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(accountMenu, /activeRole/);
   assert.match(accountMenu, /Perfil da conta/);
   assert.match(accountMenu, /profilePresentation\.profileLabel/);
-  assert.match(accountMenu, /Área de trabalho: \{profilePresentation\.workspaceLabel\}/);
+  assert.doesNotMatch(accountMenu, /Área de trabalho:/);
+  assert.doesNotMatch(accountMenu, /Este perfil permanece associado/);
   assert.doesNotMatch(accountMenu, /Mudar para/);
   assert.match(profileActions, /setInitialProfileRole/);
   assert.doesNotMatch(profileActions, /\.update\(\{ active_role/);
@@ -1145,13 +1146,11 @@ test("keeps explicit profile identity separate from role-specific controls", () 
     dashboardKicker: "Perfil Aluno",
     profileLabel: "Aluno",
     showAdvisorField: true,
-    workspaceLabel: "Criação de projetos",
   });
   assert.deepEqual(USER_PROFILE_PRESENTATIONS.advisor, {
     dashboardKicker: "Perfil Orientador",
     profileLabel: "Orientador",
     showAdvisorField: false,
-    workspaceLabel: "Revisão de projetos",
   });
 });
 
@@ -1278,11 +1277,10 @@ test("registers Change 075 production operational stability", async () => {
 });
 
 test("registers Change 076 explicit profiles and contextual controls", async () => {
-  const [roadmap, closure, operations, projectState, presentation] = await Promise.all([
+  const [roadmap, closure, operations, presentation] = await Promise.all([
     readProjectFile(".specs/roadmap.md"),
     readProjectFile(".specs/changes/076-explicit-profile-role-interface/closure-evidence.md"),
     readProjectFile("docs/operations.md"),
-    readProjectFile(".specs/project-state.md"),
     readProjectFile("modules/profile/presentation.ts"),
   ]);
 
@@ -1290,7 +1288,23 @@ test("registers Change 076 explicit profiles and contextual controls", async () 
   assert.match(closure, /gpt-5\.6-sol com raciocínio xhigh/);
   assert.match(closure, /dpl_AsVvML65fECUU2XfhCGaFN4anYGd/);
   assert.match(operations, /Perfil Aluno/);
-  assert.match(projectState, /Changes concluídas: 001–076/);
   assert.match(presentation, /showAdvisorField: false/);
   assert.match(presentation, /showAdvisorField: true/);
+});
+
+test("registers Change 077 concise profile menu", async () => {
+  const [roadmap, closure, operations, accountMenu, presentation] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/077-concise-profile-menu/closure-evidence.md"),
+    readProjectFile("docs/operations.md"),
+    readProjectFile("modules/auth/account-menu.tsx"),
+    readProjectFile("modules/profile/presentation.ts"),
+  ]);
+
+  assert.match(roadmap, /077 \| Menu de perfil conciso \| Concluída/);
+  assert.match(closure, /dpl_HiCEa53yXkM9b2AWbnHvruEJ2vb1/);
+  assert.match(operations, /identificação\s+explícita `Aluno` ou `Orientador`/);
+  assert.doesNotMatch(accountMenu, /Área de trabalho:/);
+  assert.doesNotMatch(accountMenu, /Este perfil permanece associado/);
+  assert.doesNotMatch(presentation, /workspaceLabel/);
 });

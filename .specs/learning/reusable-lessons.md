@@ -14,3 +14,6 @@
    neutra pode simplificar ações, mas não deve apagar quem o usuário é no sistema.
 7. Capacidades visuais por papel devem derivar de um único contrato testável,
    enquanto autorização continua sendo aplicada no servidor e no banco.
+8. Textos explicativos de estado permanente devem aparecer somente quando ajudam
+   uma decisão atual; em menus compactos, o rótulo explícito do perfil pode ser
+   suficiente.

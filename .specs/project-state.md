@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change atual: nenhuma.
-- Changes concluídas: 001–076 conforme `.specs/roadmap.md`.
+- Changes concluídas: 001–077 conforme `.specs/roadmap.md`.
 - Changes pendentes: nenhuma.
 
 ## Decisões-chave
@@ -25,12 +25,11 @@
 
 ## Estado validado mais recente
 
-A Change 076 restaurou a identificação explícita de Aluno e Orientador sem
-reintroduzir troca de papel. O contrato contextual mantém o campo de orientador
-exclusivo do Aluno; o E2E com duas contas confirmou persistência, isolamento,
-vínculo, comentários, correções, aprovações e conclusão. Next.js 16.3.5, 92
-testes, exportação e build passaram. O deployment
-`dpl_AsVvML65fECUU2XfhCGaFN4anYGd` está READY no domínio canônico.
+A Change 077 simplificou o menu para manter somente `Perfil da conta` e a
+identificação `Aluno` ou `Orientador`. Os textos auxiliares e o código sem uso
+foram removidos. Next.js 16.3.5, 93 testes, exportação, build e segurança
+passaram. O deployment `dpl_HiCEa53yXkM9b2AWbnHvruEJ2vb1` está READY no domínio
+canônico.
 
 ## Questões em aberto
 
