@@ -22,3 +22,24 @@ dependências desatualizadas que foram corrigidas antes do encerramento.
 - Copiar segredo oculto de produção para facilitar teste local.
 - Usar faixa aberta de Node que permita avanço silencioso de major.
 - Aprovar scripts de instalação ou correções de dependência em bloco.
+
+# Retrospectiva — Change 076
+
+## Resultado
+
+Aluno e Orientador voltaram a aparecer explicitamente no menu e no dashboard,
+sem reintroduzir troca de papel. A área de trabalho continua contextual e o campo
+de orientador permanece exclusivo do Aluno.
+
+## O que funcionou
+
+- Separar identidade, área de trabalho e capacidade visual em um contrato único.
+- Usar o E2E de duas contas para provar persistência, isolamento e intercâmbio.
+- Preservar menções a estudante quando elas descrevem corretamente o autor do
+  projeto revisado.
+
+## O que evitar
+
+- Interpretar a remoção de textos indevidos como remoção do nome do próprio
+  perfil.
+- Tratar ocultação de controles como substituta de autorização no backend.

@@ -521,3 +521,22 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   `https://mapadapesquisa.com.br`.
 - Smoke pós-deploy: domínio HTTP 200, health `status=ok`, Research Starter HTTP
   200 com três referências e nenhum log de erro nos dez minutos inspecionados.
+
+## Change 076 — Clareza dos perfis e interface contextual (12/09/2026)
+
+- Os perfis Aluno e Orientador continuam existindo e permanecem associados à
+  conta após a escolha inicial.
+- O menu voltou a exibir o nome explícito do perfil e o dashboard mostra
+  `Perfil Aluno` ou `Perfil Orientador`; `Criação de projetos` e `Revisão de
+  projetos` aparecem apenas como área de trabalho.
+- Não existe ação de troca de papel. O campo `E-mail do orientador` fica visível
+  somente no perfil Aluno, enquanto referências ao estudante permanecem válidas
+  no contexto de revisão de um projeto compartilhado.
+- O E2E com duas contas confirmou novo login, isolamento, vínculo, bloqueio de
+  edição pelo orientador, comentários, correção, aprovações, mapa final e
+  referências.
+- Gate local: lint, tipos, 92 testes, exportação e build Next.js 16.3.5
+  aprovados.
+- Deployment: `dpl_AsVvML65fECUU2XfhCGaFN4anYGd` (READY), aliasado a
+  `https://mapadapesquisa.com.br`; domínio HTTP 200, health `status=ok` e nenhum
+  erro encontrado nos logs inspecionados.

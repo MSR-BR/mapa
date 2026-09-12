@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 import { isBugReportAdminEmail } from "@/modules/bug-reports/config";
+import { USER_PROFILE_PRESENTATIONS } from "@/modules/profile/presentation";
 import { type UserProfileRole } from "@/modules/profile/types";
 import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
@@ -19,7 +20,7 @@ type Props = {
 
 export function AccountMenu({ activeRole, avatarUrl, displayName, email, initials }: Props) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
-  const workspaceLabel = activeRole === "advisor" ? "Revisão de projetos" : "Criação de projetos";
+  const profilePresentation = USER_PROFILE_PRESENTATIONS[activeRole];
 
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
@@ -53,8 +54,9 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
           {email ? <span>{email}</span> : null}
         </div>
         <div className="account-profile-switch">
-          <span>Área de trabalho</span>
-          <strong>{workspaceLabel}</strong>
+          <span>Perfil da conta</span>
+          <strong>{profilePresentation.profileLabel}</strong>
+          <small>Área de trabalho: {profilePresentation.workspaceLabel}</small>
           <small>Este perfil permanece associado à conta.</small>
         </div>
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+import { USER_PROFILE_PRESENTATIONS } from "../modules/profile/presentation.ts";
+
 const readProjectFile = (path) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
@@ -1088,6 +1090,9 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   ]);
 
   assert.match(accountMenu, /activeRole/);
+  assert.match(accountMenu, /Perfil da conta/);
+  assert.match(accountMenu, /profilePresentation\.profileLabel/);
+  assert.match(accountMenu, /Área de trabalho: \{profilePresentation\.workspaceLabel\}/);
   assert.doesNotMatch(accountMenu, /Mudar para/);
   assert.match(profileActions, /setInitialProfileRole/);
   assert.doesNotMatch(profileActions, /\.update\(\{ active_role/);
@@ -1101,8 +1106,9 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(profileStorage, /hasProfile: false/);
   assert.match(dashboard, /isStudentMode/);
   assert.match(dashboard, /isAdvisorMode/);
+  assert.match(dashboard, /profilePresentation\.dashboardKicker/);
+  assert.match(dashboard, /showAdvisorField=\{profilePresentation\.showAdvisorField\}/);
   assert.match(dashboard, /Crie mapas e revise projetos compartilhados/);
-  assert.match(dashboard, /showAdvisorField=\{false\}/);
   assert.match(dashboard, /Projetos e revisões/);
   assert.match(dashboard, /advisor-mode-hero/);
   assert.match(dashboard, /profile\.activeRole === "advisor"/);
@@ -1132,6 +1138,21 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(styles, /profile-mode-backdrop/);
   assert.match(styles, /account-profile-switch/);
   assert.match(styles, /project-advisor-panel/);
+});
+
+test("keeps explicit profile identity separate from role-specific controls", () => {
+  assert.deepEqual(USER_PROFILE_PRESENTATIONS.student, {
+    dashboardKicker: "Perfil Aluno",
+    profileLabel: "Aluno",
+    showAdvisorField: true,
+    workspaceLabel: "Criação de projetos",
+  });
+  assert.deepEqual(USER_PROFILE_PRESENTATIONS.advisor, {
+    dashboardKicker: "Perfil Orientador",
+    profileLabel: "Orientador",
+    showAdvisorField: false,
+    workspaceLabel: "Revisão de projetos",
+  });
 });
 
 test("uses the approved dark silver authentication shell", async () => {
@@ -1254,4 +1275,22 @@ test("registers Change 075 production operational stability", async () => {
   assert.match(operations, /research-starter:verify:production/);
   assert.match(projectState, /RESEARCH_STARTER_MAPA_API_KEY/);
   assert.match(agentRules, /node_modules\/next\/dist\/docs\//);
+});
+
+test("registers Change 076 explicit profiles and contextual controls", async () => {
+  const [roadmap, closure, operations, projectState, presentation] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/076-explicit-profile-role-interface/closure-evidence.md"),
+    readProjectFile("docs/operations.md"),
+    readProjectFile(".specs/project-state.md"),
+    readProjectFile("modules/profile/presentation.ts"),
+  ]);
+
+  assert.match(roadmap, /076 \| Clareza dos perfis e interface contextual \| Concluída/);
+  assert.match(closure, /gpt-5\.6-sol com raciocínio xhigh/);
+  assert.match(closure, /dpl_AsVvML65fECUU2XfhCGaFN4anYGd/);
+  assert.match(operations, /Perfil Aluno/);
+  assert.match(projectState, /Changes concluídas: 001–076/);
+  assert.match(presentation, /showAdvisorField: false/);
+  assert.match(presentation, /showAdvisorField: true/);
 });

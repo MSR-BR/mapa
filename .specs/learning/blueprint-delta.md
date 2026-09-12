@@ -16,3 +16,10 @@ decisão explícita sobre scripts de instalação antes do deploy final.
 Diferenciar três níveis de prova: configurado, autenticado e funcional. Para o
 encerramento, integrações críticas precisam de smoke funcional pelo caminho real
 do produto.
+
+## Identidade e capacidades por perfil
+
+Separar no blueprint o nome persistente do perfil, a área de trabalho e as
+capacidades visuais. A interface deve identificar explicitamente Aluno ou
+Orientador, derivar controles de um contrato por papel e manter autorização
+independente no servidor e no banco.

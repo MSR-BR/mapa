@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { USER_PROFILE_PRESENTATIONS } from "@/modules/profile/presentation";
 import { claimPendingAdvisorProjects, loadUserProfile } from "@/modules/profile/storage";
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
@@ -64,6 +65,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const { resume, continue: continueParam } = await searchParams;
   const { supabase, userId } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
+  const profilePresentation = USER_PROFILE_PRESENTATIONS[profile.activeRole];
   const isStudentMode = profile.activeRole === "student";
   const isAdvisorMode = profile.activeRole === "advisor";
   if (profile.activeRole === "advisor") {
@@ -194,22 +196,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     <main className="workspace-shell dashboard-home">
       {isStudentMode ? (
         <section className="quick-start" aria-labelledby="quick-start-title">
+          <p className="section-kicker">{profilePresentation.dashboardKicker}</p>
           <h1 id="quick-start-title">Vamos construir o mapa da sua pesquisa?</h1>
           <p className="quick-start-summary">
             Defina e organize os tópicos fundamentais da pesquisa de forma lógica,
             integrada e metodologicamente coerente.
           </p>
-          <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showResearchType />
+          <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showAdvisorField={profilePresentation.showAdvisorField} showResearchType />
         </section>
       ) : (
         <section className="advisor-mode-hero" aria-labelledby="advisor-mode-title">
-          <p className="section-kicker">Área de revisão</p>
+          <p className="section-kicker">{profilePresentation.dashboardKicker}</p>
           <h1 id="advisor-mode-title">Crie mapas e revise projetos compartilhados</h1>
           <p>
             Você pode desenvolver projetos próprios sem validação externa e também revisar mapas
             compartilhados com o e-mail da sua conta.
           </p>
-          <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showAdvisorField={false} showResearchType />
+          <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showAdvisorField={profilePresentation.showAdvisorField} showResearchType />
         </section>
       )}
 

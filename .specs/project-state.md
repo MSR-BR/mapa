@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change atual: nenhuma.
-- Changes concluídas: 001–075 conforme `.specs/roadmap.md`.
+- Changes concluídas: 001–076 conforme `.specs/roadmap.md`.
 - Changes pendentes: nenhuma.
 
 ## Decisões-chave
@@ -25,13 +25,14 @@
 
 ## Estado validado mais recente
 
-A Change 075 encerrou a estabilização operacional: variável canônica do Research
-Starter somente em Production, smoke autenticado com HTTP 200 e três referências,
-Node.js 22.x, Next.js 16.3.5, 90 testes, exportação, build, scanner de segurança e
-`npm audit` sem vulnerabilidades conhecidas. O deployment final
-`dpl_A96gpBn81Z4Rfu5tqDxoRpYKACZi` está READY no domínio canônico.
+A Change 076 restaurou a identificação explícita de Aluno e Orientador sem
+reintroduzir troca de papel. O contrato contextual mantém o campo de orientador
+exclusivo do Aluno; o E2E com duas contas confirmou persistência, isolamento,
+vínculo, comentários, correções, aprovações e conclusão. Next.js 16.3.5, 92
+testes, exportação e build passaram. O deployment
+`dpl_AsVvML65fECUU2XfhCGaFN4anYGd` está READY no domínio canônico.
 
 ## Questões em aberto
 
-Nenhuma questão funcional conhecida. Novas Changes dependerão de feedback real,
-incidente ou novo escopo aprovado.
+Nenhuma. Uma nova Change depende de feedback real, incidente ou novo escopo
+aprovado.
