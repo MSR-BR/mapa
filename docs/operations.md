@@ -581,3 +581,28 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   o endereço `https://mapadapesquisa.com.br` dentro do quadro final.
 - O pacote inclui MP4, música-fonte, cena, capa, quatro quadros de inspeção,
   relatório técnico, manifesto e proveniência. Não houve deploy do aplicativo.
+
+## Change 080 — Roteiro promocional para NotebookLM (12/09/2026)
+
+- O roteiro canônico está em `docs/notebooklm-promo-video.md`, com configuração
+  recomendada, prompt para Personalizar, narração, indicações visuais e textos de
+  tela.
+- A narrativa cobre impacto, problema, solução, modos Rápido e Avançado, IA sob
+  controle do usuário, colaboração Aluno–Orientador e CTA.
+- Logo, tagline, URL e QR Code foram classificados como conteúdo exato e devem
+  ser aplicados na pós-produção. O gerador deve apenas reservar a área final.
+- A duração de 45–60 segundos é alvo narrativo; a plataforma pode variar a saída.
+- Esta Change não gerou vídeo, não alterou o aplicativo e não realizou deploy.
+
+## Change 081 — Vídeo de apresentação na landing page (12/09/2026)
+
+- O MP4 fornecido foi copiado sem recompressão para
+  `public/media/mapa-da-pesquisa-apresentacao.mp4`; o SHA-256 permaneceu
+  `8c1e80c2a52c7a27fd5e14805d9ed93043ce6b7609f8a643731cd3c2f841418a`.
+- A landing `/home.html` exibe o vídeo logo após o hero e oferece o atalho
+  `Assistir ao vídeo`.
+- O player usa controles nativos, `playsInline`, 576 × 976, poster real e
+  `preload="none"`, sem autoplay.
+- O layout usa duas colunas no desktop e uma coluna no celular.
+- O arquivo mede 12.256.548 bytes e dura aproximadamente 1 min 17 s.
+- A mudança permanece local; nenhum deploy foi realizado.

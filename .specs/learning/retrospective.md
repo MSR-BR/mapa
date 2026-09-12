@@ -88,3 +88,48 @@ eletrônica gerada profissionalmente para publicidade.
   scroll.
 - Repetir pads sintéticos simples quando ritmo e clímax são parte do pedido.
 - Sobrescrever uma versão já entregue durante uma revisão criativa.
+
+# Retrospectiva — Change 080
+
+## Resultado
+
+O pedido de roteiro para NotebookLM foi convertido em um documento durável com
+configuração, prompt de personalização, narrativa cronometrada, textos exatos,
+fontes necessárias e fronteira clara entre geração e pós-produção.
+
+## O que funcionou
+
+- Usar o formato Brief para concentrar a mensagem promocional.
+- Basear afirmações somente nas capacidades já validadas do aplicativo.
+- Separar roteiro orientativo de elementos que exigem fidelidade literal.
+- Registrar explicitamente que gerar o vídeo é uma etapa futura.
+
+## O que evitar
+
+- Tratar uma duração solicitada como garantia da plataforma generativa.
+- Permitir que logo, URL ou QR Code sejam redesenhados pelo modelo.
+- Confundir roteiro promocional com autorização para gerar ou publicar o vídeo.
+
+# Retrospectiva — Change 081
+
+## Resultado
+
+O vídeo vertical recebido foi incorporado à landing pública em uma seção própria,
+com acesso pelo hero, resumo textual, poster real, player nativo e layout
+responsivo. O arquivo foi preservado sem recompressão.
+
+## O que funcionou
+
+- Auditar metadados e hash antes da integração.
+- Escolher como poster um quadro final que identifica produto e domínio.
+- Evitar autoplay e carregar o MP4 somente por decisão do visitante.
+- Manter texto de valor ao lado do player, útil mesmo sem reprodução.
+- Testar a presença e a assinatura binária dos dois ativos públicos.
+
+## O que evitar
+
+- Colocar um vídeo de 12 MB no caminho crítico da primeira pintura.
+- Usar uma capa genérica que não explique o conteúdo da peça.
+- Ocultar controles ou iniciar áudio sem interação.
+- Tratar hospedagem direta no repositório como solução definitiva para grande
+  escala.

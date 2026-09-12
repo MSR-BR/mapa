@@ -28,3 +28,9 @@
     uma transformação e a música precisa construir energia até o CTA.
 12. Revisões criativas devem manter a versão aprovada em diretório e hash
     próprios; uma nova direção é uma nova entrega, não uma sobrescrita.
+13. Em plataformas de vídeo fundamentadas em fontes, o roteiro pode orientar a
+    narrativa, mas duração, narração e composição continuam não determinísticas;
+    logo, texto, URL e QR Code precisam de uma etapa final controlada.
+14. Vídeo promocional abaixo da dobra deve reservar espaço por dimensões ou
+    `aspect-ratio`, mostrar poster representativo e usar carregamento sob demanda;
+    autoplay com áudio não deve ser requisito de conversão.

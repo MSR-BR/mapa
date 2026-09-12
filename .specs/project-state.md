@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change atual: nenhuma.
-- Changes concluídas: 001–079 conforme `.specs/roadmap.md`.
+- Changes concluídas: 001–081 conforme `.specs/roadmap.md`.
 - Changes pendentes: nenhuma.
 
 ## Decisões-chave
@@ -25,13 +25,13 @@
 
 ## Estado validado mais recente
 
-A Change 079 preservou integralmente a C78 e criou a versão 2 do vídeo
-promocional. A nova peça tem gancho em 0,3 segundo, quatro atos, apresentação
-mais forte do app, faixa eletrônica profissional gerada, CTA, logo e QR Code
-validado. Os dois pacotes permanecem separados em `outputs/social-promo-c78/`
-e `outputs/social-promo-c79/`. A aplicação em produção não foi alterada.
+A Change 081 incorporou o vídeo fornecido à landing pública logo após o hero e
+adicionou acesso direto pelo botão secundário. O player usa controles nativos,
+`playsInline`, dimensões declaradas, poster real e carregamento sob demanda. O
+MP4 público preserva o hash do original; o layout foi preparado para desktop e
+celular. A aplicação em produção ainda não foi publicada com essa mudança.
 
 ## Questões em aberto
 
-Nenhuma. Uma nova Change depende de feedback sobre a versão 2 ou de novo escopo
-aprovado.
+Nenhuma no escopo atual. A publicação da Change 081 depende de uma solicitação
+posterior de CPD.

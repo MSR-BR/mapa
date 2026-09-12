@@ -75,7 +75,37 @@ export default async function PublicLandingPage() {
         <p className="eyebrow">Mapa da Pesquisa</p>
         <h1 id="landing-title">Da situação-problema ao produto acadêmico.</h1>
         <p className="landing-lede">Responda cinco perguntas, escolha entre TCC, monografia, dissertação, tese ou artigo e construa uma proposta com IA, referências do Research Starter e revisão humana em cada etapa.</p>
-        <div className="landing-actions"><Link className="landing-primary" href="/">Começar um mapa</Link><Link className="landing-secondary" href="#como-funciona">Como funciona</Link></div>
+        <div className="landing-actions"><Link className="landing-primary" href="/">Começar um mapa</Link><Link className="landing-secondary" href="#apresentacao">Assistir ao vídeo</Link></div>
+      </section>
+      <section className="landing-video" id="apresentacao" aria-labelledby="landing-video-title">
+        <div className="landing-video-copy">
+          <p className="eyebrow">Veja em ação</p>
+          <h2 id="landing-video-title">Conheça o Mapa da Pesquisa.</h2>
+          <p className="landing-video-lede" id="landing-video-description">Em pouco mais de um minuto, veja como uma ideia ganha estrutura, como a IA apoia cada decisão e como estudante e orientador avançam juntos.</p>
+          <ul className="landing-video-points" aria-label="Destaques da apresentação">
+            <li>Mapa Rápido ou Mapa Avançado</li>
+            <li>Problemática, objetivos, capítulos e metodologia</li>
+            <li>Sugestões da IA com revisão humana</li>
+          </ul>
+        </div>
+        <figure className="landing-video-figure">
+          <div className="landing-video-shell">
+            <video
+              aria-describedby="landing-video-description"
+              aria-label="Vídeo de apresentação do Mapa da Pesquisa"
+              controls
+              height={976}
+              playsInline
+              poster="/media/mapa-da-pesquisa-apresentacao-poster.png"
+              preload="none"
+              width={576}
+            >
+              <source src="/media/mapa-da-pesquisa-apresentacao.mp4" type="video/mp4" />
+              Seu navegador não oferece suporte à reprodução deste vídeo.
+            </video>
+          </div>
+          <figcaption>Apresentação do Mapa da Pesquisa · 1 min 17 s</figcaption>
+        </figure>
       </section>
       <section className="landing-section" id="como-funciona" aria-labelledby="how-title">
         <p className="eyebrow">Um processo guiado</p>

@@ -35,3 +35,16 @@ Para revisões, exigir também preservação verificável da versão anterior e 
 auditoria de eficácia publicitária: interrupção no primeiro segundo, papel do
 produto na transformação, hierarquia da promessa, progressão sonora e força do
 CTA. Música deve ser avaliada como parte da narrativa, com fonte identificada.
+
+## Plataformas audiovisuais fundamentadas em fontes
+
+Quando a entrega for preparada para NotebookLM ou ferramenta equivalente,
+registrar separadamente: seleção de fontes, prompt de personalização, roteiro
+canônico, conteúdo exato e etapa de pós-produção. A saída generativa não deve ser
+aceita como reprodução confiável de marca, textos, domínio ou QR Code.
+
+Ao incorporar a peça em uma landing page, exigir dimensões reservadas, poster
+derivado de conteúdo aprovado, controles acessíveis, reprodução sem autoplay de
+áudio, carregamento compatível com a posição da mídia na página e verificação
+responsiva. Arquivos grandes podem começar em hospedagem própria, mas devem ter
+um gatilho documentado de migração para CDN ou streaming adaptativo.

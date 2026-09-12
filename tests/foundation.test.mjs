@@ -1368,3 +1368,27 @@ test("registers Change 079 premium promo while preserving version 1", async () =
   assert.equal(report.qrPayload, "https://mapadapesquisa.com.br");
   assert.ok(videoV2.byteLength > 2_000_000);
 });
+
+test("embeds the supplied promotional video in the public landing page", async () => {
+  const [landing, styles, roadmap, video, poster] = await Promise.all([
+    readProjectFile("app/home.html/page.tsx"),
+    readProjectFile("app/globals.css"),
+    readProjectFile(".specs/roadmap.md"),
+    readFile(new URL("../public/media/mapa-da-pesquisa-apresentacao.mp4", import.meta.url)),
+    readFile(new URL("../public/media/mapa-da-pesquisa-apresentacao-poster.png", import.meta.url)),
+  ]);
+
+  assert.match(roadmap, /081 \| Vídeo de apresentação na landing page \| Concluída/);
+  assert.match(landing, /id="apresentacao"/);
+  assert.match(landing, /<video/);
+  assert.match(landing, /preload="none"/);
+  assert.match(landing, /playsInline/);
+  assert.match(landing, /mapa-da-pesquisa-apresentacao\.mp4/);
+  assert.match(landing, /mapa-da-pesquisa-apresentacao-poster\.png/);
+  assert.match(styles, /\.landing-video \{ display:grid/);
+  assert.match(styles, /@media \(max-width: 520px\).*\.landing-actions \{ display:grid; grid-template-columns:1fr; \}/);
+  assert.equal(video.subarray(4, 8).toString("ascii"), "ftyp");
+  assert.equal(poster.subarray(1, 4).toString("ascii"), "PNG");
+  assert.ok(video.byteLength > 10_000_000);
+  assert.ok(poster.byteLength > 500_000);
+});
