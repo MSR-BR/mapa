@@ -109,10 +109,10 @@ export function ProjectCardModal({
       {advisorReview ? (
         <span className={`project-advisor-badge project-advisor-badge-${advisorReview.status}`}>
           {advisorReview.status === "pending"
-            ? `Aguardando orientador · ${advisorReview.label}`
+            ? `Aguardando revisão · ${advisorReview.label}`
             : advisorReview.status === "changes_requested"
               ? `Correção solicitada · ${advisorReview.label}`
-              : `Orientador aprovou · ${advisorReview.label}`}
+              : `Etapa validada · ${advisorReview.label}`}
         </span>
       ) : null}
       {isIntegration ? <span className="project-origin-badge">Integração de projetos</span> : null}

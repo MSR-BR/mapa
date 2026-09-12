@@ -4,8 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 import { isBugReportAdminEmail } from "@/modules/bug-reports/config";
-import { setActiveProfileRole } from "@/modules/profile/actions";
-import { USER_PROFILE_ROLE_LABELS, type UserProfileRole } from "@/modules/profile/types";
+import { type UserProfileRole } from "@/modules/profile/types";
 import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 import { logout } from "./actions";
@@ -20,7 +19,7 @@ type Props = {
 
 export function AccountMenu({ activeRole, avatarUrl, displayName, email, initials }: Props) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
-  const nextRole: UserProfileRole = activeRole === "advisor" ? "student" : "advisor";
+  const workspaceLabel = activeRole === "advisor" ? "Revisão de projetos" : "Criação de projetos";
 
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
@@ -54,12 +53,9 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
           {email ? <span>{email}</span> : null}
         </div>
         <div className="account-profile-switch">
-          <span>Modo atual</span>
-          <strong>{USER_PROFILE_ROLE_LABELS[activeRole]}</strong>
-          <form action={setActiveProfileRole} onSubmit={() => trackAnalyticsEvent("profile_role_selected", { profile_role: nextRole, source: "dashboard" })}>
-            <input name="role" type="hidden" value={nextRole} />
-            <button type="submit">Mudar para {USER_PROFILE_ROLE_LABELS[nextRole].toLocaleLowerCase("pt-BR")}</button>
-          </form>
+          <span>Área de trabalho</span>
+          <strong>{workspaceLabel}</strong>
+          <small>Este perfil permanece associado à conta.</small>
         </div>
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
         <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole, source: "dashboard" })}><button type="submit">Sair</button></form>

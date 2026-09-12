@@ -10,7 +10,11 @@ import type { StoredReference } from "./types";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
 import { formatResearchProductGuidance, researchProductTypeSchema, type ResearchProductType } from "@/modules/research-workflow/research-level-guidance";
 import type { ResearchIntake } from "@/modules/projects/research-intake";
-import { methodologyPlanInputSchema, type MethodologyPlanInput } from "@/modules/research-workflow/methodology-validation";
+import {
+  methodologyPlanInputSchema,
+  reconcileGeneratedMethodologyRows,
+  type MethodologyPlanInput,
+} from "@/modules/research-workflow/methodology-validation";
 import type { FinalMap } from "@/modules/research-workflow/final-map";
 import {
   coherenceFindingSchema,
@@ -30,7 +34,7 @@ import {
   validateReferenceIds,
 } from "./schema";
 
-export const GENERATION_MODEL = "gemini-2.5-flash";
+export const GENERATION_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
 
 type ResearchRequestInput = Pick<
   Project,
@@ -120,7 +124,7 @@ const generatedMethodologyPlanSchema = z.object({
     objectiveId: z.string().uuid(),
     studentJustification: z.string().trim().max(1_000).nullable().default(null),
   })).min(3).max(7),
-  title: z.string().trim().min(3).max(120),
+  title: z.string().trim().min(3).max(240),
 });
 
 const generatedCoherenceReviewSchema = z.object({
@@ -225,7 +229,7 @@ export async function suggestResearchPrompts(prompt: string) {
     ].join("\n"),
     providerOptions: {
       google: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
     temperature: 0.45,
@@ -262,7 +266,7 @@ export async function broadenResearchQuery(
     ].join("\n"),
     providerOptions: {
       google: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
     temperature: 0.1,
@@ -317,7 +321,7 @@ export async function interpretResearchRequest(
     prompt,
     providerOptions: {
       google: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
     temperature: 0.1,
@@ -376,7 +380,7 @@ export async function generateProblemCandidates(
         ].join("\n"),
         providerOptions: {
           google: {
-            thinkingConfig: { thinkingBudget: 0 },
+            thinkingConfig: { thinkingLevel: "minimal" },
           } satisfies GoogleLanguageModelOptions,
         },
         temperature: attempt === 1 ? 0.35 : 0.15,
@@ -427,7 +431,7 @@ export async function regenerateProblemStatement(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.25,
   });
   const result = generatedDefinitionSchema.parse(output);
@@ -458,7 +462,7 @@ export async function generateGeneralObjective(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.2,
   });
   const result = generatedDefinitionSchema.parse(output);
@@ -489,7 +493,7 @@ export async function generateSpecificObjectives(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.25,
   });
   const objectives = generatedSpecificObjectivesSchema.parse(output).objectives;
@@ -536,7 +540,7 @@ export async function generateLiteratureTopics(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.25,
   });
   const topics = generatedChapterTopicsSchema.parse(output).topics.map((topic) => ({
@@ -582,7 +586,7 @@ export async function generateDevelopmentTopics(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.25,
   });
   const topics = generatedChapterTopicsSchema.parse(output).topics;
@@ -608,8 +612,6 @@ export async function generateMethodologyPlan(
     objectiveCoverage: topic.objectiveCoverage,
     title: topic.title,
   }));
-  const objectiveIds = new Set(specificObjectives.map((objective) => objective.id));
-  const topicIds = new Set(chapterTopics.map((topic) => topic.id));
   const existingByObjective = new Map(existingRows.map((row) => [row.objectiveId, row.id]));
 
   const { output } = await generateText({
@@ -640,19 +642,23 @@ export async function generateMethodologyPlan(
       studentContextPrompt(studentContext),
       `Evidências verificadas: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.22,
   });
 
   const generated = generatedMethodologyPlanSchema.parse(output);
-  const invalidObjectiveIds = generated.rows.map((row) => row.objectiveId).filter((objectiveId) => !objectiveIds.has(objectiveId) && objectiveId !== generalObjectiveId);
-  if (invalidObjectiveIds.length > 0) throw new Error("A IA relacionou uma linha metodológica a objetivo inexistente.");
-  const invalidTopicIds = generated.rows.flatMap((row) => row.associatedTopicIds).filter((topicId) => !topicIds.has(topicId));
-  if (invalidTopicIds.length > 0) throw new Error("A IA relacionou metodologia a tópico inexistente.");
+  const reconciledRows = reconcileGeneratedMethodologyRows(
+    generated.rows,
+    [
+      ...specificObjectives.map((objective) => ({ ...objective, type: "specific" as const })),
+      { content: generalObjective, id: generalObjectiveId, type: "general" as const },
+    ],
+    [...literatureTopics, ...developmentTopics],
+  );
 
   return methodologyPlanInputSchema.parse({
     classification: generated.classification,
-    rows: generated.rows.map((row) => ({
+    rows: reconciledRows.map((row) => ({
       ...row,
       id: existingByObjective.get(row.objectiveId) ?? crypto.randomUUID(),
       warnings: [],
@@ -689,7 +695,7 @@ export async function reviewFinalMapCoherence(finalMap: FinalMap) {
         severity: finding.severity,
       })))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } satisfies GoogleLanguageModelOptions },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
     temperature: 0.1,
   });
 
@@ -736,7 +742,7 @@ export async function generateResearchStructure(
     prompt,
     providerOptions: {
       google: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
     temperature: 0.25,
@@ -776,7 +782,7 @@ export async function mergeResearchStructures(
     prompt,
     providerOptions: {
       google: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
     temperature: 0.2,

@@ -9,6 +9,7 @@ import {
   validateProblemStatement,
   validateSpecificObjectives,
 } from "./definition-validation";
+import { reconcileTopicLinks } from "./topic-integrity";
 import {
   methodologyPlanInputSchema,
   validateMethodologyPlan,
@@ -409,6 +410,7 @@ function deterministicFindings(
 }
 
 export function buildFinalMap(workflow: ResearchWorkflow): FinalMap {
+  workflow = { ...workflow, content: reconcileTopicLinks(workflow.content) };
   const content = workflow.content;
   const discovery = content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === discovery.selectedCandidateId) ?? null;
@@ -471,7 +473,11 @@ export function buildFinalMap(workflow: ResearchWorkflow): FinalMap {
   };
 }
 
-export function canCompleteFinalMap(finalMap: FinalMap) {
+export function canCompleteFinalMap(finalMap: FinalMap, options: { advisory?: boolean } = {}) {
+  // The strict mode remains available to validators and tests. The product
+  // completion flow uses advisory mode so coherence rules guide revision
+  // without blocking a workable draft.
+  if (options.advisory) return true;
   return finalMap.findings.every((finding) => finding.severity !== "blocking");
 }
 

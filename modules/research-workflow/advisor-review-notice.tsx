@@ -11,11 +11,11 @@ export function AdvisorReviewNotice({ workflow, projectId }: { projectId: string
   if (!review) return null;
   const label = ADVISOR_REVIEW_LABELS[review.step];
   const title = review.status === "pending"
-    ? "Aguardando validação do orientador"
-    : "Correção solicitada pelo orientador";
+    ? "Aguardando revisão"
+    : "Correção solicitada na revisão";
   const body = review.status === "pending"
-    ? `O estudante validou ${label}. A próxima etapa será liberada quando o orientador aprovar.`
-    : `Revise ${label} conforme o comentário do orientador e valide novamente pelo estudante.`;
+    ? `O estudante validou ${label}. A próxima etapa será liberada depois da revisão.`
+    : `Revise ${label} conforme os comentários recebidos e valide novamente pelo estudante.`;
 
   async function resendReminder() {
     if (busy) return;
@@ -40,7 +40,7 @@ export function AdvisorReviewNotice({ workflow, projectId }: { projectId: string
         <span>{body}</span>
       </div>
       {review.advisorComments ? <p>{review.advisorComments}</p> : null}
-      {review.status === "pending" ? <div className="advisor-review-reminder-row"><button className="advisor-review-remind" disabled={busy} onClick={() => void resendReminder()} type="button">{busy ? "Enviando…" : "Reenviar aviso ao orientador"}</button>{message ? <span role="status">{message}</span> : null}</div> : null}
+      {review.status === "pending" ? <div className="advisor-review-reminder-row"><button className="advisor-review-remind" disabled={busy} onClick={() => void resendReminder()} type="button">{busy ? "Enviando…" : "Reenviar aviso de revisão"}</button>{message ? <span role="status">{message}</span> : null}</div> : null}
     </aside>
   );
 }

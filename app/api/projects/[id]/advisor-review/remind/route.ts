@@ -34,14 +34,14 @@ export async function POST(_request: Request, routeContext: { params: Promise<{ 
   if (isAdvisor) {
     const advisorMatches = project.advisor_id === userId
       || (Boolean(project.advisor_email) && normalizeAdvisorEmail(project.advisor_email) === actorEmail);
-    if (!advisorMatches) return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de orientador." }, { status: 403 });
+    if (!advisorMatches) return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de revisão." }, { status: 403 });
   } else if (project.owner_id !== userId) {
     return NextResponse.json({ error: "Você não pode reenviar avisos deste projeto." }, { status: 403 });
   }
 
   const recipientEmail = isAdvisor ? review.studentEmail : review.advisorEmail ?? normalizeAdvisorEmail(project.advisor_email);
   if (!recipientEmail) {
-    return NextResponse.json({ error: isAdvisor ? "O e-mail do estudante não está disponível." : "Cadastre um e-mail de orientador antes de reenviar." }, { status: 422 });
+    return NextResponse.json({ error: isAdvisor ? "O e-mail do estudante não está disponível." : "Cadastre um e-mail de revisão antes de reenviar." }, { status: 422 });
   }
 
   const result = await sendProjectNotification({
@@ -56,5 +56,5 @@ export async function POST(_request: Request, routeContext: { params: Promise<{ 
   });
   if (result.status === "skipped") return NextResponse.json({ error: "O serviço de e-mail não está configurado." }, { status: 503 });
   if (result.status === "failed") return NextResponse.json({ error: "Não foi possível enviar o lembrete agora." }, { status: 502 });
-  return NextResponse.json({ message: isAdvisor ? "Lembrete enviado ao estudante." : "Lembrete enviado ao orientador." });
+  return NextResponse.json({ message: isAdvisor ? "Lembrete enviado ao estudante." : "Lembrete enviado para revisão." });
 }

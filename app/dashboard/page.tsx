@@ -140,7 +140,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       : readClassicReferences(structure?.references_data);
     const integrationSource = project.problem_statement?.match(/^Integração dos projetos:\s*(.+)$/i)?.[1]?.trim() ?? null;
     const isIntegration = structure?.prompt_version.endsWith("-merge") || Boolean(integrationSource);
-    const showAdvisorMetadata = !(isAdvisorMode && project.owner_id === userId);
+    const showAdvisorMetadata = !isAdvisorMode;
     return {
       academicArea: meta?.area ?? project.knowledge_area ?? "Área a definir",
       advisorEmail: showAdvisorMetadata ? project.advisor_email ?? null : null,
@@ -203,11 +203,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </section>
       ) : (
         <section className="advisor-mode-hero" aria-labelledby="advisor-mode-title">
-          <p className="section-kicker">Modo orientador</p>
-          <h1 id="advisor-mode-title">Crie seus mapas e acompanhe orientações</h1>
+          <p className="section-kicker">Área de revisão</p>
+          <h1 id="advisor-mode-title">Crie mapas e revise projetos compartilhados</h1>
           <p>
-            Você pode desenvolver projetos próprios sem validação externa e também revisar mapas vinculados
-            ao e-mail da sua conta.
+            Você pode desenvolver projetos próprios sem validação externa e também revisar mapas
+            compartilhados com o e-mail da sua conta.
           </p>
           <QuickStartForm canResume={profile.hasLegalConsent} resumeDraft={resume === "1"} showAdvisorField={false} showResearchType />
         </section>
@@ -228,7 +228,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <div className="section-heading">
           <div>
             <p className="section-kicker">Biblioteca</p>
-            <h2 id="recent-projects-title">{isAdvisorMode ? "Projetos e supervisões" : "Seus projetos"}</h2>
+            <h2 id="recent-projects-title">{isAdvisorMode ? "Projetos e revisões" : "Seus projetos"}</h2>
           </div>
         </div>
 
@@ -240,11 +240,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ) : !hasVisibleProjects ? (
           <div className="inline-state empty-projects">
             <span className="empty-state-icon" aria-hidden="true">⌁</span>
-            <strong>{isStudentMode ? "Sua biblioteca ainda está vazia." : "Nenhum projeto próprio ou supervisionado ainda."}</strong>
+            <strong>{isStudentMode ? "Sua biblioteca ainda está vazia." : "Nenhum projeto próprio ou compartilhado ainda."}</strong>
             <span>
               {isStudentMode
                 ? "Escreva uma ideia acima para criar o primeiro mapa."
-                : "Crie um mapa acima ou peça para um estudante indicar o e-mail da sua conta como orientador."}
+                : "Crie um mapa acima ou peça para um estudante compartilhar o projeto com o e-mail da sua conta."}
             </span>
           </div>
         ) : (
@@ -275,10 +275,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             {isAdvisorMode ? (
               <DashboardProjectGrid
                 allowIntegration={false}
-                description="Projetos de estudantes que informaram seu e-mail como orientador. Abra para comentar, solicitar correção ou validar a etapa."
-                emptyMessage="Nenhum projeto aguardando sua orientação."
+                description="Projetos compartilhados com sua conta. Abra para comentar, solicitar correção ou validar a etapa."
+                emptyMessage="Nenhum projeto aguardando sua revisão."
                 projects={advisorProjects}
-                title="Projetos sob minha orientação"
+                title="Projetos para revisar"
                 variant="advisor"
               />
             ) : null}

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { WorkflowProgress } from "./workflow-progress";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import type { ResearchWorkflow } from "./schema";
 
@@ -93,7 +94,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
         state: "choosing_problem",
         stableState: "choosing_problem",
       } : current);
-      router.refresh();
+      router.replace(`/dashboard/projects/${encodeURIComponent(projectId)}?workflowStep=problem_statement`, { scroll: false });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível escolher a proposta.");
     } finally {
@@ -135,6 +136,8 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
           </div>
         </div>
       ) : null}
+
+      <WorkflowProgress current={1} currentStep={selectedCandidate ? "problem_statement" : null} disabled={busy} projectId={projectId} revision={workflow.revision} />
 
       <div className="proposal-original-prompt">
         <span>Seu pedido original</span>

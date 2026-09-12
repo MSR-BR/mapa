@@ -20,6 +20,8 @@ import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
+import { WorkflowProgress } from "./workflow-progress";
+import { workflowNavigationUrl } from "./workflow-navigation";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
 type Operation = "complete" | "go_to" | "review" | null;
@@ -48,19 +50,20 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
   const selectedEdges = selectedNodeId
     ? finalMap.edges.filter((edge) => edge.from === selectedNodeId || edge.to === selectedNodeId)
     : [];
-  const blockingFindings = finalMap.findings.filter((finding) => finding.severity === "blocking");
-  const warningFindings = finalMap.findings.filter((finding) => finding.severity !== "blocking");
+  // Findings guide the next revision; they do not block project completion.
+  const blockingFindings: typeof finalMap.findings = [];
+  const warningFindings = finalMap.findings;
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
   const completeButtonLabel = workflow.state === "completed"
     ? "Projeto encerrado"
     : waitingForAdvisor
-      ? "Aguardando orientador"
+      ? "Aguardando revisão"
       : "Encerrar projeto";
   const completionHelpText = workflow.state === "completed"
     ? "Este mapa já foi encerrado e pode ser exportado a qualquer momento."
     : waitingForAdvisor
-      ? "A etapa foi enviada ao orientador. O encerramento ficará disponível depois da validação dele."
+      ? "A etapa foi enviada para revisão. O encerramento ficará disponível depois da validação."
       : isAdvisorOwner
         ? "Revise a versão final e encerre o projeto quando estiver tudo certo."
         : "Revise a versão final e encerre o projeto para concluir o mapa.";
@@ -104,7 +107,11 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
         return;
       }
       setMessage(payload.message ?? (action === "review" ? "Coerência revisada." : null));
-      router.refresh();
+      if (action === "go_to") {
+        router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o mapa final.");
     } finally {
@@ -137,12 +144,14 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
     <section className="final-map-workspace" aria-labelledby="final-map-title">
       <div className="definition-heading">
         <div>
-          <p className="section-kicker">Mapa final</p>
+          <p className="section-kicker">Passo 2/2 · Etapa 4/4</p>
           <h2 id="final-map-title">{finalMap.title?.approvedContent ?? finalMap.title?.proposedContent ?? "Mapa da proposta de pesquisa"}</h2>
           <p>A proposta abaixo reúne as etapas validadas e mostra a cadeia lógica entre problema, objetivos, capítulos, metodologia, resultados esperados e evidências.</p>
         </div>
         <span className={`definition-origin ${workflow.state === "completed" ? "" : "user"}`}>{workflow.state === "completed" ? "Versão concluída" : "Em revisão final"}</span>
       </div>
+
+      <WorkflowProgress current={4} currentStep="final_map" disabled={busy || waitingForAdvisor} onWorkflow={setWorkflow} projectId={projectId} revision={workflow.revision} />
 
       <div className="final-completion-panel" aria-labelledby="final-completion-title">
         <div className="final-completion-copy">
@@ -152,7 +161,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
         </div>
         <div className="final-map-actions">
           <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-          <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+          <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap, { advisory: true }) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
         </div>
       </div>
       {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
@@ -172,28 +181,28 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
       <div className="final-map-layout">
         <article className="final-map-document">
           <section id="problem-section">
-            <p className="section-kicker">Etapa 1</p>
+            <p className="section-kicker">Etapa 1/4</p>
             <h3>Problemática da pesquisa</h3>
             <p>{withCitationMarkers(finalMap.problemStatement?.approvedContent ?? "", finalMap.problemStatement?.referenceIds ?? [], referenceCodes)}</p>
             {correctionButton("problem")}
           </section>
 
           <section>
-            <p className="section-kicker">Etapa 2</p>
+            <p className="section-kicker">Etapa 2/4 · Passo 1/2</p>
             <h3>Objetivo geral</h3>
             <p>{withCitationMarkers(finalMap.generalObjective?.approvedContent ?? "", finalMap.generalObjective?.referenceIds ?? [], referenceCodes)}</p>
             {correctionButton("general")}
           </section>
 
           <section>
-            <p className="section-kicker">Etapa 3</p>
+            <p className="section-kicker">Etapa 2/4 · Passo 2/2</p>
             <h3>Objetivos específicos</h3>
             <ol>{finalMap.specificObjectives.map((objective) => <li key={objective.id}>{withCitationMarkers(objective.approvedContent ?? "", objective.referenceIds, referenceCodes)}</li>)}</ol>
             {correctionButton("specifics")}
           </section>
 
           <section>
-            <p className="section-kicker">Capítulo 3</p>
+            <p className="section-kicker">Etapa 4/4 · Passo 1/2 · Capítulo 3</p>
             <h3>Metodologia e resultados esperados</h3>
             <div className="final-method-table">
               {finalMap.methodologyRows.map((row, index) => {
@@ -213,7 +222,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           </section>
 
           <section>
-            <p className="section-kicker">Etapa 4 · Capítulo 2</p>
+            <p className="section-kicker">Etapa 3/4 · Passo 1/2 · Capítulo 2</p>
             <h3>Revisão da Literatura</h3>
             <ol>{finalMap.literatureTopics.map((topic) => (
               <li key={topic.id}>
@@ -226,7 +235,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
           </section>
 
           <section>
-            <p className="section-kicker">Etapa 5 · Capítulo 4</p>
+            <p className="section-kicker">Etapa 3/4 · Passo 2/2 · Capítulo 4</p>
             <h3>Desenvolvimento / Estudo de Caso / Análise e Discussão</h3>
             <ol>{finalMap.developmentTopics.map((topic) => <li key={topic.id}><strong>{topic.label}</strong> {withCitationMarkers(topic.title, topic.referenceIds, referenceCodes)}{topic.objectiveCoverage.length > 0 ? <p className="topic-coverage-summary"><strong>Cobertura:</strong> {topic.objectiveCoverage.map((coverage) => { const specificIndex = finalMap.specificObjectives.findIndex((objective) => objective.id === coverage.objectiveId); const label = coverage.objectiveId === finalMap.generalObjective?.id ? "OEG" : specificIndex >= 0 ? `OE${specificIndex + 1}` : "objetivo"; return `${label} — ${objectiveCoverageLabel(coverage.degree)}`; }).join("; ")}</p> : null}</li>)}</ol>
             {correctionButton("development")}
@@ -255,7 +264,7 @@ export function FinalMapWorkspace({ initialWorkflow, isAdvisorOwner = false, pro
                   const step = finalMap.nodes.find((node) => finding.elementIds.includes(node.id))?.correctionStep ?? null;
                   return (
                     <li className={finding.severity} key={finding.id}>
-                      <strong>{finding.severity === "blocking" ? "Bloqueio" : finding.severity === "warning" ? "Aviso" : "Sugestão"}</strong>
+                      <strong>{finding.severity === "blocking" ? "Sugestão de revisão" : finding.severity === "warning" ? "Aviso" : "Sugestão"}</strong>
                       <span>{finding.message}</span>
                       {finding.resolution ? <p>{finding.resolution}</p> : null}
                       {correctionButton(step, "Ir para correção")}

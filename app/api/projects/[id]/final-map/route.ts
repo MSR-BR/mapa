@@ -162,7 +162,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   if (!isAdvisorOwner && parsed.data.action === "complete" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+    return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
     return NextResponse.json({ error: "O mapa final ainda não pode ser revisado." }, { status: 409 });
@@ -190,7 +190,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
-  if (!canCompleteFinalMap(finalMap)) {
+  if (!canCompleteFinalMap(finalMap, { advisory: true })) {
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
     return saved
       ? NextResponse.json({ errors: finalMap.findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.message), workflow: saved }, { status: 422 })
@@ -236,6 +236,6 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     });
   }
   return saved
-    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Mapa validado pelo estudante. Aguardando validação do orientador." : "Mapa concluído.", workflow: saved })
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Mapa validado pelo estudante. Aguardando revisão." : "Mapa concluído.", workflow: saved })
     : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }

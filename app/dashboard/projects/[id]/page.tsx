@@ -67,8 +67,8 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
           <p className="eyebrow">Mapa da pesquisa</p>
           <h1>{project.title}</h1>
           <div className="inline-state advisor-mode-required" role="status">
-            <strong>Abra este projeto no modo orientador.</strong>
-            <span>Use o ícone do usuário, no topo da tela, e escolha “Mudar para orientador”.</span>
+            <strong>Esta conta está configurada para criação de projetos.</strong>
+            <span>Abra o projeto com a conta de revisão vinculada a ele.</span>
           </div>
         </main>
       );

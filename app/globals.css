@@ -515,13 +515,32 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .proposal-tags span { border: 1px solid #c2d6cb; border-radius: 999px; padding: 0.3rem 0.55rem; color: #466257; font-size: 0.72rem; }
 .proposal-next-step { border-top: 1px solid #cee0d7; padding-top: 0.85rem; font-size: 0.8rem; font-weight: 700; }
 .research-definition, .definition-complete { display: grid; gap: 1.35rem; margin-top: 2rem; }
-.definition-progress { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: hidden; border: 1px solid #cbd9d2; border-radius: 1rem; background: rgb(255 255 255 / 52%); }
-.definition-progress span { display: flex; min-width: 0; align-items: center; gap: 0.55rem; border-right: 1px solid #dce6e1; padding: 0.75rem 0.9rem; color: #74847c; font-size: 0.76rem; font-weight: 750; }
-.definition-progress span:last-child { border-right: 0; }
-.definition-progress b { display: grid; width: 1.55rem; height: 1.55rem; flex: none; place-items: center; border: 1px solid #b9cbc2; border-radius: 50%; font-size: 0.68rem; }
-.definition-progress .current { background: #edf6f1; color: #205b42; }
-.definition-progress .current b { border-color: var(--accent); background: var(--accent); color: white; }
-.definition-progress .done b { border-color: #79ad96; color: #27704f; }
+.workflow-progress { display: grid; gap: 0.75rem; border: 1px solid #bad1c4; border-radius: 1rem; padding: 0.9rem 1rem; background: #f5fbf7; }
+.workflow-progress-summary, .workflow-progress-detail-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; color: #416456; }
+.workflow-progress-summary span, .workflow-progress-detail-summary span { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.workflow-progress-summary strong { color: #1d6746; font-size: 0.95rem; }
+.workflow-progress ol { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.workflow-progress-macro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.workflow-progress li { min-width: 0; color: #718278; font-size: 0.72rem; font-weight: 700; }
+.workflow-progress-item, .workflow-progress li button { display: flex; width: 100%; min-width: 0; align-items: center; gap: 0.48rem; border: 0; border-radius: 0.65rem; padding: 0.42rem 0.5rem; color: inherit; font: inherit; text-align: left; }
+.workflow-progress li button { background: transparent; cursor: pointer; }
+.workflow-progress li button:hover:not(:disabled) { background: #e4f2ea; color: #185d40; }
+.workflow-progress li button:focus-visible { outline: 3px solid rgb(29 103 70 / 28%); outline-offset: 2px; }
+.workflow-progress li button:disabled { cursor: wait; opacity: 0.62; }
+.workflow-progress li b { display: grid; width: 1.5rem; height: 1.5rem; flex: none; place-items: center; border: 1px solid #b9cbc2; border-radius: 50%; font-size: 0.66rem; }
+.workflow-progress li span span, .workflow-progress li button span { overflow-wrap: anywhere; }
+.workflow-progress li.done { color: #2d7652; }
+.workflow-progress li.done b { border-color: #77ad92; background: #e3f2e9; }
+.workflow-progress li.current { color: #1b5c40; }
+.workflow-progress li.current .workflow-progress-item { background: #e9f5ee; }
+.workflow-progress li.current b { border-color: var(--accent); background: var(--accent); color: #fff; }
+.workflow-progress-detail { display: grid; gap: 0.55rem; border-top: 1px solid #d4e3db; padding-top: 0.7rem; }
+.workflow-progress-detail-summary strong { color: #285f46; font-size: 0.78rem; }
+.workflow-progress-detail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.workflow-progress-detail li { border: 1px solid #d4e1da; border-radius: 0.72rem; background: rgb(255 255 255 / 58%); }
+.workflow-progress-detail li.current { border-color: #91b9a5; background: #eaf5ef; }
+.workflow-progress-detail li.current .workflow-progress-item { background: transparent; }
+.workflow-progress-error { margin: 0; border-radius: 0.65rem; padding: 0.6rem 0.7rem; background: #fff1ef; color: #87352e; font-size: 0.76rem; font-weight: 700; }
 .definition-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-top: 0.5rem; }
 .definition-heading h2, .definition-complete h2 { margin: 0.35rem 0 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.02; letter-spacing: -0.055em; }
 .definition-heading p:not(.section-kicker) { max-width: 50rem; margin: 0.8rem 0 0; color: var(--muted); line-height: 1.6; }
@@ -705,7 +724,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .methodology-workspace { display: grid; gap: 1.35rem; margin-top: 2rem; }
 .methodology-progress { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .methodology-title-editor, .methodology-classification, .methodology-row { border: 1px solid #c8d8d0; border-radius: 1rem; background: var(--surface); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 5%); }
-.methodology-title-editor { padding: 1rem; }
+.methodology-title-editor { display: grid; gap: 0.45rem; padding: 1rem; }
+.methodology-title-editor > small { color: #67571d; font-size: 0.76rem; line-height: 1.35; }
 .methodology-title-editor label, .methodology-classification label, .methodology-row label { display: grid; gap: 0.45rem; color: #52645b; font-size: 0.72rem; font-weight: 800; }
 .methodology-field-heading { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: 0.35rem; }
 .methodology-help { position: relative; display: inline-flex; align-items: center; }
@@ -956,10 +976,8 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .proposal-grid { grid-template-columns: 1fr; }
   .proposal-discovery-heading { align-items: start; flex-direction: column; gap: 1rem; }
   .proposal-error { align-items: stretch; flex-direction: column; }
-  .definition-progress { grid-template-columns: 1fr; }
-  .definition-progress span { border-right: 0; border-bottom: 1px solid #dce6e1; }
-  .definition-progress span:last-child { border-bottom: 0; }
-  .methodology-progress { grid-template-columns: 1fr; }
+  .workflow-progress-summary, .workflow-progress-detail-summary { align-items: start; }
+  .workflow-progress-macro, .workflow-progress-detail ol { grid-template-columns: 1fr; }
   .definition-heading { align-items: start; flex-direction: column; gap: 1rem; }
   .manual-reference-panel { grid-template-columns: minmax(0, 1fr) auto; padding: 0.85rem; }
   .manual-reference-backdrop { align-items: end; padding: 0.75rem; }

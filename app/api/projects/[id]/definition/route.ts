@@ -292,7 +292,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   if (!isAdvisorOwner && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (workflow.content.activeStep !== parsed.data.step) {
     return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
@@ -416,35 +416,31 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   const errors = validationErrors(content, step, { requireStudentJustification: !isAdvisorOwner });
-  if (errors.length > 0) {
-    const elementIds = step === "specific_objectives"
-      ? content.elements.filter((element) => element.type === "specific_objective").map((element) => element.id)
-      : [currentElement(content, step)?.id].filter((value): value is string => Boolean(value));
-    content = researchWorkflowContentSchema.parse({
-      ...content,
-      coherenceFindings: errors.map((message) => ({
-        elementIds,
-        id: crypto.randomUUID(),
-        message,
-        resolution: null,
-        rule: "Validação estrutural da Change 011",
-        severity: "blocking",
-      })),
-    });
-    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase, userId);
-    if (!saved) {
-      return NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
-    }
-    return NextResponse.json({ errors, workflow: saved }, { status: 422 });
-  }
+  const elementIds = step === "specific_objectives"
+    ? content.elements.filter((element) => element.type === "specific_objective").map((element) => element.id)
+    : [currentElement(content, step)?.id].filter((value): value is string => Boolean(value));
+  const advisoryFindings = errors.map((message) => ({
+    elementIds,
+    id: crypto.randomUUID(),
+    message,
+    resolution: "Sugestão de revisão: você pode seguir agora e ajustar este ponto depois.",
+    rule: "Orientação de coerência da Change 068",
+    severity: "warning" as const,
+  }));
 
   const sourceRevision = workflow.sourceRevision + 1;
-  content = researchWorkflowContentSchema.parse({ ...content, coherenceFindings: [] });
+  content = researchWorkflowContentSchema.parse({ ...content, coherenceFindings: advisoryFindings });
   let state: ResearchWorkflow["state"];
   let stableState: ResearchWorkflow["stableState"];
   if (step === "problem_statement") {
     const problem = currentElement(content, "problem_statement")!;
-    content = markDescendantsStale(content, "problem_statement");
+    const existingGeneral = currentElement(content, "general_objective");
+    const reuseExistingGeneral = Boolean(
+      problem.approvedContent === problem.proposedContent
+      && existingGeneral
+      && existingGeneral.status !== "stale",
+    );
+    if (!reuseExistingGeneral) content = markDescendantsStale(content, "problem_statement");
     content = upsertElement(content, {
       approvedContent: problem.proposedContent,
       id: problem.id,
@@ -455,22 +451,23 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       type: "problem_statement",
       updatedBy: problem.updatedBy === "ai" ? "ai" : "user",
     });
-    const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
-    const studentContext = studentContextNotes(content);
-    const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
-    const existingGeneral = currentElement(content, "general_objective");
     const generalId = existingGeneral?.id ?? crypto.randomUUID();
-    content = upsertElement(content, {
-      approvedContent: null,
-      id: generalId,
-      proposedContent: generated.content,
-      referenceIds: generated.referenceIds,
-      sourceRevision,
-      status: "suggested",
-      studentJustification: existingGeneral?.studentJustification ?? null,
-      type: "general_objective",
-      updatedBy: "ai",
-    });
+    if (!reuseExistingGeneral) {
+      const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
+      const studentContext = studentContextNotes(content);
+      const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
+      content = upsertElement(content, {
+        approvedContent: null,
+        id: generalId,
+        proposedContent: generated.content,
+        referenceIds: generated.referenceIds,
+        sourceRevision,
+        status: "suggested",
+        studentJustification: existingGeneral?.studentJustification ?? null,
+        type: "general_objective",
+        updatedBy: "ai",
+      });
+    }
     content = researchWorkflowContentSchema.parse({
       ...content,
       activeStep: "general_objective",
@@ -484,7 +481,13 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   } else if (step === "general_objective") {
     const problem = currentElement(content, "problem_statement")!;
     const general = currentElement(content, "general_objective")!;
-    content = markDescendantsStale(content, "general_objective");
+    const existingSpecifics = content.elements.filter((element) => element.type === "specific_objective");
+    const reuseExistingSpecifics = Boolean(
+      general.approvedContent === general.proposedContent
+      && existingSpecifics.length >= 3
+      && existingSpecifics.every((element) => element.status !== "stale"),
+    );
+    if (!reuseExistingSpecifics) content = markDescendantsStale(content, "general_objective");
     content = upsertElement(content, {
       approvedContent: general.proposedContent,
       id: general.id,
@@ -495,25 +498,26 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       type: "general_objective",
       updatedBy: general.updatedBy === "ai" ? "ai" : "user",
     });
-    const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
-    const studentContext = studentContextNotes(content);
-    const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
-    const existingSpecifics = content.elements.filter((element) => element.type === "specific_objective");
-    const specificIds: string[] = [];
-    for (const [index, objective] of generated.entries()) {
-      const specificId = existingSpecifics[index]?.id ?? crypto.randomUUID();
-      specificIds.push(specificId);
-      content = upsertElement(content, {
-        approvedContent: null,
-        id: specificId,
-        proposedContent: objective.content,
-        referenceIds: objective.referenceIds,
-        sourceRevision,
-        status: "suggested",
-        studentJustification: existingSpecifics[index]?.studentJustification ?? null,
-        type: "specific_objective",
-        updatedBy: "ai",
-      });
+    const specificIds: string[] = reuseExistingSpecifics ? existingSpecifics.map((element) => element.id) : [];
+    if (!reuseExistingSpecifics) {
+      const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
+      const studentContext = studentContextNotes(content);
+      const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
+      for (const [index, objective] of generated.entries()) {
+        const specificId = existingSpecifics[index]?.id ?? crypto.randomUUID();
+        specificIds.push(specificId);
+        content = upsertElement(content, {
+          approvedContent: null,
+          id: specificId,
+          proposedContent: objective.content,
+          referenceIds: objective.referenceIds,
+          sourceRevision,
+          status: "suggested",
+          studentJustification: existingSpecifics[index]?.studentJustification ?? null,
+          type: "specific_objective",
+          updatedBy: "ai",
+        });
+      }
     }
     content = researchWorkflowContentSchema.parse({
       ...content,
@@ -614,6 +618,6 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     });
   }
   return saved
-    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando validação do orientador." : "Etapa validada.", workflow: saved })
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando revisão." : "Etapa validada.", workflow: saved })
     : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
 }

@@ -8,7 +8,10 @@ import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } fro
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
-import { methodologyCompatibilityWarnings, type MethodologyPlanInput } from "./methodology-validation";
+import { FINAL_TITLE_MAX_LENGTH, FINAL_TITLE_RECOMMENDED_LENGTH, methodologyCompatibilityWarnings, type MethodologyPlanInput } from "./methodology-validation";
+import { WorkflowProgress } from "./workflow-progress";
+import { workflowNavigationUrl } from "./workflow-navigation";
+import { reconcileTopicLinks } from "./topic-integrity";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
@@ -111,7 +114,7 @@ function classificationDraft(workflow: ResearchWorkflow): ClassificationDraft {
 }
 
 function rowsDraft(workflow: ResearchWorkflow): MethodologyRowDraft[] {
-  return workflow.content.methodologyRows.map((row) => ({
+  return reconcileTopicLinks(workflow.content).methodologyRows.map((row) => ({
     analysisTreatment: row.analysisTreatment,
     associatedTopicIds: row.associatedTopicIds,
     dataCollection: row.dataCollection,
@@ -170,7 +173,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
   const rowJustificationLabel = isAdvisorOwner ? "Justificativa da linha (opcional)" : "Justificativa da linha *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
+  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");
@@ -195,7 +198,18 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
     allowedObjectiveIds: new Set(objectives.filter((objective) => objective.type === "specific").map((objective) => objective.id)),
     generalObjectiveId: general?.id,
   }), [currentClassification, general?.id, objectives, rows]);
+  const titleLengthWarning = title.trim().length > FINAL_TITLE_RECOMMENDED_LENGTH
+    ? `O título final tem mais de ${FINAL_TITLE_RECOMMENDED_LENGTH} caracteres; ele pode seguir assim, mas considere encurtá-lo para facilitar a identificação do projeto.`
+    : null;
   const warningFindings = [
+    ...(titleLengthWarning ? [{
+      elementIds: [],
+      id: "live-methodology-title-length-warning",
+      message: titleLengthWarning,
+      resolution: "Aviso de concisão: o título continua válido e não impede o avanço.",
+      rule: "Concisão do título final",
+      severity: "warning" as const,
+    }] : []),
     ...findings.filter((finding) => finding.severity !== "blocking" && !finding.rule.toLocaleLowerCase("pt-BR").includes("compatibilidade metodológica")),
     ...liveWarningMessages.map((message, index) => ({
       elementIds: rows.map((row) => row.id),
@@ -276,7 +290,11 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
       setMessage(payload.message ?? null);
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage: "methodology", stage_number: "6", result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
-      router.refresh();
+      if (action === "validate" || action === "back") {
+        router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       trackAnalyticsEvent("stage_blocked", { stage: "methodology", stage_number: "6", result: "failed", reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a metodologia.");
@@ -376,7 +394,8 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   if (workflow.state === "reviewing_map") {
     return (
       <section className="definition-complete methodology-complete">
-        <p className="section-kicker">Etapa 4 validada</p>
+        <WorkflowProgress current={4} currentStep="final_map" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <p className="section-kicker">Passo 1/2 · Etapa 4/4 validado</p>
         <h2>Matriz metodológica consolidada</h2>
         <div className="definition-summary">
           <div><span>Título da pesquisa</span><p>{workflow.content.elements.find((element) => element.type === "research_title")?.approvedContent}</p></div>
@@ -394,21 +413,17 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
-            <p className="section-kicker">Etapa 4</p>
+            <p className="section-kicker">Passo 1/2 · Etapa 4/4</p>
             <h2>{operation === "initialize" || operation === "regenerate" ? "Construindo a matriz metodológica…" : "Salvando sua metodologia…"}</h2>
           </div>
         </div>
       ) : null}
 
-      <nav className="definition-progress methodology-progress" aria-label="Progresso da construção">
-        {["Problemática", "Objetivos", "Capítulos", "Metodologia"].map((label, index) => (
-          <span className={index === 3 ? "current" : "done"} key={label}><b>{index + 1}</b>{label}</span>
-        ))}
-      </nav>
+      <WorkflowProgress current={4} currentStep="methodology_matrix" disabled={busy || waitingForAdvisor} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
 
       <div className="definition-heading">
         <div>
-          <p className="section-kicker">Etapa 4 · Metodologia</p>
+          <p className="section-kicker">Passo 1/2 · Etapa 4/4</p>
           <h2 id="methodology-title">Matriz metodológica e resultados esperados</h2>
           <p>Confirme como cada objetivo será atendido, quais dados serão levantados, como serão tratados e que contribuição se espera produzir.</p>
         </div>
@@ -417,7 +432,8 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
       {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="methodology-title-editor">
-        <label>Título final sugerido *<input maxLength={120} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
+        <label>Título final sugerido *<input maxLength={FINAL_TITLE_MAX_LENGTH} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
+        <small>Até {FINAL_TITLE_MAX_LENGTH} caracteres. Acima de {FINAL_TITLE_RECOMMENDED_LENGTH}, o sistema apenas recomenda encurtar; você pode avançar.</small>
       </div>
 
       <aside className="methodology-classification" aria-label="Classificação metodológica">
@@ -465,7 +481,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
                 <textarea maxLength={1000} onChange={(event) => updateRow(row.id, { studentJustification: event.target.value || null })} placeholder="Por que esta linha metodológica é necessária?" value={row.studentJustification ?? ""} />
               </details>
               <details className="methodology-topic-links">
-                <summary>{row.associatedTopicIds.length} tópicos associados</summary>
+                <summary>{row.associatedTopicIds.filter((topicId) => topics.some((topic) => topic.id === topicId)).length} tópicos associados</summary>
                 {topics.map((topic) => (
                   <label key={topic.id}>
                     <input checked={row.associatedTopicIds.includes(topic.id)} onChange={() => toggleTopic(row, topic.id)} type="checkbox" />
@@ -487,6 +503,13 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         ) : null}
       </div>
 
+      {rows.length === 0 && !busy ? (
+        <div className="definition-findings" id="methodology-empty-explanation" role="alert">
+          <strong>A matriz metodológica ainda não foi criada</strong>
+          <p>A etapa 4 só pode ser validada depois que existir uma linha para cada objetivo. Gere novamente; os objetivos e capítulos já salvos serão preservados.</p>
+          <button className="definition-button secondary" onClick={() => void submit("regenerate")} type="button">Gerar matriz novamente</button>
+        </div>
+      ) : null}
       {blockingMessages.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{blockingMessages.map((error) => <li key={error}>{methodologyMessageText(error)}</li>)}</ul></div> : null}
       {warningFindings.length > 0 ? (
         <div className="methodology-findings" role="status">
@@ -501,7 +524,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <button aria-describedby={rows.length === 0 ? "methodology-empty-explanation" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{rows.length === 0 ? "Matriz necessária para validar" : validateButtonLabel}</button>
       </div>
     </section>
   );

@@ -183,7 +183,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card">
-          <span>Etapa 1</span>
+          <span>Etapa 1/4</span>
           <h4>Problemática da pesquisa</h4>
           <p>{withCitationMarkers(readable(problem), problem?.referenceIds ?? [], referenceCodes) || "Ainda não validada."}</p>
           {studentJustification(problem?.studentJustification, "Justificativa da grande pergunta")}
@@ -191,7 +191,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card">
-          <span>Etapa 2</span>
+          <span>Etapa 2/4 · Passo 1/2</span>
           <h4>Objetivo geral</h4>
           <p>{withCitationMarkers(readable(general), general?.referenceIds ?? [], referenceCodes) || "Ainda não validado."}</p>
           {studentJustification(general?.studentJustification, "Justificativa do objetivo geral")}
@@ -199,7 +199,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card advisor-readonly-card-wide">
-          <span>Etapa 3</span>
+          <span>Etapa 2/4 · Passo 2/2</span>
           <h4>Objetivos específicos</h4>
           {specificObjectives.length > 0 ? (
             <ol className="advisor-readonly-list">
@@ -216,7 +216,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card advisor-readonly-card-wide">
-          <span>Etapa 4 · Capítulo 2</span>
+          <span>Etapa 3/4 · Passo 1/2 · Capítulo 2</span>
           <h4>Revisão da literatura</h4>
           {finalMap.literatureTopics.length > 0 ? (
             <ol className="advisor-readonly-list">
@@ -236,7 +236,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card advisor-readonly-card-wide">
-          <span>Etapa 5 · Capítulo 4</span>
+          <span>Etapa 3/4 · Passo 2/2 · Capítulo 4</span>
           <h4>Desenvolvimento / estudo de caso</h4>
           {finalMap.developmentTopics.length > 0 ? (
             <ol className="advisor-readonly-list">
@@ -257,7 +257,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card advisor-readonly-card-wide">
-          <span>Etapa 4 · Metodologia</span>
+          <span>Etapa 4/4 · Passo 1/2 · Capítulo 3</span>
           <h4>Metodologia e resultados esperados</h4>
           {content.methodologyClassification ? (
             <div className="advisor-readonly-subcard">
@@ -287,12 +287,12 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
         </article>
 
         <article className="advisor-readonly-card">
-          <span>Título final</span>
+          <span>Etapa 4/4 · Passo 1/2 · Título final</span>
           <h4>{readable(researchTitle) || "Título ainda não consolidado"}</h4>
         </article>
 
         <article className="advisor-readonly-card">
-          <span>Mapa final</span>
+          <span>Etapa 4/4 · Passo 2/2 · Mapa final</span>
           <h4>Status</h4>
           <p>{readable(finalSummary) || "Mapa final ainda não concluído."}</p>
         </article>
@@ -396,7 +396,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
   return (
     <section className="advisor-review-workspace" aria-labelledby="advisor-review-title">
       <div className="advisor-review-hero">
-        <p className="eyebrow">Área do orientador</p>
+        <p className="eyebrow">Área de revisão</p>
         <h2 id="advisor-review-title">{projectTitle}</h2>
         <p>
           Revise a etapa enviada pelo estudante. Ele só poderá avançar quando você validar,
@@ -427,7 +427,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
           </div>
 
           <label className="advisor-review-comments">
-            <span>Comentários do orientador</span>
+            <span>Comentários da revisão</span>
             <textarea
               disabled={!canAct || busyAction !== null}
               maxLength={2_000}

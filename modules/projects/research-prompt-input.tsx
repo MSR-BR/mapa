@@ -11,6 +11,7 @@ type ResearchPromptInputProps = {
   id: string;
   onChange: (value: string) => void;
   onEnter: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  onSuggestionSelect?: (value: string) => void;
   value: string;
 };
 
@@ -58,6 +59,7 @@ export function ResearchPromptInput({
   id,
   onChange,
   onEnter,
+  onSuggestionSelect,
   value,
 }: ResearchPromptInputProps) {
   const [suggestions, setSuggestions] = useState<PromptSuggestion[]>([]);
@@ -136,10 +138,12 @@ export function ResearchPromptInput({
               <button
                 key={`${suggestion.kind}-${suggestion.text}-${index}`}
                 onClick={() => {
-                  onChange(normalizeSuggestionText(suggestion.text));
+                  const selectedPrompt = normalizeSuggestionText(suggestion.text);
+                  onChange(selectedPrompt);
+                  onSuggestionSelect?.(selectedPrompt);
                   setSuggestions([]);
                   setSuggestionsForPrompt("");
-                  lastRequestedPrompt.current = suggestion.text.trim();
+                  lastRequestedPrompt.current = selectedPrompt;
                 }}
                 type="button"
               >

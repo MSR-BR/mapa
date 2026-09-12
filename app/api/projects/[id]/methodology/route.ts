@@ -9,6 +9,7 @@ import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor"
 import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
+  FINAL_TITLE_MAX_LENGTH,
   methodologyPlanInputSchema,
   validateMethodologyPlan,
   type MethodologyPlanInput,
@@ -22,6 +23,7 @@ import {
   type ValidatedElement,
 } from "@/modules/research-workflow/schema";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+import { reconcileTopicLinks } from "@/modules/research-workflow/topic-integrity";
 import type { ChapterTopicInput } from "@/modules/research-workflow/chapter-validation";
 import {
   discoveryWithWorkflowReferences,
@@ -240,7 +242,7 @@ function planFromRequest(body: z.infer<typeof requestSchema>) {
 function formatMethodologyPlanIssues(error: z.ZodError<MethodologyPlanInput>) {
   return [...new Set(error.issues.map((issue) => {
     const [section, second, third] = issue.path;
-    if (section === "title") return "Título final sugerido: escreva um título entre 3 e 120 caracteres.";
+    if (section === "title") return `Título final sugerido: escreva um título entre 3 e ${FINAL_TITLE_MAX_LENGTH} caracteres.`;
     if (section === "classification") {
       const field = second;
       if (field === "nature") return "Natureza (*): selecione Básica ou Aplicada.";
@@ -322,8 +324,8 @@ function validationFindings(
       elementIds: methodIds.length > 0 ? methodIds : [titleId].filter((value): value is string => Boolean(value)),
       id: crypto.randomUUID(),
       message,
-      resolution: "Aviso de coerência: confirme ou ajuste a célula correspondente.",
-      rule: "Compatibilidade metodológica da Change 013",
+      resolution: "Sugestão de revisão: você pode seguir agora e ajustar esta célula depois.",
+      rule: "Orientação de coerência da Change 068",
       severity: "warning" as const,
     })),
   ];
@@ -395,7 +397,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
   const { action } = parsed.data;
   if (!isAdvisorOwner && action === "validate" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (
     workflow.state !== "validating_methodology"
@@ -417,7 +419,10 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   if (action === "initialize" && planFromContent(workflow.content)) {
-    return NextResponse.json({ workflow });
+    const content = reconcileTopicLinks(workflow.content);
+    if (content === workflow.content) return NextResponse.json({ workflow });
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
   let plan: MethodologyPlanInput;
@@ -464,7 +469,16 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: error instanceof Error ? error.message : "A matriz metodológica está incompleta." }, { status: 400 });
   }
 
-  let content = replaceMethodology(workflow.content, plan, workflow.sourceRevision, action === "initialize" || action === "regenerate" ? "ai" : "user");
+  const reconciledWorkflowContent = reconcileTopicLinks(workflow.content);
+  const allowedTopicIdsForPlan = new Set(chapterTopics(reconciledWorkflowContent, "literature").concat(chapterTopics(reconciledWorkflowContent, "development")).map((topic) => topic.id));
+  plan = {
+    ...plan,
+    rows: plan.rows.map((row) => ({
+      ...row,
+      associatedTopicIds: [...new Set(row.associatedTopicIds.filter((topicId) => allowedTopicIdsForPlan.has(topicId)))],
+    })),
+  };
+  let content = replaceMethodology(reconciledWorkflowContent, plan, workflow.sourceRevision, action === "initialize" || action === "regenerate" ? "ai" : "user");
 
   if (action === "save" || action === "initialize" || action === "regenerate") {
     const { warnings } = validateMethodologyPlan(plan, {
@@ -490,17 +504,11 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     generalObjectiveId: context.general.id,
     requireStudentJustification: !isAdvisorOwner,
   });
-  if (errors.length > 0) {
-    content = researchWorkflowContentSchema.parse({ ...content, coherenceFindings: validationFindings(content, errors, warnings) });
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
-    return saved
-      ? NextResponse.json({ errors, workflow: saved }, { status: 422 })
-      : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
-  }
+  const advisoryMessages = [...new Set([...errors, ...warnings])];
 
   const sourceRevision = workflow.sourceRevision + 1;
   content = approveMethodology(
-    researchWorkflowContentSchema.parse({ ...content, coherenceFindings: validationFindings(content, [], warnings) }),
+    researchWorkflowContentSchema.parse({ ...content, coherenceFindings: validationFindings(content, [], advisoryMessages) }),
     sourceRevision,
     context,
   );
@@ -552,5 +560,5 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     });
   }
 
-  return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando validação do orientador." : "Metodologia validada.", workflow: saved });
+  return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando revisão." : "Metodologia validada.", workflow: saved });
 }

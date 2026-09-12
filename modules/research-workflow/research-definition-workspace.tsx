@@ -8,6 +8,8 @@ import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } fro
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
+import { WorkflowProgress } from "./workflow-progress";
+import { workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
@@ -71,7 +73,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
   const justificationLabelSuffix = isAdvisorOwner ? " (opcional)" : " *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
+  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
 
   useEffect(() => {
     const stage = step === "problem_statement" ? "problem" : "definition";
@@ -131,7 +133,11 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
-      router.refresh();
+      if (action === "validate" || action === "back") {
+        router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar esta etapa.");
     } finally {
@@ -159,7 +165,8 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
   if (!step) {
     return (
       <section className="definition-complete" aria-labelledby="definition-complete-title">
-        <p className="section-kicker">Etapas 1–3 validadas</p>
+        <WorkflowProgress current={2} currentStep="specific_objectives" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <p className="section-kicker">Problemática e objetivos validados</p>
         <h2 id="definition-complete-title">Problemática e objetivos consolidados</h2>
         <div className="definition-summary">
           <div><span>Problemática</span><p>{findElement(workflow, "problem_statement")?.approvedContent}</p></div>
@@ -174,7 +181,12 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
     );
   }
 
-  const stepNumber = step === "problem_statement" ? 1 : step === "general_objective" ? 2 : 3;
+  const workflowStage = step === "problem_statement" ? 1 : 2;
+  const visibleStepLabel = step === "problem_statement"
+    ? "Etapa 1/4 · Problemática"
+    : step === "general_objective"
+      ? "Passo 1/2 · Etapa 2/4"
+      : "Passo 2/2 · Etapa 2/4";
   const title = step === "problem_statement" ? "Problemática da pesquisa" : step === "general_objective" ? "Objetivo geral" : "Objetivos específicos";
   const explanation = step === "problem_statement"
     ? "A grande pergunta representa a razão central da pesquisa e orientará todas as etapas seguintes."
@@ -184,27 +196,20 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
 
   return (
     <section className="research-definition" aria-labelledby="definition-title">
+      <WorkflowProgress current={workflowStage} currentStep={step} disabled={busy || waitingForAdvisor} hasUnsavedChanges={currentValueChanged} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
-            <p className="section-kicker">Etapa {stepNumber}</p>
+            <p className="section-kicker">{visibleStepLabel}</p>
             <h2>{operation === "regenerate" || operation === "validate" ? "Analisando coerência e evidências…" : "Salvando sua pesquisa…"}</h2>
           </div>
         </div>
       ) : null}
 
-      <nav className="definition-progress" aria-label="Progresso da construção">
-        {["Problemática", "Objetivo geral", "Objetivos específicos"].map((label, index) => (
-          <span className={index + 1 === stepNumber ? "current" : index + 1 < stepNumber ? "done" : ""} key={label}>
-            <b>{index + 1}</b>{label}
-          </span>
-        ))}
-      </nav>
-
       <div className="definition-heading">
         <div>
-          <p className="section-kicker">Etapa {stepNumber}</p>
+          <p className="section-kicker">{visibleStepLabel}</p>
           <h2 id="definition-title">{title}</h2>
           <p>{explanation}</p>
         </div>

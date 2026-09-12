@@ -131,6 +131,10 @@ function replaceTopics(
   });
 }
 
+function sameTopics(left: ChapterTopicInput[], right: ChapterTopicInput[]) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 function addTraceLinks(
   content: ResearchWorkflowContent,
   chapter: "literature" | "development",
@@ -241,7 +245,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   if (!isAdvisorOwner && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando validação do orientador." }, { status: 409 });
+    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   const context = validateContext(workflow);
   if (!context) return NextResponse.json({ error: "Problemática e objetivos precisam estar validados." }, { status: 409 });
@@ -371,6 +375,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const currentTopics = topicsFromContent(content, step);
+  const submittedTopicsAreUnchanged = sameTopics(currentTopics, topicsFromContent(workflow.content, step));
   const specificObjectiveIds = new Set(context.specifics.map((item) => item.id));
   const allowedObjectiveIds = step === "development"
     ? new Set([...specificObjectiveIds, context.general.id])
@@ -389,7 +394,23 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (step === "development") {
     errors.push(...validateCompleteObjectiveCoverage(topicsFromContent(content, "literature"), currentTopics, [...specificObjectiveIds]));
   }
-  if (errors.length > 0) return NextResponse.json({ errors: [...new Set(errors)], error: "Revise a cobertura antes de avançar." }, { status: 422 });
+  const advisoryMessages = [...new Set(errors)];
+  if (advisoryMessages.length > 0) {
+    content = researchWorkflowContentSchema.parse({
+      ...content,
+      coherenceFindings: [
+        ...content.coherenceFindings.filter((finding) => finding.rule !== "Orientação de capítulos da Change 068"),
+        ...advisoryMessages.map((message) => ({
+          elementIds: currentTopics.map((topic) => topic.id),
+          id: crypto.randomUUID(),
+          message,
+          resolution: "Sugestão de revisão: você pode seguir agora e ajustar a cobertura depois.",
+          rule: "Orientação de capítulos da Change 068",
+          severity: "warning" as const,
+        })),
+      ],
+    });
+  }
 
   const sourceRevision = workflow.sourceRevision + 1;
   const type = step === "literature" ? "literature_topic" : "development_topic";
@@ -403,16 +424,20 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   });
   content = addTraceLinks(content, step, sourceRevision, context.general.id);
   if (step === "literature") {
-    const generated = await generateDevelopmentTopics(
-      context.problem.approvedContent!,
-      context.general.approvedContent!,
-      context.general.id,
-      context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
-      currentTopics,
-      discoveryWithWorkflowReferences(context.discovery, content),
-      studentContextNotes(content),
-    );
-    content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
+    const existingDevelopmentTopics = topicsFromContent(content, "development");
+    const reuseExistingDevelopment = submittedTopicsAreUnchanged && existingDevelopmentTopics.length >= 3;
+    if (!reuseExistingDevelopment) {
+      const generated = await generateDevelopmentTopics(
+        context.problem.approvedContent!,
+        context.general.approvedContent!,
+        context.general.id,
+        context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
+        currentTopics,
+        discoveryWithWorkflowReferences(context.discovery, content),
+        studentContextNotes(content),
+      );
+      content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
+    }
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" });
     const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
     const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
@@ -449,7 +474,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       });
     }
     return saved
-      ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 2 validado pelo estudante. Aguardando validação do orientador." : "Capítulo 2 validado.", workflow: saved })
+      ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 2 validado pelo estudante. Aguardando revisão." : reuseExistingDevelopment ? "Capítulo 2 validado. A versão já existente do Capítulo 4 foi preservada." : "Capítulo 2 validado.", workflow: saved })
       : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
   content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
@@ -488,6 +513,6 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     });
   }
   return saved
-    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 4 validado pelo estudante. Aguardando validação do orientador." : "Capítulo 4 validado.", workflow: saved })
+    ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 4 validado pelo estudante. Aguardando revisão." : "Capítulo 4 validado.", workflow: saved })
     : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeSchema, type ResearchIntakeDraft } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
@@ -13,6 +13,8 @@ export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
 
 export function PublicStartForm() {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const quickSuggestionContinuePending = useRef(false);
   const [continuing, setContinuing] = useState(false);
   const [mode, setMode] = useState<"quick" | "advanced">("advanced");
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
@@ -45,10 +47,23 @@ export function PublicStartForm() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!quickSuggestionContinuePending.current || continuing || !formRef.current) return;
+    if (quickPrompt.trim().length < 10) return;
+    quickSuggestionContinuePending.current = false;
+    formRef.current.requestSubmit();
+  }, [continuing, quickPrompt]);
+
   function handleQuickEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey) return;
     event.preventDefault();
     event.currentTarget.form?.requestSubmit();
+  }
+
+  function handleQuickSuggestionSelect(prompt: string) {
+    quickSuggestionContinuePending.current = true;
+    setError("");
+    setQuickPrompt(prompt);
   }
 
   function continueToLogin(event: FormEvent<HTMLFormElement>) {
@@ -89,7 +104,7 @@ export function PublicStartForm() {
   }
 
   return (
-    <form className="quick-start-form public-start-form" onSubmit={continueToLogin}>
+    <form className="quick-start-form public-start-form" onSubmit={continueToLogin} ref={formRef}>
       <div className="public-mode-stack">
         <section className={`public-mode-card public-mode-card-advanced ${mode === "advanced" ? "is-open" : ""}`}>
           <button
@@ -130,7 +145,7 @@ export function PublicStartForm() {
           </button>
           {mode === "quick" ? (
             <div className="public-mode-content" id="quick-research-mode">
-              <ResearchPromptInput id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} value={quickPrompt} />
+              <ResearchPromptInput id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
               <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
             </div>
           ) : null}

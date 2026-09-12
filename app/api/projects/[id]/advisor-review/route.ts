@@ -66,12 +66,12 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const { supabase, userId, claims } = await requireAuthenticatedUser();
   const profile = await loadUserProfile(supabase, userId);
   if (profile.activeRole !== "advisor") {
-    return NextResponse.json({ error: "Ative o modo orientador para validar etapas." }, { status: 403 });
+    return NextResponse.json({ error: "Esta conta não possui acesso à área de revisão." }, { status: 403 });
   }
   await claimPendingAdvisorProjects(supabase);
   const reviewerEmail = claimEmail(claims as Record<string, unknown>);
   if (!reviewerEmail) {
-    return NextResponse.json({ error: "Sua conta não possui e-mail confirmado para atuar como orientador." }, { status: 403 });
+    return NextResponse.json({ error: "Sua conta não possui e-mail confirmado para revisar este projeto." }, { status: 403 });
   }
 
   const { data: project, error: projectError } = await supabase
@@ -85,12 +85,12 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
   }
   if (project.workflow_version !== 2) {
-    return NextResponse.json({ error: "A validação do orientador está disponível apenas no Mapa v2." }, { status: 409 });
+    return NextResponse.json({ error: "A revisão está disponível apenas no Mapa v2." }, { status: 409 });
   }
   const advisorEmail = normalizeAdvisorEmail(project.advisor_email);
   const advisorMatches = project.advisor_id === userId || (Boolean(advisorEmail) && advisorEmail === reviewerEmail);
   if (!advisorMatches) {
-    return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de orientador." }, { status: 403 });
+    return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de revisão." }, { status: 403 });
   }
 
   const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
@@ -100,7 +100,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   const review = pendingAdvisorReview(workflow.content);
   if (!review || review.id !== parsed.data.reviewId) {
-    return NextResponse.json({ error: "Não há uma validação pendente do orientador para esta etapa." }, { status: 409 });
+    return NextResponse.json({ error: "Não há uma revisão pendente para esta etapa." }, { status: 409 });
   }
 
   const comments = parsed.data.comments?.trim() || null;
@@ -140,7 +140,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     });
     state = review.targetState;
     stableState = review.targetStableState;
-    message = "Etapa validada pelo orientador. O estudante já pode avançar.";
+    message = "Etapa revisada e validada. O estudante já pode avançar.";
   }
 
   const saved = await saveWorkflow(workflow, content, state, stableState, supabase, project.owner_id);

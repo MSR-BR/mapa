@@ -7,9 +7,9 @@ export const LEGAL_PROFILE_COPY = {
     checkbox: "Li e aceito os Termos de uso e a Política de privacidade para usar o Mapa como estudante.",
   },
   advisor: {
-    roleLabel: "orientador",
-    intro: "Como orientador, você pode criar projetos próprios e, quando estiver vinculado a um estudante, ler, comentar e validar as etapas enviadas para sua orientação.",
-    checkbox: "Li e aceito os Termos de uso e a Política de privacidade para usar o Mapa como orientador.",
+    roleLabel: "revisão",
+    intro: "Nesta área de revisão, você pode criar projetos próprios e, quando estiver vinculado a um estudante, ler, comentar e validar as etapas compartilhadas com sua conta.",
+    checkbox: "Li e aceito os Termos de uso e a Política de privacidade para usar a área de revisão do Mapa.",
   },
 } as const;
 

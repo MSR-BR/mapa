@@ -32,6 +32,7 @@ import {
 } from "../modules/research-workflow/chapter-validation";
 import {
   methodologyCompatibilityWarnings,
+  reconcileGeneratedMethodologyRows,
   validateMethodologyPlan,
   type MethodologyPlanInput,
 } from "../modules/research-workflow/methodology-validation";
@@ -41,6 +42,13 @@ import {
   finalMapSummary,
 } from "../modules/research-workflow/final-map";
 import { cloneResearchWorkflowContent } from "../modules/research-workflow/clone";
+import { reconcileTopicLinks } from "../modules/research-workflow/topic-integrity";
+import {
+  canNavigateToWorkflowTarget,
+  workflowNavigationPosition,
+  workflowNavigationState,
+  workflowNavigationUrl,
+} from "../modules/research-workflow/workflow-navigation";
 import {
   workflowDashboardMeta,
   workflowDashboardTitle,
@@ -448,6 +456,10 @@ test("validates methodology matrix coverage and expected-result wording", () => 
     generalObjective: "Analisar a influência da inteligência artificial na aprendizagem no ensino superior.",
   };
   assert.deepEqual(validateMethodologyPlan(makeMethodologyPlan(), options).errors, []);
+  const longButAllowedTitle = "Analisar estratégias institucionais para o uso responsável de inteligência artificial na aprendizagem no ensino superior, considerando práticas pedagógicas, formação docente e critérios de avaliação acadêmica.";
+  const longTitleValidation = validateMethodologyPlan(makeMethodologyPlan({ title: longButAllowedTitle }), options);
+  assert.deepEqual(longTitleValidation.errors, []);
+  assert.match(longTitleValidation.warnings.join(" "), /pode seguir assim/i);
   assert.match(validateMethodologyPlan(makeMethodologyPlan({
     rows: makeMethodologyPlan().rows.map((row, index) => index === 2 ? { ...row, objectiveId: OBJECTIVE_1 } : row),
   }), options).errors.join(" "), /objetivo específico/);
@@ -492,6 +504,62 @@ test("requires and accepts an OEG synthesis row in methodology when requested", 
 
   assert.deepEqual(validateMethodologyPlan(planWithGeneral, options).errors, []);
   assert.match(validateMethodologyPlan(basePlan, options).errors.join(" "), /objetivo geral \(OEG\)/i);
+});
+
+test("reconciles invalid AI methodology links with every real objective", () => {
+  const invalidObjectiveId = "10000000-0000-4000-8000-000000000777";
+  const invalidTopicId = "40000000-0000-4000-8000-000000000777";
+  const generatedRows = makeMethodologyPlan().rows.map((row, index) => ({
+    analysisTreatment: row.analysisTreatment,
+    associatedTopicIds: index === 0 ? [invalidTopicId] : row.associatedTopicIds,
+    dataCollection: row.dataCollection,
+    expectedResult: row.expectedResult,
+    objectiveId: index === 0 ? OBJECTIVE_1 : index === 1 ? OBJECTIVE_1 : invalidObjectiveId,
+    studentJustification: row.studentJustification,
+  }));
+  const topics = [
+    makeChapterTopic("40000000-0000-4000-8000-000000000001", "Base teórica", OBJECTIVE_1),
+    makeChapterTopic("50000000-0000-4000-8000-000000000001", "Análise do segundo objetivo", OBJECTIVE_2),
+    makeChapterTopic("50000000-0000-4000-8000-000000000002", "Análise do terceiro objetivo", OBJECTIVE_3),
+    makeChapterTopic("50000000-0000-4000-8000-000000000099", "Síntese geral", GENERAL_OBJECTIVE_ROW, { generalObjectiveAligned: true }),
+  ];
+  const reconciled = reconcileGeneratedMethodologyRows(generatedRows, [
+    { content: "Analisar a base teórica.", id: OBJECTIVE_1, type: "specific" },
+    { content: "Examinar a aplicação.", id: OBJECTIVE_2, type: "specific" },
+    { content: "Propor uma síntese.", id: OBJECTIVE_3, type: "specific" },
+    { content: "Integrar os objetivos da pesquisa.", id: GENERAL_OBJECTIVE_ROW, type: "general" },
+  ], topics);
+
+  assert.deepEqual(reconciled.map((row) => row.objectiveId), [OBJECTIVE_1, OBJECTIVE_2, OBJECTIVE_3, GENERAL_OBJECTIVE_ROW]);
+  assert.equal(new Set(reconciled.map((row) => row.objectiveId)).size, 4);
+  assert.equal(reconciled.every((row) => row.associatedTopicIds.length > 0), true);
+  assert.equal(reconciled.some((row) => row.associatedTopicIds.includes(invalidTopicId)), false);
+});
+
+test("allows direct navigation only to an earlier workflow position", () => {
+  const workflow = researchWorkflowSchema.parse({
+    content: { ...EMPTY_WORKFLOW_CONTENT, activeStep: "development_topics" },
+    ownerId: "16ba4d4e-bf5b-49d6-8f65-8a678103194b",
+    projectId: "f5ce3156-7832-4717-8268-12dcf81fe1c0",
+    revision: 9,
+    schemaVersion: RESEARCH_WORKFLOW_SCHEMA_VERSION,
+    sourceRevision: 4,
+    stableState: "validating_development",
+    state: "validating_development",
+    updatedAt: "2026-09-11T20:00:00.000Z",
+  });
+
+  assert.equal(workflowNavigationPosition(workflow), "development_topics");
+  assert.equal(canNavigateToWorkflowTarget(workflow, "literature_topics"), true);
+  assert.equal(canNavigateToWorkflowTarget(workflow, "development_topics"), false);
+  assert.equal(canNavigateToWorkflowTarget(workflow, "methodology_matrix"), false);
+  assert.deepEqual(workflowNavigationState("specific_objectives"), {
+    activeStep: "specific_objectives",
+    stableState: "validating_specific_objectives",
+    state: "validating_specific_objectives",
+  });
+  assert.match(workflowNavigationUrl(workflow.projectId, workflow), /workflowRevision=9/);
+  assert.match(workflowNavigationUrl(workflow.projectId, workflow), /workflowStep=development_topics/);
 });
 
 test("warns about uncertain methodology compatibility without blocking", () => {
@@ -651,6 +719,31 @@ function makeCompleteWorkflow(overrides: Partial<ResearchWorkflow> = {}): Resear
   });
 }
 
+test("reconciles stale topic associations without removing existing topics", () => {
+  const workflow = makeCompleteWorkflow();
+  const staleTopicId = "90000000-0000-4000-8000-000000000001";
+  workflow.content.chapterTopicDetails = [
+    ...workflow.content.chapterTopicDetails,
+    {
+      chapter: "literature",
+      exceptionJustification: null,
+      generalObjectiveAligned: false,
+      objectiveCoverage: [],
+      order: 99,
+      studentJustification: null,
+      topicId: staleTopicId,
+    },
+  ];
+  workflow.content.methodologyRows = workflow.content.methodologyRows.map((row, index) => index === 0
+    ? { ...row, associatedTopicIds: [row.associatedTopicIds[0], row.associatedTopicIds[0], staleTopicId] }
+    : row);
+
+  const content = reconcileTopicLinks(workflow.content);
+  assert.equal(content.chapterTopicDetails.some((detail) => detail.topicId === staleTopicId), false);
+  assert.deepEqual(content.methodologyRows[0]?.associatedTopicIds, [workflow.content.methodologyRows[0]?.associatedTopicIds[0]]);
+  assert.equal(content.elements.filter((item) => item.type === "literature_topic").length, workflow.content.elements.filter((item) => item.type === "literature_topic").length);
+});
+
 test("builds a final map with traceability and completion gate", () => {
   const finalMap = buildFinalMap(makeCompleteWorkflow());
   assert.equal(canCompleteFinalMap(finalMap), true);
@@ -682,6 +775,7 @@ test("blocks final map completion when a reference was not verified by Research 
     : item);
   const finalMap = buildFinalMap(workflow);
   assert.equal(canCompleteFinalMap(finalMap), false);
+  assert.equal(canCompleteFinalMap(finalMap, { advisory: true }), true);
   assert.equal(finalMap.findings.some((finding) => /referência/i.test(finding.message) && finding.severity === "blocking"), true);
 });
 

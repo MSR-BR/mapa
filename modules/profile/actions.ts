@@ -7,31 +7,37 @@ import { requireAuthenticatedUser } from "@/modules/projects/auth";
 
 import { isUserProfileRole } from "./types";
 
-export async function setActiveProfileRole(formData: FormData) {
+export async function setInitialProfileRole(formData: FormData) {
   const role = formData.get("role");
   if (!isUserProfileRole(role)) redirect("/dashboard?profile=invalid");
 
   const { supabase, userId } = await requireAuthenticatedUser();
   const now = new Date().toISOString();
 
-  const { data: existingProfile, error: updateError } = await supabase
+  const { data: existingProfile, error: profileError } = await supabase
     .from("user_profiles")
-    .update({ active_role: role, updated_at: now })
+    .select("active_role")
     .eq("user_id", userId)
-    .select("user_id")
     .maybeSingle();
 
-  if (updateError) redirect("/dashboard?profile=error");
+  if (profileError) redirect("/dashboard?profile=error");
 
-  if (!existingProfile) {
-    const { error: insertError } = await supabase
-      .from("user_profiles")
-      .insert({ active_role: role, created_at: now, updated_at: now, user_id: userId });
-
-    if (insertError) redirect("/dashboard?profile=error");
+  // The role is intentionally chosen only once. Existing profiles always win,
+  // including when an old tab submits a stale first-access form.
+  if (existingProfile) {
+    revalidatePath("/dashboard");
+    redirect("/dashboard");
   }
 
-  if (role === "advisor") {
+  const { data: createdProfile, error: insertError } = await supabase
+    .from("user_profiles")
+    .insert({ active_role: role, created_at: now, updated_at: now, user_id: userId })
+    .select("active_role")
+    .maybeSingle();
+
+  if (insertError || !createdProfile) redirect("/dashboard?profile=error");
+
+  if (createdProfile.active_role === "advisor") {
     await supabase.rpc("claim_pending_advisor_projects");
   }
 

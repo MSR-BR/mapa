@@ -10,6 +10,8 @@ import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
 import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
+import { WorkflowProgress } from "./workflow-progress";
+import { workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
@@ -75,7 +77,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
   const busy = operation !== null;
   const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
   const justificationLabel = isAdvisorOwner ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar como orientador" : "Validar pelo estudante";
+  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
 
   useEffect(() => {
     const stage = chapter === "literature" ? "literature" : "methodology";
@@ -123,7 +125,11 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
       else trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: referenceBucket });
       if (action === "optimize") setShowOptimize(false);
       setMessage(payload.message ?? null);
-      router.refresh();
+      if (action === "validate" || action === "back") {
+        router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       trackAnalyticsEvent(action === "optimize" ? "literature_optimization_failed" : "stage_blocked", { stage, stage_number: stageNumber, result: "failed", reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
@@ -191,7 +197,8 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
   if (workflow.state === "validating_methodology" && workflow.content.activeStep === null) {
     return (
       <section className="definition-complete">
-        <p className="section-kicker">Etapas 4–5 validadas</p>
+        <WorkflowProgress current={3} currentStep="development_topics" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <p className="section-kicker">Etapa 3/4 validada</p>
         <h2>Capítulos 2 e 4 consolidados</h2>
         <div className="chapter-complete-grid">
           <div><span>Capítulo 2 · Revisão da Literatura</span><ol>{readTopics(workflow, "literature").map((topic) => <li key={topic.id}>{topic.title}</li>)}</ol></div>
@@ -203,17 +210,19 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
   }
 
   const chapterNumber = chapter === "literature" ? 2 : 4;
-  const stageNumber = chapter === "literature" ? 4 : 5;
+  const visibleStepLabel = chapter === "literature" ? "Passo 1/2 · Etapa 3/4" : "Passo 2/2 · Etapa 3/4";
   return (
     <section className="chapter-planning" aria-labelledby="chapter-planning-title">
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
-          <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">Etapa {stageNumber}</p><h2>{operation === "optimize" ? "Buscando nova literatura verificável…" : "Organizando tópicos e cobertura…"}</h2></div>
+          <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">{visibleStepLabel}</p><h2>{operation === "optimize" ? "Buscando nova literatura verificável…" : "Organizando tópicos e cobertura…"}</h2></div>
         </div>
       ) : null}
 
+      <WorkflowProgress current={3} currentStep={workflow.content.activeStep ?? "development_topics"} disabled={busy || waitingForAdvisor} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+
       <div className="definition-heading">
-        <div><p className="section-kicker">Etapa {stageNumber} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
+        <div><p className="section-kicker">{visibleStepLabel} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
       {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}

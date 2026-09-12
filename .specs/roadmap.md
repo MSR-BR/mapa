@@ -59,6 +59,17 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 061 | Revisão e promoção de objetivos | Concluída | A etapa de objetivos específicos permite revisar o objetivo geral e promover um OE para OEG, preservando referências, justificativas, validação e rastreabilidade. |
 | 062 | Lembretes de validação aluno–orientador | Concluída | Estudante e orientador podem reenviar com segurança o aviso da etapa pendente para a outra parte, sem expor credenciais ou criar uma nova revisão. |
 | 063 | Correção das ações de objetivos | Concluída | Voltar, salvar, remover e promover objetivos aceitam a ausência de promoção sem retornar “Operação inválida”; regressão testada e publicada em produção. |
+| 064 | Papel de conta imutável e linguagem de revisão | Concluída | Papel escolhido no primeiro acesso não pode mais ser trocado pela interface, Server Action ou banco; área de revisão ganhou linguagem neutra e a migration foi publicada e verificada no Supabase. |
+| 065 | Mapa Rápido: seleção que avança | Concluída | Selecionar um tema sugerido preenche e submete o mesmo fluxo do Mapa Rápido: cria o projeto no dashboard ou preserva o rascunho antes do login na home; testes, build, deploy e health check aprovados. |
+| 066 | Título final ampliado com aviso de concisão | Concluída | Título final aceita até 240 caracteres; acima de 120, a concisão é recomendada sem bloquear salvamento, validação ou encerramento; testes, build, deploy e health check aprovados. |
+| 067 | Progresso da jornada em N/M | Concluída | A jornada exibe Etapa N/4 em descoberta, definição, capítulos, metodologia, mapa final e resumos de etapas validadas; subpassos e workflow interno preservados; testes, build, deploy e health check aprovados. |
+| 068 | Coerência orientativa sem travar o fluxo | Concluída | Critérios acadêmicos de definição, capítulos, metodologia e mapa final são persistidos como avisos orientativos, permitindo avanço e encerramento; segurança técnica e formato inválido permanecem protegidos; testes, build, deploy e health check aprovados. |
+| 069 | Retorno sem perda de dados | Concluída | Voltar e avançar sem edição preserva objetivo geral, objetivos específicos e Capítulo 4; só há regeneração após alteração real na origem; testes, build, deploy e health check aprovados. |
+| 070 | Reconciliação de associações de tópicos | Concluída | Contagens usam apenas tópicos existentes; IDs órfãos ou duplicados são removidos das associações metodológicas sem apagar conteúdo válido; testes, build, deploy e health check aprovados. |
+| 071 | Verificador E2E compatível com papel imutável | Concluída | A simulação aluno–orientador valida os papéis permanentes das contas de teste sem tentar atualizá-los; lint, tipos, 84 testes, build e fluxo RLS completo passaram, com limpeza do projeto temporário. |
+| 072 | Recuperação do pipeline Gemini | Concluída | Gemini 3.6 Flash restaurou saída estruturada, metodologia e título final por IA; 85 testes, build, Research Starter e smokes de produção passaram no deployment dpl_BeNtfChz7iKdcneZHyD69LhmRodY. |
+| 073 | Navegação e validação confiável das etapas | Concluída | Avanço explícito em um clique, barra Etapa/Passo navegável para trás e matriz metodológica reconciliada com objetivos reais; 88 testes, E2E autenticado e produção saudável. |
+| 074 | Homologação final do fluxo completo em produção | Concluída | Jornada aluno–revisor, papéis imutáveis, isolamento, Mapa Rápido, navegação, IA, 89 testes e produção homologados; resta apenas sincronizar a chave local do Research Starter, pois a chave publicada está válida. |
 
 ## Marcos
 
@@ -77,7 +88,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 
 - Hosting: Vercel confirmado.
 - Banco e Auth: Supabase/PostgreSQL confirmado no projeto `aeaweherkrqmlqnxsmib`.
-- Provedor de IA: Gemini 2.5 Flash confirmado na conta já paga pelo responsável.
+- Provedor de IA: Gemini 3.6 Flash confirmado na conta já paga pelo responsável, com GEMINI_MODEL como override opcional.
 - Contrato do Research Starter: v1 integrado exclusivamente pelo backend.
 - Custos, privacidade, retenção, termos e responsável pelo tratamento devem continuar monitorados durante o rollout do v2.
 

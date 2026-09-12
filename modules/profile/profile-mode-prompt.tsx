@@ -1,4 +1,4 @@
-import { setActiveProfileRole } from "./actions";
+import { setInitialProfileRole } from "./actions";
 
 export function ProfileModePrompt({ email }: { email: string }) {
   return (
@@ -13,17 +13,17 @@ export function ProfileModePrompt({ email }: { email: string }) {
         <h2 id="profile-mode-title">Como você quer usar o Mapa?</h2>
         <p>
           Esta escolha organiza o dashboard e as ações disponíveis para {email || "sua conta"}.
-          Você poderá trocar depois pelo ícone do usuário.
+          Essa escolha define sua área de trabalho e será mantida nesta conta.
         </p>
         <div className="profile-mode-options">
-          <form action={setActiveProfileRole}>
+          <form action={setInitialProfileRole}>
             <input name="role" type="hidden" value="student" />
             <button type="submit">
               <strong>Sou aluno</strong>
               <span>Crio meus mapas e envio etapas para validação do orientador.</span>
             </button>
           </form>
-          <form action={setActiveProfileRole}>
+          <form action={setInitialProfileRole}>
             <input name="role" type="hidden" value="advisor" />
             <button type="submit">
               <strong>Sou orientador</strong>

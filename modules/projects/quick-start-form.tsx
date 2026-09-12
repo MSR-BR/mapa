@@ -35,6 +35,7 @@ export function QuickStartForm({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const resumeSubmitPending = useRef(false);
+  const quickSuggestionSubmitPending = useRef(false);
   const pendingDraftRead = useRef(false);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
   const [mode, setMode] = useState<StartMode>(null);
@@ -84,10 +85,24 @@ export function QuickStartForm({
     formRef.current.requestSubmit();
   }, [intake, mode, quickPrompt, showResearchType]);
 
+
+  useEffect(() => {
+    if (!quickSuggestionSubmitPending.current || pending || !formRef.current) return;
+    if (quickPrompt.trim().length < 10) return;
+    quickSuggestionSubmitPending.current = false;
+    formRef.current.requestSubmit();
+  }, [pending, quickPrompt]);
+
   function handleQuickEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey) return;
     event.preventDefault();
     event.currentTarget.form?.requestSubmit();
+  }
+
+  function handleQuickSuggestionSelect(prompt: string) {
+    quickSuggestionSubmitPending.current = true;
+    setClientError("");
+    setQuickPrompt(prompt);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -168,7 +183,7 @@ export function QuickStartForm({
           </button>
           {mode === "quick" ? (
             <div className="public-mode-content" id="dashboard-quick-research-mode">
-              <ResearchPromptInput id="dashboard-quick-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} value={quickPrompt} />
+              <ResearchPromptInput id="dashboard-quick-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
               <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
             </div>
           ) : null}

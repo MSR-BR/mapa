@@ -120,16 +120,50 @@ async function requireData<T>(operation: string, result: { data: T | null; error
   return result.data;
 }
 
-async function upsertProfile(client: Client, userId: string, activeRole: "advisor" | "student") {
-  const now = new Date().toISOString();
-  await requireData(
-    `Perfil ${activeRole}`,
-    await client
-      .from("user_profiles")
-      .upsert({ active_role: activeRole, created_at: now, updated_at: now, user_id: userId }, { onConflict: "user_id" })
-      .select("user_id")
-      .maybeSingle(),
-  );
+async function assertExistingProfileRole(
+  account: { client: Client; userId: string },
+  expectedRole: "advisor" | "student",
+) {
+  const { data, error } = await account.client
+    .from("user_profiles")
+    .select("active_role")
+    .eq("user_id", account.userId)
+    .maybeSingle();
+
+  if (error) throw new Error(`Perfil de teste ${expectedRole}: ${error.message}`);
+  if (!data) {
+    throw new Error(
+      `A conta de teste ${expectedRole} ainda não possui um perfil. ` +
+      "Acesse o aplicativo uma vez com essa conta e confirme o papel permanente antes de rodar esta verificação.",
+    );
+  }
+  if (data.active_role !== expectedRole) {
+    throw new Error(
+      `A conta de teste esperada como ${expectedRole} está registrada como ${data.active_role}. ` +
+      "Use contas de teste distintas e com papéis permanentes corretos; este verificador não altera perfis.",
+    );
+  }
+}
+
+async function assertProfileRoleIsImmutableAcrossSessions(
+  account: { client: Client; email: string; userId: string },
+  expectedRole: "advisor" | "student",
+) {
+  const attemptedRole = expectedRole === "student" ? "advisor" : "student";
+  const attemptedUpdate = await account.client
+    .from("user_profiles")
+    .update({ active_role: attemptedRole })
+    .eq("user_id", account.userId)
+    .select("active_role");
+
+  if (!attemptedUpdate.error && (attemptedUpdate.data?.length ?? 0) > 0) {
+    throw new Error("O papel da conta " + expectedRole + " pôde ser alterado para " + attemptedRole + ".");
+  }
+
+  await assertExistingProfileRole(account, expectedRole);
+  const freshAccount = await ensureSignedIn(account.email, expectedRole);
+  await assertExistingProfileRole(freshAccount, expectedRole);
+  await freshAccount.client.auth.signOut();
 }
 
 function id() {
@@ -575,14 +609,22 @@ async function advisorDecision(
 
 async function cleanup(student: { client: Client }, projectId: string | null) {
   if (!projectId) return;
-  await student.client.from("research_workflows").delete().eq("project_id", projectId);
-  await student.client.from("projects").delete().eq("id", projectId);
+  const workflowDeletion = await student.client.from("research_workflows").delete().eq("project_id", projectId);
+  if (workflowDeletion.error) throw new Error("Limpeza do workflow temporário: " + workflowDeletion.error.message);
+  const projectDeletion = await student.client.from("projects").delete().eq("id", projectId);
+  if (projectDeletion.error) throw new Error("Limpeza do projeto temporário: " + projectDeletion.error.message);
+
+  const remainingProject = await student.client.from("projects").select("id").eq("id", projectId).maybeSingle();
+  if (remainingProject.error) throw new Error("Confirmação da limpeza temporária: " + remainingProject.error.message);
+  if (remainingProject.data) throw new Error("O projeto temporário permaneceu após a limpeza.");
 }
 
 const student = await ensureSignedIn(studentEmail, "student");
 const advisor = await ensureSignedIn(advisorEmail, "advisor");
-await upsertProfile(student.client, student.userId, "student");
-await upsertProfile(advisor.client, advisor.userId, "advisor");
+await assertExistingProfileRole(student, "student");
+await assertExistingProfileRole(advisor, "advisor");
+await assertProfileRoleIsImmutableAcrossSessions(student, "student");
+await assertProfileRoleIsImmutableAcrossSessions(advisor, "advisor");
 
 let projectId: string | null = null;
 try {
@@ -590,6 +632,14 @@ try {
   const currentProjectId = setup.project.id;
   projectId = currentProjectId;
   let workflow = setup.workflow;
+
+  const advisorBeforeLink = await advisor.client
+    .from("projects")
+    .select("id")
+    .eq("id", currentProjectId)
+    .maybeSingle();
+  if (advisorBeforeLink.error) throw new Error("Isolamento anterior ao vínculo: " + advisorBeforeLink.error.message);
+  if (advisorBeforeLink.data) throw new Error("O projeto ficou visível ao orientador antes do vínculo.");
 
   const linked = await requireData(
     "Vínculo do orientador",
@@ -634,6 +684,18 @@ try {
 
   workflow = await submitStepForAdvisor(student, workflow, transitions[0].step, transitions[0].transition);
   workflow = await advisorSaveComment(advisor, workflow);
+  const studentCommentRead = await requireData(
+    "Leitura do comentário pelo aluno",
+    await student.client
+      .from("research_workflows")
+      .select("project_id, owner_id, content, revision, state")
+      .eq("project_id", currentProjectId)
+      .maybeSingle(),
+  ) as AdvisorWorkflowReadRow;
+  const studentObservedReview = currentAdvisorReview(researchWorkflowContentSchema.parse(studentCommentRead.content));
+  if (studentObservedReview?.advisorComments !== "Comentário de verificação salvo pelo orientador.") {
+    throw new Error("O comentário do orientador não ficou visível para o aluno.");
+  }
   workflow = await advisorDecision(advisor, workflow, "changes_requested");
   if (currentAdvisorReview(workflow.content)?.status !== "changes_requested") throw new Error("Correção solicitada não ficou visível para o aluno.");
   workflow = await submitStepForAdvisor(student, workflow, transitions[0].step, transitions[0].transition);
@@ -673,10 +735,13 @@ try {
       "cadastro/login orientador",
       "perfil aluno",
       "perfil orientador",
+      "papéis imutáveis após novo login",
+      "isolamento antes do vínculo",
       "vínculo orientador",
       "leitura supervisionada",
       "bloqueio de edição do projeto pelo orientador",
       "comentário do orientador",
+      "comentário recebido pelo aluno",
       "solicitação de correção",
       "aprovação de todas as etapas",
       "mapa final concluído",

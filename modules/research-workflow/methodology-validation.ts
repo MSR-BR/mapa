@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import type { ChapterTopicInput } from "./chapter-validation";
 import {
   methodologyClassificationSchema,
   methodologyRowSchema,
@@ -25,13 +26,64 @@ export const methodologyRowInputSchema = methodologyRowSchema.omit({
   warnings: z.array(z.string().trim().min(1).max(500)).max(6).default([]),
 });
 
+export const FINAL_TITLE_RECOMMENDED_LENGTH = 120;
+export const FINAL_TITLE_MAX_LENGTH = 240;
+
 export const methodologyPlanInputSchema = z.object({
   classification: methodologyClassificationInputSchema,
   rows: z.array(methodologyRowInputSchema).min(3).max(7),
-  title: z.string().trim().min(3).max(120),
+  title: z.string().trim().min(3).max(FINAL_TITLE_MAX_LENGTH),
 });
 
 export type MethodologyPlanInput = z.infer<typeof methodologyPlanInputSchema>;
+
+type GeneratedMethodologyRow = Omit<MethodologyPlanInput["rows"][number], "id" | "warnings">;
+type MethodologyObjectiveInput = { content: string; id: string; type: "general" | "specific" };
+
+export function reconcileGeneratedMethodologyRows(
+  rows: GeneratedMethodologyRow[],
+  objectives: MethodologyObjectiveInput[],
+  topics: ChapterTopicInput[],
+): GeneratedMethodologyRow[] {
+  const usedRows = new Set<number>();
+  const validTopicIds = new Set(topics.map((topic) => topic.id));
+
+  function topicIdsForObjective(objective: MethodologyObjectiveInput) {
+    const direct = topics
+      .filter((topic) => topic.objectiveCoverage.some((coverage) => coverage.objectiveId === objective.id))
+      .map((topic) => topic.id);
+    if (direct.length > 0) return direct.slice(0, 4);
+    if (objective.type === "general") {
+      const aligned = topics.filter((topic) => topic.generalObjectiveAligned).map((topic) => topic.id);
+      if (aligned.length > 0) return aligned.slice(0, 4);
+    }
+    return topics[0] ? [topics[0].id] : [];
+  }
+
+  return objectives.map((objective) => {
+    let rowIndex = rows.findIndex((row, index) => !usedRows.has(index) && row.objectiveId === objective.id);
+    if (rowIndex < 0) rowIndex = rows.findIndex((_, index) => !usedRows.has(index));
+    if (rowIndex >= 0) usedRows.add(rowIndex);
+    const source = rowIndex >= 0 ? rows[rowIndex] : null;
+    const knownTopicIds = source
+      ? [...new Set(source.associatedTopicIds.filter((topicId) => validTopicIds.has(topicId)))]
+      : [];
+    const associatedTopicIds = knownTopicIds.length > 0 ? knownTopicIds : topicIdsForObjective(objective);
+
+    return source ? {
+      ...source,
+      associatedTopicIds,
+      objectiveId: objective.id,
+    } : {
+      analysisTreatment: "As informações serão organizadas e analisadas em relação ao objetivo e à problemática da pesquisa.",
+      associatedTopicIds,
+      dataCollection: `Serão levantadas informações e evidências diretamente relacionadas ao objetivo: ${objective.content}`,
+      expectedResult: "Espera-se produzir uma síntese fundamentada que contribua para atender este objetivo.",
+      objectiveId: objective.id,
+      studentJustification: null,
+    };
+  });
+}
 
 function normalized(value: string) {
   return value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -134,6 +186,7 @@ export function validateMethodologyPlan(
   }
 
   const errors: string[] = [];
+  const warnings: string[] = [];
   const objectiveIds = parsed.data.rows.map((row) => row.objectiveId);
   const objectiveSet = new Set(objectiveIds);
   const generalObjectiveRows = options.generalObjectiveId
@@ -184,8 +237,8 @@ export function validateMethodologyPlan(
     }
   });
 
-  if (parsed.data.title.length > 100) {
-    errors.push("O título final deve ser curto o bastante para identificar o projeto.");
+  if (parsed.data.title.length > FINAL_TITLE_RECOMMENDED_LENGTH) {
+    warnings.push(`O título final tem mais de ${FINAL_TITLE_RECOMMENDED_LENGTH} caracteres; ele pode seguir assim, mas considere encurtá-lo para facilitar a identificação do projeto.`);
   }
   if (!includesAny(parsed.data.title, options.generalObjective.split(/\s+/).filter((word) => word.length > 5).slice(0, 6))) {
     errors.push("O título final precisa derivar semanticamente do objetivo geral validado.");
@@ -193,9 +246,12 @@ export function validateMethodologyPlan(
 
   return {
     errors: unique(errors),
-    warnings: methodologyCompatibilityWarnings(parsed.data.rows, parsed.data.classification, {
-      allowedObjectiveIds: options.allowedObjectiveIds,
-      generalObjectiveId: options.generalObjectiveId,
-    }),
+    warnings: unique([
+      ...warnings,
+      ...methodologyCompatibilityWarnings(parsed.data.rows, parsed.data.classification, {
+        allowedObjectiveIds: options.allowedObjectiveIds,
+        generalObjectiveId: options.generalObjectiveId,
+      }),
+    ]),
   };
 }

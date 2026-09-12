@@ -67,7 +67,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(legalContent, /com apoio do orientador/);
   assert.match(legalContent, /no uso do aplicativo/);
   assert.match(legalContent, /Como estudante/);
-  assert.match(legalContent, /Como orientador/);
+  assert.match(legalContent, /Nesta área de revisão/);
   assert.match(legalContent, /Research Starter/);
   assert.match(legalContent, /até 30 dias/);
   assert.match(profileStorage, /terms_version === LEGAL_TERMS_VERSION/);
@@ -86,10 +86,12 @@ test("requests login only after the public central execution", async () => {
 });
 
 test("suggests AI refinements while the research request is being written", async () => {
-  const [input, route, gemini] = await Promise.all([
+  const [input, route, gemini, quickStart, publicStart] = await Promise.all([
     readProjectFile("modules/projects/research-prompt-input.tsx"),
     readProjectFile("app/api/prompt-suggestions/route.ts"),
     readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("modules/projects/quick-start-form.tsx"),
+    readProjectFile("modules/projects/public-start-form.tsx"),
   ]);
 
   assert.match(input, /Exemplo: Crie um roteiro de dissertação de mestrado/);
@@ -99,6 +101,13 @@ test("suggests AI refinements while the research request is being written", asyn
   assert.match(input, /buildLocalPromptSuggestions/);
   assert.match(input, /Tema \{index \+ 1\}/);
   assert.match(input, /normalizeSuggestionText/);
+  assert.match(input, /onSuggestionSelect\?\.\(selectedPrompt\)/);
+  assert.match(quickStart, /quickSuggestionSubmitPending/);
+  assert.match(quickStart, /onSuggestionSelect=\{handleQuickSuggestionSelect\}/);
+  assert.match(quickStart, /formRef\.current\.requestSubmit\(\)/);
+  assert.match(publicStart, /quickSuggestionContinuePending/);
+  assert.match(publicStart, /onSuggestionSelect=\{handleQuickSuggestionSelect\}/);
+  assert.match(publicStart, /formRef\.current\.requestSubmit\(\)/);
   assert.match(gemini, /Não use os rótulos 'Tema de pesquisa', 'Investigar' ou 'Analisar'/);
   assert.match(route, /suggestResearchPrompts/);
   assert.match(gemini, /exatamente 3 sugestões curtas/);
@@ -306,11 +315,34 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(gemini, /replacementFocus/);
   assert.match(gemini, /Remova instruções operacionais/);
   assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
-  assert.match(gemini, /thinkingBudget: 0/);
+  assert.match(gemini, /process\.env\.GEMINI_MODEL\?\.trim\(\) \|\| "gemini-3\.6-flash"/);
+  assert.match(gemini, /thinkingLevel: "minimal"/);
+  assert.doesNotMatch(gemini, /thinkingBudget: 0|gemini-2\.5-flash/);
   assert.match(gemini, /validateReferenceIds/);
   assert.match(migration, /unique \(owner_id, idempotency_key\)/);
   assert.equal((migration.match(/create policy/g) ?? []).length, 8);
   assert.match(migration, /alter table public\.research_structures enable row level security/);
+});
+
+test("recovers the Gemini 3 pipeline and preserves AI-generated final titles", async () => {
+  const [gemini, verification, environment, roadmap, spec] = await Promise.all([
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("scripts/verify-gemini.mjs"),
+    readProjectFile(".env.example"),
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/072-gemini-pipeline-recovery/spec.md"),
+  ]);
+
+  assert.match(gemini, /process\.env\.GEMINI_MODEL\?\.trim\(\) \|\| "gemini-3\.6-flash"/);
+  assert.match(gemini, /thinkingLevel: "minimal"/);
+  assert.doesNotMatch(gemini, /thinkingBudget: 0|gemini-2\.5-flash/);
+  assert.match(gemini, /Sugira um título final curto derivado do objetivo geral/);
+  assert.match(gemini, /title: generated\.title/);
+  assert.match(verification, /const model = process\.env\.GEMINI_MODEL\?\.trim\(\) \|\| "gemini-3\.6-flash"/);
+  assert.match(verification, /thinkingLevel: "minimal"/);
+  assert.match(environment, /^GEMINI_MODEL=$/m);
+  assert.match(roadmap, /072 \| Recuperação do pipeline Gemini \| Concluída/);
+  assert.match(spec, /\*\*Status:\*\* concluída/);
 });
 
 test("provides persistent editing with loss protection and retry", async () => {
@@ -722,6 +754,109 @@ test("implements Change 052 with a real Research Starter optimization and safe a
   assert.match(version, /v\d{8}\.\d+/);
 });
 
+test("reconciles stale topic links before presenting association counts", async () => {
+  const [integrity, workspace, route, finalMap] = await Promise.all([
+    readProjectFile("modules/research-workflow/topic-integrity.ts"),
+    readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
+    readProjectFile("app/api/projects/[id]/methodology/route.ts"),
+    readProjectFile("modules/research-workflow/final-map.ts"),
+  ]);
+
+  assert.match(integrity, /reconcileTopicLinks/);
+  assert.match(integrity, /associatedTopicIds: uniqueIds/);
+  assert.match(workspace, /filter\(\(topicId\) => topics\.some/);
+  assert.match(route, /reconciledWorkflowContent/);
+  assert.match(finalMap, /content: reconcileTopicLinks\(workflow\.content\)/);
+});
+
+test("preserves downstream work when returning without editing an upstream step", async () => {
+  const [definitionRoute, chaptersRoute] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/definition/route.ts"),
+    readProjectFile("app/api/projects/[id]/chapters/route.ts"),
+  ]);
+
+  assert.match(definitionRoute, /reuseExistingGeneral/);
+  assert.match(definitionRoute, /reuseExistingSpecifics/);
+  assert.match(definitionRoute, /if \(!reuseExistingGeneral\) content = markDescendantsStale/);
+  assert.match(definitionRoute, /if \(!reuseExistingSpecifics\) content = markDescendantsStale/);
+  assert.match(chaptersRoute, /sameTopics/);
+  assert.match(chaptersRoute, /reuseExistingDevelopment/);
+  assert.match(chaptersRoute, /versão já existente do Capítulo 4 foi preservada/);
+});
+
+test("keeps academic coherence advisory instead of blocking stage progression", async () => {
+  const [definitionRoute, chaptersRoute, methodologyRoute, finalMap, finalMapRoute, workspace] = await Promise.all([
+    readProjectFile("app/api/projects/[id]/definition/route.ts"),
+    readProjectFile("app/api/projects/[id]/chapters/route.ts"),
+    readProjectFile("app/api/projects/[id]/methodology/route.ts"),
+    readProjectFile("modules/research-workflow/final-map.ts"),
+    readProjectFile("app/api/projects/[id]/final-map/route.ts"),
+    readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
+  ]);
+
+  assert.match(definitionRoute, /Orientação de coerência da Change 068/);
+  assert.match(chaptersRoute, /Orientação de capítulos da Change 068/);
+  assert.match(methodologyRoute, /advisoryMessages = \[\.\.\.new Set\(\[\.\.\.errors, \.\.\.warnings\]\)\]/);
+  assert.doesNotMatch(methodologyRoute, /return NextResponse\.json\(\{ errors, workflow: saved \}, \{ status: 422 \}\)/);
+  assert.match(finalMap, /if \(options\.advisory\) return true/);
+  assert.match(finalMapRoute, /canCompleteFinalMap\(finalMap, \{ advisory: true \}\)/);
+  assert.match(workspace, /Sugestão de revisão/);
+});
+
+test("distinguishes macro stages from substeps across the research workflow", async () => {
+  const [progress, discovery, definition, chapters, methodology, finalMap] = await Promise.all([
+    readProjectFile("modules/research-workflow/workflow-progress.tsx"),
+    readProjectFile("modules/research-workflow/proposal-discovery-workspace.tsx"),
+    readProjectFile("modules/research-workflow/research-definition-workspace.tsx"),
+    readProjectFile("modules/research-workflow/literature-development-workspace.tsx"),
+    readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
+    readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
+  ]);
+
+  assert.match(progress, /Etapa \{current\}\/\{WORKFLOW_PROGRESS_TOTAL\}/);
+  assert.match(progress, /Passo \{currentDetail\}\/\{detailSteps\.length\}/);
+  assert.match(progress, /Problemática/, "A etapa inicial é nomeada de acordo com o conteúdo.");
+  assert.match(progress, /Metodologia e encerramento/, "O encerramento integra a última macroetapa.");
+  assert.match(progress, /Voltar para/);
+  assert.match(discovery, /currentStep=\{selectedCandidate \? "problem_statement" : null\}/);
+  assert.match(definition, /currentStep=\{step\}/);
+  assert.match(chapters, /currentStep=\{workflow\.content\.activeStep/);
+  assert.match(methodology, /currentStep="methodology_matrix"/);
+  assert.match(finalMap, /currentStep="final_map"/);
+  assert.doesNotMatch(definition, /className="definition-progress"/);
+  assert.doesNotMatch(methodology, /className="definition-progress methodology-progress"/);
+});
+
+test("implements Change 073 with revision-safe back navigation and methodology recovery", async () => {
+  const [progress, navigation, route, gemini, methodology, styles, spec, roadmap] = await Promise.all([
+    readProjectFile("modules/research-workflow/workflow-progress.tsx"),
+    readProjectFile("modules/research-workflow/workflow-navigation.ts"),
+    readProjectFile("app/api/projects/[id]/navigation/route.ts"),
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
+    readProjectFile("app/globals.css"),
+    readProjectFile(".specs/changes/073-reliable-workflow-navigation/spec.md"),
+    readProjectFile(".specs/roadmap.md"),
+  ]);
+
+  assert.match(progress, /api\/projects/);
+  assert.match(progress, /\/navigation/);
+  assert.match(progress, /hasUnsavedChanges && !window\.confirm/);
+  assert.match(progress, /router\.replace\(workflowNavigationUrl/);
+  assert.match(navigation, /POSITION_ORDER/);
+  assert.match(navigation, /POSITION_ORDER\[target\] < POSITION_ORDER\[current\]/);
+  assert.match(route, /requireAuthenticatedUser\(\)/);
+  assert.match(route, /workflow\.revision !== parsed\.data\.revision/);
+  assert.match(route, /pendingAdvisorReview\(workflow\.content\)/);
+  assert.match(route, /Etapa anterior aberta sem alterar o conteúdo salvo/);
+  assert.match(gemini, /reconcileGeneratedMethodologyRows/);
+  assert.match(methodology, /A matriz metodológica ainda não foi criada/);
+  assert.match(methodology, /Gerar matriz novamente/);
+  assert.match(styles, /workflow-progress-detail/);
+  assert.match(spec, /Change 073/);
+  assert.match(roadmap, /\| 073 \| Navegação e validação confiável das etapas \|/);
+});
+
 test("keeps methodology controls responsive and reference-aware", async () => {
   const [workspace, styles, route, gemini] = await Promise.all([
     readProjectFile("modules/research-workflow/methodology-workspace.tsx"),
@@ -747,6 +882,9 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /Adicionar linha OEG/);
   assert.match(workspace, /moveRow/);
   assert.match(workspace, /Título final sugerido \*/);
+  assert.match(workspace, /FINAL_TITLE_MAX_LENGTH/);
+  assert.match(workspace, /sistema apenas recomenda encurtar; você pode avançar/);
+  assert.match(route, /FINAL_TITLE_MAX_LENGTH/);
   assert.match(workspace, /Natureza \*/);
   assert.match(workspace, /Abordagem \*/);
   assert.match(workspace, /Objetivos metodológicos \*/);
@@ -863,13 +1001,13 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(schema, /advisorReviews/);
   assert.match(advisorHelper, /withAdvisorReviewRequest/);
   assert.match(advisorHelper, /withAdvisorReviewDecision/);
-  assert.match(advisorWorkspace, /Área do orientador/);
+  assert.match(advisorWorkspace, /Área de revisão/);
   assert.match(advisorWorkspace, /Modo leitura/);
   assert.match(advisorWorkspace, /Tudo que o estudante construiu/);
   assert.match(advisorWorkspace, /AdvisorReadOnlyProject/);
   assert.match(advisorWorkspace, /Justificativa do estudante/);
   assert.match(advisorWorkspace, /withCitationMarkers/);
-  assert.match(advisorWorkspace, /Comentários do orientador/);
+  assert.match(advisorWorkspace, /Comentários da revisão/);
   assert.match(advisorWorkspace, /Solicitar correção/);
   assert.match(advisorWorkspace, /Validar etapa/);
   assert.match(advisorRoute, /request_changes/);
@@ -878,7 +1016,7 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(definitionRoute, /pendingAdvisorReview/);
   assert.match(definitionRoute, /isAdvisorOwner/);
   assert.match(definitionRoute, /requireStudentJustification: !isAdvisorOwner/);
-  assert.match(definitionRoute, /Aguardando validação do orientador/);
+  assert.match(definitionRoute, /Aguardando revisão/);
   assert.match(chaptersRoute, /requireStudentJustification: !isAdvisorOwner/);
   assert.match(chaptersRoute, /!isAdvisorOwner && Boolean\(advisorEmail\)/);
   assert.match(chaptersRoute, /Capítulo 2 validado pelo estudante/);
@@ -890,7 +1028,7 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(finalMapRoute, /Mapa validado pelo estudante/);
   assert.match(projectPage, /AdvisorReviewWorkspace/);
   assert.match(projectPage, /project\.owner_id/);
-  assert.match(dashboard, /Projetos sob minha orientação/);
+  assert.match(dashboard, /Projetos para revisar/);
   assert.match(dashboard, /variant="advisor"/);
   assert.match(card, /Somente o estudante pode excluir/);
   assert.match(card, /Orientador:/);
@@ -915,6 +1053,7 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
     projectPage,
     advisorRoute,
     migration,
+    profileRoleLockMigration,
     styles,
   ] = await Promise.all([
     readProjectFile("modules/auth/account-menu.tsx"),
@@ -927,12 +1066,14 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
     readProjectFile("app/dashboard/projects/[id]/page.tsx"),
     readProjectFile("app/api/projects/[id]/advisor-review/route.ts"),
     readProjectFile("supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql"),
+    readProjectFile("supabase/migrations/20260911190000_lock_user_profile_role.sql"),
     readProjectFile("app/globals.css"),
   ]);
 
   assert.match(accountMenu, /activeRole/);
-  assert.match(accountMenu, /Mudar para/);
-  assert.match(profileActions, /setActiveProfileRole/);
+  assert.doesNotMatch(accountMenu, /Mudar para/);
+  assert.match(profileActions, /setInitialProfileRole/);
+  assert.doesNotMatch(profileActions, /\.update\(\{ active_role/);
   assert.match(profileActions, /insert\(\{ active_role: role, created_at: now, updated_at: now, user_id: userId \}\)/);
   assert.match(profileActions, /redirect\("\/dashboard"\)/);
   assert.match(profileActions, /claim_pending_advisor_projects/);
@@ -943,17 +1084,17 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(profileStorage, /hasProfile: false/);
   assert.match(dashboard, /isStudentMode/);
   assert.match(dashboard, /isAdvisorMode/);
-  assert.match(dashboard, /Crie seus mapas e acompanhe orientações/);
+  assert.match(dashboard, /Crie mapas e revise projetos compartilhados/);
   assert.match(dashboard, /showAdvisorField=\{false\}/);
-  assert.match(dashboard, /Projetos e supervisões/);
+  assert.match(dashboard, /Projetos e revisões/);
   assert.match(dashboard, /advisor-mode-hero/);
   assert.match(dashboard, /profile\.activeRole === "advisor"/);
-  assert.match(dashboard, /Projetos sob minha orientação/);
+  assert.match(dashboard, /Projetos para revisar/);
   assert.match(projectPage, /ProjectAdvisorPanel/);
   assert.match(projectPage, /isAdvisorOwner/);
   assert.match(projectPage, /isAdvisorOwner \? null :/);
   assert.match(projectPage, /advisorMatches && !isAdvisor/);
-  assert.match(projectPage, /Abra este projeto no modo orientador/);
+  assert.match(projectPage, /conta está configurada para criação de projetos/);
   assert.match(advisorRoute, /profile\.activeRole !== "advisor"/);
   assert.match(advisorRoute, /project\.advisor_id === userId/);
   assert.match(projectActions, /set_project_advisor/);
@@ -969,6 +1110,8 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(migration, /create or replace function public\.claim_pending_advisor_projects/);
   assert.match(migration, /grant execute on function public\.set_project_advisor\(uuid, text\) to authenticated/);
   assert.match(migration, /advisor_id = \(select auth\.uid\(\)\)/);
+  assert.match(profileRoleLockMigration, /revoke update on table public\.user_profiles from authenticated/);
+  assert.match(profileRoleLockMigration, /drop policy if exists "user_profiles_update_own"/);
   assert.match(styles, /profile-mode-backdrop/);
   assert.match(styles, /account-profile-switch/);
   assert.match(styles, /project-advisor-panel/);
@@ -1012,6 +1155,22 @@ test("provides a two-user authenticated RLS verification without admin keys", as
   assert.doesNotMatch(verification, /service.role|sb_secret_|SUPABASE_SECRET/i);
 });
 
+test("keeps the advisor-student E2E verifier compatible with immutable account roles", async () => {
+  const [verification, roleLockMigration, roadmap, spec] = await Promise.all([
+    readProjectFile("scripts/verify-advisor-student-flow.ts"),
+    readProjectFile("supabase/migrations/20260911190000_lock_user_profile_role.sql"),
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/071-immutable-role-e2e-verifier/spec.md"),
+  ]);
+
+  assert.match(verification, /assertExistingProfileRole/);
+  assert.match(verification, /este verificador não altera perfis/);
+  assert.doesNotMatch(verification, /\.upsert\(\{ active_role/);
+  assert.match(roleLockMigration, /revoke update on table public\.user_profiles from authenticated/);
+  assert.match(roadmap, /071 \| Verificador E2E compatível com papel imutável/);
+  assert.match(spec, /O roteiro não faz `INSERT` ou `UPDATE` em `user_profiles`/);
+});
+
 test("validates the migration locally without a paid Supabase branch", async () => {
   const [script, architecture] = await Promise.all([
     readProjectFile("scripts/verify-migration-local.sh"),
@@ -1036,6 +1195,27 @@ test("keeps methodology coherence live and makes project closure discoverable", 
   assert.match(methodology, /Nenhum aviso foi detectado nos dados atuais/);
   assert.match(methodology, /Encerramento do projeto/);
   assert.match(finalMap, /Encerrar projeto/);
-  assert.match(finalMap, /Aguardando orientador/);
+  assert.match(finalMap, /Aguardando revisão/);
   assert.match(styles, /\.final-completion-panel/);
+});
+
+
+test("registers Change 074 production acceptance and cross-account isolation", async () => {
+  const [verification, roadmap, spec, finalMap, advisorWorkspace] = await Promise.all([
+    readProjectFile("scripts/verify-advisor-student-flow.ts"),
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/074-production-final-acceptance/spec.md"),
+    readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
+    readProjectFile("modules/research-workflow/advisor-review-workspace.tsx"),
+  ]);
+
+  assert.match(verification, /assertProfileRoleIsImmutableAcrossSessions/);
+  assert.match(verification, /O projeto ficou visível ao orientador antes do vínculo/);
+  assert.match(verification, /O comentário do orientador não ficou visível para o aluno/);
+  assert.match(verification, /O projeto temporário permaneceu após a limpeza/);
+  assert.match(finalMap, /Etapa 2\/4 · Passo 1\/2/);
+  assert.match(finalMap, /Etapa 3\/4 · Passo 2\/2 · Capítulo 4/);
+  assert.match(advisorWorkspace, /Etapa 4\/4 · Passo 1\/2 · Capítulo 3/);
+  assert.match(roadmap, /074 \| Homologação final do fluxo completo em produção/);
+  assert.match(spec, /gpt-5\.6-sol/);
 });
