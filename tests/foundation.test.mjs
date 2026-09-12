@@ -1308,3 +1308,30 @@ test("registers Change 077 concise profile menu", async () => {
   assert.doesNotMatch(accountMenu, /Este perfil permanece associado/);
   assert.doesNotMatch(presentation, /workspaceLabel/);
 });
+
+test("registers Change 078 reproducible social promo package", async () => {
+  const [roadmap, closure, generator, manifestText, reportText, video] = await Promise.all([
+    readProjectFile(".specs/roadmap.md"),
+    readProjectFile(".specs/changes/078-social-promo-video/closure-evidence.md"),
+    readProjectFile("scripts/generate-social-promo-c78.swift"),
+    readProjectFile("outputs/social-promo-c78/manifest.json"),
+    readProjectFile("outputs/social-promo-c78/technical-report.json"),
+    readFile(new URL("../outputs/social-promo-c78/mapa-da-pesquisa-social-15s.mp4", import.meta.url)),
+  ]);
+  const manifest = JSON.parse(manifestText);
+  const report = JSON.parse(reportText);
+
+  assert.match(roadmap, /078 \| Vídeo promocional para redes sociais \| Concluída/);
+  assert.match(closure, /gpt-5\.6-sol.*xhigh/);
+  assert.match(generator, /SUA PESQUISA/);
+  assert.match(generator, /ALUNO/);
+  assert.match(generator, /ORIENTADOR/);
+  assert.match(generator, /https:\/\/mapadapesquisa\.com\.br/);
+  assert.equal(manifest.format.durationSeconds, 15);
+  assert.equal(manifest.format.width, 1080);
+  assert.equal(manifest.format.height, 1920);
+  assert.equal(report.frameRate, 30);
+  assert.equal(report.audioTrackCount, 1);
+  assert.equal(report.qrPayload, "https://mapadapesquisa.com.br");
+  assert.ok(video.byteLength > 1_000_000);
+});

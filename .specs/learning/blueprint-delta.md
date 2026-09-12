@@ -23,3 +23,10 @@ Separar no blueprint o nome persistente do perfil, a área de trabalho e as
 capacidades visuais. A interface deve identificar explicitamente Aluno ou
 Orientador, derivar controles de um contrato por papel e manter autorização
 independente no servidor e no banco.
+
+## Produção criativa promocional
+
+Adicionar um contrato próprio para peças audiovisuais: brief e storyboard antes
+da geração; conteúdo aberto separado de marca e texto exatos; QR Code validado
+dentro do quadro final; trilha com proveniência; inspeção visual de quadros-chave;
+metadados, hashes e arquivos de publicação registrados no encerramento.

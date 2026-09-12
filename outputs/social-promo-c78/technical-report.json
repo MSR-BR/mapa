@@ -1,0 +1,9 @@
+{
+  "audioTrackCount" : 1,
+  "durationSeconds" : 15,
+  "frameRate" : 30,
+  "height" : 1920,
+  "qrPayload" : "https://mapadapesquisa.com.br",
+  "videoCodec" : "H.264",
+  "width" : 1080
+}

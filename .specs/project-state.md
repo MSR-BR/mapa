@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change atual: nenhuma.
-- Changes concluídas: 001–077 conforme `.specs/roadmap.md`.
+- Changes concluídas: 001–078 conforme `.specs/roadmap.md`.
 - Changes pendentes: nenhuma.
 
 ## Decisões-chave
@@ -25,13 +25,13 @@
 
 ## Estado validado mais recente
 
-A Change 077 simplificou o menu para manter somente `Perfil da conta` e a
-identificação `Aluno` ou `Orientador`. Os textos auxiliares e o código sem uso
-foram removidos. Next.js 16.3.5, 93 testes, exportação, build e segurança
-passaram. O deployment `dpl_HiCEa53yXkM9b2AWbnHvruEJ2vb1` está READY no domínio
-canônico.
+A Change 078 produziu o vídeo promocional vertical de 15 segundos em H.264,
+com 1080 × 1920, 30 fps, trilha original, logo oficial, figuras de Aluno e
+Orientador e QR Code validado para o domínio canônico. O pacote de publicação,
+quadros de controle, hashes e proveniência estão em
+`outputs/social-promo-c78/`. A aplicação em produção não foi alterada.
 
 ## Questões em aberto
 
-Nenhuma. Uma nova Change depende de feedback real, incidente ou novo escopo
+Nenhuma. Uma nova Change depende de feedback sobre a peça ou de novo escopo
 aprovado.

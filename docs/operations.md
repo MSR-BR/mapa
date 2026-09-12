@@ -553,3 +553,17 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - Deployment: `dpl_HiCEa53yXkM9b2AWbnHvruEJ2vb1` (READY), aliasado a
   `https://mapadapesquisa.com.br`; domínio HTTP 200, health `status=ok` e nenhum
   erro encontrado nos logs inspecionados.
+
+## Change 078 — Vídeo promocional para redes sociais (12/09/2026)
+
+- Peça vertical de 15 segundos produzida em 1080 × 1920, 30 fps e H.264, com
+  trilha instrumental original.
+- A abertura usa uma cena humana original; logo, textos, cartões, figuras, link
+  e QR Code foram compostos deterministicamente para preservar conteúdo exato.
+- O encerramento mantém o QR Code estático por mais de quatro segundos e aponta
+  para `https://mapadapesquisa.com.br`; a leitura foi confirmada tanto no PNG
+  isolado quanto no quadro final.
+- Os ativos de publicação, quadros de inspeção, hashes e proveniência estão em
+  `outputs/social-promo-c78/`; o gerador reproduzível está em
+  `scripts/generate-social-promo-c78.swift`.
+- Esta Change não alterou nem republicou a aplicação em produção.

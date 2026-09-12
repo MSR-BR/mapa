@@ -43,3 +43,24 @@ de orientador permanece exclusivo do Aluno.
 - Interpretar a remoção de textos indevidos como remoção do nome do próprio
   perfil.
 - Tratar ocultação de controles como substituta de autorização no backend.
+
+# Retrospectiva — Change 078
+
+## Resultado
+
+Foi produzido um pacote promocional vertical de 15 segundos, com narrativa de
+impacto, síntese do fluxo, relação Aluno–Orientador, identidade oficial, CTA,
+link, QR Code funcional e trilha original.
+
+## O que funcionou
+
+- Limitar a geração de imagem à cena humana e montar conteúdo exato localmente.
+- Validar o QR isolado e no quadro final antes de aceitar o MP4.
+- Exportar quadros-chave para revisão visual em resolução original.
+- Manter o gerador e os hashes junto dos arquivos finais.
+
+## O que evitar
+
+- Aprovar o vídeo somente porque os metadados técnicos estão corretos.
+- Pedir a um gerador visual que reproduza logo, texto ou QR Code.
+- Usar áudio de origem incerta quando uma trilha simples pode ser sintetizada.

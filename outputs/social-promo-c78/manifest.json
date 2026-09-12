@@ -1,0 +1,55 @@
+{
+  "change": "078",
+  "createdAt": "2026-09-12T13:28:00-03:00",
+  "format": {
+    "audioTrackCount": 1,
+    "codec": "H.264",
+    "durationSeconds": 15,
+    "frameRate": 30,
+    "height": 1920,
+    "width": 1080
+  },
+  "qrPayload": "https://mapadapesquisa.com.br",
+  "files": [
+    {
+      "path": "cover.png",
+      "bytes": 2662130,
+      "sha256": "7daf50accfc76f5c00f72de9b81f4ffd252f1e70f96fd0c20c0dff2179b2d3f6"
+    },
+    {
+      "path": "frame-final.png",
+      "bytes": 292999,
+      "sha256": "9cceb4217808fb39465b4fc1e7cef18ca35fa29ab65a5602e11f40726be7b69f"
+    },
+    {
+      "path": "frame-flow.png",
+      "bytes": 154256,
+      "sha256": "15065669ad48138925d35df47f0c90fc9a8fb83dfd3e86403d4121ea501589ee"
+    },
+    {
+      "path": "mapa-da-pesquisa-social-15s.mp4",
+      "bytes": 4883691,
+      "sha256": "bd844d18ca7ee994f8b40459a10fd59173b7ea32a5f08c5ad476ccde2c5e5448"
+    },
+    {
+      "path": "qr-mapadapesquisa.png",
+      "bytes": 7930,
+      "sha256": "ac199b1a05775a0c643b7c01e777b48293a8f80f3f32334d10b6e7f17449a806"
+    },
+    {
+      "path": "scene-student.png",
+      "bytes": 1719520,
+      "sha256": "b8af86b4e4f3c172cf38c12c91e3d574a5d486477036783c766fed525024dff9"
+    },
+    {
+      "path": "soundtrack-original.wav",
+      "bytes": 2646044,
+      "sha256": "41663efd47eb09096b5831e3fd4c9bea1b969ae555e732eed6213b2658da8b45"
+    },
+    {
+      "path": "technical-report.json",
+      "bytes": 185,
+      "sha256": "ae7f638f0c7dceb622feb8064a9ce0c7c8a451641203a4ad67fae01268975264"
+    }
+  ]
+}

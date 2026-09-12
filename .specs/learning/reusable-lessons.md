@@ -17,3 +17,9 @@
 8. Textos explicativos de estado permanente devem aparecer somente quando ajudam
    uma decisão atual; em menus compactos, o rótulo explícito do perfil pode ser
    suficiente.
+9. Em peças promocionais com conteúdo exato, a geração visual deve ficar restrita
+   às cenas abertas; marca, texto, URL e QR Code precisam de composição
+   determinística e validação automatizada.
+10. A inspeção de quadros exportados é indispensável mesmo quando duração,
+    resolução e codec passam, pois transformações de canvas podem inverter todo o
+    vídeo sem provocar erro técnico.
