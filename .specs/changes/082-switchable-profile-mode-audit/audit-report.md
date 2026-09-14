@@ -4,8 +4,9 @@
 
 A base existente é aproveitável, mas recolocar apenas um seletor no menu seria
 inseguro e inconsistente. C64 e C71 tornaram o perfil imutável no formulário,
-na Server Action, no grant do banco e no E2E. Além disso, várias permissões
-atuais refletem o contrato antigo em que Orientador também criava projetos.
+na Server Action, no grant do banco e no E2E. A autoria já oferecida ao
+Orientador deve ser preservada, mas hoje não está separada de forma persistente
+do contexto de revisão de projetos estudantis.
 
 ## Pontos positivos preserváveis
 
@@ -26,15 +27,17 @@ atuais refletem o contrato antigo em que Orientador também criava projetos.
 2. **RLS de orientação ignora o modo ativo.** Uma conta vinculada pode consultar
    `projects` e `research_workflows` como orientador pela Data API mesmo quando
    sua interface estiver no modo Aluno.
-3. **RLS de proprietário também ignora o modo ativo.** No modo Orientador, o
-   usuário continua autorizado pelo banco a criar, ler e editar seus projetos
-   de aluno.
-4. **Endpoints de aluno não possuem gate uniforme.** Criação, geração,
+3. **Projetos próprios não registram o perfil de autoria.** Como a conta hoje tem
+   papel imutável, `owner_id` era suficiente. Após liberar a troca, seria possível
+   abrir como Orientador um projeto criado como Aluno e contornar sua supervisão.
+4. **Endpoints de autoria não conhecem o contexto do projeto.** Criação, geração,
    descoberta, navegação, edição, integração, exportação e exclusão verificam
-   autenticação/propriedade, mas em geral não exigem modo Aluno.
-5. **O dashboard de Orientador ainda oferece criação.** Ele renderiza o
-   `QuickStartForm`, projetos próprios, integração e exclusão — incompatível com
-   “apenas features de orientador”.
+   autenticação/propriedade, mas não distinguem projeto de Aluno supervisionável
+   de projeto próprio e autônomo do Orientador.
+5. **Autoria e revisão estão misturadas apenas por branches de interface.** O
+   dashboard já permite ao Orientador criar e manter projetos próprios, o que deve
+   ser preservado, porém falta um contrato persistido que separe esses projetos
+   autônomos dos projetos de estudantes recebidos para revisão.
 
 ### Altos
 
@@ -66,6 +69,6 @@ atuais refletem o contrato antigo em que Orientador também criava projetos.
 ## Conclusão
 
 A solução correta é manter uma única sessão Supabase e uma única identidade,
-persistir o modo ativo no banco, trocar esse modo apenas por RPC atômica e
-aplicar a mesma matriz no DAL e na RLS. Dados pertencem às relações do projeto,
-não ao modo: trocar de perfil muda a janela de acesso, nunca a propriedade.
+persistir o modo ativo no banco, registrar também o perfil de autoria imutável
+de cada projeto e aplicar a combinação `(modo ativo, autoria, relação)` no DAL e
+na RLS. Trocar de perfil nunca altera propriedade, autoria, supervisão ou conteúdo.

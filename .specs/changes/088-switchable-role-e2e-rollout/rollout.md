@@ -10,7 +10,7 @@
 
 1. Liberar RPC conforme C87.
 2. Ativar flag na aplicação compatível.
-3. Smoke da troca com contas de teste.
+3. Smoke da troca e da criação de projeto autônomo de Orientador.
 4. Aplicar policies estritas.
 5. Repetir smoke UI/API/Data API e advisors.
 6. Observar erros 403/409/5xx e suporte sem PII.

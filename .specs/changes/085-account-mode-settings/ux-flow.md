@@ -13,4 +13,6 @@ Menu da conta
 ```
 
 Texto recomendado: “Você continuará na mesma conta. Seus projetos e vínculos
-não serão apagados; apenas as ferramentas do perfil escolhido ficarão ativas.”
+não serão apagados. Nos dois perfis você pode criar mapas rápidos ou avançados.
+Como Aluno, pode trabalhar com supervisão; como Orientador, seus projetos são
+autônomos e você também pode revisar projetos de estudantes vinculados.”

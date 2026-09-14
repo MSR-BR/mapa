@@ -23,8 +23,12 @@
   na mesma conta; banco, servidor, interface e RLS devem aplicar o mesmo modo.
 - O modo ativo será persistido no banco, versionado e trocado apenas por RPC;
   JWT, metadata e armazenamento local não serão fontes de autorização.
-- No estado-alvo, Aluno terá somente construção própria e Orientador somente
-  revisão vinculada; trocar o modo nunca altera propriedade ou conteúdo.
+- No estado-alvo, ambos os perfis criam projetos Rápidos/Avançados e mantêm sua
+  biblioteca própria: projetos de Aluno podem ter supervisão externa; projetos
+  de Orientador são autônomos. O Orientador também recebe uma fila separada de
+  projetos estudantis vinculados para revisão.
+- Cada projeto terá `authoring_role` imutável; trocar o modo nunca altera
+  autoria, propriedade, supervisão, vínculo ou conteúdo.
 - Avisos acadêmicos orientam sem bloquear; integridade técnica continua
   obrigatória.
 - A jornada usa quatro macroetapas e passos internos navegáveis para trás.
@@ -33,9 +37,11 @@
 
 A Change 082 concluiu somente a auditoria e o planejamento de modos alternáveis.
 Foram identificadas dependências do contrato imutável, lacunas de autorização e
-RLS, definida a arquitetura-alvo e criadas as Changes 083–088. Nenhum código de
-produto, migration, dado, ambiente ou deployment foi alterado; o último estado
-funcional publicado continua sendo a C81 no deployment
+RLS, definida a arquitetura-alvo e criadas as Changes 083–088. A arquitetura foi
+refinada para preservar autoria completa e autônoma do Orientador, separada da
+revisão vinculada. Nenhum código de produto, migration, dado, ambiente ou
+deployment foi alterado; o último estado funcional publicado continua sendo a
+C81 no deployment
 `dpl_G8kNnBN9DayztcX1VM3U9EbuwUUU`.
 
 ## Questões em aberto

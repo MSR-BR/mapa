@@ -8,16 +8,33 @@ auth.users (identidade e sessão)
         v
 user_profiles (active_role + role_version + role_changed_at)
         |
-        +--> modo Aluno: somente recursos próprios de construção
+        +--> modo Aluno
+        |      +--> projetos próprios com authoring_role=student
+        |      +--> orientação externa opcional
         |
-        +--> modo Orientador: somente projetos vinculados para revisão
+        +--> modo Orientador
+        |      +--> projetos próprios com authoring_role=advisor
+        |      +--> construção autônoma, sem supervisão
+        |      +--> projetos de estudantes vinculados para revisão
         |
         v
 user_profile_role_events (trilha append-only)
+
+projects (owner_id + authoring_role + advisor_id/advisor_email)
 ```
 
 `owner_id` e `advisor_id` continuam expressando a relação permanente com cada
-projeto. O modo ativo apenas determina qual relação pode ser exercida agora.
+projeto. `authoring_role` registra, sem mudança posterior, se o projeto foi criado
+no perfil Aluno ou Orientador. O modo ativo determina quais projetos e relações
+podem ser exercidos agora.
+
+## Contextos válidos
+
+- `student + owner + authoring_role=student`: autoria com orientação opcional.
+- `advisor + owner + authoring_role=advisor`: autoria autônoma, sem orientador.
+- `advisor + advisor_id + authoring_role=student`: revisão externa, desde que
+  o orientador não seja também o proprietário.
+- Qualquer outra combinação é negada ou não exibida.
 
 ## Fonte de verdade
 
@@ -34,7 +51,8 @@ projeto. O modo ativo apenas determina qual relação pode ser exercida agora.
 Uma RPC autenticada recebe `target_role` e `expected_version`, valida o usuário,
 cria o perfil no primeiro acesso ou atualiza a linha existente, incrementa a
 versão e registra o evento na mesma transação. Repetir o mesmo alvo é idempotente.
-UPDATE/INSERT direto pelo cliente permanecem bloqueados.
+UPDATE direto pelo cliente permanece bloqueado; o INSERT inicial continua
+restrito à própria conta e também é auditado por trigger.
 
 ## Autorização no Next.js
 
@@ -44,7 +62,7 @@ Um módulo `server-only` centraliza:
 - perfil configurado e consulta sem erro;
 - modo e versão atuais;
 - consentimento da versão legal para esse modo;
-- propriedade ou vínculo do projeto conforme a ação.
+- autoria imutável, propriedade ou vínculo do projeto conforme a ação.
 
 Server Components, Server Actions e Route Handlers fazem checagem própria perto
 da leitura/mutação. Layout e Proxy não são considerados barreiras suficientes.

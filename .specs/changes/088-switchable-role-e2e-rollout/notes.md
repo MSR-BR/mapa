@@ -1,6 +1,8 @@
 # Notas
 
 - O E2E deve validar permissões, não apenas textos visíveis.
+- “Projeto próprio” sempre significa autoria compatível com o perfil ativo; a
+  troca de perfil não reclassifica o projeto.
 - Contas de teste podem permanecer, mas projeto, workflow, eventos operacionais
   temporários e vínculos criados pelo teste devem ser removidos.
 - Logs e analytics registram somente modo anterior/novo, resultado e código de

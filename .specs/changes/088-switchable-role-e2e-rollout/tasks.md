@@ -2,7 +2,8 @@
 
 1. Reescrever o verificador aluno–orientador para modo alternável.
 2. Criar fixtures sintéticas e cleanup garantido em `finally`.
-3. Executar cenário funcional completo de duas contas e duas abas.
+3. Executar cenário funcional completo de duas contas, duas abas, bibliotecas
+   próprias dos dois perfis e fila de projetos orientados.
 4. Executar ataques negativos por interface, API e cliente Supabase direto.
 5. Validar consentimentos e eventos de troca sem PII.
 6. Rodar lint, tipos, testes, exportação, segurança, dependências e build.

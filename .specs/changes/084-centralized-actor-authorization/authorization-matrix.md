@@ -1,18 +1,30 @@
 # Matriz de autorização server-side
 
-## Aluno obrigatório
+## Autoria própria — Aluno ou Orientador
 
-- Server Actions: criar, editar, duplicar, excluir e definir orientador.
+- Server Actions: criar, editar, duplicar e excluir.
 - APIs: `generation`, `generate`, `discover`, `proposal-selection`,
   `definition`, `chapters`, `methodology`, `final-map`, `navigation`,
   `references`, `integrate` e `exports`.
-- Requisito adicional: `owner_id = auth.uid()`.
+- Requisitos: `owner_id = auth.uid()` e
+  `project.authoring_role = actor.active_role`.
+- Criação deriva `authoring_role` no servidor/banco. Duplicação preserva o
+  valor. Integração aceita apenas fontes do perfil ativo e a saída o herda.
+
+## Aluno obrigatório
+
+- Definir ou trocar orientador, enviar etapa para supervisão e reenviar lembrete
+  ao orientador.
+- Requisitos adicionais: propriedade e `authoring_role=student`.
 
 ## Orientador obrigatório
 
 - API de comentário, correção e aprovação de revisão.
-- Requisito adicional: vínculo por `advisor_id`; compatibilidade temporária por
-  e-mail só até a reivindicação atômica do vínculo.
+- Requisitos adicionais: projeto `authoring_role=student` e vínculo por
+  `advisor_id`; compatibilidade temporária por e-mail só até a reivindicação
+  atômica do vínculo.
+- Projeto próprio `authoring_role=advisor` usa o fluxo integral de autoria,
+  sem as APIs de revisão ou supervisão.
 
 ## Bifurcado
 

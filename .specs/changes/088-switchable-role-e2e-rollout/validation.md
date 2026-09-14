@@ -7,7 +7,7 @@
 - `npm run check`, `npm run security:audit`, `npm audit` e
   `git diff --check`.
 - Smokes reais de Gemini e Research Starter sem imprimir credenciais.
-- Exportação PDF/DOCX de projeto sintético do Aluno.
+- Exportação PDF/DOCX de projetos sintéticos de Aluno e Orientador.
 - Supabase migrations + Security/Performance Advisors.
 - Deployment READY, domínio canônico 200, `/api/health` ok e logs sem erro novo.
-- Query final confirma cleanup do projeto/workflow sintético.
+- Query final confirma cleanup dos projetos/workflows sintéticos.

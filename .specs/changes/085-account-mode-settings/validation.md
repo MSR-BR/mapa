@@ -4,6 +4,8 @@
   inválido.
 - Teste de que o logout não é chamado durante a troca.
 - Teste de revalidação e destino do redirect.
+- Teste das duas bibliotecas próprias e da fila vinculada do Orientador após
+  trocas sucessivas, sem alteração de autoria ou supervisão.
 - Teste de duas abas: evento local apenas dispara refresh; servidor decide modo.
 - Auditoria de acessibilidade, foco, labels, confirmação e reduced motion.
 - Viewports desktop e móvel.

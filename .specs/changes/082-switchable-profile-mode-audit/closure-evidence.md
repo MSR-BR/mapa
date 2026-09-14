@@ -17,3 +17,7 @@ remota obrigatória de migrations, schema, policies, agregados sem PII e advisor
 
 A implementação só pode começar após aprovação da C83. Até o rollout final, a
 produção continua com os perfis imutáveis das C64/C71.
+
+Retificação de produto incorporada após a auditoria: Orientador mantém criação
+Rápida/Avançada e projetos próprios autônomos; a fila de revisão vinculada é uma
+capacidade adicional e separada.

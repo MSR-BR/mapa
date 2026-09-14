@@ -77,13 +77,13 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 079 | Vídeo promocional premium — versão 2 | Concluída | C78 preservada; nova peça com gancho em 0,3 s, transformação visual do app, mensagem de valor, CTA premium, faixa eletrônica gerada, QR validado e pacote reproduzível. |
 | 080 | Roteiro promocional para NotebookLM | Concluída | Prompt e roteiro Brief em português estruturados para aproximadamente 60 segundos, com conteúdo exato separado da geração; nenhum vídeo ou deploy foi executado. |
 | 081 | Vídeo de apresentação na landing page | Concluída | MP4 fornecido incorporado após o hero com poster real, controles acessíveis, carregamento sob demanda, layout responsivo e regressão automatizada; CPD validado no domínio canônico. |
-| 082 | Auditoria e arquitetura de modos alternáveis | Concluída | Contrato imutável, lacunas de UI/servidor/RLS, matriz canônica, arquitetura-alvo e sequência C83–C88 documentados; nenhuma mudança funcional ou remota executada. |
-| 083 | Fundação de dados para modo ativo | Planejada | Migration aditiva preserva o modo atual, acrescenta versão/horário, trilha append-only e RPC ainda sem grant; preflight remoto é gate obrigatório. |
-| 084 | Autorização centralizada por modo | Planejada | DAL fail-closed e gates uniformes protegem Server Components, Server Actions e Route Handlers; código permanece sob feature flag desligada. |
+| 082 | Auditoria e arquitetura de modos alternáveis | Concluída | Contrato imutável, lacunas de UI/servidor/RLS, matriz canônica e sequência C83–C88 documentados; autoria própria nos dois perfis e revisão vinculada foram separadas sem mudança funcional remota. |
+| 083 | Fundação de dados para modo ativo | Planejada | Migration aditiva preserva o modo atual, acrescenta autoria imutável ao projeto, versão/horário, trilha append-only e RPC ainda sem grant; preflight remoto é gate obrigatório. |
+| 084 | Autorização centralizada por modo | Planejada | DAL fail-closed combina modo, autoria e relação em Server Components, Server Actions e Route Handlers; código permanece sob feature flag desligada. |
 | 085 | Seleção de perfil nas configurações | Planejada | A mesma conta escolhe Aluno ou Orientador com confirmação, concorrência versionada, consentimento correto e atualização entre abas. |
-| 086 | Interface estrita Aluno/Orientador | Planejada | Aluno recebe somente construção própria; Orientador recebe somente revisão vinculada; dados do outro modo permanecem preservados e não são revelados. |
-| 087 | RLS e vínculos conscientes do modo | Planejada | Policies, funções e trigger reproduzem a matriz no Supabase; troca via RPC é liberada com grants mínimos e auto-orientação é bloqueada. |
-| 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam troca, persistência, vínculo, negações UI/API/RLS, produção, observabilidade, cleanup e CPD final. |
+| 086 | Interface estrita Aluno/Orientador | Planejada | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. |
+| 087 | RLS e vínculos conscientes do modo | Planejada | Policies, funções e trigger combinam modo, autoria e relação; Orientador mantém CRUD autônomo próprio sem poder autoaprovar projeto criado como Aluno. |
+| 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam autoria nos dois perfis, supervisão estudantil, revisão vinculada, troca, RLS, produção, cleanup e CPD final. |
 
 ## Marcos
 

@@ -8,3 +8,5 @@
 6. O plano cobre migration, servidor, configurações, interface, RLS e E2E.
 7. C83–C88 possuem especificações completas e gates verificáveis.
 8. Nenhuma mudança funcional ou remota foi executada durante a auditoria.
+9. O plano permite autoria nos dois modos sem transformar projeto de Aluno em
+   projeto autônomo quando a conta troca para Orientador.

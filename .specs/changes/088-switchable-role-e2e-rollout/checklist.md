@@ -2,6 +2,9 @@
 
 - [ ] E2E alternável implementado.
 - [ ] Duas contas e duas abas validadas.
+- [ ] Criação Rápida/Avançada nos dois perfis validada.
+- [ ] Projeto próprio autônomo de Orientador concluído e exportado.
+- [ ] Projeto estudantil não pode ser autoaprovado após troca.
 - [ ] Matriz UI/API/RLS aprovada.
 - [ ] Persistência entre logins aprovada.
 - [ ] Consentimento e auto-orientação validados.
