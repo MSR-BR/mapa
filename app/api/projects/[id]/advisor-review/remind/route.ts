@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { sendProjectNotification } from "@/lib/email/project-notifications";
-import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { ADVISOR_REVIEW_LABELS, currentAdvisorReview } from "@/modules/research-workflow/advisor-review";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
@@ -11,8 +10,14 @@ export async function POST(_request: Request, routeContext: { params: Promise<{ 
   const { id } = await routeContext.params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
 
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
+  const access = await authorizeProjectRoute({
+    capability: "reminder",
+    mutation: true,
+    projectId: id,
+    request: _request,
+  });
+  if (!access.ok) return access.response;
+  const { actor, relation, supabase, userId } = access.value;
   const { data: project, error } = await supabase
     .from("projects")
     .select("id, owner_id, advisor_email, advisor_id, title, workflow_version, deleted_at")
@@ -29,15 +34,8 @@ export async function POST(_request: Request, routeContext: { params: Promise<{ 
     return NextResponse.json({ error: "Não há uma validação ativa para reenviar." }, { status: 409 });
   }
 
-  const actorEmail = claimEmail(claims as Record<string, unknown>);
-  const isAdvisor = profile.activeRole === "advisor";
-  if (isAdvisor) {
-    const advisorMatches = project.advisor_id === userId
-      || (Boolean(project.advisor_email) && normalizeAdvisorEmail(project.advisor_email) === actorEmail);
-    if (!advisorMatches) return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de revisão." }, { status: 403 });
-  } else if (project.owner_id !== userId) {
-    return NextResponse.json({ error: "Você não pode reenviar avisos deste projeto." }, { status: 403 });
-  }
+  const actorEmail = claimEmail(actor.claims);
+  const isAdvisor = relation === "advisor";
 
   const recipientEmail = isAdvisor ? review.studentEmail : review.advisorEmail ?? normalizeAdvisorEmail(project.advisor_email);
   if (!recipientEmail) {

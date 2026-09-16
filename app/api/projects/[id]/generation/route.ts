@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { editableResearchStructureSchema, validateReferenceIds } from "@/modules/generation/schema";
 import { loadGenerationSnapshot, loadGenerationStatus } from "@/modules/generation/storage";
 import { toJson } from "@/modules/generation/types";
@@ -10,7 +10,9 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const statusOnly = new URL(request.url).searchParams.get("status") === "1";
   const payload = statusOnly
     ? { job: await loadGenerationStatus(supabase, userId, id) }
@@ -21,7 +23,9 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const body: unknown = await request.json().catch(() => null);
   const parsed = editableResearchStructureSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "A estrutura contém campos inválidos." }, { status: 400 });

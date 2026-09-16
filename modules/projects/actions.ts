@@ -9,8 +9,18 @@ import {
   duplicateResearchWorkflow,
 } from "@/modules/research-workflow/storage";
 
+import {
+  ActorAuthorizationError,
+  isAccountModeSwitchEnabled,
+  requireActorContext,
+} from "@/modules/profile/authorization";
+
 import { normalizeAdvisorEmail } from "./advisor";
-import { requireAuthenticatedUser } from "./auth";
+import {
+  authorizeProject,
+  expectedRoleVersionFromFormData,
+  type AuthorizedProjectContext,
+} from "./auth";
 import type { AdvisorLinkActionState, ProjectActionState } from "./types";
 import { parseProjectForm, readProjectId } from "./validation";
 import {
@@ -21,6 +31,13 @@ import {
   type ResearchIntake,
 } from "./research-intake";
 
+function projectAuthorizationMessage(error: ActorAuthorizationError) {
+  if (error.code === "profile_mode_stale") return error.message;
+  if (error.code === "profile_mode_mismatch") return "Esta ação não está disponível no perfil ativo.";
+  if (error.code === "profile_consent_required") return error.message;
+  return "Não foi possível confirmar sua autorização. Atualize a página e tente novamente.";
+}
+
 function academicLevelForResearchType(type: ResearchIntake["researchType"]) {
   if (type === "tcc") return "undergraduate" as const;
   if (type === "monografia") return "specialization" as const;
@@ -30,7 +47,7 @@ function academicLevelForResearchType(type: ResearchIntake["researchType"]) {
 }
 
 async function saveProjectAdvisor(
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   projectId: string,
   advisorEmail: string | null,
 ) {
@@ -74,12 +91,26 @@ export async function createProject(
     };
   }
 
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
+  let actor;
+  try {
+    actor = await requireActorContext({
+      expectedRoleVersion: expectedRoleVersionFromFormData(formData),
+      requireLegalConsent: true,
+    });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      return { message: projectAuthorizationMessage(error), status: "error" };
+    }
+    throw error;
+  }
+  const { claims, supabase, userId } = actor;
   const useResearchMapV2 = autoGenerate && isResearchMapV2EnabledForClaims(claims);
-  let projectData = result.data;
+  let projectData = isAccountModeSwitchEnabled() && actor.activeRole === "advisor"
+    ? { ...result.data, advisor_email: null }
+    : result.data;
   if (autoGenerate) {
     projectData = {
-      ...result.data,
+      ...projectData,
       academic_level: intake?.researchType ? academicLevelForResearchType(intake.researchType) : result.data.academic_level,
       problem_statement: parsedIntake
         ? result.data.problem_statement || result.data.title
@@ -152,10 +183,25 @@ export async function updateProject(
   }
   if (!projectId) return { message: "Projeto inválido.", status: "error" };
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  let access;
+  try {
+    access = await authorizeProject(projectId, "owner", {
+      expectedRoleVersion: expectedRoleVersionFromFormData(formData),
+      requireLegalConsent: true,
+    });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      return { message: projectAuthorizationMessage(error), status: "error" };
+    }
+    throw error;
+  }
+  const { actor, supabase, userId } = access;
+  const projectData = isAccountModeSwitchEnabled() && actor.activeRole === "advisor"
+    ? { ...result.data, advisor_email: null }
+    : result.data;
   const { data, error } = await supabase
     .from("projects")
-    .update({ ...result.data, advisor_id: null, updated_at: new Date().toISOString() })
+    .update({ ...projectData, advisor_id: null, updated_at: new Date().toISOString() })
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)
@@ -165,7 +211,7 @@ export async function updateProject(
   if (error || !data) {
     return { message: "Projeto não encontrado ou sem permissão.", status: "error" };
   }
-  const advisorLink = await saveProjectAdvisor(supabase, projectId, result.data.advisor_email);
+  const advisorLink = await saveProjectAdvisor(supabase, projectId, projectData.advisor_email);
   if ("error" in advisorLink) {
     return { message: "Não foi possível verificar a conta do orientador.", status: "error" };
   }
@@ -187,8 +233,23 @@ export async function updateProjectAdvisor(
     return { message: "Informe um e-mail válido para o orientador.", status: "error", value: advisorEmail };
   }
 
-  const { supabase } = await requireAuthenticatedUser();
-  const advisorLink = await saveProjectAdvisor(supabase, projectId, advisorEmail);
+  let access;
+  try {
+    access = await authorizeProject(projectId, "student_supervision", {
+      expectedRoleVersion: expectedRoleVersionFromFormData(formData),
+      requireLegalConsent: true,
+    });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      return {
+        message: projectAuthorizationMessage(error),
+        status: "error",
+        value: advisorEmail ?? "",
+      };
+    }
+    throw error;
+  }
+  const advisorLink = await saveProjectAdvisor(access.supabase, projectId, advisorEmail);
   if ("error" in advisorLink) {
     return { message: "Projeto não encontrado ou sem permissão.", status: "error", value: advisorEmail ?? "" };
   }
@@ -217,10 +278,22 @@ export async function duplicateProject(formData: FormData) {
   const projectId = readProjectId(formData);
   if (!projectId) redirect("/dashboard");
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  let access;
+  try {
+    access = await authorizeProject(projectId, "owner", {
+      expectedRoleVersion: expectedRoleVersionFromFormData(formData),
+      requireLegalConsent: true,
+    });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      redirect(`/dashboard?error=${error.code}`);
+    }
+    throw error;
+  }
+  const { supabase, userId } = access;
   const { data: source } = await supabase
     .from("projects")
-    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, workflow_version")
+    .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, workflow_version, authoring_role")
     .eq("id", projectId)
     .eq("owner_id", userId)
     .is("deleted_at", null)
@@ -231,7 +304,19 @@ export async function duplicateProject(formData: FormData) {
   const copyTitle = `${source.title} (cópia)`.slice(0, 160);
   const { data: copy, error } = await supabase
     .from("projects")
-    .insert({ ...source, owner_id: userId, status: "draft", title: copyTitle })
+    .insert({
+      academic_level: source.academic_level,
+      advisor_email: source.advisor_email,
+      advisor_id: source.advisor_id,
+      keywords: source.keywords,
+      knowledge_area: source.knowledge_area,
+      owner_id: userId,
+      problem_statement: source.problem_statement,
+      status: "draft",
+      theme: source.theme,
+      title: copyTitle,
+      workflow_version: source.workflow_version,
+    })
     .select("id")
     .single();
 
@@ -258,7 +343,19 @@ export async function deleteProject(formData: FormData) {
   const confirmed = formData.get("confirmDelete") === "yes";
   if (!projectId || !confirmed) redirect("/dashboard?error=delete-confirmation");
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  let access;
+  try {
+    access = await authorizeProject(projectId, "owner", {
+      expectedRoleVersion: expectedRoleVersionFromFormData(formData),
+      requireLegalConsent: true,
+    });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      redirect(`/dashboard?error=${error.code}`);
+    }
+    throw error;
+  }
+  const { supabase, userId } = access;
   const now = new Date().toISOString();
   const { data, error } = await supabase
     .from("projects")

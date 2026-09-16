@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { toJson } from "@/modules/generation/types";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import {
+  authorizeProjectRoute,
+  type AuthorizedProjectContext,
+} from "@/modules/projects/auth";
 import {
   researchWorkflowContentSchema,
   type ProblemCandidate,
@@ -11,7 +14,7 @@ import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function updateSelectedProject(
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   ownerId: string,
   projectId: string,
   candidate: ProblemCandidate,
@@ -46,7 +49,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Seleção inválida." }, { status: 400 });
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   const discovery = workflow?.content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === candidateId);

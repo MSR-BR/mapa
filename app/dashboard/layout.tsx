@@ -1,25 +1,38 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { AccountMenu } from "@/modules/auth/account-menu";
 import { BrandLogo } from "@/modules/branding/brand-logo";
-import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
-import { loadUserProfile } from "@/modules/profile/storage";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
 import { LegalConsentGate } from "@/modules/legal/legal-consent-gate";
 import { LegalLinks } from "@/modules/legal/legal-links";
+import {
+  ActorAuthorizationError,
+  loadActorContext,
+} from "@/modules/profile/authorization";
+import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
+  let actorState: Awaited<ReturnType<typeof loadActorContext>>;
+  try {
+    actorState = await loadActorContext();
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError && error.code === "authentication_required") {
+      redirect("/login");
+    }
+    throw error;
+  }
+
+  const identity = actorState.status === "ready" ? actorState.actor : actorState.identity;
+  const profile = actorState.status === "ready" ? actorState.actor : null;
   const metadata = (
-    claims.user_metadata && typeof claims.user_metadata === "object"
-      ? claims.user_metadata
+    identity.claims.user_metadata && typeof identity.claims.user_metadata === "object"
+      ? identity.claims.user_metadata
       : {}
   ) as Record<string, unknown>;
-  const email = typeof claims.email === "string" ? claims.email : "";
+  const email = typeof identity.claims.email === "string" ? identity.claims.email : "";
   const displayName = [metadata.full_name, metadata.name].find((value) => typeof value === "string") as string | undefined;
   const avatarUrl = [metadata.avatar_url, metadata.picture].find((value) => typeof value === "string") as string | undefined;
   const initialsSource = displayName || email.split("@")[0] || "U";
@@ -39,7 +52,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <nav aria-label="Navegação principal">
           <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
           <AccountMenu
-            activeRole={profile.activeRole}
+            activeRole={profile?.activeRole}
             avatarUrl={avatarUrl}
             displayName={displayName}
             email={email}
@@ -47,8 +60,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           />
         </nav>
       </header>
-      {!profile.hasProfile ? <ProfileModePrompt email={email} /> : null}
-      {profile.hasProfile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} /> : null}
+      {!profile ? <ProfileModePrompt email={email} /> : null}
+      {profile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} /> : null}
       {children}
       <LegalLinks defaultEmail={email} />
     </div>

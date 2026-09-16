@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { GenerationWorkspace } from "@/modules/generation/generation-workspace";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
-import { loadUserProfile } from "@/modules/profile/storage";
-import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { ActorAuthorizationError } from "@/modules/profile/authorization";
+import { authorizeProject } from "@/modules/projects/auth";
 import { PendingProjectCleanup } from "@/modules/projects/pending-project-cleanup";
 import { ProjectAdvisorPanel } from "@/modules/projects/project-advisor-panel";
 import { AdvisorReviewWorkspace } from "@/modules/research-workflow/advisor-review-workspace";
@@ -34,45 +33,37 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { discover, generate } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
+  let access;
+  try {
+    access = await authorizeProject(id, "related_read", { requireLegalConsent: true });
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError) {
+      if (error.code === "authentication_required") redirect("/login");
+      if (error.code === "project_not_found") notFound();
+      redirect(`/dashboard?error=${error.code}`);
+    }
+    throw error;
+  }
+  const { actor, relation, supabase, userId } = access;
   const { data: project } = await supabase
     .from("projects")
     .select(
-      "id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at, owner_id, advisor_email, advisor_id",
+      "id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at, owner_id, advisor_email, advisor_id, authoring_role",
     )
     .eq("id", id)
     .is("deleted_at", null)
     .maybeSingle();
 
   if (!project) notFound();
-  const isOwner = project.owner_id === userId;
-  const userEmail = claimEmail(claims as Record<string, unknown>);
-  const advisorMatches = !isOwner && Boolean(userEmail) && (
-    project.advisor_id === userId || normalizeAdvisorEmail(project.advisor_email) === userEmail
-  );
-  const isAdvisor = advisorMatches && profile.activeRole === "advisor";
-  if (!isOwner && !advisorMatches) notFound();
+  const isOwner = relation === "owner";
+  const isAdvisor = relation === "advisor";
 
   const source = integrationSource(project.problem_statement);
-  const isAdvisorOwner = isOwner && profile.activeRole === "advisor";
+  const isAdvisorOwner = isOwner && actor.activeRole === "advisor";
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
     if (!workflow) notFound();
-    if (advisorMatches && !isAdvisor) {
-      return (
-        <main className="workspace-shell proposal-workspace-shell">
-          <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
-          <p className="eyebrow">Mapa da pesquisa</p>
-          <h1>{project.title}</h1>
-          <div className="inline-state advisor-mode-required" role="status">
-            <strong>Esta conta está configurada para criação de projetos.</strong>
-            <span>Abra o projeto com a conta de revisão vinculada a ele.</span>
-          </div>
-        </main>
-      );
-    }
     if (isAdvisor) {
       return (
         <main className="workspace-shell proposal-workspace-shell">

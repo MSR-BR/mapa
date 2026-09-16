@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 
+import {
+  isAccountModeSwitchEnabled,
+  loadActorContext,
+} from "@/modules/profile/authorization";
 import { USER_PROFILE_PRESENTATIONS } from "@/modules/profile/presentation";
-import { claimPendingAdvisorProjects, loadUserProfile } from "@/modules/profile/storage";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { claimPendingAdvisorProjects } from "@/modules/profile/storage";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
 import { workflowAdvisorStatus } from "@/modules/research-workflow/advisor-review";
@@ -63,31 +66,39 @@ function isWorkflowFinished(project: { status: string; workflow_version: number 
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
   const { resume, continue: continueParam } = await searchParams;
-  const { supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
+  const actorState = await loadActorContext();
+  if (actorState.status !== "ready") {
+    return <main aria-hidden="true" className="workspace-shell dashboard-home" />;
+  }
+  const profile = actorState.actor;
+  const { supabase, userId } = profile;
   const profilePresentation = USER_PROFILE_PRESENTATIONS[profile.activeRole];
   const isStudentMode = profile.activeRole === "student";
   const isAdvisorMode = profile.activeRole === "advisor";
   if (profile.activeRole === "advisor") {
     await claimPendingAdvisorProjects(supabase);
   }
-  const projectColumns = "id, title, theme, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id";
+  const projectColumns = "id, title, theme, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id, authoring_role";
+  const ownedProjectsBase = supabase
+    .from("projects")
+    .select(projectColumns)
+    .eq("owner_id", userId)
+    .is("deleted_at", null);
+  const ownedProjectsQuery = isAccountModeSwitchEnabled()
+    ? ownedProjectsBase.eq("authoring_role", profile.activeRole)
+    : ownedProjectsBase;
+  const advisedProjectsBase = supabase
+    .from("projects")
+    .select(projectColumns)
+    .neq("owner_id", userId)
+    .is("deleted_at", null);
+  const advisedProjectsQuery = isAccountModeSwitchEnabled()
+    ? advisedProjectsBase.eq("authoring_role", "student")
+    : advisedProjectsBase;
   const [{ data, error }, { data: advisedData, error: advisedError }] = await Promise.all([
-    supabase
-      .from("projects")
-      .select(projectColumns)
-      .eq("owner_id", userId)
-      .is("deleted_at", null)
-      .order("updated_at", { ascending: false })
-      .limit(12),
+    ownedProjectsQuery.order("updated_at", { ascending: false }).limit(12),
     profile.activeRole === "advisor"
-      ? supabase
-        .from("projects")
-        .select(projectColumns)
-        .neq("owner_id", userId)
-        .is("deleted_at", null)
-        .order("updated_at", { ascending: false })
-        .limit(12)
+      ? advisedProjectsQuery.order("updated_at", { ascending: false }).limit(12)
       : Promise.resolve({ data: [], error: null }),
   ]);
   const projects = data ?? [];

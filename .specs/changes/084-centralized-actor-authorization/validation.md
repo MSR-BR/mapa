@@ -13,3 +13,10 @@
   `requireAuthenticatedUser`.
 - `npm run check`, `npm run security:audit` e `git diff --check`.
 - Deployment com flag desligada e smoke de regressão dos dois perfis atuais.
+
+## Resultado local — 2026-09-16
+
+- `npm run check`: aprovado, com 102 testes e build de produção.
+- `npm run security:audit`: aprovado em 521 arquivos e 14/14 rotas acadêmicas.
+- `git diff --check`: aprovado.
+- CPD e smoke remoto com a flag desligada permanecem pendentes.

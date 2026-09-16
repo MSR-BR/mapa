@@ -25,7 +25,7 @@ test("keeps the branded foundation and locale in the App Router", async () => {
 });
 
 test("requests login only after the public central execution", async () => {
-  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard, supportRoute, profileStorage] = await Promise.all([
+  const [home, publicStart, loginPage, signupPage, authActions, quickStart, legalContent, legalLinks, dashboard, supportRoute, actorPolicy, profileStorage] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("modules/projects/public-start-form.tsx"),
     readProjectFile("app/(auth)/login/page.tsx"),
@@ -36,6 +36,7 @@ test("requests login only after the public central execution", async () => {
     readProjectFile("modules/legal/legal-links.tsx"),
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("app/api/support/route.ts"),
+    readProjectFile("modules/profile/actor-policy.ts"),
     readProjectFile("modules/profile/storage.ts"),
   ]);
 
@@ -73,7 +74,8 @@ test("requests login only after the public central execution", async () => {
   assert.match(legalContent, /Nesta área de revisão/);
   assert.match(legalContent, /Research Starter/);
   assert.match(legalContent, /até 30 dias/);
-  assert.match(profileStorage, /terms_version === LEGAL_TERMS_VERSION/);
+  assert.match(profileStorage, /resolveProfileRecord\(data, consent, LEGAL_TERMS_VERSION\)/);
+  assert.match(actorPolicy, /consent\.terms_version === termsVersion/);
   assert.match(legalLinks, /Sérgio França/);
   assert.match(legalLinks, /Escola de Engenharia/);
   assert.match(legalLinks, /aria-labelledby="legal-dialog-title"/);
@@ -502,7 +504,7 @@ test("protects the dashboard beyond the auth proxy", async () => {
 
   assert.match(proxy, /auth\.getClaims\(\)/);
   assert.match(proxyEntry, /_next\/static/);
-  assert.match(dashboard, /requireAuthenticatedUser\(\)/);
+  assert.match(dashboard, /loadActorContext\(\)/);
   assert.match(projectAuth, /auth\.getClaims\(\)/);
   assert.match(projectAuth, /redirect\("\/login"\)/);
   assert.match(authActions, /signInWithPassword/);
@@ -865,7 +867,7 @@ test("implements Change 073 with revision-safe back navigation and methodology r
   assert.match(progress, /router\.replace\(workflowNavigationUrl/);
   assert.match(navigation, /POSITION_ORDER/);
   assert.match(navigation, /POSITION_ORDER\[target\] < POSITION_ORDER\[current\]/);
-  assert.match(route, /requireAuthenticatedUser\(\)/);
+  assert.match(route, /authorizeProjectRoute/);
   assert.match(route, /workflow\.revision !== parsed\.data\.revision/);
   assert.match(route, /pendingAdvisorReview\(workflow\.content\)/);
   assert.match(route, /Etapa anterior aberta sem alterar o conteúdo salvo/);
@@ -1092,7 +1094,7 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
 
   assert.match(accountMenu, /activeRole/);
   assert.match(accountMenu, /Perfil da conta/);
-  assert.match(accountMenu, /profilePresentation\.profileLabel/);
+  assert.match(accountMenu, /profilePresentation\?\.profileLabel/);
   assert.doesNotMatch(accountMenu, /Área de trabalho:/);
   assert.doesNotMatch(accountMenu, /Este perfil permanece associado/);
   assert.doesNotMatch(accountMenu, /Mudar para/);
@@ -1118,10 +1120,11 @@ test("supports student/advisor profile modes and deferred advisor linking", asyn
   assert.match(projectPage, /ProjectAdvisorPanel/);
   assert.match(projectPage, /isAdvisorOwner/);
   assert.match(projectPage, /isAdvisorOwner \? null :/);
-  assert.match(projectPage, /advisorMatches && !isAdvisor/);
-  assert.match(projectPage, /conta está configurada para criação de projetos/);
-  assert.match(advisorRoute, /profile\.activeRole !== "advisor"/);
-  assert.match(advisorRoute, /project\.advisor_id === userId/);
+  assert.match(projectPage, /authorizeProject\(id, "related_read"/);
+  assert.match(projectPage, /relation === "advisor"/);
+  assert.doesNotMatch(projectPage, /advisorMatches/);
+  assert.match(advisorRoute, /capability: "advisor_review"/);
+  assert.match(advisorRoute, /authorizeProjectRoute/);
   assert.match(projectActions, /set_project_advisor/);
   assert.match(projectActions, /E-mail salvo\. O vínculo será concluído/);
   assert.match(projectAdvisorPanel, /E-mail do orientador/);

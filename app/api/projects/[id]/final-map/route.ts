@@ -4,9 +4,12 @@ import { z } from "zod";
 import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import { reviewFinalMapCoherence } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
-import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import {
+  authorizeProjectCapabilityResponse,
+  authorizeProjectRoute,
+  type AuthorizedProjectContext,
+} from "@/modules/projects/auth";
 import {
   buildFinalMap,
   canCompleteFinalMap,
@@ -124,7 +127,7 @@ async function saveWorkflow(
   state: ResearchWorkflow["state"],
   stableState: ResearchWorkflow["stableState"],
   sourceRevision: number,
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   ownerId: string,
 ) {
   const revision = workflow.revision + 1;
@@ -154,9 +157,11 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
 
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
-  const isAdvisorOwner = profile.activeRole === "advisor";
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { actor, supabase, userId } = access.value;
+  const claims = actor.claims;
+  const isAdvisorOwner = actor.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
@@ -204,6 +209,12 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
   const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
+    const supervisionError = authorizeProjectCapabilityResponse(
+      access.value,
+      "student_supervision",
+    );
+    if (supervisionError) return supervisionError;
+
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: null }),
       {

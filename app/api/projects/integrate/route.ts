@@ -4,7 +4,7 @@ import { GENERATION_MODEL, mergeResearchStructures } from "@/modules/generation/
 import { STRUCTURE_PROMPT_VERSION } from "@/modules/generation/prompts/structure-v1";
 import { isResearchStructure, RESEARCH_STRUCTURE_SCHEMA_VERSION, type ResearchStructure } from "@/modules/generation/schema";
 import { toJson, type StoredReference } from "@/modules/generation/types";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { authorizeOwnedProjectsRoute } from "@/modules/projects/auth";
 import { buildFinalMap, finalMapSummary, topicsFromContent } from "@/modules/research-workflow/final-map";
 import {
   researchWorkflowContentSchema,
@@ -260,7 +260,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Selecione de 2 a 4 projetos válidos." }, { status: 400 });
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeOwnedProjectsRoute({
+    mutation: true,
+    projectIds,
+    request,
+  });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const { data: projects } = await supabase
     .from("projects")
     .select("id, title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")

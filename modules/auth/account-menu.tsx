@@ -11,7 +11,7 @@ import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { logout } from "./actions";
 
 type Props = {
-  activeRole: UserProfileRole;
+  activeRole?: UserProfileRole;
   avatarUrl?: string;
   displayName?: string;
   email: string;
@@ -20,7 +20,7 @@ type Props = {
 
 export function AccountMenu({ activeRole, avatarUrl, displayName, email, initials }: Props) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
-  const profilePresentation = USER_PROFILE_PRESENTATIONS[activeRole];
+  const profilePresentation = activeRole ? USER_PROFILE_PRESENTATIONS[activeRole] : null;
 
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
@@ -55,10 +55,10 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
         </div>
         <div className="account-profile-switch">
           <span>Perfil da conta</span>
-          <strong>{profilePresentation.profileLabel}</strong>
+          <strong>{profilePresentation?.profileLabel ?? "Não definido"}</strong>
         </div>
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
-        <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole, source: "dashboard" })}><button type="submit">Sair</button></form>
+        <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole ?? "unknown", source: "dashboard" })}><button type="submit">Sair</button></form>
       </div>
     </details>
   );

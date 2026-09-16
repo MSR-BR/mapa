@@ -1,13 +1,13 @@
 import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 
-const trackedFiles = execFileSync("git", ["ls-files"], { encoding: "utf8" })
+const repositoryFiles = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard"], { encoding: "utf8" })
   .split("\n")
   .map((file) => file.trim())
   .filter(Boolean)
   .filter((file) => !file.startsWith(".git/") && !file.startsWith("node_modules/") && !file.startsWith(".next/"));
 
-const textFiles = trackedFiles.filter((file) => !/\.(?:png|jpe?g|gif|webp|pdf|woff2?|ttf|ico)$/i.test(file));
+const textFiles = repositoryFiles.filter((file) => !/\.(?:png|jpe?g|gif|webp|pdf|woff2?|ttf|ico)$/i.test(file));
 const contents = new Map();
 for (const file of textFiles) {
   contents.set(file, await readFile(file, "utf8"));
@@ -18,9 +18,9 @@ const pass = (check, evidence) => findings.push({ check, evidence, status: "pass
 const warn = (check, evidence) => findings.push({ check, evidence, status: "warning" });
 const fail = (check, evidence) => findings.push({ check, evidence, status: "fail" });
 
-const trackedEnvFiles = trackedFiles.filter((file) => /(^|\/)\.env(?:\.|$)/.test(file) && file !== ".env.example");
-if (trackedEnvFiles.length === 0) pass("secrets", "Nenhum .env de ambiente foi rastreado pelo Git.");
-else fail("secrets", `Arquivos de ambiente rastreados: ${trackedEnvFiles.join(", ")}`);
+const repositoryEnvFiles = repositoryFiles.filter((file) => /(^|\/)\.env(?:\.|$)/.test(file) && file !== ".env.example");
+if (repositoryEnvFiles.length === 0) pass("secrets", "Nenhum .env de ambiente versionado ou pendente foi encontrado.");
+else fail("secrets", `Arquivos de ambiente versionados ou pendentes: ${repositoryEnvFiles.join(", ")}`);
 
 const secretPatterns = [
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
@@ -34,7 +34,7 @@ for (const [file, text] of contents) {
   if (file === ".env.example") continue;
   if (secretPatterns.some((pattern) => pattern.test(text))) secretHits.push(file);
 }
-if (secretHits.length === 0) pass("secrets", "Nenhum padrão de chave privada/token foi encontrado nos arquivos rastreados.");
+if (secretHits.length === 0) pass("secrets", "Nenhum padrão de chave privada/token foi encontrado nos arquivos do repositório.");
 else fail("secrets", `Possíveis segredos em: ${secretHits.join(", ")}`);
 
 const publicEnv = contents.get(".env.example") ?? "";
@@ -46,7 +46,7 @@ if (!/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=/.test(publicEnv)) {
   pass("public-environment", "Variáveis públicas não incluem service_role, senha ou tokens privados.");
 }
 
-const migrationFiles = trackedFiles.filter((file) => file.startsWith("supabase/migrations/") && file.endsWith(".sql"));
+const migrationFiles = repositoryFiles.filter((file) => file.startsWith("supabase/migrations/") && file.endsWith(".sql"));
 const advisorHardening = migrationFiles
   .map((file) => contents.get(file) ?? "")
   .join("\n");
@@ -67,15 +67,21 @@ if (advisorHardening.includes("restrict_advisor_workflow_update_trigger")) {
   fail("advisor-rls", "Não foi encontrada a proteção de UPDATE do workflow do orientador.");
 }
 
-const projectApiRoutes = trackedFiles.filter((file) => /^app\/api\/projects\/.*\/route\.ts$/.test(file));
+const projectApiRoutes = repositoryFiles.filter((file) => /^app\/api\/projects\/.*\/route\.ts$/.test(file));
 const unguardedProjectRoutes = projectApiRoutes.filter((file) => {
   const text = contents.get(file) ?? "";
-  return !text.includes("requireAuthenticatedUser") && !text.includes("auth.getClaims");
+  return !text.includes("authorizeProjectRoute") && !text.includes("authorizeOwnedProjectsRoute");
 });
-if (unguardedProjectRoutes.length === 0) pass("api-auth", `${projectApiRoutes.length} rotas de projeto exigem autenticação no servidor.`);
-else fail("api-auth", `Rotas de projeto sem requireAuthenticatedUser: ${unguardedProjectRoutes.join(", ")}`);
+const legacyProjectRoutes = projectApiRoutes.filter((file) => (contents.get(file) ?? "").includes("requireAuthenticatedUser"));
+if (unguardedProjectRoutes.length > 0) {
+  fail("api-auth", `Rotas de projeto sem gate central: ${unguardedProjectRoutes.join(", ")}`);
+} else if (legacyProjectRoutes.length > 0) {
+  fail("api-auth", `Rotas de projeto ainda usam autenticação legada: ${legacyProjectRoutes.join(", ")}`);
+} else {
+  pass("api-auth", `${projectApiRoutes.length} rotas de projeto usam autorização central de ator, modo e relação.`);
+}
 
-const dangerousHtml = trackedFiles.filter((file) => file !== "scripts/audit-security.mjs" && (contents.get(file) ?? "").includes("dangerouslySetInnerHTML"));
+const dangerousHtml = repositoryFiles.filter((file) => file !== "scripts/audit-security.mjs" && (contents.get(file) ?? "").includes("dangerouslySetInnerHTML"));
 if (dangerousHtml.length === 1 && dangerousHtml[0] === "app/home.html/page.tsx") {
   pass("xss", "Único uso de HTML bruto está limitado ao JSON-LD estático da landing page.");
 } else if (dangerousHtml.length === 0) pass("xss", "Nenhum uso de HTML bruto foi encontrado.");
@@ -105,5 +111,5 @@ if ((contents.get("app/dashboard/layout.tsx") ?? "").includes("index: false") &&
 warn("remote-verification", "Verificação RLS remota e fluxo E2E dependem de credenciais de teste e acesso à API Supabase; não são inferidos por esta auditoria estática.");
 
 const failures = findings.filter((finding) => finding.status === "fail");
-console.log(JSON.stringify({ generatedAt: new Date().toISOString(), filesScanned: trackedFiles.length, findings }, null, 2));
+console.log(JSON.stringify({ generatedAt: new Date().toISOString(), filesScanned: repositoryFiles.length, findings }, null, 2));
 if (failures.length > 0) process.exitCode = 1;

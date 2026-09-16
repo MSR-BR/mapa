@@ -5,9 +5,11 @@ import {
   sendProjectNotification,
 } from "@/lib/email/project-notifications";
 import { toJson } from "@/modules/generation/types";
-import { claimPendingAdvisorProjects, loadUserProfile } from "@/modules/profile/storage";
-import { claimEmail, normalizeAdvisorEmail } from "@/modules/projects/advisor";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { claimEmail } from "@/modules/projects/advisor";
+import {
+  authorizeProjectRoute,
+  type AuthorizedProjectContext,
+} from "@/modules/projects/auth";
 import {
   ADVISOR_REVIEW_LABELS,
   pendingAdvisorReview,
@@ -33,7 +35,7 @@ async function saveWorkflow(
   content: ResearchWorkflowContent,
   state: ResearchWorkflow["state"],
   stableState: ResearchWorkflow["stableState"],
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   ownerId: string,
 ) {
   const revision = workflow.revision + 1;
@@ -63,13 +65,15 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
   }
 
-  const { supabase, userId, claims } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
-  if (profile.activeRole !== "advisor") {
-    return NextResponse.json({ error: "Esta conta não possui acesso à área de revisão." }, { status: 403 });
-  }
-  await claimPendingAdvisorProjects(supabase);
-  const reviewerEmail = claimEmail(claims as Record<string, unknown>);
+  const access = await authorizeProjectRoute({
+    capability: "advisor_review",
+    mutation: true,
+    projectId: id,
+    request,
+  });
+  if (!access.ok) return access.response;
+  const { actor, supabase, userId } = access.value;
+  const reviewerEmail = claimEmail(actor.claims);
   if (!reviewerEmail) {
     return NextResponse.json({ error: "Sua conta não possui e-mail confirmado para revisar este projeto." }, { status: 403 });
   }
@@ -87,12 +91,6 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (project.workflow_version !== 2) {
     return NextResponse.json({ error: "A revisão está disponível apenas no Mapa v2." }, { status: 409 });
   }
-  const advisorEmail = normalizeAdvisorEmail(project.advisor_email);
-  const advisorMatches = project.advisor_id === userId || (Boolean(advisorEmail) && advisorEmail === reviewerEmail);
-  if (!advisorMatches) {
-    return NextResponse.json({ error: "Este projeto não está vinculado à sua conta de revisão." }, { status: 403 });
-  }
-
   const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });

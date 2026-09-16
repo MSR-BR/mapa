@@ -22,7 +22,6 @@ export function LegalConsentGate({ activeRole }: { activeRole: "student" | "advi
           <p className="legal-version">Versão {LEGAL_TERMS_VERSION}</p>
         </div>
         <form action={action}>
-          <input name="profileRole" type="hidden" value={activeRole} />
           <label className="legal-checkbox"><input name="accepted" required type="checkbox" /> {profileCopy.checkbox}</label>
           <button className="primary-button legal-accept-button" disabled={pending} type="submit">{pending ? "Registrando…" : "Aceitar e continuar"}</button>
           {state?.error ? <p className="legal-form-error" role="alert">{state.error}</p> : null}

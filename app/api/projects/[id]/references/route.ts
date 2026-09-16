@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { toJson } from "@/modules/generation/types";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import {
+  authorizeProjectRoute,
+  type AuthorizedProjectContext,
+} from "@/modules/projects/auth";
 import {
   discoveryReferenceSchema,
   researchWorkflowContentSchema,
@@ -83,7 +86,7 @@ function upsertManualReference(
 async function saveWorkflow(
   workflow: ResearchWorkflow,
   content: ResearchWorkflowContent,
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   ownerId: string,
 ) {
   const revision = workflow.revision + 1;
@@ -111,7 +114,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     return NextResponse.json({ error: "Referência inválida." }, { status: 400 });
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });

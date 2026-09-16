@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { toJson } from "@/modules/generation/types";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { discoverResearchProposals } from "@/modules/research-workflow/discovery-service";
 import {
   researchWorkflowSchema,
@@ -15,11 +15,13 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 export const maxDuration = 120;
 
-export async function POST(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const [{ data: project }, workflow] = await Promise.all([
     supabase
       .from("projects")

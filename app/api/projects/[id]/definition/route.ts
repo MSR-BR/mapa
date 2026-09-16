@@ -8,9 +8,12 @@ import {
   regenerateProblemStatement,
 } from "@/modules/generation/gemini";
 import { toJson } from "@/modules/generation/types";
-import { loadUserProfile } from "@/modules/profile/storage";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import {
+  authorizeProjectCapabilityResponse,
+  authorizeProjectRoute,
+  type AuthorizedProjectContext,
+} from "@/modules/projects/auth";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   validateGeneralObjective,
@@ -132,7 +135,7 @@ async function saveWorkflow(
   sourceRevision: number,
   state: ResearchWorkflow["state"],
   stableState: ResearchWorkflow["stableState"],
-  supabase: Awaited<ReturnType<typeof requireAuthenticatedUser>>["supabase"],
+  supabase: AuthorizedProjectContext["supabase"],
   ownerId: string,
 ) {
   const revision = workflow.revision + 1;
@@ -279,9 +282,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
   }
 
-  const { claims, supabase, userId } = await requireAuthenticatedUser();
-  const profile = await loadUserProfile(supabase, userId);
-  const isAdvisorOwner = profile.activeRole === "advisor";
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { actor, supabase, userId } = access.value;
+  const claims = actor.claims;
+  const isAdvisorOwner = actor.activeRole === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   const discovery = workflow?.content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === discovery.selectedCandidateId);
@@ -574,6 +579,12 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const targetActiveStep = content.activeStep;
   const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
+    const supervisionError = authorizeProjectCapabilityResponse(
+      access.value,
+      "student_supervision",
+    );
+    if (supervisionError) return supervisionError;
+
     content = withAdvisorReviewRequest(
       researchWorkflowContentSchema.parse({ ...content, activeStep: step }),
       {

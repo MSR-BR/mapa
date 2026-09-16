@@ -11,7 +11,7 @@ import { STRUCTURE_PROMPT_VERSION } from "@/modules/generation/prompts/structure
 import { RESEARCH_STRUCTURE_SCHEMA_VERSION } from "@/modules/generation/schema";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
 import { toJson } from "@/modules/generation/types";
-import { requireAuthenticatedUser } from "@/modules/projects/auth";
+import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { fetchResearchStarterReport } from "@/modules/research-starter/client";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -35,7 +35,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Informe até 10 palavras-chave válidas." }, { status: 400 });
   }
 
-  const { supabase, userId } = await requireAuthenticatedUser();
+  const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
   const { data: project } = await supabase
     .from("projects")
     .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, authoring_role, status, workflow_version, created_at, updated_at, deleted_at")

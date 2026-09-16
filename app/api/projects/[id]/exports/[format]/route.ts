@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
 import { buildExportFilename } from "@/modules/export/filename";
 import { createFinalMapPdfExport, createPdfExport } from "@/modules/export/pdf";
 import { loadGenerationSnapshot } from "@/modules/generation/storage";
+import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { buildFinalMap } from "@/modules/research-workflow/final-map";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
@@ -19,10 +19,9 @@ export async function GET(request: Request, context: { params: Promise<{ format:
   const { searchParams } = new URL(request.url);
   const draft = searchParams.get("draft") === "1";
 
-  const supabase = await createClient();
-  const { data: claims, error: authError } = await supabase.auth.getClaims();
-  const userId = claims?.claims?.sub;
-  if (authError || typeof userId !== "string") return NextResponse.json({ error: "Autenticação necessária." }, { status: 401 });
+  const access = await authorizeProjectRoute({ projectId: id, request });
+  if (!access.ok) return access.response;
+  const { supabase, userId } = access.value;
 
   const { data: project } = await supabase
     .from("projects")
