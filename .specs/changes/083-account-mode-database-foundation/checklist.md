@@ -15,5 +15,6 @@
 - [x] Tipos atualizados e typecheck aprovado.
 - [x] Security/Performance Advisors e smokes pós-migration aprovados.
 - [x] E2E real Aluno–Orientador aprovado com limpeza do projeto temporário.
-- [ ] CPD concluído — evidência de produção aprovada; commit, push e deploy ainda
-  não foram executados nesta etapa.
+- [x] CPD concluído — commit `6702f70`, push da branch
+  `codex/change-003-004`, deployment de produção
+  `dpl_xKYU68AYP9bQJABUyot7TbjFz4AT` e smoke público aprovados.

@@ -1,7 +1,7 @@
 # Evidência de implementação e produção — Change 083
 
 **Data:** 16/09/2026
-**Estado:** migration e validação remota concluídas; CPD pendente.
+**Estado:** concluída, versionada e publicada em produção.
 
 ## Preflight remoto
 
@@ -58,7 +58,15 @@
 - Performance Advisor: 0 erros; 6 avisos preexistentes.
 - Domínio canônico: HTTP 200; health: `status=ok`.
 
-## Pendente
+## CPD
 
-- CPD: commit, push e deploy ainda não executados.
+- Commit funcional: `6702f70` (`feat: add account mode database foundation`).
+- Push: branch `codex/change-003-004` sincronizada com `origin`.
+- Deployment: `dpl_xKYU68AYP9bQJABUyot7TbjFz4AT`, target `production`, estado
+  `Ready`; build Next.js 16.3.5 concluído com sucesso.
+- URL técnica:
+  `https://mapadapesquisa-cx5qltxl0-msr-brs-projects.vercel.app`.
+- Alias canônico: `https://mapadapesquisa.com.br`, HTTP 200.
+- `/api/health`: `status=ok`, com Supabase, Gemini, Resend e Research Starter
+  configurados.
 - A troca de modo permanece indisponível até as Changes 084–087.

@@ -1,7 +1,7 @@
 # Fechamento técnico — Change 083
 
 **Data:** 16/09/2026
-**Resultado:** aprovado em produção; CPD pendente.
+**Resultado:** concluído e aprovado em produção.
 
 | Gate | Resultado |
 |---|---|
@@ -18,5 +18,7 @@
 | Performance Advisor | 0 erros |
 | E2E Aluno–Orientador | Aprovado e limpo |
 | Domínio/health | HTTP 200 / `status=ok` |
+| Commit/push | `6702f70` / `codex/change-003-004` sincronizada |
+| Deployment | `dpl_xKYU68AYP9bQJABUyot7TbjFz4AT` — `Ready` |
 
 Nenhum e-mail, título, conteúdo acadêmico ou segredo foi incluído nesta evidência.

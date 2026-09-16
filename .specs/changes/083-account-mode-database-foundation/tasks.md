@@ -29,5 +29,6 @@
   nenhuma autoria ausente e nenhum projeto de Orientador supervisionado.
 - Security e Performance Advisors ficaram com zero erros; os avisos restantes
   pertencem a funções e policies anteriores à C83.
-- A publicação de schema foi concluída. O CPD de repositório/deploy permanece
-  separado e aguarda comando explícito.
+- A publicação de schema e o CPD foram concluídos: commit `6702f70`, push da
+  branch `codex/change-003-004` e deployment de produção
+  `dpl_xKYU68AYP9bQJABUyot7TbjFz4AT` em estado `Ready`.

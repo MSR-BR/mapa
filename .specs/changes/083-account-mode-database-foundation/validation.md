@@ -35,3 +35,5 @@
   de `TEST_USER_A/B`; o E2E real configurado entre Aluno e Orientador passou e
   removeu o projeto temporário.
 - `https://mapadapesquisa.com.br`: HTTP 200; `/api/health`: `status=ok`.
+- CPD: commit `6702f70`, push aprovado e deployment
+  `dpl_xKYU68AYP9bQJABUyot7TbjFz4AT` confirmado como `Ready` em produção.

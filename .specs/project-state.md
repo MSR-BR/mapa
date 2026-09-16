@@ -7,9 +7,9 @@
 
 ## Estado atual
 
-- Change atual: 083 — migration e validação remota aprovadas; CPD pendente.
+- Change atual: 084 — autorização centralizada por modo.
 - Changes funcionalmente concluídas: 001–083 conforme `.specs/roadmap.md`.
-- Changes pendentes: CPD da 083 e execução sequencial de 084–088.
+- Changes pendentes: execução sequencial de 084–088.
 
 ## Decisões-chave
 
@@ -48,9 +48,11 @@ auto-orientações redundantes foram removidas e uma supervisão externa foi
 preservada como autoria histórica de Aluno. A trilha de eventos está protegida
 por RLS, a RPC de troca continua sem EXECUTE e nenhuma interface de troca foi
 liberada. Advisors, E2E, smokes, build e domínio foram aprovados.
+O CPD foi concluído no commit `6702f70` e no deployment de produção
+`dpl_xKYU68AYP9bQJABUyot7TbjFz4AT`, confirmado como `Ready` com domínio HTTP
+200 e health `status=ok`.
 
 ## Questões em aberto
 
-- Executar CPD da Change 083 antes de iniciar a 084.
 - Antes da C88, decidir formalmente entre manter o DNS externo ou delegar os
   nameservers à Vercel. Sem decisão explícita, manter a configuração funcional.
