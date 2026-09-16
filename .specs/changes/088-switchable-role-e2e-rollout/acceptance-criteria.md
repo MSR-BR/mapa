@@ -17,3 +17,9 @@
 12. Auto-orientação, autoria adulterada e UPDATE direto de perfil falham.
 13. Suite completa, advisors, produção, health e logs ficam aprovados.
 14. Não existe regressão alta/crítica nem dado de teste remanescente.
+15. A estratégia de DNS está registrada; manter provedor externo é aceito se
+    domínio, certificado e registros permanecerem válidos.
+16. Nameservers não são alterados automaticamente nem na mesma janela das
+    migrations/RLS.
+17. Se houver mudança de DNS, site, SSL, domínio raiz, `www` deliberadamente
+    ausente e envio/recebimento de e-mail permanecem validados.

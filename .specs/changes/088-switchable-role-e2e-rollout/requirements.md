@@ -13,4 +13,9 @@
 - Executar suíte completa, exportação e integração de projeto próprio nos dois
   perfis, build e smokes de produção.
 - Monitorar erros sanitizados após rollout e manter plano de roll-forward.
+- Cumprir o gate `domain-dns-gate.md`: escolher DNS externo ou delegação à
+  Vercel, verificar domínio/SSL/e-mail e manter o cutover DNS separado do rollout
+  de autenticação/RLS.
+- Não alterar registrar, nameservers ou zona DNS sem autorização explícita e
+  inventário dos registros existentes.
 - Atualizar roadmap, estado, runbook, evidências e aprendizado do Pó Mágico.

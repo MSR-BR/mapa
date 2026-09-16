@@ -5,6 +5,8 @@
 - C83 aplicada e reconciliada.
 - Código C84–C86 publicado e testado com flag desligada.
 - Backup/restore e queries de verificação documentados.
+- Estratégia do `domain-dns-gate.md` aprovada. Se houver delegação de DNS, ela
+  deve estar concluída e estável antes desta janela.
 
 ## Ativação
 
@@ -13,7 +15,8 @@
 3. Smoke da troca e da criação de projeto autônomo de Orientador.
 4. Aplicar policies estritas.
 5. Repetir smoke UI/API/Data API e advisors.
-6. Observar erros 403/409/5xx e suporte sem PII.
+6. Repetir smoke de domínio/SSL/health e, se DNS mudou, e-mail.
+7. Observar erros 403/409/5xx e suporte sem PII.
 
 ## Recuperação
 
@@ -22,3 +25,5 @@
   protegidos.
 - Erro de policy: aplicar migration corretiva explícita e auditada; nunca editar
   migration já publicada nem usar reset destrutivo.
+- Erro de DNS: não alterar RLS para compensar; executar o rollback documentado da
+  zona/nameservers e revalidar site, certificado e e-mail.

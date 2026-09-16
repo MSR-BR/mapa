@@ -83,7 +83,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 085 | Seleção de perfil nas configurações | Planejada | A mesma conta escolhe Aluno ou Orientador com confirmação, concorrência versionada, consentimento correto e atualização entre abas. |
 | 086 | Interface estrita Aluno/Orientador | Planejada | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. |
 | 087 | RLS e vínculos conscientes do modo | Planejada | Policies, funções e trigger combinam modo, autoria e relação; Orientador mantém CRUD autônomo próprio sem poder autoaprovar projeto criado como Aluno. |
-| 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam autoria nos dois perfis, supervisão estudantil, revisão vinculada, troca, RLS, produção, cleanup e CPD final. |
+| 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam autoria, supervisão, revisão, troca e RLS; gate separado confirma estratégia DNS, domínio, SSL e e-mail sem cutover automático de nameservers. |
 
 ## Marcos
 
@@ -102,6 +102,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 ## Dependências externas
 
 - Hosting: Vercel confirmado.
+- Domínio raiz funcional na Vercel com DNS externo em 16/09/2026; escolha entre
+  manter o provedor atual ou delegar nameservers fica como gate controlado da C88.
 - Banco e Auth: Supabase/PostgreSQL confirmado no projeto `aeaweherkrqmlqnxsmib`.
 - Provedor de IA: Gemini 3.6 Flash confirmado na conta já paga pelo responsável, com GEMINI_MODEL como override opcional.
 - Contrato do Research Starter: v1 integrado exclusivamente pelo backend.

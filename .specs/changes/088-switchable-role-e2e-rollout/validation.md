@@ -9,5 +9,10 @@
 - Smokes reais de Gemini e Research Starter sem imprimir credenciais.
 - Exportação PDF/DOCX de projetos sintéticos de Aluno e Orientador.
 - Supabase migrations + Security/Performance Advisors.
-- Deployment READY, domínio canônico 200, `/api/health` ok e logs sem erro novo.
+- `vercel domains inspect mapadapesquisa.com.br`, NS, A/CNAME, certificado e
+  propagação verificados conforme a estratégia escolhida.
+- Deployment READY, domínio canônico 200, HTTPS/HSTS, `/api/health` ok,
+  `www` conforme C38 e logs sem erro novo.
+- Se qualquer DNS mudar, smoke real de envio e recebimento em
+  `suporte@mapadapesquisa.com.br`, MX, SPF, DKIM e DMARC.
 - Query final confirma cleanup dos projetos/workflows sintéticos.

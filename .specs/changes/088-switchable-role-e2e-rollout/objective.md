@@ -4,4 +4,5 @@
 
 Homologar ponta a ponta a troca de modo, a autoria própria de Aluno e Orientador,
 a colaboração entre duas contas e a defesa contra abas obsoletas/acesso direto;
-concluir rollout, observabilidade, documentação e CPD de produção.
+concluir rollout, gate seguro de domínio/DNS/SSL, observabilidade, documentação
+e CPD de produção.

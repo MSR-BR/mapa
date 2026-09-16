@@ -14,6 +14,12 @@
 ## Decisões-chave
 
 - Aplicação Next.js publicada na Vercel em `https://mapadapesquisa.com.br`.
+- Em 16/09/2026, o domínio raiz respondia HTTP 200/HTTPS na Vercel e o A
+  apontava para `76.76.21.21`, enquanto os nameservers permaneciam externos em
+  `d.sec.dns.br` e `e.sec.dns.br`.
+- DNS externo funcional é aceito. Delegar para a Vercel é opcional, exige
+  autorização explícita, preservação integral da zona/e-mail e janela separada
+  das migrations/RLS; o gate pertence à C88.
 - Supabase é responsável por banco e autenticação; RLS protege os dados.
 - Gemini e Research Starter são acessados somente pelo backend.
 - `RESEARCH_STARTER_MAPA_API_KEY` é o único nome aceito para a credencial do
@@ -49,3 +55,5 @@ C81 no deployment
 - Aprovação explícita para iniciar a Change 083.
 - O conector Supabase recusou consultas somente leitura por falta de permissão;
   o preflight remoto deve ser concluído antes de qualquer DDL da C83.
+- Antes da C88, decidir formalmente entre manter o DNS externo ou delegar os
+  nameservers à Vercel. Sem decisão explícita, manter a configuração funcional.
