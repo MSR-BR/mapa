@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { acceptLegalTerms } from "./legal-consent-actions";
 import { LEGAL_CONTENT, LEGAL_PROFILE_COPY, LEGAL_TERMS_VERSION } from "./legal-content";
 
-export function LegalConsentGate({ activeRole }: { activeRole: "student" | "advisor" }) {
+export function LegalConsentGate({ activeRole, roleVersion }: { activeRole: "student" | "advisor"; roleVersion: number }) {
   const [state, action, pending] = useActionState(acceptLegalTerms, null);
   const profileCopy = LEGAL_PROFILE_COPY[activeRole];
   return (
@@ -22,6 +22,7 @@ export function LegalConsentGate({ activeRole }: { activeRole: "student" | "advi
           <p className="legal-version">Versão {LEGAL_TERMS_VERSION}</p>
         </div>
         <form action={action}>
+          <input name="profileRoleVersion" type="hidden" value={roleVersion} />
           <label className="legal-checkbox"><input name="accepted" required type="checkbox" /> {profileCopy.checkbox}</label>
           <button className="primary-button legal-accept-button" disabled={pending} type="submit">{pending ? "Registrando…" : "Aceitar e continuar"}</button>
           {state?.error ? <p className="legal-form-error" role="alert">{state.error}</p> : null}

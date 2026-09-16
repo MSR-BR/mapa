@@ -7,3 +7,6 @@
   Aluno supervisionado em projeto autônomo.
 - O componente cliente nunca decide autorização e não recebe dados sensíveis.
 - Se a RPC ainda não tiver grant, a flag impede a exposição da ação.
+- A Server Action só encerra localmente o no-op quando alvo e versão coincidem.
+  Em reenvio após perda de resposta, ela chama a RPC para que o `request_id`
+  recupere o resultado idempotente antes da verificação de concorrência.

@@ -8,8 +8,10 @@ import { LegalConsentGate } from "@/modules/legal/legal-consent-gate";
 import { LegalLinks } from "@/modules/legal/legal-links";
 import {
   ActorAuthorizationError,
+  isAccountModeSwitchEnabled,
   loadActorContext,
 } from "@/modules/profile/authorization";
+import { AccountModeSync } from "@/modules/profile/account-mode-sync";
 import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false, follow: false } };
@@ -27,6 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const identity = actorState.status === "ready" ? actorState.actor : actorState.identity;
   const profile = actorState.status === "ready" ? actorState.actor : null;
+  const accountModeSwitchEnabled = isAccountModeSwitchEnabled();
   const metadata = (
     identity.claims.user_metadata && typeof identity.claims.user_metadata === "object"
       ? identity.claims.user_metadata
@@ -52,6 +55,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <nav aria-label="Navegação principal">
           <Link className="nav-dashboard-button" href="/dashboard">Dashboard</Link>
           <AccountMenu
+            accountModeSwitchEnabled={accountModeSwitchEnabled}
             activeRole={profile?.activeRole}
             avatarUrl={avatarUrl}
             displayName={displayName}
@@ -60,8 +64,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
           />
         </nav>
       </header>
-      {!profile ? <ProfileModePrompt email={email} /> : null}
-      {profile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} /> : null}
+      {accountModeSwitchEnabled ? <AccountModeSync /> : null}
+      {!profile ? <ProfileModePrompt allowModeSwitch={accountModeSwitchEnabled} email={email} /> : null}
+      {profile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} roleVersion={profile.roleVersion} /> : null}
       {children}
       <LegalLinks defaultEmail={email} />
     </div>

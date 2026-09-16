@@ -11,6 +11,7 @@ import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { logout } from "./actions";
 
 type Props = {
+  accountModeSwitchEnabled?: boolean;
   activeRole?: UserProfileRole;
   avatarUrl?: string;
   displayName?: string;
@@ -18,7 +19,7 @@ type Props = {
   initials: string;
 };
 
-export function AccountMenu({ activeRole, avatarUrl, displayName, email, initials }: Props) {
+export function AccountMenu({ accountModeSwitchEnabled, activeRole, avatarUrl, displayName, email, initials }: Props) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const profilePresentation = activeRole ? USER_PROFILE_PRESENTATIONS[activeRole] : null;
 
@@ -57,6 +58,7 @@ export function AccountMenu({ activeRole, avatarUrl, displayName, email, initial
           <span>Perfil da conta</span>
           <strong>{profilePresentation?.profileLabel ?? "Não definido"}</strong>
         </div>
+        {accountModeSwitchEnabled && activeRole ? <Link className="account-menu-link" href="/dashboard/settings">Configurações</Link> : null}
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
         <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole ?? "unknown", source: "dashboard" })}><button type="submit">Sair</button></form>
       </div>

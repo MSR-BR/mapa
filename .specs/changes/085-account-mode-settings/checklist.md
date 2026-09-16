@@ -1,10 +1,10 @@
 # Checklist
 
-- [ ] Página de configurações criada.
-- [ ] Escolha e confirmação acessíveis.
-- [ ] Troca atômica e idempotente integrada.
-- [ ] Concorrência por versão tratada.
-- [ ] Sincronização entre abas implementada como hint.
-- [ ] Consentimento e analytics integrados.
-- [ ] Responsividade e testes aprovados.
+- [x] Página de configurações criada.
+- [x] Escolha e confirmação acessíveis.
+- [x] Troca atômica e idempotente integrada.
+- [x] Concorrência por versão tratada.
+- [x] Sincronização entre abas implementada como hint.
+- [x] Consentimento e analytics integrados.
+- [x] Responsividade e testes aprovados.
 - [ ] Feature flag permanece desligada e CPD concluído.
