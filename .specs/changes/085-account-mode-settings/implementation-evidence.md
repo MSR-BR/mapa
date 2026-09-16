@@ -41,3 +41,12 @@
 - A interface estrita de todas as áreas por perfil pertence à C86.
 - Grants e policies remotos conscientes do modo pertencem à C87.
 - Ativação e homologação autenticada completa pertencem à C88.
+
+## CPD
+
+- Implementação: commit `6c0d629` enviado ao GitHub.
+- Deploy: `dpl_Ba41VMBJbUTmSUfhCurJHqcKvasT`, estado `READY`, alvo Production.
+- Domínio canônico: `https://mapadapesquisa.com.br`.
+- Smokes HTTP e inspeção de logs aprovados; nenhum erro registrado.
+- Publicação feita com a feature flag desligada e sem conceder execução remota
+  à RPC de troca.

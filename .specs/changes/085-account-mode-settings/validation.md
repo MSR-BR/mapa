@@ -32,3 +32,17 @@
 - `ACCOUNT_MODE_SWITCH_ENABLED` permanece `false` por padrão. O grant remoto da
   RPC continua deliberadamente revogado até a C87; portanto, a troca ainda não
   fica exposta em produção.
+
+## Resultado de produção — 2026-09-16
+
+- Commit de implementação `6c0d629` enviado para `codex/change-003-004`.
+- Deployment `dpl_Ba41VMBJbUTmSUfhCurJHqcKvasT`: `READY` em Production e
+  associado ao domínio canônico `https://mapadapesquisa.com.br`.
+- Build Vercel no Next.js 16.3.5 concluído em 30 s; compilação em 7,4 s e
+  TypeScript em 15,4 s.
+- Smokes remotos: raiz `200`, health `ok`, dashboard e configurações anônimos
+  `307` para `/login`, e API protegida `401 authentication_required` com
+  payload estruturalmente válido.
+- Logs de erro do deployment após os smokes: nenhum registro encontrado.
+- A variável `ACCOUNT_MODE_SWITCH_ENABLED` continua ausente em Production;
+  seu fallback seguro é `false`, mantendo o link e a ação indisponíveis.

@@ -7,4 +7,4 @@
 - [x] Sincronização entre abas implementada como hint.
 - [x] Consentimento e analytics integrados.
 - [x] Responsividade e testes aprovados.
-- [ ] Feature flag permanece desligada e CPD concluído.
+- [x] Feature flag permanece desligada e CPD concluído.
