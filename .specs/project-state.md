@@ -7,9 +7,9 @@
 
 ## Estado atual
 
-- Change atual: nenhuma.
-- Changes concluídas: 001–082 conforme `.specs/roadmap.md`.
-- Changes pendentes: 083–088, aguardando aprovação e execução sequencial.
+- Change atual: 083 — migration e validação remota aprovadas; CPD pendente.
+- Changes funcionalmente concluídas: 001–083 conforme `.specs/roadmap.md`.
+- Changes pendentes: CPD da 083 e execução sequencial de 084–088.
 
 ## Decisões-chave
 
@@ -41,19 +41,16 @@
 
 ## Estado validado mais recente
 
-A Change 082 concluiu somente a auditoria e o planejamento de modos alternáveis.
-Foram identificadas dependências do contrato imutável, lacunas de autorização e
-RLS, definida a arquitetura-alvo e criadas as Changes 083–088. A arquitetura foi
-refinada para preservar autoria completa e autônoma do Orientador, separada da
-revisão vinculada. Nenhum código de produto, migration, dado, ambiente ou
-deployment foi alterado; o último estado funcional publicado continua sendo a
-C81 no deployment
-`dpl_G8kNnBN9DayztcX1VM3U9EbuwUUU`.
+A Change 083 instalou a fundação versionada de modos no Supabase de produção.
+A migration `20260916163351 account_mode_database_foundation` foi registrada
+como a 14ª migration. Treze perfis e 65 projetos foram migrados; seis
+auto-orientações redundantes foram removidas e uma supervisão externa foi
+preservada como autoria histórica de Aluno. A trilha de eventos está protegida
+por RLS, a RPC de troca continua sem EXECUTE e nenhuma interface de troca foi
+liberada. Advisors, E2E, smokes, build e domínio foram aprovados.
 
 ## Questões em aberto
 
-- Aprovação explícita para iniciar a Change 083.
-- O conector Supabase recusou consultas somente leitura por falta de permissão;
-  o preflight remoto deve ser concluído antes de qualquer DDL da C83.
+- Executar CPD da Change 083 antes de iniciar a 084.
 - Antes da C88, decidir formalmente entre manter o DNS externo ou delegar os
   nameservers à Vercel. Sem decisão explícita, manter a configuração funcional.

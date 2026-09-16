@@ -173,6 +173,7 @@ export type Database = {
           academic_level: string | null
           advisor_email: string | null
           advisor_id: string | null
+          authoring_role: "student" | "advisor"
           created_at: string
           deleted_at: string | null
           id: string
@@ -322,22 +323,64 @@ export type Database = {
           },
         ]
       }
+      user_profile_role_events: {
+        Row: {
+          active_role: "student" | "advisor"
+          actor_id: string | null
+          changed_at: string
+          event_type: "baseline" | "profile_created" | "role_switched" | "role_switch_noop"
+          id: string
+          idempotency_key: string | null
+          previous_role: "student" | "advisor" | null
+          role_version: number
+          user_id: string
+        }
+        Insert: {
+          active_role: "student" | "advisor"
+          actor_id?: string | null
+          changed_at?: string
+          event_type: "baseline" | "profile_created" | "role_switched" | "role_switch_noop"
+          id?: string
+          idempotency_key?: string | null
+          previous_role?: "student" | "advisor" | null
+          role_version: number
+          user_id: string
+        }
+        Update: {
+          active_role?: "student" | "advisor"
+          actor_id?: string | null
+          changed_at?: string
+          event_type?: "baseline" | "profile_created" | "role_switched" | "role_switch_noop"
+          id?: string
+          idempotency_key?: string | null
+          previous_role?: "student" | "advisor" | null
+          role_version?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_profiles: {
         Row: {
-          active_role: string
+          active_role: "student" | "advisor"
           created_at: string
+          role_changed_at: string
+          role_version: number
           updated_at: string
           user_id: string
         }
         Insert: {
-          active_role: string
+          active_role: "student" | "advisor"
           created_at?: string
+          role_changed_at?: string
+          role_version?: number
           updated_at?: string
           user_id: string
         }
         Update: {
-          active_role?: string
+          active_role?: "student" | "advisor"
           created_at?: string
+          role_changed_at?: string
+          role_version?: number
           updated_at?: string
           user_id?: string
         }
@@ -362,6 +405,18 @@ export type Database = {
           project_id_input: string
         }
         Returns: boolean
+      }
+      switch_active_role: {
+        Args: {
+          expected_role_version: number
+          next_role: "student" | "advisor"
+          request_id: string
+        }
+        Returns: {
+          active_role: "student" | "advisor"
+          role_changed_at: string
+          role_version: number
+        }[]
       }
     }
     Enums: {

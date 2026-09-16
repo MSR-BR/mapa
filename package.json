@@ -18,6 +18,7 @@
     "supabase:verify-authenticated-rls": "node --env-file-if-exists=.env.local scripts/verify-authenticated-rls.mjs",
     "supabase:verify-advisor-student": "node --env-file-if-exists=.env.local --import tsx scripts/verify-advisor-student-flow.ts",
     "supabase:verify-migration-local": "sh scripts/verify-migration-local.sh",
+    "supabase:verify-account-mode-foundation": "sh scripts/verify-account-mode-foundation.sh",
     "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
     "research-starter:verify:production": "node --env-file-if-exists=.env.local scripts/verify-research-starter-production.mjs",
     "research-proposals:verify": "node --conditions=react-server --env-file-if-exists=.env.local --import tsx scripts/verify-proposal-discovery.ts",

@@ -1392,3 +1392,42 @@ test("embeds the supplied promotional video in the public landing page", async (
   assert.ok(video.byteLength > 10_000_000);
   assert.ok(poster.byteLength > 500_000);
 });
+
+
+test("prepares the versioned account-mode database foundation without exposing the switch", async () => {
+  const [migration, verifier, verificationSql, databaseTypes, requirements] = await Promise.all([
+    readProjectFile("supabase/migrations/20260916163351_account_mode_database_foundation.sql"),
+    readProjectFile("scripts/verify-account-mode-foundation.sh"),
+    readProjectFile("scripts/verify-account-mode-foundation.sql"),
+    readProjectFile("lib/supabase/database.types.ts"),
+    readProjectFile(".specs/changes/083-account-mode-database-foundation/requirements.md"),
+  ]);
+
+  assert.match(migration, /^begin;/);
+  assert.match(migration, /c083_projects_without_profiles/);
+  assert.match(migration, /create table public.user_profile_role_events/);
+  assert.match(migration, /alter table public.user_profile_role_events enable row level security/);
+  assert.match(migration, /user_profile_role_events_actor_idx/);
+  assert.match(migration, /revoke all on table public\.user_profile_role_events\s+from public, anon, authenticated/);
+  assert.match(migration, /add column authoring_role text/);
+  assert.match(migration, /c083_student_self_advised_projects/);
+  assert.match(migration, /p\.advisor_id = p\.owner_id/);
+  assert.match(migration, /else 'student'/);
+  assert.match(migration, /new\.authoring_role := resolved_role/);
+  assert.match(migration, /project_authoring_role_is_immutable/);
+  assert.match(migration, /advisor_authored_project_cannot_have_supervisor/);
+  assert.match(migration, /create or replace function public\.switch_active_role/);
+  assert.match(migration, /role_version_conflict/);
+  assert.match(migration, /idempotency_key_conflict/);
+  assert.match(migration, /revoke all on function public\.switch_active_role\(text, bigint, uuid\)\s+from public, anon, authenticated, service_role/);
+  assert.match(migration, /revoke update on table public.user_profiles from authenticated/);
+  assert.match(migration, /commit;\s*$/);
+  assert.match(verifier, /postgres:17-alpine/);
+  assert.match(verifier, /trap cleanup/);
+  assert.match(verificationSql, /verification_forged_authoring_was_trusted/);
+  assert.match(verificationSql, /verification_switch_rpc_exposed/);
+  assert.match(databaseTypes, /authoring_role: "student" \| "advisor"/);
+  assert.match(databaseTypes, /user_profile_role_events/);
+  assert.match(databaseTypes, /switch_active_role/);
+  assert.match(requirements, /manter seu EXECUTE revogado até a C87/);
+});

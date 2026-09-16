@@ -8,6 +8,7 @@ const project = {
   academic_level: "masters",
   advisor_email: null,
   advisor_id: null,
+  authoring_role: "student",
   created_at: now,
   deleted_at: null,
   id: crypto.randomUUID(),
