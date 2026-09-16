@@ -95,6 +95,7 @@ test("identity, errors, consent and feature flag stay server authoritative", () 
   const auth = read("modules/projects/auth.ts");
   const legal = read("modules/legal/legal-consent-actions.ts");
   const actions = read("modules/projects/actions.ts");
+  const dashboard = read("app/dashboard/page.tsx");
   assert.match(actor, /import "server-only"/);
   assert.match(actor, /auth\.getClaims\(\)/);
   assert.match(actor, /profile_mode_stale/);
@@ -109,5 +110,7 @@ test("identity, errors, consent and feature flag stay server authoritative", () 
   assert.match(actions, /authorizeProject/);
   assert.match(actions, /"student_supervision"/);
   assert.doesNotMatch(actions, /requireAuthenticatedUser/);
+  assert.match(dashboard, /ActorAuthorizationError/);
+  assert.match(dashboard, /error.code === "authentication_required"/);
   assert.match(read(".env.example"), /^ACCOUNT_MODE_SWITCH_ENABLED=false$/m);
 });

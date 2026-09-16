@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import {
+  ActorAuthorizationError,
   isAccountModeSwitchEnabled,
   loadActorContext,
 } from "@/modules/profile/authorization";
@@ -66,7 +67,15 @@ function isWorkflowFinished(project: { status: string; workflow_version: number 
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ continue?: string; resume?: string }> }) {
   const { resume, continue: continueParam } = await searchParams;
-  const actorState = await loadActorContext();
+  let actorState: Awaited<ReturnType<typeof loadActorContext>>;
+  try {
+    actorState = await loadActorContext();
+  } catch (error) {
+    if (error instanceof ActorAuthorizationError && error.code === "authentication_required") {
+      redirect("/login");
+    }
+    throw error;
+  }
   if (actorState.status !== "ready") {
     return <main aria-hidden="true" className="workspace-shell dashboard-home" />;
   }
