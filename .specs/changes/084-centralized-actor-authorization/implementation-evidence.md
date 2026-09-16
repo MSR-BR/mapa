@@ -1,6 +1,6 @@
 # Evidências de implementação — Change 084
 
-Data da validação local: 2026-09-16.
+Data da validação e publicação: 2026-09-16.
 
 ## Implementação
 
@@ -25,8 +25,8 @@ Data da validação local: 2026-09-16.
   `actor.activeRole`.
 - Erros de autenticação, modo, recurso e concorrência usam respostas tipadas
   401, 403, 404 e 409, sem expor dados do projeto sem relação.
-- `ACCOUNT_MODE_SWITCH_ENABLED=false` permanece como padrão. A C84 não foi
-  publicada nem habilitada nesta etapa.
+- `ACCOUNT_MODE_SWITCH_ENABLED=false` permanece como padrão; a variável não
+  está definida em Production e, portanto, a troca de modo continua desligada.
 
 ## Validação local
 
@@ -41,7 +41,25 @@ Data da validação local: 2026-09-16.
 - A ressalva informativa do auditor permanece: smokes remotos com duas contas
   dependem das credenciais de teste e serão executados no rollout posterior.
 
+## CPD e produção
+
+- Implementação principal: commit `76999b2` (`feat: centralize account mode authorization`).
+- Hotfix de redirecionamento sem sessão: commit `7e62bf5`
+  (`fix: handle unauthenticated dashboard render`).
+- Branch publicada: `codex/change-003-004`.
+- Deployment final: `dpl_CXCa1RFjZRaGWTD5yysKNy6PCkFg`, estado `READY`,
+  alvo `production`.
+- URL técnica:
+  `https://mapadapesquisa-mu497ugid-msr-brs-projects.vercel.app`.
+- Domínio canônico: `https://mapadapesquisa.com.br`.
+- Build remoto: Next.js 16.3.5, compilação, TypeScript e 20 páginas estáticas
+  aprovados; build concluído em 15 s.
+- Smoke: raiz `200`; `/api/health` com `status: ok`; `/dashboard` sem sessão
+  retorna `307` para `/login`; API protegida retorna `401` com
+  `authentication_required`.
+- Varredura de logs após o smoke: nenhum erro encontrado.
+
 ## Estado de entrega
 
-Implementação e validação local concluídas. Commit, push e deploy da C84
-permanecem pendentes; a produção continua na versão publicada ao fechar a C83.
+Implementação, validação, commit, push e deploy da C84 concluídos. A troca de
+modo permanece deliberadamente desativada até a C85.

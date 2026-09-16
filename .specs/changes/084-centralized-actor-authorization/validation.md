@@ -14,9 +14,18 @@
 - `npm run check`, `npm run security:audit` e `git diff --check`.
 - Deployment com flag desligada e smoke de regressão dos dois perfis atuais.
 
-## Resultado local — 2026-09-16
+## Resultado — 2026-09-16
 
 - `npm run check`: aprovado, com 102 testes e build de produção.
 - `npm run security:audit`: aprovado em 521 arquivos e 14/14 rotas acadêmicas.
 - `git diff --check`: aprovado.
-- CPD e smoke remoto com a flag desligada permanecem pendentes.
+- Deployment final `dpl_CXCa1RFjZRaGWTD5yysKNy6PCkFg`: `READY` em Production,
+  no domínio canônico `https://mapadapesquisa.com.br`.
+- `ACCOUNT_MODE_SWITCH_ENABLED` ausente em Production: fallback seguro `false`
+  confirmado e troca de modo desligada.
+- Smoke remoto: raiz `200`, health `ok`, dashboard anônimo `307` para `/login`
+  e API protegida `401 authentication_required`.
+- Logs de erro do deployment após o smoke: nenhum registro encontrado.
+- O primeiro deploy revelou um log de exceção no render paralelo do dashboard
+  anônimo; o hotfix `7e62bf5` passou por toda a suíte e eliminou o registro no
+  deployment final.

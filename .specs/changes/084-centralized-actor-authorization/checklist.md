@@ -8,5 +8,5 @@
 - [x] Todas as ações e rotas inventariadas migradas.
 - [x] Consentimento não confia no cliente.
 - [x] Erros tipados e sem vazamento validados.
-- [ ] Flag desligada confirmada em produção após o CPD da C84.
-- [ ] Gates completos com commit, push e deploy aprovados.
+- [x] Flag desligada confirmada em produção após o CPD da C84.
+- [x] Gates completos com commit, push e deploy aprovados.
