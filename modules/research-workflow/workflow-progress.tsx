@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
+
 import {
   workflowNavigationUrl,
   type WorkflowNavigationPosition,
@@ -63,6 +65,7 @@ export function WorkflowProgress({
   revision,
 }: WorkflowProgressProps) {
   const router = useRouter();
+  const { roleVersion } = useActiveProfile();
   const [pendingTarget, setPendingTarget] = useState<WorkflowNavigationTarget | null>(null);
   const [error, setError] = useState<string | null>(null);
   const detailSteps = DETAIL_STEPS[current];
@@ -78,7 +81,7 @@ export function WorkflowProgress({
     try {
       const response = await fetch(`/api/projects/${projectId}/navigation`, {
         body: JSON.stringify({ revision, target }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; workflow?: ResearchWorkflow };

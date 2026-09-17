@@ -8,6 +8,7 @@ import { ResearchActivityIcon } from "./research-activity-icon";
 import type { GenerationSnapshot } from "./types";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 
 type Props = {
   autoGenerate?: boolean;
@@ -24,6 +25,7 @@ const STATUS_LABELS = {
 } as const;
 
 export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, projectId }: Props) {
+  const { activeRole, roleVersion } = useActiveProfile();
   const router = useRouter();
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [draft, setDraft] = useState<ResearchStructure | null>(initialSnapshot.structure);
@@ -36,8 +38,8 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   const autoTriggered = useRef(false);
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", source: autoGenerate ? "resume" : "dashboard" });
-  }, [autoGenerate]);
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: autoGenerate ? "resume" : "dashboard" });
+  }, [activeRole, autoGenerate]);
 
   useEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
@@ -78,7 +80,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     try {
       const response = await fetch(`/api/projects/${projectId}/generate`, {
         body: JSON.stringify({ idempotencyKey, keywords: keywordOverrides }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json();
@@ -137,7 +139,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     try {
       const response = await fetch(`/api/projects/${projectId}/generation`, {
         body: JSON.stringify(draft),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "PATCH",
       });
       const payload = await response.json();

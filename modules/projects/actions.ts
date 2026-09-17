@@ -195,8 +195,10 @@ export async function updateProject(
     }
     throw error;
   }
-  const { actor, supabase, userId } = access;
-  const projectData = isAccountModeSwitchEnabled() && actor.activeRole === "advisor"
+  const { supabase, userId } = access;
+  const isSelfDirectedProject = isAccountModeSwitchEnabled()
+    && access.project.authoring_role === "advisor";
+  const projectData = isSelfDirectedProject
     ? { ...result.data, advisor_email: null }
     : result.data;
   const { data, error } = await supabase
@@ -211,9 +213,11 @@ export async function updateProject(
   if (error || !data) {
     return { message: "Projeto não encontrado ou sem permissão.", status: "error" };
   }
-  const advisorLink = await saveProjectAdvisor(supabase, projectId, projectData.advisor_email);
-  if ("error" in advisorLink) {
-    return { message: "Não foi possível verificar a conta do orientador.", status: "error" };
+  if (!isSelfDirectedProject) {
+    const advisorLink = await saveProjectAdvisor(supabase, projectId, projectData.advisor_email);
+    if ("error" in advisorLink) {
+      return { message: "Não foi possível verificar a conta do orientador.", status: "error" };
+    }
   }
 
   revalidatePath("/dashboard");

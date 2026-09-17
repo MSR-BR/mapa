@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
 import { ProjectCardModal, type DashboardProject } from "./project-card-modal";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 
 const INTEGRATION_STEPS = [
@@ -36,6 +37,7 @@ export function DashboardProjectGrid({
   variant,
 }: DashboardProjectGridProps) {
   const router = useRouter();
+  const { activeRole, roleVersion } = useActiveProfile();
   const sectionTitleId = useId();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [integrating, setIntegrating] = useState(false);
@@ -59,8 +61,8 @@ export function DashboardProjectGrid({
 
   async function integrate() {
     if (selectedIds.length < 2 || selectedIds.length > 4) return;
-    setAnalyticsContext({ auth_state: "authenticated", source: "dashboard" });
-    trackAnalyticsEvent("project_integration_started", { source: "dashboard", result: "started" });
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard" });
+    trackAnalyticsEvent("project_integration_started", { profile_role: activeRole, source: "dashboard", result: "started" });
     setIntegrating(true);
     setMessage(null);
     setProgress({ percent: 12, step: INTEGRATION_STEPS[0] });
@@ -78,7 +80,7 @@ export function DashboardProjectGrid({
     try {
       const response = await fetch("/api/projects/integrate", {
         body: JSON.stringify({ projectIds: selectedIds }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; projectId?: string; sourceTitles?: string[] };
@@ -88,12 +90,12 @@ export function DashboardProjectGrid({
         percent: 100,
         step: `Integração concluída: ${sourceTitles.join(", ")}`,
       });
-      trackAnalyticsEvent("project_integration_completed", { source: "dashboard", result: "success", reference_count_bucket: "unknown" });
+      trackAnalyticsEvent("project_integration_completed", { profile_role: activeRole, source: "dashboard", result: "success", reference_count_bucket: "unknown" });
       window.setTimeout(() => {
         router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
       }, 700);
     } catch (error) {
-      trackAnalyticsEvent("project_integration_failed", { source: "dashboard", result: "failed", reason_code: "unknown" });
+      trackAnalyticsEvent("project_integration_failed", { profile_role: activeRole, source: "dashboard", result: "failed", reason_code: "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
       setIntegrating(false);
       setProgress({ percent: 0, step: INTEGRATION_STEPS[0] });

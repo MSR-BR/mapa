@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
@@ -14,7 +15,7 @@ import { workflowNavigationUrl } from "./workflow-navigation";
 import { reconcileTopicLinks } from "./topic-integrity";
 import type { ResearchWorkflow } from "./schema";
 
-type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
+type Props = { initialWorkflow: ResearchWorkflow; isSelfDirectedProject?: boolean; projectId: string };
 type Operation = "back" | "initialize" | "regenerate" | "save" | "validate" | null;
 type ClassificationDraft = MethodologyPlanInput["classification"];
 type MethodologyRowDraft = MethodologyPlanInput["rows"][number];
@@ -155,8 +156,9 @@ function methodologyMessageText(message: string) {
     .replace(/^A linha (\d+)/i, (_, index: string) => `OE${index} (objetivo específico ${index})`);
 }
 
-export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
+export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [title, setTitle] = useState(() => findTitle(initialWorkflow));
   const [classification, setClassification] = useState<ClassificationDraft>(() => classificationDraft(initialWorkflow));
@@ -171,9 +173,9 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const initialized = useRef(false);
   const busy = operation !== null;
-  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
-  const rowJustificationLabel = isAdvisorOwner ? "Justificativa da linha (opcional)" : "Justificativa da linha *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
+  const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
+  const rowJustificationLabel = isSelfDirectedProject ? "Justificativa da linha (opcional)" : "Justificativa da linha *";
+  const validateButtonLabel = "Validar etapa";
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");
@@ -222,9 +224,9 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
   ];
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage: "methodology" });
-    trackAnalyticsEvent("stage_started", { stage: "methodology", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
-  }, [isAdvisorOwner]);
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage: "methodology" });
+    trackAnalyticsEvent("stage_started", { stage: "methodology", stage_number: "6", profile_role: activeRole, has_advisor: "unknown" });
+  }, [activeRole]);
 
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
@@ -266,7 +268,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
     setOperation(action);
     setMessage(null);
     setErrors([]);
-    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage: "methodology", stage_number: "6", profile_role: isAdvisorOwner ? "advisor" : "student" });
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage: "methodology", stage_number: "6", profile_role: activeRole });
     try {
       const includePlan = action === "save" || action === "validate";
       const response = await fetch(`/api/projects/${projectId}/methodology`, {
@@ -277,7 +279,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
           rows: includePlan ? rows : undefined,
           title: includePlan ? title : undefined,
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
@@ -289,7 +291,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
       setMessage(payload.message ?? null);
-      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage: "methodology", stage_number: "6", result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage: "methodology", stage_number: "6", result: "success", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(references.length) });
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
       } else {
@@ -429,7 +431,7 @@ export function MethodologyWorkspace({ initialWorkflow, isAdvisorOwner = false, 
         </div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
+      {isSelfDirectedProject ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="methodology-title-editor">
         <label>Título final sugerido *<input maxLength={FINAL_TITLE_MAX_LENGTH} onChange={(event) => setTitle(event.target.value)} value={title} /></label>

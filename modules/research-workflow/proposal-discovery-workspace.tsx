@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { WorkflowProgress } from "./workflow-progress";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 type Operation = "discovering" | "selecting" | null;
 
 export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkflow, originalPrompt, projectId }: Props) {
+  const { activeRole, roleVersion } = useActiveProfile();
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [operation, setOperation] = useState<Operation>(null);
@@ -33,11 +35,11 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   const busy = operation !== null;
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", source: autoDiscover ? "resume" : "dashboard", stage: "discovery" });
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: autoDiscover ? "resume" : "dashboard", stage: "discovery" });
     if (discovery) {
       trackAnalyticsEvent("proposal_viewed", { stage: "discovery", source: autoDiscover ? "resume" : "dashboard", reference_count_bucket: getReferenceCountBucket(discovery.references.length) });
     }
-  }, [autoDiscover, discovery]);
+  }, [activeRole, autoDiscover, discovery]);
 
   async function discover() {
     setOperation("discovering");
@@ -47,6 +49,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     trackAnalyticsEvent("generation_started", { stage: "discovery", source: autoDiscover ? "resume" : "dashboard", result: "started" });
     try {
       const response = await fetch(`/api/projects/${projectId}/discover`, {
+        headers: profileMutationHeaders(roleVersion),
         method: "POST",
         signal: AbortSignal.timeout(110_000),
       });
@@ -80,7 +83,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     try {
       const response = await fetch(`/api/projects/${projectId}/proposal-selection`, {
         body: JSON.stringify({ candidateId }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string };

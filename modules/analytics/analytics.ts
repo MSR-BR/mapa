@@ -6,7 +6,7 @@
  * errors can never accidentally become event parameters.
  */
 export type AnalyticsEventName =
-  | "consent_choice" | "login_started" | "login_success" | "login_failed" | "logout" | "profile_role_selected"
+  | "consent_choice" | "login_started" | "login_success" | "login_failed" | "logout" | "profile_role_selected" | "profile_mode_changed"
   | "project_start" | "project_draft_saved" | "project_resumed" | "generation_started" | "generation_completed"
   | "generation_failed" | "generation_retry" | "proposal_viewed" | "proposal_selected"
   | "stage_started" | "stage_saved" | "stage_submitted" | "stage_completed" | "stage_blocked" | "stage_revision_requested"

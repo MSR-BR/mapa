@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
@@ -14,7 +15,7 @@ import { WorkflowProgress } from "./workflow-progress";
 import { workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow } from "./schema";
 
-type Props = { initialWorkflow: ResearchWorkflow; isAdvisorOwner?: boolean; projectId: string };
+type Props = { initialWorkflow: ResearchWorkflow; isSelfDirectedProject?: boolean; projectId: string };
 type Chapter = "literature" | "development";
 type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
@@ -49,8 +50,9 @@ function validatedGeneralObjective(workflow: ResearchWorkflow) {
   return workflow.content.elements.find((element) => element.type === "general_objective" && element.status === "validated");
 }
 
-export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
+export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
   const [topics, setTopics] = useState<ChapterTopicInput[]>(() => readTopics(initialWorkflow, chapter));
@@ -75,15 +77,15 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
   const savedTopics = readTopics(workflow, chapter);
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
-  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
-  const justificationLabel = isAdvisorOwner ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
+  const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
+  const justificationLabel = isSelfDirectedProject ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
+  const validateButtonLabel = "Validar etapa";
 
   useEffect(() => {
     const stage = chapter === "literature" ? "literature" : "methodology";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage });
-    trackAnalyticsEvent("stage_started", { stage, stage_number: chapter === "literature" ? "4" : "5", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
-  }, [chapter, isAdvisorOwner]);
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage });
+    trackAnalyticsEvent("stage_started", { stage, stage_number: chapter === "literature" ? "4" : "5", profile_role: activeRole, has_advisor: "unknown" });
+  }, [activeRole, chapter]);
 
   function applyWorkflow(next: ResearchWorkflow) {
     setWorkflow(next);
@@ -101,14 +103,14 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
     setErrors([]);
     const stage = chapter === "literature" ? "literature" : "methodology";
     const stageNumber = chapter === "literature" ? "4" : "5";
-    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: isAdvisorOwner ? "advisor" : "student" });
-    if (action === "optimize") trackAnalyticsEvent("literature_optimization_started", { stage: "literature", stage_number: "4", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: activeRole });
+    if (action === "optimize") trackAnalyticsEvent("literature_optimization_started", { stage: "literature", stage_number: "4", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(references.length) });
     try {
       const requestBody: Record<string, unknown> = { action, revision: workflow.revision, step: chapter, ...extra };
       if (action === "save" || action === "validate") requestBody.topics = topics;
       const response = await fetch(`/api/projects/${projectId}/chapters`, {
         body: JSON.stringify(requestBody),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
@@ -122,7 +124,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
       if (action === "optimize") trackAnalyticsEvent("literature_optimization_completed", { stage: "literature", result: "success", reference_count_bucket: referenceBucket });
-      else trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: referenceBucket });
+      else trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: activeRole, reference_count_bucket: referenceBucket });
       if (action === "optimize") setShowOptimize(false);
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
@@ -225,7 +227,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isAdvisorOwner
         <div><p className="section-kicker">{visibleStepLabel} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
         <span className={`definition-origin ${changed ? "user" : "ai"}`}>{changed ? "Editado por você" : "Sugestão da IA"}</span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
+      {isSelfDirectedProject ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <aside className="coverage-panel" aria-label="Cobertura dos objetivos específicos">
         <strong>Cobertura dos objetivos</strong>

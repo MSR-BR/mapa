@@ -19,7 +19,7 @@ acadêmico, e-mail, nome, UUID, comentário, resposta de provedor ou stack trace
 ### Eventos disponíveis
 
 `consent_choice`, `login_started`, `login_success`, `login_failed`, `logout`,
-`profile_role_selected`, `project_start`, `project_draft_saved`,
+`profile_role_selected`, `profile_mode_changed`, `project_start`, `project_draft_saved`,
 `project_resumed`, `generation_started`, `generation_completed`,
 `generation_failed`, `generation_retry`, `proposal_viewed`,
 `proposal_selected`, `stage_started`, `stage_saved`, `stage_submitted`,

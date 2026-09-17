@@ -4,6 +4,8 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
+import { useActiveProfile } from "@/modules/profile/active-profile-context";
+
 import { deleteProject } from "./actions";
 
 export type DashboardProject = {
@@ -18,6 +20,7 @@ export type DashboardProject = {
   projectId: string;
   referenceCount: number;
   referencePreview: Array<{ label: string; title: string | null }>;
+  relation: "advisor" | "owner";
   stageLabel: string;
   statusLabel: string;
   title: string;
@@ -43,6 +46,7 @@ export function ProjectCardModal({
   projectId,
   referenceCount,
   referencePreview,
+  relation,
   selectable = true,
   selected,
   stageLabel,
@@ -51,6 +55,7 @@ export function ProjectCardModal({
   updatedAt,
   workflowVersion,
 }: Props) {
+  const { roleVersion } = useActiveProfile();
   const menuRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLButtonElement>(null);
   const [menuPosition, setMenuPosition] = useState<{ left: number; top: number } | null>(null);
@@ -105,6 +110,7 @@ export function ProjectCardModal({
         </button>
       </div>
       <span className="project-status">{statusLabel}</span>
+      {relation === "advisor" ? <span className="project-origin-badge">Projeto orientado</span> : null}
       {advisorEmail ? <span className="project-origin-badge">Orientador: {advisorEmail}</span> : null}
       {advisorReview ? (
         <span className={`project-advisor-badge project-advisor-badge-${advisorReview.status}`}>
@@ -164,10 +170,11 @@ export function ProjectCardModal({
                 }}
               >
                 <input name="projectId" type="hidden" value={projectId} />
+                <input name="profileRoleVersion" type="hidden" value={roleVersion} />
                 <input name="confirmDelete" type="hidden" value="yes" />
                 <button className="danger-button" type="submit">Excluir</button>
               </form>
-            ) : <span className="project-popover-note">Somente o estudante pode excluir.</span>}
+            ) : <span className="project-popover-note">A autoria e a exclusão permanecem com o estudante.</span>}
           </div>
         </div>,
         document.body,

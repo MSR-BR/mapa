@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
+
 import type { ResearchWorkflow } from "./schema";
 
 type Props = {
@@ -33,6 +35,7 @@ function manualReferences(workflow: ResearchWorkflow) {
 }
 
 export function ManualReferencePanel({ onWorkflow, projectId, workflow }: Props) {
+  const { roleVersion } = useActiveProfile();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [busy, setBusy] = useState(false);
@@ -50,7 +53,7 @@ export function ManualReferencePanel({ onWorkflow, projectId, workflow }: Props)
     try {
       const response = await fetch(`/api/projects/${projectId}/references`, {
         body: JSON.stringify({ reference: draft, revision: workflow.revision }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; message?: string; workflow?: ResearchWorkflow };

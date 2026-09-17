@@ -2,6 +2,8 @@
 
 import { useActionState, useState } from "react";
 
+import { useActiveProfile } from "@/modules/profile/active-profile-context";
+
 import { updateProjectAdvisor } from "./actions";
 import { initialAdvisorLinkActionState, type AdvisorLinkActionState } from "./types";
 import { trackAnalyticsEvent } from "@/modules/analytics/analytics";
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: Props) {
+  const { roleVersion } = useActiveProfile();
   const [editing, setEditing] = useState(!advisorEmail);
   const [state, formAction, pending] = useActionState(async (previousState: AdvisorLinkActionState, formData: FormData) => {
     const nextState = await updateProjectAdvisor(previousState, formData);
@@ -54,6 +57,7 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
       ) : (
         <form action={formAction} onSubmit={() => trackAnalyticsEvent("advisor_link_started", { profile_role: "student", source: "dashboard" })}>
           <input name="projectId" type="hidden" value={projectId} />
+          <input name="profileRoleVersion" type="hidden" value={roleVersion} />
           <label>
             <span>E-mail do orientador</span>
             <input

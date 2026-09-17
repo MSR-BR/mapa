@@ -44,7 +44,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     }
     throw error;
   }
-  const { actor, relation, supabase, userId } = access;
+  const { relation, supabase, userId } = access;
   const { data: project } = await supabase
     .from("projects")
     .select(
@@ -59,7 +59,8 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const isAdvisor = relation === "advisor";
 
   const source = integrationSource(project.problem_statement);
-  const isAdvisorOwner = isOwner && actor.activeRole === "advisor";
+  const isSelfDirectedProject = isOwner && access.project.authoring_role === "advisor";
+  const isStudentAuthoredProject = isOwner && access.project.authoring_role === "student";
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
@@ -89,21 +90,21 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
         <IntegrationBanner source={source} />
-        {isAdvisorOwner ? null : (
+        {isStudentAuthoredProject ? (
           <ProjectAdvisorPanel
             advisorEmail={project.advisor_email}
             advisorLinked={Boolean(project.advisor_id)}
             projectId={project.id}
           />
-        )}
+        ) : null}
         {isFinalMapStage ? (
-          <FinalMapWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
+          <FinalMapWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : isMethodologyStage ? (
-          <MethodologyWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
+          <MethodologyWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : isChapterPlanningStage ? (
-          <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
+          <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : workflow.content.discovery?.selectedCandidateId ? (
-          <ResearchDefinitionWorkspace initialWorkflow={workflow} isAdvisorOwner={isAdvisorOwner} projectId={project.id} />
+          <ResearchDefinitionWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : (
           <ProposalDiscoveryWorkspace
             autoDiscover={discover === "1"}
@@ -126,13 +127,13 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>
       <IntegrationBanner source={source} />
-      {isAdvisorOwner ? null : (
+      {isStudentAuthoredProject ? (
         <ProjectAdvisorPanel
           advisorEmail={project.advisor_email}
           advisorLinked={Boolean(project.advisor_id)}
           projectId={project.id}
         />
-      )}
+      ) : null}
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
     </main>
   );

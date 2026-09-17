@@ -84,6 +84,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const profilePresentation = USER_PROFILE_PRESENTATIONS[profile.activeRole];
   const isStudentMode = profile.activeRole === "student";
   const isAdvisorMode = profile.activeRole === "advisor";
+  const strictMode = isAccountModeSwitchEnabled();
   if (profile.activeRole === "advisor") {
     await claimPendingAdvisorProjects(supabase);
   }
@@ -93,7 +94,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     .select(projectColumns)
     .eq("owner_id", userId)
     .is("deleted_at", null);
-  const ownedProjectsQuery = isAccountModeSwitchEnabled()
+  const ownedProjectsQuery = strictMode
     ? ownedProjectsBase.eq("authoring_role", profile.activeRole)
     : ownedProjectsBase;
   const advisedProjectsBase = supabase
@@ -101,8 +102,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     .select(projectColumns)
     .neq("owner_id", userId)
     .is("deleted_at", null);
-  const advisedProjectsQuery = isAccountModeSwitchEnabled()
-    ? advisedProjectsBase.eq("authoring_role", "student")
+  const advisedProjectsQuery = strictMode
+    ? advisedProjectsBase.eq("authoring_role", "student").eq("advisor_id", userId)
     : advisedProjectsBase;
   const [{ data, error }, { data: advisedData, error: advisedError }] = await Promise.all([
     ownedProjectsQuery.order("updated_at", { ascending: false }).limit(12),
@@ -162,7 +163,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       : readClassicReferences(structure?.references_data);
     const integrationSource = project.problem_statement?.match(/^Integração dos projetos:\s*(.+)$/i)?.[1]?.trim() ?? null;
     const isIntegration = structure?.prompt_version.endsWith("-merge") || Boolean(integrationSource);
-    const showAdvisorMetadata = !isAdvisorMode;
+    const showAdvisorMetadata = project.owner_id === userId && project.authoring_role === "student";
     return {
       academicArea: meta?.area ?? project.knowledge_area ?? "Área a definir",
       advisorEmail: showAdvisorMetadata ? project.advisor_email ?? null : null,
@@ -175,6 +176,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       projectId: project.id,
       referenceCount: references.length,
       referencePreview: references.slice(0, 2),
+      relation: project.owner_id === userId ? "owner" as const : "advisor" as const,
       stageLabel: meta?.stageLabel ?? "Fluxo clássico",
       statusLabel: isIntegration ? "Integração" : project.workflow_version === 2 ? "Mapa v2" : statusLabels[project.status] ?? project.status,
       title: meta?.title ?? project.title,
@@ -206,7 +208,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     .map((project) => dashboardProjectById.get(project.id))
     .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
   const continuationMeta = activeProjects[0] ?? null;
-  const hasVisibleProjects = projects.length > 0 || advisorProjects.length > 0;
+  const hasOwnProjects = projects.length > 0;
+  const hasAdvisorProjects = advisorProjects.length > 0;
+  const hasPrimaryLibraryProjects = strictMode ? hasOwnProjects : hasOwnProjects || hasAdvisorProjects;
 
   if (continueParam === "1" && resume !== "1" && continuationMeta) {
     redirect(`/dashboard/projects/${continuationMeta.projectId}`);
@@ -237,7 +241,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       )}
 
       <section className="recent-projects" aria-labelledby="recent-projects-title">
-        {isStudentMode && continuationMeta ? (
+        {(strictMode || isStudentMode) && continuationMeta ? (
           <div className="continue-project-card">
             <div>
               <p className="section-kicker">Continue de onde parou</p>
@@ -250,23 +254,38 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
         <div className="section-heading">
           <div>
-            <p className="section-kicker">Biblioteca</p>
-            <h2 id="recent-projects-title">{isAdvisorMode ? "Projetos e revisões" : "Seus projetos"}</h2>
+            <p className="section-kicker">{strictMode ? "Biblioteca do perfil" : "Biblioteca"}</p>
+            <h2 id="recent-projects-title">
+              {strictMode ? "Meus projetos" : isAdvisorMode ? "Projetos e revisões" : "Seus projetos"}
+            </h2>
+            {strictMode ? (
+              <p>
+                {isStudentMode
+                  ? "Projetos criados como Aluno, com supervisão opcional."
+                  : "Projetos autônomos criados como Orientador, sem supervisão externa."}
+              </p>
+            ) : null}
           </div>
         </div>
 
-        {error || advisedError ? (
+        {error ? (
           <div className="inline-state error-state" role="alert">
-            <strong>Não foi possível carregar os projetos.</strong>
+            <strong>Não foi possível carregar seus projetos.</strong>
             <span>Tente atualizar a página em alguns instantes.</span>
           </div>
-        ) : !hasVisibleProjects ? (
+        ) : !hasPrimaryLibraryProjects ? (
           <div className="inline-state empty-projects">
             <span className="empty-state-icon" aria-hidden="true">⌁</span>
-            <strong>{isStudentMode ? "Sua biblioteca ainda está vazia." : "Nenhum projeto próprio ou compartilhado ainda."}</strong>
+            <strong>
+              {strictMode
+                ? "Nenhum projeto criado neste perfil."
+                : isStudentMode
+                  ? "Sua biblioteca ainda está vazia."
+                  : "Nenhum projeto próprio ou compartilhado ainda."}
+            </strong>
             <span>
-              {isStudentMode
-                ? "Escreva uma ideia acima para criar o primeiro mapa."
+              {strictMode || isStudentMode
+                ? "Escolha Mapa Rápido ou Mapa Avançado acima para começar."
                 : "Crie um mapa acima ou peça para um estudante compartilhar o projeto com o e-mail da sua conta."}
             </span>
           </div>
@@ -295,7 +314,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               title="Projetos integrados"
               variant="integrated"
             />
-            {isAdvisorMode ? (
+            {!strictMode && isAdvisorMode ? (
               <DashboardProjectGrid
                 allowIntegration={false}
                 description="Projetos compartilhados com sua conta. Abra para comentar, solicitar correção ou validar a etapa."
@@ -308,6 +327,39 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </div>
         )}
       </section>
+
+      {strictMode && isAdvisorMode ? (
+        <section className="recent-projects advisor-projects-library" aria-labelledby="advisor-projects-title">
+          <div className="section-heading">
+            <div>
+              <p className="section-kicker">Área de orientação</p>
+              <h2 id="advisor-projects-title">Projetos orientados</h2>
+              <p>Projetos de estudantes vinculados à sua conta, separados da sua biblioteca autoral.</p>
+            </div>
+          </div>
+          {advisedError ? (
+            <div className="inline-state error-state" role="alert">
+              <strong>Não foi possível carregar os projetos orientados.</strong>
+              <span>Tente atualizar a página em alguns instantes.</span>
+            </div>
+          ) : !hasAdvisorProjects ? (
+            <div className="inline-state empty-projects">
+              <span className="empty-state-icon" aria-hidden="true">↗</span>
+              <strong>Nenhum projeto orientado vinculado.</strong>
+              <span>Quando um estudante vincular sua conta, o projeto aparecerá somente nesta área.</span>
+            </div>
+          ) : (
+            <DashboardProjectGrid
+              allowIntegration={false}
+              description="Abra um projeto para comentar, solicitar correção ou validar a etapa enviada pelo estudante."
+              emptyMessage="Nenhum projeto aguardando sua revisão."
+              projects={advisorProjects}
+              title="Projetos recebidos"
+              variant="advisor"
+            />
+          )}
+        </section>
+      ) : null}
     </main>
   );
 }

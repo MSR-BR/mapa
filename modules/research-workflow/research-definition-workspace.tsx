@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
@@ -14,7 +15,7 @@ import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
   initialWorkflow: ResearchWorkflow;
-  isAdvisorOwner?: boolean;
+  isSelfDirectedProject?: boolean;
   projectId: string;
 };
 
@@ -31,8 +32,9 @@ function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
     .map((element) => ({ content: element.proposedContent, id: element.id, studentJustification: element.studentJustification ?? "" }));
 }
 
-export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = false, projectId }: Props) {
+export function ResearchDefinitionWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [problem, setProblem] = useState(() => findElement(initialWorkflow, "problem_statement")?.proposedContent ?? "");
   const [general, setGeneral] = useState(() => findElement(initialWorkflow, "general_objective")?.proposedContent ?? "");
@@ -71,15 +73,15 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
         || generalJustification !== (findElement(workflow, "general_objective")?.studentJustification ?? "")
         || JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
-  const waitingForAdvisor = !isAdvisorOwner && Boolean(pendingAdvisorReview(workflow.content));
-  const justificationLabelSuffix = isAdvisorOwner ? " (opcional)" : " *";
-  const validateButtonLabel = isAdvisorOwner ? "Validar etapa" : "Validar pelo estudante";
+  const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
+  const justificationLabelSuffix = isSelfDirectedProject ? " (opcional)" : " *";
+  const validateButtonLabel = "Validar etapa";
 
   useEffect(() => {
     const stage = step === "problem_statement" ? "problem" : "definition";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: isAdvisorOwner ? "advisor" : "student", source: "dashboard", stage });
-    if (step) trackAnalyticsEvent("stage_started", { stage, stage_number: step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3", profile_role: isAdvisorOwner ? "advisor" : "student", has_advisor: "unknown" });
-  }, [isAdvisorOwner, step]);
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage });
+    if (step) trackAnalyticsEvent("stage_started", { stage, stage_number: step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3", profile_role: activeRole, has_advisor: "unknown" });
+  }, [activeRole, step]);
 
   function applyWorkflow(nextWorkflow: ResearchWorkflow) {
     setWorkflow(nextWorkflow);
@@ -99,7 +101,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
     setErrors([]);
     const stage = step === "problem_statement" ? "problem" : "definition";
     const stageNumber = step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3";
-    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: isAdvisorOwner ? "advisor" : "student" });
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: activeRole });
     try {
       const response = await fetch(`/api/projects/${projectId}/definition`, {
         body: JSON.stringify({
@@ -115,7 +117,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
           studentJustification: step === "problem_statement" ? problemJustification : step === "general_objective" ? generalJustification : undefined,
           step,
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as {
@@ -131,7 +133,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
-      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: isAdvisorOwner ? "advisor" : "student", reference_count_bucket: getReferenceCountBucket(references.length) });
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
@@ -217,7 +219,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isAdvisorOwner = 
           {currentElement?.updatedBy === "user" || currentValueChanged ? "Editado por você" : "Sugestão da IA"}
         </span>
       </div>
-      {isAdvisorOwner ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
+      {isSelfDirectedProject ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="definition-source">
         <span>Origem desta etapa</span>

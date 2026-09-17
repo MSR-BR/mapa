@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 
+import { useActiveProfile } from "@/modules/profile/active-profile-context";
+
 import type { Project } from "./types";
 import {
   initialProjectActionState,
@@ -18,6 +20,7 @@ type ProjectFormProps = {
 };
 
 export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) {
+  const { activeRole, roleVersion } = useActiveProfile();
   const [dirty, setDirty] = useState(false);
   const submitting = useRef(false);
   const trackedAction = async (state: ProjectActionState, formData: FormData) => {
@@ -76,6 +79,7 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
       onSubmit={() => { submitting.current = true; }}
     >
       {project ? <input name="projectId" type="hidden" value={project.id} /> : null}
+      <input name="profileRoleVersion" type="hidden" value={roleVersion} />
       <label>
         Título <span>obrigatório</span>
         <input defaultValue={project?.title} maxLength={160} name="title" required {...fieldA11y("title")} />
@@ -126,11 +130,13 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
           {errorFor("academicLevel") ? <small className="field-error" id="academicLevel-error">{errorFor("academicLevel")}</small> : null}
         </label>
       </div>
-      <label>
-        E-mail do orientador
-        <input defaultValue={project?.advisor_email ?? ""} maxLength={320} name="advisorEmail" type="email" {...fieldA11y("advisorEmail")} />
-        {errorFor("advisorEmail") ? <small className="field-error" id="advisorEmail-error">{errorFor("advisorEmail")}</small> : null}
-      </label>
+      {activeRole === "student" ? (
+        <label>
+          E-mail do orientador
+          <input defaultValue={project?.advisor_email ?? ""} maxLength={320} name="advisorEmail" type="email" {...fieldA11y("advisorEmail")} />
+          {errorFor("advisorEmail") ? <small className="field-error" id="advisorEmail-error">{errorFor("advisorEmail")}</small> : null}
+        </label>
+      ) : null}
       {dirty ? <p className="unsaved-indicator" role="status">Alterações não salvas</p> : null}
       {state.message ? (
         <p className={`form-message ${state.status}`} role="status">{state.message}</p>

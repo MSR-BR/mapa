@@ -64,7 +64,7 @@ export function AccountModeSettings({ activeRole, roleVersion }: Props) {
     if (!state.requestId || handledRequestRef.current === state.requestId) return;
     handledRequestRef.current = state.requestId;
     if (state.status === "success" && state.activeRole) {
-      trackAnalyticsEvent("profile_role_selected", {
+      trackAnalyticsEvent("profile_mode_changed", {
         auth_state: "authenticated",
         profile_role: state.activeRole,
         result: "success",
@@ -76,7 +76,7 @@ export function AccountModeSettings({ activeRole, roleVersion }: Props) {
       return;
     }
     if (state.status === "conflict") {
-      trackAnalyticsEvent("profile_role_selected", {
+      trackAnalyticsEvent("profile_mode_changed", {
         auth_state: "authenticated",
         profile_role: activeRole,
         reason_code: "duplicate_action",

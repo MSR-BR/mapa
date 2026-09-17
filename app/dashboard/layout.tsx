@@ -11,6 +11,7 @@ import {
   isAccountModeSwitchEnabled,
   loadActorContext,
 } from "@/modules/profile/authorization";
+import { ActiveProfileProvider } from "@/modules/profile/active-profile-context";
 import { AccountModeSync } from "@/modules/profile/account-mode-sync";
 import { ProfileModePrompt } from "@/modules/profile/profile-mode-prompt";
 
@@ -67,7 +68,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {accountModeSwitchEnabled ? <AccountModeSync /> : null}
       {!profile ? <ProfileModePrompt allowModeSwitch={accountModeSwitchEnabled} email={email} /> : null}
       {profile && !profile.hasLegalConsent ? <LegalConsentGate activeRole={profile.activeRole} roleVersion={profile.roleVersion} /> : null}
-      {children}
+      {profile ? (
+        <ActiveProfileProvider activeRole={profile.activeRole} roleVersion={profile.roleVersion}>
+          {children}
+        </ActiveProfileProvider>
+      ) : children}
       <LegalLinks defaultEmail={email} />
     </div>
   );

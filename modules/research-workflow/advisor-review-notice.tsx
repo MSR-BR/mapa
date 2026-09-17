@@ -4,7 +4,10 @@ import { ADVISOR_REVIEW_LABELS, currentAdvisorReview } from "./advisor-review";
 import type { ResearchWorkflow } from "./schema";
 import { useState } from "react";
 
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
+
 export function AdvisorReviewNotice({ workflow, projectId }: { projectId: string; workflow: ResearchWorkflow }) {
+  const { roleVersion } = useActiveProfile();
   const review = currentAdvisorReview(workflow.content);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -22,7 +25,7 @@ export function AdvisorReviewNotice({ workflow, projectId }: { projectId: string
     setBusy(true);
     setMessage(null);
     try {
-      const response = await fetch(`/api/projects/${projectId}/advisor-review/remind`, { method: "POST" });
+      const response = await fetch(`/api/projects/${projectId}/advisor-review/remind`, { headers: profileMutationHeaders(roleVersion), method: "POST" });
       const payload = await response.json() as { error?: string; message?: string };
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível reenviar o lembrete.");
       setMessage(payload.message ?? "Lembrete enviado.");

@@ -19,6 +19,7 @@ import {
 import { ResearchIntakeForm } from "./research-intake-form";
 import { ResearchPromptInput } from "./research-prompt-input";
 import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
+import { useActiveProfile } from "@/modules/profile/active-profile-context";
 
 type StartMode = "quick" | "advanced" | null;
 
@@ -33,6 +34,7 @@ export function QuickStartForm({
   showAdvisorField?: boolean;
   showResearchType?: boolean;
 }) {
+  const { activeRole, roleVersion } = useActiveProfile();
   const formRef = useRef<HTMLFormElement>(null);
   const resumeSubmitPending = useRef(false);
   const quickSuggestionSubmitPending = useRef(false);
@@ -127,12 +129,13 @@ export function QuickStartForm({
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
     const source = resumeDraft ? "resume" : "dashboard";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: "unknown", source, entry_mode: entryMode, product_type: productType });
+    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source, entry_mode: entryMode, product_type: productType });
     trackAnalyticsEvent(resumeDraft ? "project_resumed" : "project_start", {
       entry_mode: entryMode,
       product_type: productType,
       source,
       result: "started",
+      profile_role: activeRole,
     });
   }
 
@@ -191,6 +194,7 @@ export function QuickStartForm({
       </div>
 
       <input name="autoGenerate" type="hidden" value="yes" />
+      <input name="profileRoleVersion" type="hidden" value={roleVersion} />
       <input name="legacyPromptMode" type="hidden" value={mode === "quick" ? "yes" : "no"} />
       {showAdvisorField ? (
         <label className="quick-start-advisor">

@@ -395,13 +395,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!access.ok) return access.response;
   const { actor, supabase, userId } = access.value;
   const claims = actor.claims;
-  const isAdvisorOwner = actor.activeRole === "advisor";
+  const isSelfDirectedProject = access.value.project.authoring_role === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   const { action } = parsed.data;
-  if (!isAdvisorOwner && action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && action === "validate" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (
@@ -440,7 +440,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           allowedTopicIds,
           generalObjective: approvedGeneral,
           generalObjectiveId: context.general.id,
-          requireStudentJustification: !isAdvisorOwner,
+          requireStudentJustification: !isSelfDirectedProject,
         }).warnings
         : [];
       plan = await generateMethodologyPlan(
@@ -491,7 +491,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       allowedTopicIds,
       generalObjective: approvedGeneral,
       generalObjectiveId: context.general.id,
-      requireStudentJustification: !isAdvisorOwner,
+      requireStudentJustification: !isSelfDirectedProject,
     });
     content = researchWorkflowContentSchema.parse({
       ...content,
@@ -507,7 +507,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     allowedTopicIds,
     generalObjective: approvedGeneral,
     generalObjectiveId: context.general.id,
-    requireStudentJustification: !isAdvisorOwner,
+    requireStudentJustification: !isSelfDirectedProject,
   });
   const advisoryMessages = [...new Set([...errors, ...warnings])];
 
@@ -518,7 +518,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     context,
   );
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,

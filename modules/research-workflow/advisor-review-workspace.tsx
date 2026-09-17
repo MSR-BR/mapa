@@ -7,6 +7,7 @@ import { buildFinalMap, type FinalMap, type FinalMapTopic } from "./final-map";
 import { buildReferenceCodeMap, withCitationMarkers } from "./reference-citations";
 import type { AdvisorReview, DiscoveryReference, ResearchWorkflow, ResearchWorkflowContent, ValidatedElement } from "./schema";
 import { setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 
 type AdvisorAction = "approve" | "request_changes" | "save_comment";
 
@@ -324,6 +325,7 @@ function AdvisorReadOnlyProject({ workflow }: { workflow: ResearchWorkflow }) {
 }
 
 export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitle }: Props) {
+  const { roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const review = currentAdvisorReview(workflow.content);
   const [comments, setComments] = useState(review?.advisorComments ?? "");
@@ -358,7 +360,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
           reviewId: review.id,
           revision: workflow.revision,
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; message?: string; workflow?: ResearchWorkflow };
@@ -382,7 +384,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
     setReminderBusy(true);
     setReminderMessage(null);
     try {
-      const response = await fetch(`/api/projects/${projectId}/advisor-review/remind`, { method: "POST" });
+      const response = await fetch(`/api/projects/${projectId}/advisor-review/remind`, { headers: profileMutationHeaders(roleVersion), method: "POST" });
       const payload = await response.json() as { error?: string; message?: string };
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível reenviar o lembrete.");
       setReminderMessage(payload.message ?? "Lembrete enviado ao estudante.");

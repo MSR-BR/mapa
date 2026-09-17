@@ -286,7 +286,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (!access.ok) return access.response;
   const { actor, supabase, userId } = access.value;
   const claims = actor.claims;
-  const isAdvisorOwner = actor.activeRole === "advisor";
+  const isSelfDirectedProject = access.value.project.authoring_role === "advisor";
   const workflow = await loadResearchWorkflow(supabase, userId, id);
   const discovery = workflow?.content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === discovery.selectedCandidateId);
@@ -296,7 +296,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (!isAdvisorOwner && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (workflow.content.activeStep !== parsed.data.step) {
@@ -420,7 +420,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
   }
 
-  const errors = validationErrors(content, step, { requireStudentJustification: !isAdvisorOwner });
+  const errors = validationErrors(content, step, { requireStudentJustification: !isSelfDirectedProject });
   const elementIds = step === "specific_objectives"
     ? content.elements.filter((element) => element.type === "specific_objective").map((element) => element.id)
     : [currentElement(content, step)?.id].filter((value): value is string => Boolean(value));
@@ -577,7 +577,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
   const targetActiveStep = content.activeStep;
-  const shouldWaitForAdvisor = !isAdvisorOwner && Boolean(advisorEmail);
+  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,
