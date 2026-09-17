@@ -11,4 +11,4 @@
 - [x] Analytics corrigido.
 - [x] Acessibilidade/responsividade aprovadas por contratos estáticos; captura
   autenticada está documentada como indisponível no ambiente.
-- [ ] Flag desligada e CPD concluído.
+- [x] Flag desligada e CPD concluído.

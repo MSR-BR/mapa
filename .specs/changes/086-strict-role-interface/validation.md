@@ -37,6 +37,18 @@
 - `ACCOUNT_MODE_SWITCH_ENABLED` permanece ausente em Production, com fallback
   seguro `false`; nenhuma interface nova está exposta antes da C87.
 
-## Resultado de produção — pendente do CPD
+## Resultado de produção — 2026-09-16
 
-- Commit, deployment, smokes remotos e logs serão registrados após a publicação.
+- Commit de implementação `12eb6cc` enviado para
+  `codex/change-003-004`.
+- Deployment `dpl_3ZmAL2QNy2jmLyHzLqbhGu5QZM9K`: `READY` em Production e
+  associado ao domínio canônico `https://mapadapesquisa.com.br`.
+- Build Vercel no Next.js 16.3.5 concluído em 18 s; compilação em 2,6 s e
+  TypeScript em 9,0 s.
+- Smokes remotos: raiz `200`, health `ok`, dashboard e configurações
+  anônimos `307` para `/login`, e mutação acadêmica protegida `401 authentication_required` com JSON
+  estruturalmente válido.
+- Logs de erro do deployment após os smokes: nenhum registro encontrado.
+- `ACCOUNT_MODE_SWITCH_ENABLED` continua ausente em Production; o fallback
+  seguro permanece `false`, portanto a C86 foi publicada sem expor a troca
+  antes da ativação controlada da C87.
