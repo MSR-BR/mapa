@@ -73,3 +73,24 @@ funcional. A C88 não pode alterar nameservers automaticamente.
   e-mail testados caso qualquer registro DNS seja alterado.
 - Nenhum cutover DNS ocorre na mesma janela das migrations/RLS de perfil.
 - Evidências, horário, propagação, responsável e recuperação registrados no CPD.
+
+## Decisão e saída da C88 — 17/09/2026
+
+**Estratégia escolhida: A — manter DNS externo.**
+
+A decisão conservadora prevista neste gate foi adotada porque o domínio e o
+certificado já estavam funcionais e não houve autorização para trocar
+nameservers. A verificação final confirmou:
+
+- projeto/domínio corretos na Vercel;
+- NS `d.sec.dns.br` e `e.sec.dns.br`;
+- A `76.76.21.21`;
+- MX `10 inbound-smtp.sa-east-1.amazonaws.com`;
+- domínio raiz HTTP/2 200 com HTTPS, HSTS e servidor Vercel;
+- `/api/health` com `status=ok`;
+- `www` sem resolução, conforme C38.
+
+Nenhum registro DNS foi alterado. Por isso, não houve cutover, propagação,
+rollback nem repetição de envio/recebimento de e-mail nesta janela. A ausência
+de TXT no apex e de DMARC foi registrada como observação para eventual Change
+específica; não autoriza modificação automática da zona.

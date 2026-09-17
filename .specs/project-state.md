@@ -7,12 +7,11 @@
 
 ## Estado atual
 
-- Change atual: 088 — Homologação E2E e rollout de modos.
-- Changes funcionalmente concluídas: 001–087 conforme `.specs/roadmap.md`.
-- Change 087 concluída: migrations, correção de `INSERT ... RETURNING`, matriz
-  remota, Advisors, flag, CPD e smokes aprovados.
-- Change 088 permanece pendente para homologação final observada e gate de
-  domínio/DNS/e-mail.
+- Change atual: 088 — concluída.
+- Changes concluídas: 001–088 conforme `.specs/roadmap.md`.
+- Não há nova Change planejada após a C88.
+- A conta alternável, as bibliotecas por modo, a revisão vinculada, PDF/DOCX e
+  o rollout de produção estão homologados.
 
 ## Decisões-chave
 
@@ -45,22 +44,26 @@
 
 ## Estado validado mais recente
 
-As Changes 084–087 publicaram autorização centralizada, configurações de modo,
-interfaces estritas e RLS consciente do modo. As migrations `20260917003926` e
-`20260917003928` foram aplicadas; a validação autenticada revelou uma falha de
-`INSERT ... RETURNING`, corrigida por roll-forward em `20260917015508` antes da
-ativação. A matriz remota final aprovou 15 verificações, o E2E Aluno–Orientador
-foi aprovado e `npm run check` concluiu 119/119 testes com build Next.js 16.3.5.
+A C88 fechou o ciclo C83–C88 com E2E remoto de duas contas, troca
+Aluno→Orientador→Aluno, persistência, conflito de versão, RLS direta,
+bibliotecas por autoria, supervisão, projeto autônomo de Orientador, exportações
+PDF/DOCX e cleanup. `npm run check` concluiu 119/119 testes e build Next.js
+16.3.5; scanner de segurança e auditoria npm foram aprovados.
 
-Security e Performance Advisors apresentaram zero erros; os avisos intencionais
-foram documentados. `ACCOUNT_MODE_SWITCH_ENABLED=true` está ativa somente em
-Production. O deployment `dpl_2SZj3hikYutHnXpDkSeuEgh5178x`, com commit funcional
-`b1cda6c`, está `READY` em `https://mapadapesquisa.com.br`. O seletor foi
-confirmado em sessão autenticada, os smokes foram aprovados e não houve log de
-erro após a publicação. A C88 continua necessária para a homologação final
-observada e o gate independente de domínio/DNS/e-mail.
+O deployment `dpl_FRVTWXQUpRtJBbUEotEmWV9TEtjp`, commit funcional
+`c8bdc4e`, está READY em `https://mapadapesquisa.com.br` com versão
+`v17092026.1`. O health está ok, Gemini/Research Starter/Supabase/Resend estão
+configurados, o smoke autenticado do Research Starter retornou três referências
+e não houve erro novo nos logs consultados.
+
+A estratégia de domínio é manter DNS externo: NS e MX foram preservados, o
+domínio raiz continua em HTTPS/HSTS na Vercel e `www` permanece
+deliberadamente ausente. Nenhuma mudança DNS ou teste de e-mail foi necessário
+nesta janela.
 
 ## Questões em aberto
 
-- Antes da C88, decidir formalmente entre manter o DNS externo ou delegar os
-  nameservers à Vercel. Sem decisão explícita, manter a configuração funcional.
+- Nenhuma Change funcional está planejada.
+- SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
+  autenticação de e-mail exige inventário da zona, autorização e Change
+  específica; não faz parte do rollout encerrado.

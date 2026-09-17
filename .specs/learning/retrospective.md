@@ -133,3 +133,36 @@ responsivo. O arquivo foi preservado sem recompressão.
 - Ocultar controles ou iniciar áudio sem interação.
 - Tratar hospedagem direta no repositório como solução definitiva para grande
   escala.
+
+# Retrospectiva — Change 088
+
+## Resultado
+
+O ciclo de modos alternáveis foi homologado com duas contas sintéticas,
+persistência após login, conflito de versão, bibliotecas separadas por autoria,
+supervisão vinculada, projetos autônomos de Orientador, exportações PDF/DOCX,
+integrações e produção saudável. DNS externo e MX foram preservados.
+
+## O que funcionou
+
+- Reescrever o E2E para alternar e restaurar os modos, em vez de depender de
+  papéis imutáveis.
+- Reproduzir acessos pela Data API e `INSERT ... RETURNING` com clientes
+  autenticados reais.
+- Validar PDF e DOCX em memória para projetos sintéticos dos dois perfis.
+- Isolar cada falha do navegador por camadas até distinguir DOM correto de
+  incompatibilidade do harness.
+- Manter o gate DNS somente leitura e separado do deploy de aplicação/RLS.
+- Conferir a versão pública no health; isso revelou a variável de Production
+  desatualizada antes do encerramento.
+
+## O que evitar
+
+- Reclassificar projetos quando o usuário troca de modo.
+- Deixar contas sintéticas em outro modo ou manter dados temporários.
+- Declarar um clique visual aprovado quando o driver não o concluiu.
+- Assumir que um módulo DOCX existente significa rota e interface disponíveis.
+- Trocar nameservers por recomendação de provedor sem inventário, autorização e
+  janela própria.
+- Registrar como release final um deployment cujo health ainda apresenta versão
+  antiga.

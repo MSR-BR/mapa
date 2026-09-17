@@ -616,3 +616,26 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - Smoke pós-deploy: landing, vídeo e poster HTTP 200; requisição parcial do MP4
   HTTP 206; health `status=ok`, inspeção visual aprovada e nenhum erro nos logs
   consultados.
+
+## Change 088 — Homologação E2E e rollout de modos (17/09/2026)
+
+- A mesma conta pode alternar Aluno→Orientador→Aluno em Configurações; a escolha
+  persiste entre logins e a versão do perfil impede gravações de abas obsoletas.
+- Cada modo mantém biblioteca própria por `authoring_role`. Projetos de
+  Orientador são autônomos; projetos de Aluno podem ser vinculados para revisão,
+  sem permitir edição acadêmica ou autoaprovação pelo orientador.
+- O E2E remoto usa duas contas sintéticas, restaura os modos originais e remove
+  projetos/workflows temporários em `finally`.
+- PDF e Word estão disponíveis para versões salvas e mapas finais, com a mesma
+  autorização, identificação de rascunho e `Cache-Control: private, no-store`.
+- Gate local: lint, tipos, 119 testes, PDF/DOCX, build Next.js 16.3.5, scanner de
+  segurança e auditoria npm aprovados.
+- Integrações: Gemini estruturado e Research Starter de produção com HTTP 200 e
+  três referências.
+- DNS: estratégia A mantida; NS externos `d.sec.dns.br`/`e.sec.dns.br`, A
+  `76.76.21.21`, MX preservado e `www` deliberadamente ausente. Nenhuma
+  mudança de DNS ocorreu nesta janela.
+- Commit funcional `c8bdc4e`; versão `v17092026.1`; deployment
+  `dpl_FRVTWXQUpRtJBbUEotEmWV9TEtjp` READY e aliasado ao domínio canônico.
+- Health `status=ok`, quatro provedores configurados e nenhum erro encontrado
+  nos logs pós-rollout.

@@ -34,3 +34,18 @@
 14. Vídeo promocional abaixo da dobra deve reservar espaço por dimensões ou
     `aspect-ratio`, mostrar poster representativo e usar carregamento sob demanda;
     autoplay com áudio não deve ser requisito de conversão.
+
+15. Em contas com modos alternáveis, identidade da conta, modo ativo e autoria do
+    recurso são dimensões independentes; trocar o modo nunca deve reclassificar
+    recursos existentes.
+16. E2E de autorização deve usar contas sintéticas reversíveis, preservar o modo
+    inicial e remover projetos, workflows e vínculos temporários em `finally`.
+17. Falha de um driver headless não é automaticamente falha do produto: isole
+    carregamento público, sessão autenticada, DOM, Server Action/API e RLS antes
+    de classificar o resultado, sem transformar cobertura parcial em aprovação.
+18. A existência de um gerador de arquivo não prova que o formato está
+    disponível. Valide interface, rota autenticada, cabeçalhos e assinatura
+    binária para cada perfil relevante.
+19. Rollout de autenticação/RLS e manutenção de DNS precisam de janelas e gates
+    independentes. DNS externo funcional deve ser preservado na ausência de
+    autorização explícita para delegação.

@@ -48,3 +48,32 @@ derivado de conteúdo aprovado, controles acessíveis, reprodução sem autoplay
 áudio, carregamento compatível com a posição da mídia na página e verificação
 responsiva. Arquivos grandes podem começar em hospedagem própria, mas devem ter
 um gatilho documentado de migração para CDN ou streaming adaptativo.
+
+## Modos alternáveis, formatos e gates de infraestrutura
+
+Em apps com uma conta que pode operar em mais de um modo, modelar e testar
+separadamente:
+
+- identidade estável da conta;
+- modo ativo versionado e persistente;
+- autoria imutável de cada recurso;
+- relação temporária ou vinculada de colaboração;
+- consentimento específico por modo.
+
+O fechamento deve exercitar transições reversíveis com contas sintéticas, duas
+sessões ou abas, versão obsoleta, acesso direto à API/RLS e cleanup garantido.
+Falhas de automação visual devem ser diagnosticadas em camadas e registradas
+como cobertura parcial quando apropriado; não podem ser convertidas em sucesso
+nem em defeito de produto sem evidência.
+
+Formatos exportáveis exigem prova completa: controle visível, rota autorizada,
+estado permitido, cabeçalhos privados e assinatura binária. Um gerador não
+referenciado pela rota é código disponível, não uma feature entregue.
+
+Mudanças de domínio/DNS não devem ser acopladas a migrations, autorização ou
+feature flags. Na ausência de autorização explícita, manter a configuração
+externa funcional, verificar somente leitura NS/A/CNAME/MX/TXT/SSL e exigir
+smoke de e-mail apenas se a zona efetivamente mudar.
+
+A versão exibida pelo health deve corresponder ao commit/deployment final.
+Overrides de ambiente públicos fazem parte da reconciliação de release.

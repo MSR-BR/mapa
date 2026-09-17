@@ -27,3 +27,10 @@
   migration já publicada nem usar reset destrutivo.
 - Erro de DNS: não alterar RLS para compensar; executar o rollback documentado da
   zona/nameservers e revalidar site, certificado e e-mail.
+
+## Encerramento em 17/09/2026
+
+O rollout terminou por roll-forward, sem rollback: migrations/RLS da C87
+permaneceram ativas, a flag de troca continuou habilitada em Production e a C88
+homologou a matriz remota, o E2E entre contas, exportações e produção. A
+estratégia de DNS externo foi preservada em janela sem mudança de zona.
