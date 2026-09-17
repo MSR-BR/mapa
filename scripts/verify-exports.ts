@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
+import { createDocxExport } from "../modules/export/docx";
 import { createPdfExport } from "../modules/export/pdf";
 import type { ExportDocumentInput } from "../modules/export/types";
 
@@ -44,8 +45,12 @@ const input: ExportDocumentInput = {
 
 const outputDirectory = resolve("tmp/exports");
 await mkdir(outputDirectory, { recursive: true });
-const pdf = await createPdfExport(input);
-await writeFile(resolve(outputDirectory, "mapa-export-validation.pdf"), pdf);
+const [docx, pdf] = await Promise.all([createDocxExport(input), createPdfExport(input)]);
+await Promise.all([
+  writeFile(resolve(outputDirectory, "mapa-export-validation.docx"), docx),
+  writeFile(resolve(outputDirectory, "mapa-export-validation.pdf"), pdf),
+]);
 
 if (pdf.subarray(0, 4).toString() !== "%PDF") throw new Error("PDF inválido.");
-console.log(JSON.stringify({ outputDirectory, pdfBytes: pdf.byteLength }));
+if (docx.subarray(0, 2).toString() !== "PK") throw new Error("DOCX inválido.");
+console.log(JSON.stringify({ docxBytes: docx.byteLength, outputDirectory, pdfBytes: pdf.byteLength }));

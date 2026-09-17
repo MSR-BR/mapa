@@ -260,13 +260,13 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <div className="export-panel" aria-label="Exportar última versão salva">
             <div>
               <strong>Exportar versão {snapshot.revision ?? 1}</strong>
-              <span>{dirty ? "Salve as alterações antes de exportar." : "PDF com referências cruzadas e referências otimizadas pelo Research Starter."}</span>
+              <span>{dirty ? "Salve as alterações antes de exportar." : "PDF e Word com referências cruzadas e referências otimizadas pelo Research Starter."}</span>
             </div>
             <div className="export-actions">
               {dirty ? (
-                <button disabled type="button">Exportar PDF</button>
+                <><button disabled type="button">Exportar PDF</button><button disabled type="button">Exportar Word</button></>
               ) : (
-                <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf`} referenceCount={snapshot.references.length}>Exportar PDF</ExportPdfLink>
+                <><ExportPdfLink href={`/api/projects/${projectId}/exports/pdf`} referenceCount={snapshot.references.length}>Exportar PDF</ExportPdfLink><a href={`/api/projects/${projectId}/exports/docx`}>Exportar Word</a></>
               )}
             </div>
           </div>

@@ -1,6 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database, Json } from "../lib/supabase/database.types";
+import { createFinalMapDocxExport } from "../modules/export/docx";
+import { createFinalMapPdfExport } from "../modules/export/pdf";
 import {
   currentAdvisorReview,
   pendingAdvisorReview,
@@ -29,6 +31,7 @@ type Client = SupabaseClient<Database>;
 type ProjectVerificationRow = {
   advisor_email?: string | null;
   advisor_id?: string | null;
+  authoring_role?: "advisor" | "student";
   id: string;
   owner_id: string;
   title?: string | null;
@@ -120,50 +123,102 @@ async function requireData<T>(operation: string, result: { data: T | null; error
   return result.data;
 }
 
-async function assertExistingProfileRole(
-  account: { client: Client; userId: string },
-  expectedRole: "advisor" | "student",
-) {
+async function readProfile(account: { client: Client; userId: string }) {
   const { data, error } = await account.client
     .from("user_profiles")
-    .select("active_role")
+    .select("active_role,role_version")
     .eq("user_id", account.userId)
-    .maybeSingle();
-
-  if (error) throw new Error(`Perfil de teste ${expectedRole}: ${error.message}`);
-  if (!data) {
-    throw new Error(
-      `A conta de teste ${expectedRole} ainda não possui um perfil. ` +
-      "Acesse o aplicativo uma vez com essa conta e confirme o papel permanente antes de rodar esta verificação.",
-    );
+    .single();
+  if (error || !data) throw new Error(`Leitura do perfil: ${error?.message ?? "sem retorno"}`);
+  if (data.active_role !== "student" && data.active_role !== "advisor") {
+    throw new Error("O perfil de teste não possui um modo acadêmico válido.");
   }
-  if (data.active_role !== expectedRole) {
-    throw new Error(
-      `A conta de teste esperada como ${expectedRole} está registrada como ${data.active_role}. ` +
-      "Use contas de teste distintas e com papéis permanentes corretos; este verificador não altera perfis.",
-    );
-  }
+  return { activeRole: data.active_role, roleVersion: data.role_version };
 }
 
-async function assertProfileRoleIsImmutableAcrossSessions(
+async function switchActiveRole(
+  account: { client: Client; userId: string },
+  nextRole: "advisor" | "student",
+  expectedRoleVersion?: number,
+  requestId = crypto.randomUUID(),
+) {
+  const current = expectedRoleVersion === undefined ? await readProfile(account) : null;
+  const { data, error } = await account.client.rpc("switch_active_role", {
+    expected_role_version: expectedRoleVersion ?? current!.roleVersion,
+    next_role: nextRole,
+    request_id: requestId,
+  });
+  if (error) throw new Error(`Troca para ${nextRole}: ${error.message}`);
+  const row = (Array.isArray(data) ? data[0] : data) as {
+    active_role?: string;
+    role_version?: number;
+  } | null;
+  if (!row || row.active_role !== nextRole || typeof row.role_version !== "number") {
+    throw new Error(`Troca para ${nextRole} retornou um estado inválido.`);
+  }
+  return { activeRole: nextRole, roleVersion: row.role_version };
+}
+
+async function ensureActiveRole(
+  account: { client: Client; userId: string },
+  role: "advisor" | "student",
+) {
+  const current = await readProfile(account);
+  return current.activeRole === role
+    ? current
+    : switchActiveRole(account, role, current.roleVersion);
+}
+
+async function assertActiveRolePersistsAcrossSession(
   account: { client: Client; email: string; userId: string },
   expectedRole: "advisor" | "student",
 ) {
-  const attemptedRole = expectedRole === "student" ? "advisor" : "student";
+  const current = await readProfile(account);
+  if (current.activeRole !== expectedRole) {
+    throw new Error(`O modo ${expectedRole} não permaneceu ativo na sessão atual.`);
+  }
+  const freshAccount = await ensureSignedIn(account.email, expectedRole);
+  try {
+    const freshProfile = await readProfile(freshAccount);
+    if (freshProfile.activeRole !== expectedRole || freshProfile.roleVersion !== current.roleVersion) {
+      throw new Error(`O modo ${expectedRole} não persistiu após novo login.`);
+    }
+  } finally {
+    await freshAccount.client.auth.signOut();
+  }
+}
+
+async function assertDirectProfileUpdateDenied(
+  account: { client: Client; userId: string },
+) {
+  const before = await readProfile(account);
+  const nextRole = before.activeRole === "student" ? "advisor" : "student";
   const attemptedUpdate = await account.client
     .from("user_profiles")
-    .update({ active_role: attemptedRole })
+    .update({ active_role: nextRole })
     .eq("user_id", account.userId)
     .select("active_role");
-
   if (!attemptedUpdate.error && (attemptedUpdate.data?.length ?? 0) > 0) {
-    throw new Error("O papel da conta " + expectedRole + " pôde ser alterado para " + attemptedRole + ".");
+    throw new Error("O modo ativo pôde ser alterado sem a RPC versionada.");
   }
+  const after = await readProfile(account);
+  if (after.activeRole !== before.activeRole || after.roleVersion !== before.roleVersion) {
+    throw new Error("A tentativa direta alterou o perfil.");
+  }
+}
 
-  await assertExistingProfileRole(account, expectedRole);
-  const freshAccount = await ensureSignedIn(account.email, expectedRole);
-  await assertExistingProfileRole(freshAccount, expectedRole);
-  await freshAccount.client.auth.signOut();
+async function expectStaleRoleVersionDenied(
+  account: { client: Client },
+  staleRoleVersion: number,
+) {
+  const result = await account.client.rpc("switch_active_role", {
+    expected_role_version: staleRoleVersion,
+    next_role: "student",
+    request_id: crypto.randomUUID(),
+  });
+  if (!result.error?.message.includes("role_version_conflict")) {
+    throw new Error("Uma aba com role_version obsoleta não foi recusada.");
+  }
 }
 
 function id() {
@@ -442,6 +497,52 @@ function buildCompleteContent(projectId: string): ResearchWorkflowContent {
   });
 }
 
+async function assertFinalExports(
+  project: ProjectVerificationRow,
+  content: ResearchWorkflowContent,
+) {
+  const workflow: ResearchWorkflow = {
+    content,
+    ownerId: project.owner_id,
+    projectId: project.id,
+    revision: 1,
+    schemaVersion: "2.0.0",
+    sourceRevision: 1,
+    stableState: "completed",
+    state: "completed",
+    updatedAt: new Date().toISOString(),
+  };
+  const finalMap = buildFinalMap(workflow);
+  if (!canCompleteFinalMap(finalMap)) {
+    throw new Error("O mapa sintético não ficou exportável.");
+  }
+  const input = {
+    draft: false,
+    exportedAt: new Date(),
+    finalMap,
+    project: {
+      academic_level: "masters",
+      keywords: ["C88", "alternância"],
+      knowledge_area: "Validação de produto",
+      problem_statement: "Como validar perfis alternáveis com isolamento e persistência?",
+      theme: "Homologação de perfis alternáveis",
+      title: project.title ?? "Homologação de perfis alternáveis",
+    },
+    revision: workflow.revision,
+  };
+  const [docx, pdf] = await Promise.all([
+    createFinalMapDocxExport(input),
+    createFinalMapPdfExport(input),
+  ]);
+  if (docx.subarray(0, 2).toString() !== "PK" || docx.byteLength < 4_000) {
+    throw new Error("A exportação DOCX sintética ficou inválida.");
+  }
+  if (pdf.subarray(0, 4).toString() !== "%PDF" || pdf.byteLength < 4_000) {
+    throw new Error("A exportação PDF sintética ficou inválida.");
+  }
+  return { docxBytes: docx.byteLength, pdfBytes: pdf.byteLength };
+}
+
 async function createProjectAndWorkflow(student: { client: Client; userId: string }) {
   const project = await requireData(
     "Criação do projeto do aluno",
@@ -457,10 +558,11 @@ async function createProjectAndWorkflow(student: { client: Client; userId: strin
         title: `Verificação orientador/aluno ${runId}`,
         workflow_version: 2,
       })
-      .select("id, owner_id, title")
+      .select("id,owner_id,title,authoring_role,advisor_id,advisor_email")
       .maybeSingle(),
   ) as ProjectVerificationRow;
 
+  if (project.authoring_role !== "student") throw new Error("O projeto supervisionado não foi criado como Aluno.");
   const content = buildCompleteContent(project.id);
   const workflow = await requireData(
     "Criação do workflow do aluno",
@@ -493,6 +595,61 @@ async function createProjectAndWorkflow(student: { client: Client; userId: strin
       updatedAt: workflow.updated_at,
     } satisfies ResearchWorkflow,
   };
+}
+
+async function createRoleProject(
+  account: { client: Client; userId: string },
+  expectedRole: "advisor" | "student",
+  modeLabel: "Mapa Avançado" | "Mapa Rápido",
+) {
+  const project = await requireData(
+    `Criação de ${modeLabel} no modo ${expectedRole}`,
+    await account.client
+      .from("projects")
+      .insert({
+        academic_level: "masters",
+        keywords: ["C88", "alternância", modeLabel],
+        knowledge_area: "Validação de produto",
+        owner_id: account.userId,
+        status: "draft",
+        theme: "Homologação de perfis alternáveis",
+        title: `[C88 ${runId}] ${modeLabel} · ${expectedRole}`,
+        workflow_version: 2,
+      })
+      .select("id,owner_id,title,authoring_role,advisor_id,advisor_email")
+      .single(),
+  ) as ProjectVerificationRow;
+  if (project.authoring_role !== expectedRole) {
+    throw new Error(`A autoria de ${modeLabel} não corresponde ao modo ${expectedRole}.`);
+  }
+  if (expectedRole === "advisor" && (project.advisor_id || project.advisor_email)) {
+    throw new Error("O projeto próprio do Orientador não ficou autônomo.");
+  }
+  return project;
+}
+
+async function projectIsVisible(
+  account: { client: Client },
+  projectId: string,
+) {
+  const { data, error } = await account.client
+    .from("projects")
+    .select("id")
+    .eq("id", projectId);
+  if (error) throw new Error(`Leitura de visibilidade: ${error.message}`);
+  return (data?.length ?? 0) === 1;
+}
+
+async function assertProjectVisibility(
+  account: { client: Client },
+  projectId: string,
+  expected: boolean,
+  label: string,
+) {
+  const visible = await projectIsVisible(account, projectId);
+  if (visible !== expected) {
+    throw new Error(`${label}: visibilidade esperada=${expected}, obtida=${visible}.`);
+  }
 }
 
 async function saveWorkflow(
@@ -607,69 +764,95 @@ async function advisorDecision(
   return saved;
 }
 
-async function cleanup(student: { client: Client }, projectId: string | null) {
+async function cleanupProject(
+  account: { client: Client; userId: string },
+  projectId: string | null,
+  authoringRole: "advisor" | "student",
+) {
   if (!projectId) return;
-  const workflowDeletion = await student.client.from("research_workflows").delete().eq("project_id", projectId);
+  await ensureActiveRole(account, authoringRole);
+  const workflowDeletion = await account.client.from("research_workflows").delete().eq("project_id", projectId);
   if (workflowDeletion.error) throw new Error("Limpeza do workflow temporário: " + workflowDeletion.error.message);
-  const projectDeletion = await student.client.from("projects").delete().eq("id", projectId);
+  const projectDeletion = await account.client.from("projects").delete().eq("id", projectId);
   if (projectDeletion.error) throw new Error("Limpeza do projeto temporário: " + projectDeletion.error.message);
-
-  const remainingProject = await student.client.from("projects").select("id").eq("id", projectId).maybeSingle();
+  const remainingProject = await account.client.from("projects").select("id").eq("id", projectId).maybeSingle();
   if (remainingProject.error) throw new Error("Confirmação da limpeza temporária: " + remainingProject.error.message);
   if (remainingProject.data) throw new Error("O projeto temporário permaneceu após a limpeza.");
 }
 
-const student = await ensureSignedIn(studentEmail, "student");
-const advisor = await ensureSignedIn(advisorEmail, "advisor");
-await assertExistingProfileRole(student, "student");
-await assertExistingProfileRole(advisor, "advisor");
-await assertProfileRoleIsImmutableAcrossSessions(student, "student");
-await assertProfileRoleIsImmutableAcrossSessions(advisor, "advisor");
+async function restoreOriginalRole(
+  account: { client: Client; userId: string },
+  originalRole: "advisor" | "student",
+) {
+  await ensureActiveRole(account, originalRole);
+}
 
-let projectId: string | null = null;
+const accountA = await ensureSignedIn(studentEmail, "student");
+const accountB = await ensureSignedIn(advisorEmail, "advisor");
+const accountAOriginal = await readProfile(accountA);
+const accountBOriginal = await readProfile(accountB);
+
+let studentProjectId: string | null = null;
+let accountAAdvisorProjectId: string | null = null;
+let accountBStudentProjectId: string | null = null;
+let accountBAdvisorProjectId: string | null = null;
+let studentExportBytes: { docxBytes: number; pdfBytes: number } | null = null;
+let advisorExportBytes: { docxBytes: number; pdfBytes: number } | null = null;
+let failure: unknown = null;
+const cleanupErrors: string[] = [];
+
 try {
-  const setup = await createProjectAndWorkflow(student);
-  const currentProjectId = setup.project.id;
-  projectId = currentProjectId;
-  let workflow = setup.workflow;
+  await ensureActiveRole(accountA, "student");
+  await assertActiveRolePersistsAcrossSession(accountA, "student");
+  await assertDirectProfileUpdateDenied(accountA);
 
-  const advisorBeforeLink = await advisor.client
-    .from("projects")
-    .select("id")
-    .eq("id", currentProjectId)
-    .maybeSingle();
-  if (advisorBeforeLink.error) throw new Error("Isolamento anterior ao vínculo: " + advisorBeforeLink.error.message);
-  if (advisorBeforeLink.data) throw new Error("O projeto ficou visível ao orientador antes do vínculo.");
+  await ensureActiveRole(accountB, "student");
+  await assertActiveRolePersistsAcrossSession(accountB, "student");
+  const accountBStudentProject = await createRoleProject(accountB, "student", "Mapa Rápido");
+  accountBStudentProjectId = accountBStudentProject.id;
+
+  const setup = await createProjectAndWorkflow(accountA);
+  studentProjectId = setup.project.id;
+  let workflow = setup.workflow;
+  await assertProjectVisibility(accountB, studentProjectId, false, "Isolamento anterior ao vínculo");
 
   const linked = await requireData(
     "Vínculo do orientador",
-    await student.client.rpc("set_project_advisor", {
-      advisor_email_input: advisor.email,
-      project_id_input: currentProjectId,
+    await accountA.client.rpc("set_project_advisor", {
+      advisor_email_input: accountB.email,
+      project_id_input: studentProjectId,
     }),
   );
-  if (linked !== true) throw new Error("O orientador existente não foi vinculado pelo RPC.");
+  if (linked !== true) throw new Error("A conta B não foi vinculada como orientador.");
 
-  await requireData("Claim do orientador", await advisor.client.rpc("claim_pending_advisor_projects"));
+  await ensureActiveRole(accountB, "advisor");
+  await assertActiveRolePersistsAcrossSession(accountB, "advisor");
+  await assertProjectVisibility(accountB, accountBStudentProjectId, false, "Biblioteca estudantil da conta B no modo Orientador");
+
+  await requireData("Claim do orientador", await accountB.client.rpc("claim_pending_advisor_projects"));
   const advisorProject = await requireData(
-    "Leitura do projeto supervisionado pelo orientador",
-    await advisor.client
+    "Leitura do projeto supervisionado",
+    await accountB.client
       .from("projects")
-      .select("id, owner_id, advisor_email, advisor_id")
-      .eq("id", currentProjectId)
+      .select("id,owner_id,advisor_email,advisor_id,authoring_role")
+      .eq("id", studentProjectId)
       .maybeSingle(),
   ) as ProjectVerificationRow;
-  if (advisorProject.advisor_id !== advisor.userId || advisorProject.owner_id !== student.userId) {
-    throw new Error("O projeto supervisionado não ficou visível/vinculado ao orientador esperado.");
+  if (
+    advisorProject.advisor_id !== accountB.userId
+    || advisorProject.owner_id !== accountA.userId
+    || advisorProject.authoring_role !== "student"
+  ) {
+    throw new Error("O projeto supervisionado não ficou visível/vinculado corretamente.");
   }
 
-  const forbiddenProjectUpdate = await advisor.client
+  const forbiddenProjectUpdate = await accountB.client
     .from("projects")
     .update({ title: "Atualização indevida do orientador" })
-    .eq("id", currentProjectId)
+    .eq("id", studentProjectId)
     .select("id");
-  if (forbiddenProjectUpdate.error || (forbiddenProjectUpdate.data?.length ?? 0) !== 0) {
-    throw new Error("O orientador conseguiu alterar metadados do projeto do aluno.");
+  if (!forbiddenProjectUpdate.error && (forbiddenProjectUpdate.data?.length ?? 0) > 0) {
+    throw new Error("O orientador conseguiu alterar metadados acadêmicos do projeto do aluno.");
   }
 
   const transitions: Array<{ step: AdvisorReviewStep; transition: AdvisorTransition }> = [
@@ -682,37 +865,41 @@ try {
     { step: "final_map", transition: { targetActiveStep: null, targetStableState: "completed", targetState: "completed" } },
   ];
 
-  workflow = await submitStepForAdvisor(student, workflow, transitions[0].step, transitions[0].transition);
-  workflow = await advisorSaveComment(advisor, workflow);
+  workflow = await submitStepForAdvisor(accountA, workflow, transitions[0].step, transitions[0].transition);
+  workflow = await advisorSaveComment(accountB, workflow);
   const studentCommentRead = await requireData(
     "Leitura do comentário pelo aluno",
-    await student.client
+    await accountA.client
       .from("research_workflows")
-      .select("project_id, owner_id, content, revision, state")
-      .eq("project_id", currentProjectId)
+      .select("project_id,owner_id,content,revision,state")
+      .eq("project_id", studentProjectId)
       .maybeSingle(),
   ) as AdvisorWorkflowReadRow;
-  const studentObservedReview = currentAdvisorReview(researchWorkflowContentSchema.parse(studentCommentRead.content));
-  if (studentObservedReview?.advisorComments !== "Comentário de verificação salvo pelo orientador.") {
+  const observedReview = currentAdvisorReview(researchWorkflowContentSchema.parse(studentCommentRead.content));
+  if (observedReview?.advisorComments !== "Comentário de verificação salvo pelo orientador.") {
     throw new Error("O comentário do orientador não ficou visível para o aluno.");
   }
-  workflow = await advisorDecision(advisor, workflow, "changes_requested");
-  if (currentAdvisorReview(workflow.content)?.status !== "changes_requested") throw new Error("Correção solicitada não ficou visível para o aluno.");
-  workflow = await submitStepForAdvisor(student, workflow, transitions[0].step, transitions[0].transition);
-  workflow = await advisorDecision(advisor, workflow, "approved");
+  workflow = await advisorDecision(accountB, workflow, "changes_requested");
+  if (currentAdvisorReview(workflow.content)?.status !== "changes_requested") {
+    throw new Error("A solicitação de correção não ficou visível para o aluno.");
+  }
+  workflow = await submitStepForAdvisor(accountA, workflow, transitions[0].step, transitions[0].transition);
+  workflow = await advisorDecision(accountB, workflow, "approved");
 
   for (const item of transitions.slice(1)) {
-    workflow = await submitStepForAdvisor(student, workflow, item.step, item.transition);
+    workflow = await submitStepForAdvisor(accountA, workflow, item.step, item.transition);
     const advisorRead = await requireData(
       `Leitura do workflow pelo orientador em ${item.step}`,
-      await advisor.client
+      await accountB.client
         .from("research_workflows")
-        .select("project_id, owner_id, content, revision, state")
-        .eq("project_id", currentProjectId)
+        .select("project_id,owner_id,content,revision,state")
+        .eq("project_id", studentProjectId)
         .maybeSingle(),
     ) as AdvisorWorkflowReadRow;
-    if (advisorRead.owner_id !== student.userId) throw new Error(`Workflow lido pelo orientador não pertence ao aluno em ${item.step}.`);
-    workflow = await advisorDecision(advisor, workflow, "approved");
+    if (advisorRead.owner_id !== accountA.userId) {
+      throw new Error(`O workflow supervisionado não pertence à conta A em ${item.step}.`);
+    }
+    workflow = await advisorDecision(accountB, workflow, "approved");
   }
 
   const finalMap = buildFinalMap(workflow);
@@ -726,33 +913,96 @@ try {
   if (!workflow.content.advisorReviews.some((review) => review.status === "changes_requested")) {
     throw new Error("O cenário de solicitação de correção não foi exercitado.");
   }
+  studentExportBytes = await assertFinalExports(setup.project, workflow.content);
+
+  const accountBAdvisorProject = await createRoleProject(accountB, "advisor", "Mapa Avançado");
+  accountBAdvisorProjectId = accountBAdvisorProject.id;
+  advisorExportBytes = await assertFinalExports(accountBAdvisorProject, buildCompleteContent(accountBAdvisorProject.id));
+  await assertProjectVisibility(accountB, studentProjectId, true, "Projeto orientado no modo Orientador");
+
+  const accountABeforeSwitch = await readProfile(accountA);
+  const accountAAsAdvisor = await switchActiveRole(accountA, "advisor", accountABeforeSwitch.roleVersion);
+  await expectStaleRoleVersionDenied(accountA, accountABeforeSwitch.roleVersion);
+  await assertActiveRolePersistsAcrossSession(accountA, "advisor");
+  await assertProjectVisibility(accountA, studentProjectId, false, "Projeto estudantil da conta A no modo Orientador");
+  const accountAAdvisorProject = await createRoleProject(accountA, "advisor", "Mapa Avançado");
+  accountAAdvisorProjectId = accountAAdvisorProject.id;
+  await switchActiveRole(accountA, "student", accountAAsAdvisor.roleVersion);
+  await assertActiveRolePersistsAcrossSession(accountA, "student");
+  await assertProjectVisibility(accountA, studentProjectId, true, "Projeto estudantil restaurado na conta A");
+  await assertProjectVisibility(accountA, accountAAdvisorProjectId, false, "Projeto autônomo oculto no modo Aluno");
+
+  const accountBBeforeStudent = await readProfile(accountB);
+  const accountBAsStudent = await switchActiveRole(accountB, "student", accountBBeforeStudent.roleVersion);
+  await assertActiveRolePersistsAcrossSession(accountB, "student");
+  await assertProjectVisibility(accountB, accountBStudentProjectId, true, "Projeto estudantil da conta B restaurado");
+  await assertProjectVisibility(accountB, accountBAdvisorProjectId, false, "Projeto autônomo da conta B oculto no modo Aluno");
+  await assertProjectVisibility(accountB, studentProjectId, false, "Projeto orientado oculto no modo Aluno");
+  await switchActiveRole(accountB, "advisor", accountBAsStudent.roleVersion);
+  await assertProjectVisibility(accountB, accountBStudentProjectId, false, "Projeto estudantil da conta B oculto no modo Orientador");
+  await assertProjectVisibility(accountB, accountBAdvisorProjectId, true, "Projeto autônomo da conta B restaurado");
+  await assertProjectVisibility(accountB, studentProjectId, true, "Projeto orientado restaurado");
 
   console.log(JSON.stringify({
     advisorReviews: workflow.content.advisorReviews.length,
     approvedReviews: workflow.content.advisorReviews.filter((review) => review.status === "approved").length,
     checked: [
-      "cadastro/login aluno",
-      "cadastro/login orientador",
-      "perfil aluno",
-      "perfil orientador",
-      "papéis imutáveis após novo login",
-      "isolamento antes do vínculo",
-      "vínculo orientador",
-      "leitura supervisionada",
-      "bloqueio de edição do projeto pelo orientador",
-      "comentário do orientador",
-      "comentário recebido pelo aluno",
-      "solicitação de correção",
+      "login das duas contas sintéticas",
+      "troca Aluno→Orientador→Aluno",
+      "persistência do modo após novo login",
+      "versão obsoleta recusada",
+      "UPDATE direto do perfil recusado",
+      "bibliotecas próprias isoladas por modo",
+      "Mapa Rápido próprio como Aluno",
+      "Mapa Avançado próprio como Orientador",
+      "projeto autônomo sem supervisão",
+      "isolamento anterior ao vínculo",
+      "vínculo e leitura supervisionada",
+      "bloqueio de edição acadêmica pelo orientador",
+      "comentário e solicitação de correção",
       "aprovação de todas as etapas",
       "mapa final concluído",
       "referências associadas",
+      "exportações PDF/DOCX válidas nos perfis Aluno e Orientador",
+      "saída sem PII",
     ],
-    projectId,
+    exports: { advisor: advisorExportBytes, student: studentExportBytes },
     references: finalMap.references.length,
     status: "ok",
-    studentEmail,
-    advisorEmail,
   }, null, 2));
+} catch (error) {
+  failure = error;
 } finally {
-  await cleanup(student, projectId);
+  const cleanups: Array<[
+    { client: Client; userId: string },
+    string | null,
+    "advisor" | "student",
+  ]> = [
+    [accountA, studentProjectId, "student"],
+    [accountA, accountAAdvisorProjectId, "advisor"],
+    [accountB, accountBStudentProjectId, "student"],
+    [accountB, accountBAdvisorProjectId, "advisor"],
+  ];
+  for (const [account, projectId, role] of cleanups) {
+    try {
+      await cleanupProject(account, projectId, role);
+    } catch (error) {
+      cleanupErrors.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+  try {
+    await restoreOriginalRole(accountA, accountAOriginal.activeRole);
+  } catch (error) {
+    cleanupErrors.push(error instanceof Error ? error.message : String(error));
+  }
+  try {
+    await restoreOriginalRole(accountB, accountBOriginal.activeRole);
+  } catch (error) {
+    cleanupErrors.push(error instanceof Error ? error.message : String(error));
+  }
+  await accountA.client.auth.signOut().catch(() => {});
+  await accountB.client.auth.signOut().catch(() => {});
 }
+
+if (failure) throw failure;
+if (cleanupErrors.length > 0) throw new Error(cleanupErrors.join("; "));

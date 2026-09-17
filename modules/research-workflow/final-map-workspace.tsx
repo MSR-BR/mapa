@@ -172,10 +172,11 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
       <div className="final-export-panel" aria-label="Exportar mapa final">
         <div>
           <strong>{workflow.state === "completed" ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>
-          <span>{workflow.state === "completed" ? "PDF com referências cruzadas e avisos preservados." : "O PDF indicará que o mapa ainda é rascunho e manterá bloqueios/avisos visíveis."}</span>
+          <span>{workflow.state === "completed" ? "PDF e Word com referências cruzadas e avisos preservados." : "Os arquivos indicarão que o mapa ainda é rascunho e manterão bloqueios/avisos visíveis."}</span>
         </div>
         <div>
         <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`} referenceCount={finalMap.references.length}>Exportar PDF</ExportPdfLink>
+        <a href={`/api/projects/${projectId}/exports/docx${exportSuffix}`}>Exportar Word</a>
         </div>
       </div>
 

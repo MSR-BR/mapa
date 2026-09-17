@@ -224,7 +224,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
   assert.match(pdf, /5 CONCLUSÃO E RECOMENDAÇÕES PARA FUTURAS PESQUISAS/);
   assert.match(pdf, /cbl-isbn-barcode\.jpeg/);
   assert.match(pdf, /mapadapesquisa\.com\.br/);
-  assert.match(route, /Exportação em Word está temporariamente indisponível/);
+  assert.match(route, /createFinalMapDocxExport/);
   assert.equal(asset.length > 0, true);
   assert.match(version, /v\d{8}\.\d+/);
 });
@@ -371,9 +371,10 @@ test("provides persistent editing with loss protection and retry", async () => {
   assert.match(saveRoute, /validateReferenceIds/);
 });
 
-test("exports only the authenticated owner's saved structure as PDF", async () => {
-  const [route, pdf, workspace, finalWorkspace, citationHelper, prompt, styles] = await Promise.all([
+test("exports only the authenticated owner's saved structure as PDF or DOCX", async () => {
+  const [route, docx, pdf, workspace, finalWorkspace, citationHelper, prompt, styles] = await Promise.all([
     readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
+    readProjectFile("modules/export/docx.ts"),
     readProjectFile("modules/export/pdf.ts"),
     readProjectFile("modules/generation/generation-workspace.tsx"),
     readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
@@ -384,10 +385,15 @@ test("exports only the authenticated owner's saved structure as PDF", async () =
 
   assert.match(route, /\.eq\("owner_id", userId\)/);
   assert.match(route, /format === "docx"/);
-  assert.match(route, /temporariamente indisponível/);
+  assert.match(route, /createDocxExport/);
+  assert.match(route, /createFinalMapDocxExport/);
+  assert.match(route, /application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document/);
+  assert.doesNotMatch(route, /temporariamente indisponível/);
   assert.match(route, /private, no-store/);
   assert.match(route, /Content-Disposition/);
   assert.match(route, /loadGenerationSnapshot/);
+  assert.match(docx, /Packer\.toBuffer/);
+  assert.match(docx, /createFinalMapDocxExport/);
   assert.match(pdf, /bufferPages: true/);
   assert.match(pdf, /Referências verificadas/);
   assert.match(pdf, /Referências otimizadas com Research Starter/);
@@ -400,8 +406,8 @@ test("exports only the authenticated owner's saved structure as PDF", async () =
   assert.match(finalWorkspace, /literature-draft-text/);
   assert.match(finalWorkspace, /router\.push\("\/dashboard"\)/);
   assert.match(prompt, /Revisão da Literatura, escreva texto corrido/);
-  assert.doesNotMatch(workspace, /Exportar DOCX/);
-  assert.doesNotMatch(finalWorkspace, /Exportar DOCX/);
+  assert.match(workspace, /Exportar Word/);
+  assert.match(finalWorkspace, /Exportar Word/);
   assert.match(workspace, /Salve as alterações antes de exportar/);
   assert.match(styles, /\.final-export-panel \{[^}]*linear-gradient\(145deg, #17221e, #0c1210\)/);
   assert.match(styles, /\.final-export-panel a \{[^}]*linear-gradient\(135deg, #f5fff9, #b9d6ca\)/);
@@ -1196,7 +1202,7 @@ test("provides a two-user authenticated RLS verification without admin keys", as
   assert.doesNotMatch(verification, /service.role|sb_secret_|SUPABASE_SECRET/i);
 });
 
-test("keeps the advisor-student E2E verifier compatible with immutable account roles", async () => {
+test("keeps the advisor-student E2E verifier compatible with versioned role switching", async () => {
   const [verification, roleLockMigration, roadmap, spec] = await Promise.all([
     readProjectFile("scripts/verify-advisor-student-flow.ts"),
     readProjectFile("supabase/migrations/20260911190000_lock_user_profile_role.sql"),
@@ -1204,8 +1210,12 @@ test("keeps the advisor-student E2E verifier compatible with immutable account r
     readProjectFile(".specs/changes/071-immutable-role-e2e-verifier/spec.md"),
   ]);
 
-  assert.match(verification, /assertExistingProfileRole/);
-  assert.match(verification, /este verificador não altera perfis/);
+  assert.match(verification, /switchActiveRole/);
+  assert.match(verification, /assertActiveRolePersistsAcrossSession/);
+  assert.match(verification, /role_version_conflict/);
+  assert.match(verification, /restoreOriginalRole/);
+  assert.match(verification, /saída sem PII/);
+  assert.doesNotMatch(verification, /studentEmail,\s*advisorEmail/);
   assert.doesNotMatch(verification, /\.upsert\(\{ active_role/);
   assert.match(roleLockMigration, /revoke update on table public\.user_profiles from authenticated/);
   assert.match(roadmap, /071 \| Verificador E2E compatível com papel imutável/);
@@ -1250,8 +1260,8 @@ test("registers Change 074 production acceptance and cross-account isolation", a
     readProjectFile("modules/research-workflow/advisor-review-workspace.tsx"),
   ]);
 
-  assert.match(verification, /assertProfileRoleIsImmutableAcrossSessions/);
-  assert.match(verification, /O projeto ficou visível ao orientador antes do vínculo/);
+  assert.match(verification, /assertActiveRolePersistsAcrossSession/);
+  assert.match(verification, /Isolamento anterior ao vínculo/);
   assert.match(verification, /O comentário do orientador não ficou visível para o aluno/);
   assert.match(verification, /O projeto temporário permaneceu após a limpeza/);
   assert.match(finalMap, /Etapa 2\/4 · Passo 1\/2/);
