@@ -81,8 +81,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 083 | Fundação de dados para modo ativo | Concluída | Migration 20260916163351 aplicada e registrada; backfill, auditoria, RLS, grants, Advisors, E2E, CPD e smokes aprovados. A troca permanece bloqueada. |
 | 084 | Autorização centralizada por modo | Concluída | DAL fail-closed, gates e 14 rotas publicados; 102 testes, auditoria, build, smoke e logs aprovados; feature flag segue desligada. |
 | 085 | Seleção de perfil nas configurações | Concluída | Troca reversível Aluno/Orientador, confirmação, concorrência, idempotência, consentimento e sincronização aprovados; 107 testes, PostgreSQL 17, segurança e Production saudáveis com a flag desligada. |
-| 086 | Interface estrita Aluno/Orientador | Planejada | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. |
-| 087 | RLS e vínculos conscientes do modo | Planejada | Policies, funções e trigger combinam modo, autoria e relação; Orientador mantém CRUD autônomo próprio sem poder autoaprovar projeto criado como Aluno. |
+| 086 | Interface estrita Aluno/Orientador | Concluída | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. Produção publicada com a flag desligada. |
+| 087 | RLS e vínculos conscientes do modo | Em validação | Código, matriz local PostgreSQL 17 e fase 1 remota aprovados; fase 2, Advisors, ativação da flag e encerramento aguardam autorização explícita e validação em produção. |
 | 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam autoria, supervisão, revisão, troca e RLS; gate separado confirma estratégia DNS, domínio, SSL e e-mail sem cutover automático de nameservers. |
 
 ## Marcos

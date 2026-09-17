@@ -1,6 +1,6 @@
 # Objetivo — Change 086
 
-**Status:** planejada; depende das C84–C85.
+**Status:** concluída em 2026-09-16; publicada com a flag de troca desligada.
 
 Tornar dashboard, navegação e páginas de projeto estritamente contextuais: os
 dois modos oferecem criação e gestão de projetos próprios; Aluno pode usar

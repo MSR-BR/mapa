@@ -7,9 +7,11 @@
 
 ## Estado atual
 
-- Change atual: 084 — autorização centralizada por modo.
-- Changes funcionalmente concluídas: 001–083 conforme `.specs/roadmap.md`.
-- Changes pendentes: execução sequencial de 084–088.
+- Change atual: 087 — RLS e vínculos conscientes do modo.
+- Changes funcionalmente concluídas: 001–086 conforme `.specs/roadmap.md`.
+- Change 087 em validação: implementação e testes locais concluídos, fase 1
+  aplicada remotamente e fase 2 ainda não executada.
+- Change 088 permanece pendente para homologação E2E e rollout final.
 
 ## Decisões-chave
 
@@ -41,16 +43,15 @@
 
 ## Estado validado mais recente
 
-A Change 083 instalou a fundação versionada de modos no Supabase de produção.
-A migration `20260916163351 account_mode_database_foundation` foi registrada
-como a 14ª migration. Treze perfis e 65 projetos foram migrados; seis
-auto-orientações redundantes foram removidas e uma supervisão externa foi
-preservada como autoria histórica de Aluno. A trilha de eventos está protegida
-por RLS, a RPC de troca continua sem EXECUTE e nenhuma interface de troca foi
-liberada. Advisors, E2E, smokes, build e domínio foram aprovados.
-O CPD foi concluído no commit `6702f70` e no deployment de produção
-`dpl_xKYU68AYP9bQJABUyot7TbjFz4AT`, confirmado como `Ready` com domínio HTTP
-200 e health `status=ok`.
+As Changes 084–086 publicaram autorização centralizada, configurações de modo e
+interfaces estritas com `ACCOUNT_MODE_SWITCH_ENABLED` desligada. Na C87, as duas
+migrations, o verificador PostgreSQL 17 e a matriz automatizada foram concluídos;
+`npm run check` aprovou 118/118 testes e o build Next.js 16.3.5. A migration
+`20260917003926 c087_grant_switch_active_role` foi aplicada no Supabase e o smoke
+remoto confirmou RPC idempotente e UPDATE direto do perfil negado. A migration
+`20260917003928 c087_harden_mode_aware_rls` está preparada, mas não foi executada:
+ela requer autorização explícita por alterar RLS, funções, privilégios e triggers
+do banco de produção. A flag continua desligada e a C88 continua necessária.
 
 ## Questões em aberto
 

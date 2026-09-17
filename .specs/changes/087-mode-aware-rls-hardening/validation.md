@@ -14,3 +14,11 @@
 - Query de grants, `pg_policies` e funções `SECURITY DEFINER` com `search_path`.
 - Supabase Security/Performance Advisors.
 - `npm run supabase:verify-*`, `npm run check`, security audit e smoke publicado.
+
+## Estado da validação — 2026-09-16
+
+- Local: matriz PostgreSQL 17, 118/118 testes, build e security audit aprovados.
+- Produção fase 1: migration registrada, RPC autenticada e idempotente; UPDATE
+  direto do perfil negado.
+- Produção fase 2: não executada.
+- Advisors, flag, smoke completo e encerramento: pendentes.
