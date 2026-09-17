@@ -53,6 +53,7 @@ apply_sql scripts/verify-mode-aware-rls-seed.sql
 apply_sql supabase/migrations/20260916163351_account_mode_database_foundation.sql
 apply_sql supabase/migrations/20260917003926_c087_grant_switch_active_role.sql
 apply_sql supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql
+apply_sql supabase/migrations/20260917015508_c087_fix_project_insert_returning.sql
 
 result="$(docker exec "$container_name" \
   psql \

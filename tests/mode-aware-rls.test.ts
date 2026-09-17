@@ -6,6 +6,7 @@ import test from "node:test";
 const read = (file: string) => fs.readFileSync(path.join(process.cwd(), file), "utf8");
 const grantMigration = read("supabase/migrations/20260917003926_c087_grant_switch_active_role.sql");
 const hardeningMigration = read("supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql");
+const returningFixMigration = read("supabase/migrations/20260917015508_c087_fix_project_insert_returning.sql");
 
 test("releases the switch RPC without reopening direct profile updates", () => {
   assert.match(grantMigration, /revoke all on function public\.switch_active_role\(text, bigint, uuid\)[\s\S]*from public, anon, authenticated, service_role/);
@@ -24,6 +25,13 @@ test("binds own project access to the active mode and immutable authorship", () 
   assert.match(hardeningMigration, /revoke update on table public\.projects from authenticated/);
   assert.match(hardeningMigration, /grant update \([\s\S]*workflow_version[\s\S]*\) on table public\.projects to authenticated/);
   assert.doesNotMatch(hardeningMigration.match(/grant update \([\s\S]*?\) on table public\.projects/)?.[0] ?? "", /advisor_id|advisor_email|owner_id|authoring_role/);
+});
+
+test("keeps project insert returning compatible with mode-aware selection", () => {
+  assert.match(returningFixMigration, /drop policy if exists "projects_select_own"/);
+  assert.match(returningFixMigration, /owner_id = \(select auth\.uid\(\)\)/);
+  assert.match(returningFixMigration, /authoring_role = \(select private\.current_active_role\(\)\)/);
+  assert.doesNotMatch(returningFixMigration, /project_owned_in_active_mode/);
 });
 
 test("authorizes child rows through the parent and separates linked review access", () => {
@@ -73,6 +81,7 @@ test("ships an isolated direct-client policy matrix", () => {
   assert.match(runner, /postgres:17-alpine/);
   assert.match(runner, /20260917003926_c087_grant_switch_active_role\.sql/);
   assert.match(runner, /20260917003928_c087_harden_mode_aware_rls\.sql/);
+  assert.match(runner, /20260917015508_c087_fix_project_insert_returning\.sql/);
   assert.match(verification, /verification_student_projects_visible_in_advisor_mode/);
   assert.match(verification, /verification_advisor_owner_cross_mode_matrix/);
   assert.match(verification, /verification_pending_claim_failed/);
@@ -80,4 +89,6 @@ test("ships an isolated direct-client policy matrix", () => {
   assert.match(verification, /verification_expected_academic_tamper_denial/);
   assert.match(verification, /verification_missing_profile_visibility/);
   assert.match(verification, /verification_function_grants_invalid/);
+  assert.match(verification, /verification_student_insert_returning_failed/);
+  assert.match(verification, /verification_advisor_insert_returning_failed/);
 });

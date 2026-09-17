@@ -37,7 +37,8 @@ begin
     where schemaname = 'public'
       and tablename = 'projects'
       and policyname = 'projects_select_own'
-      and qual like '%project_owned_in_active_mode%'
+      and qual like '%owner_id = ( SELECT auth.uid()%'
+      and qual like '%authoring_role = ( SELECT private.current_active_role()%'
   ) or not exists (
     select 1 from pg_policies
     where schemaname = 'public'
@@ -206,6 +207,7 @@ do $$
 declare
   affected integer;
   linked boolean;
+  returned_id uuid;
   switched record;
 begin
   if private.current_active_role() <> 'student' then
@@ -305,7 +307,11 @@ begin
     'Projeto estudantil temporário',
     'advisor',
     2
-  );
+  ) returning id into returned_id;
+
+  if returned_id <> 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee' then
+    raise exception 'verification_student_insert_returning_failed';
+  end if;
 
   if not exists (
     select 1 from public.projects
@@ -371,7 +377,11 @@ begin
     auth.uid(),
     'Projeto autônomo criado após troca',
     2
-  );
+  ) returning id into returned_id;
+
+  if returned_id <> 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1' then
+    raise exception 'verification_advisor_insert_returning_failed';
+  end if;
 
   update public.projects
   set title = 'Projeto autônomo atualizado',
