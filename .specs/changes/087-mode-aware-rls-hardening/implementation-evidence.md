@@ -36,3 +36,18 @@
 - Falha de interface ou RPC: manter/desligar a flag e corrigir por roll-forward.
 - Falha de policy: usar migration corretiva explícita e auditada; não alterar
   migration já publicada nem executar reset destrutivo.
+
+## CPD parcial — aplicação compatível com flag desligada
+
+- Commit documental e Pó Mágico: `cdfd16b`, enviado para
+  `codex/change-003-004`.
+- Deployment de produção: `dpl_DqxcM261EhvZ6MT4qRzyWFWA8mpS`, estado `READY`,
+  associado a `https://mapadapesquisa.com.br`.
+- Build Vercel com Next.js 16.3.5 concluído em 11 s.
+- `ACCOUNT_MODE_SWITCH_ENABLED` ausente em Production; fallback seguro `false`.
+- Smokes: raiz 200, health `status=ok`, dashboard/configurações 307 para login e
+  API acadêmica com payload válido negada sem sessão por
+  `authentication_required`.
+- Varredura pós-deploy: nenhum log de erro encontrado.
+- Este CPD não encerra a C87: fase 2, Advisors, flag e matriz remota permanecem
+  pendentes.

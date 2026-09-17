@@ -53,6 +53,11 @@ remoto confirmou RPC idempotente e UPDATE direto do perfil negado. A migration
 ela requer autorização explícita por alterar RLS, funções, privilégios e triggers
 do banco de produção. A flag continua desligada e a C88 continua necessária.
 
+O CPD parcial da C87 publicou o commit `cdfd16b` no deployment
+`dpl_DqxcM261EhvZ6MT4qRzyWFWA8mpS`, confirmado como `READY`. Raiz, health,
+redirecionamentos autenticados e gate anônimo da API foram aprovados; não houve
+log de erro após os smokes. A flag continuou ausente em Production.
+
 ## Questões em aberto
 
 - Antes da C88, decidir formalmente entre manter o DNS externo ou delegar os
