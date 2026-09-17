@@ -82,7 +82,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 084 | Autorização centralizada por modo | Concluída | DAL fail-closed, gates e 14 rotas publicados; 102 testes, auditoria, build, smoke e logs aprovados; feature flag segue desligada. |
 | 085 | Seleção de perfil nas configurações | Concluída | Troca reversível Aluno/Orientador, confirmação, concorrência, idempotência, consentimento e sincronização aprovados; 107 testes, PostgreSQL 17, segurança e Production saudáveis com a flag desligada. |
 | 086 | Interface estrita Aluno/Orientador | Concluída | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. Produção publicada com a flag desligada. |
-| 087 | RLS e vínculos conscientes do modo | Em validação | Código, matriz local PostgreSQL 17 e fase 1 remota aprovados; fase 2, Advisors, ativação da flag e encerramento aguardam autorização explícita e validação em produção. |
+| 087 | RLS e vínculos conscientes do modo | Concluída | Três migrations aplicadas; correção de `INSERT ... RETURNING`, matriz autenticada remota, Advisors, E2E, flag e deployment de produção aprovados. |
 | 088 | Homologação E2E e rollout de modos | Planejada | Duas contas e duas abas validam autoria, supervisão, revisão, troca e RLS; gate separado confirma estratégia DNS, domínio, SSL e e-mail sem cutover automático de nameservers. |
 
 ## Marcos
@@ -97,7 +97,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - M7: descoberta, problemática, objetivos, capítulos, metodologia e resultados esperados validados.
 - M8: mapa rastreável e coerente entregue — concluído.
 - M9: v2 implantado com compatibilidade legada — concluído e revalidado em produção com fluxo autenticado real.
-- M10: conta com modos Aluno/Orientador alternáveis e estritamente isolados — planejado nas Changes 083–088.
+- M10: conta com modos Aluno/Orientador alternáveis e estritamente isolados — em andamento; Changes 083–087 concluídas e C88 pendente.
 
 ## Dependências externas
 

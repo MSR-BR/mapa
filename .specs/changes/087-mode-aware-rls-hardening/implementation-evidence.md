@@ -1,53 +1,53 @@
 # Evidência de implementação — Change 087
 
-## Implementação e validação local
+## Banco e segurança
 
-- Duas migrations de rollout foram criadas: liberação mínima da RPC e
-  endurecimento de RLS, funções, privilégios e trigger.
-- Helpers internos usam schema privado, identidade da sessão e `search_path`
-  seguro; grants públicos e atualização direta do modo permanecem revogados.
-- O verificador isolado em PostgreSQL 17 aprovou modo, autoria, vínculo,
-  recursos filhos, RPC, grants e trigger.
-- C83, C85 e C87 foram revalidadas em banco isolado.
-- `npm run check` aprovou 118/118 testes, lint, tipos, exportações e build
-  Next.js 16.3.5.
-- A auditoria de segurança local foi aprovada.
+- `20260917003926 c087_grant_switch_active_role` liberou apenas a RPC
+  autenticada de troca de modo; atualização direta de `user_profiles` continuou
+  revogada.
+- `20260917003928 c087_harden_mode_aware_rls` aplicou RLS consciente do modo,
+  privilégios mínimos, funções com `search_path` seguro e trigger imutável.
+- A matriz remota inicial encontrou uma incompatibilidade entre a policy de
+  leitura por helper e `INSERT ... RETURNING`. A correção foi feita por
+  roll-forward em `20260917015508 c087_fix_project_insert_returning`, sem editar
+  migrations publicadas.
+- O pós-flight confirmou três migrations registradas, RLS habilitada nas seis
+  tabelas críticas, 24 policies, nenhum `UPDATE` sem `WITH CHECK`, grants mínimos,
+  três índices, trigger ativo e zero dados inconsistentes.
 
-## Produção — fase 1
+## Validação
 
-- Preflight confirmou C83 aplicada, dados consistentes e ausência da C87.
-- `20260917003926 c087_grant_switch_active_role` foi aplicada e registrada de
-  forma transacional no Supabase.
-- Conta sintética autenticada confirmou RPC funcional e idempotente.
-- UPDATE direto de `user_profiles` permaneceu negado.
+- PostgreSQL 17 local e o verificador remoto autenticado aprovaram modo, autoria,
+  vínculo, recursos filhos, RPC, concorrência, grants e trigger.
+- A matriz remota final aprovou 15 verificações e limpou os dados sintéticos,
+  restaurando os modos originais.
+- `npm run supabase:verify-advisor-student` aprovou o fluxo profundo entre contas.
+- `npm run check` aprovou 119/119 testes, lint, tipos, exportações e build
+  Next.js 16.3.5; `npm run security:audit` também foi aprovado.
+- Security e Performance Advisors apresentaram zero erros. Os avisos restantes
+  foram classificados: três RPCs `SECURITY DEFINER` são endpoints autenticados
+  intencionais, a proteção de senhas vazadas é uma configuração preexistente de
+  Auth, e as policies permissivas paralelas separam acesso próprio e
+  supervisionado deliberadamente.
 
-## Pendente — fase 2 e encerramento
+## Ativação e CPD
 
-- `20260917003928 c087_harden_mode_aware_rls` está preparada no SQL Editor, mas
-  não foi executada porque a alteração tem alcance de produção e requer
-  autorização explícita.
-- A flag `ACCOUNT_MODE_SWITCH_ENABLED` permanece desligada.
-- Após autorização: aplicar fase 2, executar pós-flight, matriz remota,
-  Security/Performance Advisors, smokes, observabilidade e registrar o CPD final.
-- A C88 continua obrigatória para homologação E2E e rollout dos modos.
+- `ACCOUNT_MODE_SWITCH_ENABLED=true` foi configurada exclusivamente em
+  Production depois da matriz aprovada.
+- O commit funcional `b1cda6c` foi publicado no deployment
+  `dpl_2SZj3hikYutHnXpDkSeuEgh5178x`, estado `READY`, em
+  `https://mapadapesquisa.com.br`.
+- O seletor de perfil foi confirmado em sessão autenticada em
+  `/dashboard/settings`; nenhum modo da conta real inspecionada foi alterado.
+- Raiz e health responderam corretamente; dashboard/configurações redirecionam
+  visitantes sem sessão; a API protegida nega acesso anônimo; nenhum erro foi
+  encontrado nos logs da última hora após os smokes.
 
 ## Recuperação
 
-- Falha de interface ou RPC: manter/desligar a flag e corrigir por roll-forward.
-- Falha de policy: usar migration corretiva explícita e auditada; não alterar
-  migration já publicada nem executar reset destrutivo.
-
-## CPD parcial — aplicação compatível com flag desligada
-
-- Commit documental e Pó Mágico: `cdfd16b`, enviado para
-  `codex/change-003-004`.
-- Deployment de produção: `dpl_DqxcM261EhvZ6MT4qRzyWFWA8mpS`, estado `READY`,
-  associado a `https://mapadapesquisa.com.br`.
-- Build Vercel com Next.js 16.3.5 concluído em 11 s.
-- `ACCOUNT_MODE_SWITCH_ENABLED` ausente em Production; fallback seguro `false`.
-- Smokes: raiz 200, health `status=ok`, dashboard/configurações 307 para login e
-  API acadêmica com payload válido negada sem sessão por
-  `authentication_required`.
-- Varredura pós-deploy: nenhum log de erro encontrado.
-- Este CPD não encerra a C87: fase 2, Advisors, flag e matriz remota permanecem
-  pendentes.
+- Problema de interface ou RPC: remover/desligar a flag de Production e
+  redeployar, mantendo os dados e as policies.
+- Problema de policy: corrigir por migration explícita de roll-forward. Não
+  editar migrations aplicadas nem executar reset destrutivo em produção.
+- A C88 permanece separada para homologação final observada, incluindo o gate de
+  domínio/DNS/e-mail sem cutover automático de nameservers.

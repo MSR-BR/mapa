@@ -2,16 +2,17 @@
 
 ## Blueprint
 
-- Primário: APP v2.1.
+- Primário: APP v2.3.
 - Secundários: SOFTWARE e AI SYSTEM.
 
 ## Estado atual
 
-- Change atual: 087 — RLS e vínculos conscientes do modo.
-- Changes funcionalmente concluídas: 001–086 conforme `.specs/roadmap.md`.
-- Change 087 em validação: implementação e testes locais concluídos, fase 1
-  aplicada remotamente e fase 2 ainda não executada.
-- Change 088 permanece pendente para homologação E2E e rollout final.
+- Change atual: 088 — Homologação E2E e rollout de modos.
+- Changes funcionalmente concluídas: 001–087 conforme `.specs/roadmap.md`.
+- Change 087 concluída: migrations, correção de `INSERT ... RETURNING`, matriz
+  remota, Advisors, flag, CPD e smokes aprovados.
+- Change 088 permanece pendente para homologação final observada e gate de
+  domínio/DNS/e-mail.
 
 ## Decisões-chave
 
@@ -26,16 +27,17 @@
 - Gemini e Research Starter são acessados somente pelo backend.
 - `RESEARCH_STARTER_MAPA_API_KEY` é o único nome aceito para a credencial do
   Research Starter e permanece restrito ao backend de Production.
-- Em produção, o papel inicial da conta ainda é permanente até a conclusão da C88.
-- O estado-alvo aprovado para planejamento permite escolher Aluno ou Orientador
-  na mesma conta; banco, servidor, interface e RLS devem aplicar o mesmo modo.
-- O modo ativo será persistido no banco, versionado e trocado apenas por RPC;
-  JWT, metadata e armazenamento local não serão fontes de autorização.
-- No estado-alvo, ambos os perfis criam projetos Rápidos/Avançados e mantêm sua
-  biblioteca própria: projetos de Aluno podem ter supervisão externa; projetos
-  de Orientador são autônomos. O Orientador também recebe uma fila separada de
+- Em produção, a mesma conta pode alternar o modo ativo entre Aluno e Orientador
+  nas configurações; a troca não altera a autoria dos projetos existentes.
+- O estado-alvo aprovado permite escolher Aluno ou Orientador na mesma conta;
+  banco, servidor, interface e RLS aplicam o mesmo modo.
+- O modo ativo é persistido no banco, versionado e trocado apenas por RPC; JWT,
+  metadata e armazenamento local não são fontes de autorização.
+- Ambos os perfis criam projetos Rápidos/Avançados e mantêm sua biblioteca
+  própria: projetos de Aluno podem ter supervisão externa; projetos de
+  Orientador são autônomos. O Orientador também recebe uma fila separada de
   projetos estudantis vinculados para revisão.
-- Cada projeto terá `authoring_role` imutável; trocar o modo nunca altera
+- Cada projeto tem `authoring_role` imutável; trocar o modo nunca altera
   autoria, propriedade, supervisão, vínculo ou conteúdo.
 - Avisos acadêmicos orientam sem bloquear; integridade técnica continua
   obrigatória.
@@ -43,20 +45,20 @@
 
 ## Estado validado mais recente
 
-As Changes 084–086 publicaram autorização centralizada, configurações de modo e
-interfaces estritas com `ACCOUNT_MODE_SWITCH_ENABLED` desligada. Na C87, as duas
-migrations, o verificador PostgreSQL 17 e a matriz automatizada foram concluídos;
-`npm run check` aprovou 118/118 testes e o build Next.js 16.3.5. A migration
-`20260917003926 c087_grant_switch_active_role` foi aplicada no Supabase e o smoke
-remoto confirmou RPC idempotente e UPDATE direto do perfil negado. A migration
-`20260917003928 c087_harden_mode_aware_rls` está preparada, mas não foi executada:
-ela requer autorização explícita por alterar RLS, funções, privilégios e triggers
-do banco de produção. A flag continua desligada e a C88 continua necessária.
+As Changes 084–087 publicaram autorização centralizada, configurações de modo,
+interfaces estritas e RLS consciente do modo. As migrations `20260917003926` e
+`20260917003928` foram aplicadas; a validação autenticada revelou uma falha de
+`INSERT ... RETURNING`, corrigida por roll-forward em `20260917015508` antes da
+ativação. A matriz remota final aprovou 15 verificações, o E2E Aluno–Orientador
+foi aprovado e `npm run check` concluiu 119/119 testes com build Next.js 16.3.5.
 
-O CPD parcial da C87 publicou o commit `cdfd16b` no deployment
-`dpl_DqxcM261EhvZ6MT4qRzyWFWA8mpS`, confirmado como `READY`. Raiz, health,
-redirecionamentos autenticados e gate anônimo da API foram aprovados; não houve
-log de erro após os smokes. A flag continuou ausente em Production.
+Security e Performance Advisors apresentaram zero erros; os avisos intencionais
+foram documentados. `ACCOUNT_MODE_SWITCH_ENABLED=true` está ativa somente em
+Production. O deployment `dpl_2SZj3hikYutHnXpDkSeuEgh5178x`, com commit funcional
+`b1cda6c`, está `READY` em `https://mapadapesquisa.com.br`. O seletor foi
+confirmado em sessão autenticada, os smokes foram aprovados e não houve log de
+erro após a publicação. A C88 continua necessária para a homologação final
+observada e o gate independente de domínio/DNS/e-mail.
 
 ## Questões em aberto
 
