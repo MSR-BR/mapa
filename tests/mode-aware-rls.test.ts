@@ -77,6 +77,7 @@ test("hardens supervision functions and the review trigger", () => {
 test("ships an isolated direct-client policy matrix", () => {
   const runner = read("scripts/verify-mode-aware-rls.sh");
   const verification = read("scripts/verify-mode-aware-rls.sql");
+  const remoteVerification = read("scripts/verify-mode-aware-rls-remote.mjs");
 
   assert.match(runner, /postgres:17-alpine/);
   assert.match(runner, /20260917003926_c087_grant_switch_active_role\.sql/);
@@ -91,4 +92,7 @@ test("ships an isolated direct-client policy matrix", () => {
   assert.match(verification, /verification_function_grants_invalid/);
   assert.match(verification, /verification_student_insert_returning_failed/);
   assert.match(verification, /verification_advisor_insert_returning_failed/);
+  assert.match(remoteVerification, /student_insert_returning/);
+  assert.match(remoteVerification, /advisor_insert_returning/);
+  assert.match(remoteVerification, /temporary_data_cleaned_and_roles_restored/);
 });

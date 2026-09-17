@@ -21,6 +21,7 @@
     "supabase:verify-account-mode-foundation": "sh scripts/verify-account-mode-foundation.sh",
     "supabase:verify-account-mode-settings": "sh scripts/verify-account-mode-settings.sh",
     "supabase:verify-mode-aware-rls": "sh scripts/verify-mode-aware-rls.sh",
+    "supabase:verify-mode-aware-rls-remote": "node --env-file-if-exists=.env.local scripts/verify-mode-aware-rls-remote.mjs",
     "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
     "research-starter:verify:production": "node --env-file-if-exists=.env.local scripts/verify-research-starter-production.mjs",
     "research-proposals:verify": "node --conditions=react-server --env-file-if-exists=.env.local --import tsx scripts/verify-proposal-discovery.ts",
