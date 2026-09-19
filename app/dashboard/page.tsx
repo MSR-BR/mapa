@@ -261,7 +261,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             {strictMode ? (
               <p>
                 {isStudentMode
-                  ? "Projetos criados como Aluno, com supervisão opcional."
+                  ? "Projetos criados como Aluno, com supervisão obrigatória para avançar."
                   : "Projetos autônomos criados como Orientador, sem supervisão externa."}
               </p>
             ) : null}

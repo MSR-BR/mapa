@@ -27,12 +27,15 @@ test("requires an advisor only for student-authored progression", () => {
 });
 
 test("blocks the first student decision in the interface until an advisor is saved", () => {
+  const dashboard = read("app/dashboard/page.tsx");
   const page = read("app/dashboard/projects/[id]/page.tsx");
   const panel = read("modules/projects/project-advisor-panel.tsx");
   const workspace = read("modules/research-workflow/research-definition-workspace.tsx");
   const actions = read("modules/projects/actions.ts");
   const styles = read("app/globals.css");
 
+  assert.match(dashboard, /supervisão obrigatória para avançar/i);
+  assert.doesNotMatch(dashboard, /supervisão opcional/i);
   assert.match(page, /advisorEmail=\{project\.advisor_email\}/);
   assert.match(panel, /id="project-advisor"/);
   assert.match(panel, /required\s+type="email"/);
