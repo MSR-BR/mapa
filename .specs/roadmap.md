@@ -84,6 +84,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 086 | Interface estrita Aluno/Orientador | Concluída | Ambos criam e gerenciam projetos próprios; Aluno pode usar supervisão, enquanto Orientador cria de forma autônoma e recebe revisões vinculadas em área separada. Produção publicada com a flag desligada. |
 | 087 | RLS e vínculos conscientes do modo | Concluída | Três migrations aplicadas; correção de `INSERT ... RETURNING`, matriz autenticada remota, Advisors, E2E, flag e deployment de produção aprovados. |
 | 088 | Homologação E2E e rollout de modos | Concluída | Duas contas, persistência, concorrência, RLS, projetos próprios/supervisionados, PDF/DOCX, integrações, DNS externo e produção foram homologados; deployment final READY em v17092026.1. |
+| 089 | Orientador obrigatório para avanço do Aluno | Em validação | Interface, quatro APIs e trigger PostgreSQL impedem avanço de projeto estudantil sem e-mail e aprovação; 123 testes e PostgreSQL 17 passaram, com migration remota e deploy pendentes de autorização. |
 
 ## Marcos
 

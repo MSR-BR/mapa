@@ -104,7 +104,12 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         ) : isChapterPlanningStage ? (
           <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : workflow.content.discovery?.selectedCandidateId ? (
-          <ResearchDefinitionWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
+          <ResearchDefinitionWorkspace
+            advisorEmail={project.advisor_email}
+            initialWorkflow={workflow}
+            isSelfDirectedProject={isSelfDirectedProject}
+            projectId={project.id}
+          />
         ) : (
           <ProposalDiscoveryWorkspace
             autoDiscover={discover === "1"}

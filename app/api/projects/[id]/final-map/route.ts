@@ -15,6 +15,11 @@ import {
   canCompleteFinalMap,
   finalMapSummary,
 } from "@/modules/research-workflow/final-map";
+import {
+  projectAdvisorGate,
+  STUDENT_ADVISOR_REQUIRED_CODE,
+  STUDENT_ADVISOR_REQUIRED_MESSAGE,
+} from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   researchWorkflowContentSchema,
@@ -172,6 +177,18 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
     return NextResponse.json({ error: "O mapa final ainda não pode ser revisado." }, { status: 409 });
   }
+  const advisorGate = parsed.data.action === "complete"
+    ? projectAdvisorGate({
+      advisorEmail: await loadProjectAdvisorEmail(supabase, userId, id),
+      authoringRole: access.value.project.authoring_role,
+    })
+    : null;
+  if (advisorGate?.kind === "advisor_required") {
+    return NextResponse.json(
+      { code: STUDENT_ADVISOR_REQUIRED_CODE, error: STUDENT_ADVISOR_REQUIRED_MESSAGE },
+      { status: 409 },
+    );
+  }
 
   if (parsed.data.action === "go_to") {
     if (!parsed.data.targetStep) return NextResponse.json({ error: "Etapa de destino inválida." }, { status: 400 });
@@ -206,8 +223,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   content = upsertFinalMap(content, finalMapSummary(finalMap), sourceRevision);
   nextWorkflow = { ...workflow, content };
   content = replaceFinalMapFindings(content, buildFinalMap(nextWorkflow).findings.filter((finding) => finding.severity !== "blocking"));
-  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
+  const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
+  const shouldWaitForAdvisor = advisorGate?.kind === "advisor_review";
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,

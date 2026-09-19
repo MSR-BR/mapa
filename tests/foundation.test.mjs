@@ -1046,13 +1046,13 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(definitionRoute, /requireStudentJustification: !isSelfDirectedProject/);
   assert.match(definitionRoute, /Aguardando revisão/);
   assert.match(chaptersRoute, /requireStudentJustification: !isSelfDirectedProject/);
-  assert.match(chaptersRoute, /!isSelfDirectedProject && Boolean\(advisorEmail\)/);
+  assert.match(chaptersRoute, /projectAdvisorGate/);
   assert.match(chaptersRoute, /Capítulo 2 validado pelo estudante/);
   assert.match(chaptersRoute, /Capítulo 4 validado pelo estudante/);
   assert.match(methodologyRoute, /requireStudentJustification: !isSelfDirectedProject/);
-  assert.match(methodologyRoute, /!isSelfDirectedProject && Boolean\(advisorEmail\)/);
+  assert.match(methodologyRoute, /projectAdvisorGate/);
   assert.match(methodologyRoute, /Metodologia validada pelo estudante/);
-  assert.match(finalMapRoute, /!isSelfDirectedProject && Boolean\(advisorEmail\)/);
+  assert.match(finalMapRoute, /projectAdvisorGate/);
   assert.match(finalMapRoute, /Mapa validado pelo estudante/);
   assert.match(projectPage, /AdvisorReviewWorkspace/);
   assert.match(projectPage, /project\.owner_id/);

@@ -233,7 +233,14 @@ export async function updateProjectAdvisor(
   const rawEmail = formData.get("advisorEmail");
   const advisorEmail = normalizeAdvisorEmail(typeof rawEmail === "string" ? rawEmail : "");
   if (!projectId) return { message: "Projeto inválido.", status: "error", value: advisorEmail ?? "" };
-  if (advisorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advisorEmail)) {
+  if (!advisorEmail) {
+    return {
+      message: "Informe o e-mail do orientador. Projetos do perfil Aluno precisam de validação para avançar.",
+      status: "error",
+      value: "",
+    };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advisorEmail)) {
     return { message: "Informe um e-mail válido para o orientador.", status: "error", value: advisorEmail };
   }
 
@@ -260,9 +267,6 @@ export async function updateProjectAdvisor(
 
   revalidatePath("/dashboard");
   revalidatePath(`/dashboard/projects/${projectId}`);
-  if (!advisorEmail) {
-    return { linked: false, message: "Orientador removido deste projeto.", status: "success", value: "" };
-  }
   return advisorLink.linked
     ? {
       linked: true,

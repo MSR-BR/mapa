@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
+import { STUDENT_ADVISOR_REQUIRED_MESSAGE } from "./advisor-requirement";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
@@ -14,6 +15,7 @@ import { workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
+  advisorEmail: string | null;
   initialWorkflow: ResearchWorkflow;
   isSelfDirectedProject?: boolean;
   projectId: string;
@@ -32,7 +34,7 @@ function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
     .map((element) => ({ content: element.proposedContent, id: element.id, studentJustification: element.studentJustification ?? "" }));
 }
 
-export function ResearchDefinitionWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
+export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
@@ -74,8 +76,15 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isSelfDirectedPro
         || JSON.stringify(specifics) !== JSON.stringify(specificDrafts(workflow));
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
+  const advisorRequired = !isSelfDirectedProject && !advisorEmail?.trim();
   const justificationLabelSuffix = isSelfDirectedProject ? " (opcional)" : " *";
-  const validateButtonLabel = "Validar etapa";
+  const validateButtonLabel = waitingForAdvisor
+    ? "Aguardando validação"
+    : advisorRequired
+      ? "Informe o orientador para avançar"
+      : isSelfDirectedProject
+        ? "Validar etapa"
+        : "Enviar para validação";
 
   useEffect(() => {
     const stage = step === "problem_statement" ? "problem" : "definition";
@@ -219,6 +228,15 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isSelfDirectedPro
           {currentElement?.updatedBy === "user" || currentValueChanged ? "Editado por você" : "Sugestão da IA"}
         </span>
       </div>
+      {advisorRequired ? (
+        <aside className="student-advisor-required" id="student-advisor-required" role="alert">
+          <div>
+            <strong>Informe o orientador antes de validar</strong>
+            <span>{STUDENT_ADVISOR_REQUIRED_MESSAGE}</span>
+          </div>
+          <a href="#project-advisor">Ir para o e-mail do orientador</a>
+        </aside>
+      ) : null}
       {isSelfDirectedProject ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
 
       <div className="definition-source">
@@ -326,7 +344,7 @@ export function ResearchDefinitionWorkspace({ initialWorkflow, isSelfDirectedPro
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
         <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <button aria-describedby={advisorRequired ? "student-advisor-required" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || advisorRequired} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>
     </section>
   );

@@ -7,11 +7,12 @@
 
 ## Estado atual
 
-- Change atual: 088 — concluída.
+- Change atual: 089 — implementação local aprovada; rollout pendente.
 - Changes concluídas: 001–088 conforme `.specs/roadmap.md`.
-- Não há nova Change planejada após a C88.
+- A C89 exige orientador e aprovação para todo avanço de projeto criado como
+  Aluno, preservando rascunhos e a autonomia dos projetos de Orientador.
 - A conta alternável, as bibliotecas por modo, a revisão vinculada, PDF/DOCX e
-  o rollout de produção estão homologados.
+  o rollout da C88 permanecem homologados em produção.
 
 ## Decisões-chave
 
@@ -33,7 +34,8 @@
 - O modo ativo é persistido no banco, versionado e trocado apenas por RPC; JWT,
   metadata e armazenamento local não são fontes de autorização.
 - Ambos os perfis criam projetos Rápidos/Avançados e mantêm sua biblioteca
-  própria: projetos de Aluno podem ter supervisão externa; projetos de
+  própria: projetos de Aluno exigem orientador e aprovação para avançar, mas
+  podem ser criados e salvos como rascunho antes do vínculo; projetos de
   Orientador são autônomos. O Orientador também recebe uma fila separada de
   projetos estudantis vinculados para revisão.
 - Cada projeto tem `authoring_role` imutável; trocar o modo nunca altera
@@ -61,9 +63,17 @@ domínio raiz continua em HTTPS/HSTS na Vercel e `www` permanece
 deliberadamente ausente. Nenhuma mudança DNS ou teste de e-mail foi necessário
 nesta janela.
 
+## Implementação local mais recente
+
+A C89 passou em lint, tipos, 123 testes, exportações, build, auditoria de
+segurança e PostgreSQL 17 isolado. A migration aditiva e o código estão prontos,
+mas ainda não foram aplicados/publicados em produção. A versão pública continua
+`v17092026.1` até autorização do rollout.
+
 ## Questões em aberto
 
-- Nenhuma Change funcional está planejada.
+- Autorizar a migration remota e o deploy da C89; depois executar E2E
+  aluno–orientador, health, logs, CPD e evolução do Pó Mágico.
 - SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
   autenticação de e-mail exige inventário da zona, autorização e Change
   específica; não faz parte do rollout encerrado.

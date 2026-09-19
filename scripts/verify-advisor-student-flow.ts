@@ -697,6 +697,44 @@ function activeStepForReview(step: AdvisorReviewStep): ResearchWorkflowContent["
   return step === "final_map" ? null : step;
 }
 
+async function assertStudentProgressWithoutAdvisorDenied(
+  student: { client: Client },
+  workflow: ResearchWorkflow,
+) {
+  const attempted = await student.client
+    .from("research_workflows")
+    .update({
+      content: { ...workflow.content, activeStep: "general_objective" } as unknown as Json,
+      revision: workflow.revision + 1,
+      stable_state: "validating_general_objective",
+      state: "validating_general_objective",
+      updated_at: new Date(Date.now() + 5_000).toISOString(),
+    })
+    .eq("project_id", workflow.projectId)
+    .eq("owner_id", workflow.ownerId)
+    .eq("revision", workflow.revision)
+    .select("project_id");
+  if (!attempted.error) {
+    throw new Error("O aluno avançou diretamente sem informar e sem obter aprovação do orientador.");
+  }
+
+  const unchanged = await requireData(
+    "Confirmação do bloqueio sem orientador",
+    await student.client
+      .from("research_workflows")
+      .select("project_id,revision,state,stable_state")
+      .eq("project_id", workflow.projectId)
+      .maybeSingle(),
+  ) as Pick<WorkflowVerificationRow, "project_id" | "revision" | "stable_state" | "state">;
+  if (
+    unchanged.revision !== workflow.revision
+    || unchanged.state !== workflow.state
+    || unchanged.stable_state !== workflow.stableState
+  ) {
+    throw new Error("A tentativa sem orientador alterou o workflow apesar da recusa.");
+  }
+}
+
 async function submitStepForAdvisor(
   student: { client: Client },
   workflow: ResearchWorkflow,
@@ -815,6 +853,7 @@ try {
   studentProjectId = setup.project.id;
   let workflow = setup.workflow;
   await assertProjectVisibility(accountB, studentProjectId, false, "Isolamento anterior ao vínculo");
+  await assertStudentProgressWithoutAdvisorDenied(accountA, workflow);
 
   const linked = await requireData(
     "Vínculo do orientador",
@@ -957,6 +996,7 @@ try {
       "Mapa Avançado próprio como Orientador",
       "projeto autônomo sem supervisão",
       "isolamento anterior ao vínculo",
+      "avanço sem orientador recusado sem alterar o workflow",
       "vínculo e leitura supervisionada",
       "bloqueio de edição acadêmica pelo orientador",
       "comentário e solicitação de correção",

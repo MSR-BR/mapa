@@ -102,7 +102,7 @@ test("keeps advisor-owned projects autonomous and removes student-only controls"
   assert.match(form, /activeRole === "student"/);
   assert.match(actions, /access\.project\.authoring_role === "advisor"/);
   assert.match(actions, /if \(!isSelfDirectedProject\)/);
-  assert.match(workflowFiles, /const validateButtonLabel = "Validar etapa"/);
+  assert.match(workflowFiles, /Enviar para validação/);
   assert.match(workflowFiles, /isSelfDirectedProject \? null : <AdvisorReviewNotice/);
   assert.match(workflowFiles, /access\.value\.project\.authoring_role === "advisor"/);
   assert.doesNotMatch(workflowFiles, /Validar pelo estudante|Validar como orientador|isAdvisorOwner/);

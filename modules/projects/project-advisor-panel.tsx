@@ -34,13 +34,13 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
   const linked = state.status === "idle" ? advisorLinked : Boolean(state.linked);
 
   return (
-    <aside className="project-advisor-panel" aria-labelledby="project-advisor-title">
+    <aside className={`project-advisor-panel ${hasEmail ? "" : "required"}`} aria-labelledby="project-advisor-title" id="project-advisor">
       <div>
         <p className="section-kicker">Orientação</p>
         <h2 id="project-advisor-title">Orientador do projeto</h2>
-        <p>
-          Informe a conta do orientador para que este mapa apareça na área dele. Se a conta ainda não existir,
-          o Mapa guarda o e-mail e faz o vínculo quando ela for criada.
+        <p id="project-advisor-help">
+          No perfil Aluno, o e-mail do orientador é obrigatório para validar a primeira decisão e avançar.
+          Se a conta ainda não existir, o Mapa guarda o e-mail e faz o vínculo quando ela for criada.
         </p>
       </div>
       {hasEmail && !editing ? (
@@ -61,10 +61,12 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
           <label>
             <span>E-mail do orientador</span>
             <input
+              aria-describedby="project-advisor-help"
               defaultValue={displayedEmail}
               maxLength={320}
               name="advisorEmail"
               placeholder="orientador@instituicao.edu"
+              required
               type="email"
             />
           </label>
@@ -85,7 +87,7 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
           ? linked
             ? "Conta vinculada."
             : "E-mail guardado. O vínculo será feito quando o orientador entrar com essa conta."
-          : "Nenhum orientador indicado ainda."}
+          : "Obrigatório para validar e avançar no perfil Aluno."}
       </div>
       {state.message ? <p className={`project-advisor-message ${state.status}`}>{state.message}</p> : null}
     </aside>

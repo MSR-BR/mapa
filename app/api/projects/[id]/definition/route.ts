@@ -14,6 +14,11 @@ import {
   authorizeProjectRoute,
   type AuthorizedProjectContext,
 } from "@/modules/projects/auth";
+import {
+  projectAdvisorGate,
+  STUDENT_ADVISOR_REQUIRED_CODE,
+  STUDENT_ADVISOR_REQUIRED_MESSAGE,
+} from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   validateGeneralObjective,
@@ -304,6 +309,18 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   const { action, step } = parsed.data;
+  const advisorGate = action === "validate"
+    ? projectAdvisorGate({
+      advisorEmail: await loadProjectAdvisorEmail(supabase, userId, id),
+      authoringRole: access.value.project.authoring_role,
+    })
+    : null;
+  if (advisorGate?.kind === "advisor_required") {
+    return NextResponse.json(
+      { code: STUDENT_ADVISOR_REQUIRED_CODE, error: STUDENT_ADVISOR_REQUIRED_MESSAGE },
+      { status: 409 },
+    );
+  }
   if (action === "back") {
     let content = workflow.content;
     let state: ResearchWorkflow["state"] = workflow.state;
@@ -575,9 +592,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     stableState = "validating_literature";
   }
 
-  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
+  const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
   const targetActiveStep = content.activeStep;
-  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
+  const shouldWaitForAdvisor = advisorGate?.kind === "advisor_review";
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,

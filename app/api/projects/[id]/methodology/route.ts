@@ -10,6 +10,11 @@ import {
   authorizeProjectRoute,
   type AuthorizedProjectContext,
 } from "@/modules/projects/auth";
+import {
+  projectAdvisorGate,
+  STUDENT_ADVISOR_REQUIRED_CODE,
+  STUDENT_ADVISOR_REQUIRED_MESSAGE,
+} from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   FINAL_TITLE_MAX_LENGTH,
@@ -410,6 +415,18 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   ) {
     return NextResponse.json({ error: "Esta não é a etapa metodológica ativa." }, { status: 409 });
   }
+  const advisorGate = action === "validate"
+    ? projectAdvisorGate({
+      advisorEmail: await loadProjectAdvisorEmail(supabase, userId, id),
+      authoringRole: access.value.project.authoring_role,
+    })
+    : null;
+  if (advisorGate?.kind === "advisor_required") {
+    return NextResponse.json(
+      { code: STUDENT_ADVISOR_REQUIRED_CODE, error: STUDENT_ADVISOR_REQUIRED_MESSAGE },
+      { status: 409 },
+    );
+  }
   const context = validateContext(workflow);
   if (!context) return NextResponse.json({ error: "Objetivos e capítulos precisam estar validados." }, { status: 409 });
   const approvedProblem = context.problem.approvedContent!;
@@ -517,8 +534,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     sourceRevision,
     context,
   );
-  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
+  const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
+  const shouldWaitForAdvisor = advisorGate?.kind === "advisor_review";
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,

@@ -14,6 +14,11 @@ import {
   type AuthorizedProjectContext,
 } from "@/modules/projects/auth";
 import { fetchResearchStarterReport, ResearchStarterClientError } from "@/modules/research-starter/client";
+import {
+  projectAdvisorGate,
+  STUDENT_ADVISOR_REQUIRED_CODE,
+  STUDENT_ADVISOR_REQUIRED_MESSAGE,
+} from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import {
   chapterTopicsInputSchema,
@@ -259,6 +264,18 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   if (action !== "initialize" && workflow.content.activeStep !== activeStep) {
     return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
   }
+  const advisorGate = action === "validate"
+    ? projectAdvisorGate({
+      advisorEmail: await loadProjectAdvisorEmail(supabase, userId, id),
+      authoringRole: access.value.project.authoring_role,
+    })
+    : null;
+  if (advisorGate?.kind === "advisor_required") {
+    return NextResponse.json(
+      { code: STUDENT_ADVISOR_REQUIRED_CODE, error: STUDENT_ADVISOR_REQUIRED_MESSAGE },
+      { status: 409 },
+    );
+  }
 
   if (action === "initialize") {
     if (workflow.state !== "validating_literature" || ![null, "literature_topics"].includes(workflow.content.activeStep)) {
@@ -444,8 +461,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       content = replaceTopics(content, "development", generated.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
     }
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "development_topics" });
-    const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-    const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
+    const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
+    const shouldWaitForAdvisor = advisorGate?.kind === "advisor_review";
     if (shouldWaitForAdvisor) {
       const supervisionError = authorizeProjectCapabilityResponse(
         access.value,
@@ -489,8 +506,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
   content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
-  const advisorEmail = await loadProjectAdvisorEmail(supabase, userId, id);
-  const shouldWaitForAdvisor = !isSelfDirectedProject && Boolean(advisorEmail);
+  const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
+  const shouldWaitForAdvisor = advisorGate?.kind === "advisor_review";
   if (shouldWaitForAdvisor) {
     const supervisionError = authorizeProjectCapabilityResponse(
       access.value,
