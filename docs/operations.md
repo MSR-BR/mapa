@@ -639,3 +639,24 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   `dpl_FRVTWXQUpRtJBbUEotEmWV9TEtjp` READY e aliasado ao domínio canônico.
 - Health `status=ok`, quatro provedores configurados e nenhum erro encontrado
   nos logs pós-rollout.
+
+## Change 089 — Orientador obrigatório para avanço do Aluno (19/09/2026)
+
+- A migration `20260919123000_c089_require_student_advisor_approval.sql` foi
+  aplicada no projeto `aeaweherkrqmlqnxsmib` pelo SQL Editor autenticado.
+  Função e trigger passaram de ausentes para presentes.
+- A CLI Supabase retornou 403 por privilégio insuficiente de organização; o
+  caminho alternativo foi executado somente após conferir projeto, conteúdo
+  integral do arquivo e resultado da transação.
+- O E2E remoto confirmou recusa do avanço sem orientador, workflow inalterado,
+  vínculo, correção, sete aprovações, conclusão, referências, PDF/DOCX,
+  isolamento, persistência dos modos e cleanup.
+- As matrizes RLS consciente do modo, autenticada e anônima passaram.
+- Gate final: lint, tipos, 123 testes, exportações e build Next.js 16.3.5.
+- O smoke autenticado encontrou e corrigiu uma mensagem residual de supervisão
+  opcional; a interface final informa supervisão obrigatória para avançar.
+- Versão pública `v19092026.1`; deployment
+  `dpl_DHKUXF8BMmtdBjd2tTDQ5SFZRYYe` READY e aliasado ao domínio canônico.
+- Health `status=ok`, quatro provedores configurados; Research Starter HTTP
+  200 com três referências; Gemini estruturado válido; nenhum erro ou HTTP 500
+  encontrado nos logs pós-rollout.

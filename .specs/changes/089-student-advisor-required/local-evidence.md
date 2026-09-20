@@ -1,6 +1,6 @@
 # Evidências locais — Change 089
 
-**Estado:** implementação local aprovada em 19/09/2026; rollout pendente.
+**Estado:** implementação local aprovada; rollout concluído em 19/09/2026.
 
 ## Resultado funcional
 
@@ -34,9 +34,8 @@ O PostgreSQL 17 isolado confirmou:
 - `npm audit --offline --omit=dev`: zero vulnerabilidades no cache local.
 - `git diff --check`: aprovado.
 
-## Pendência de rollout
+## Resultado do rollout
 
-A migration `20260919123000_c089_require_student_advisor_approval.sql` ainda
-não foi aplicada no Supabase de produção, e o código ainda não foi publicado.
-Essas ações exigem autorização explícita e serão seguidas por E2E remoto,
-health, smoke, logs, CPD e atualização do Pó Mágico.
+A migration e o código foram publicados e verificados em produção. As
+evidências remotas, E2E, health, smoke, logs e CPD estão registradas em
+`closure-evidence.md`.

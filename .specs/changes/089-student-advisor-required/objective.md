@@ -1,6 +1,6 @@
 # Objetivo — Change 089
 
-**Status:** implementação local aprovada em 19/09/2026; rollout pendente.
+**Status:** concluída em produção em 19/09/2026.
 
 Exigir orientação nos projetos criados no modo Aluno: o estudante pode criar o
 projeto e salvar rascunhos sem vínculo inicial, mas não pode validar a primeira
