@@ -122,7 +122,7 @@ export function ResearchPromptInput({
         name="prompt"
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={onEnter}
-        placeholder="Exemplo: Crie um roteiro de dissertação de mestrado sobre o uso de inteligência artificial no ensino superior"
+        placeholder="Informe as palavras-chave (mínimo duas) ou escreva o tema da pesquisa."
         required
         rows={3}
         value={value}

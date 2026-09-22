@@ -24,6 +24,8 @@
 - Supabase é responsável por banco e autenticação; RLS e triggers protegem os
   dados e as transições críticas.
 - Gemini e Research Starter são acessados somente pelo backend.
+- `RESEARCH_STARTER_MAPA_API_KEY` permanece o nome canônico da credencial
+  server-side do Research Starter.
 - Em produção, a mesma conta pode alternar o modo ativo entre Aluno e Orientador
   nas configurações; a troca não altera a autoria dos projetos existentes.
 - O modo ativo é persistido no banco, versionado e trocado apenas por RPC; JWT,

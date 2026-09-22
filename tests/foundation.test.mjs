@@ -99,7 +99,8 @@ test("suggests AI refinements while the research request is being written", asyn
     readProjectFile("modules/projects/public-start-form.tsx"),
   ]);
 
-  assert.match(input, /Exemplo: Crie um roteiro de dissertação de mestrado/);
+  assert.match(input, /Informe as palavras-chave \(mínimo duas\) ou escreva o tema da pesquisa\./);
+  assert.doesNotMatch(input, /Exemplo: Crie um roteiro de dissertação de mestrado/);
   assert.match(input, /650/);
   assert.match(input, /Sugestões para consolidar o mapa/);
   assert.match(input, /MINIMUM_SUGGESTION_LENGTH = 8/);
