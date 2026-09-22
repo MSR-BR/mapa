@@ -3,7 +3,7 @@
 ## Gate obrigatório
 
 - Não iniciar o corte enquanto a C91 não estiver concluída em produção.
-- Exigir Google, Facebook e LinkedIn públicos, estáveis e testados com contas
+- Exigir Google e LinkedIn públicos, estáveis e testados com contas
   reais controladas.
 - Inventariar contas somente por senha e garantir pelo menos uma identidade
   social vinculada a cada conta que precise continuar acessando o produto.
@@ -11,8 +11,8 @@
 
 ## Interface e rotas
 
-- Manter somente os botões “Continuar com Google”, “Continuar com Facebook” e
-  “Continuar com LinkedIn” na tela de acesso.
+- Manter somente os botões “Continuar com Google” e “Continuar com LinkedIn” na
+  tela de acesso.
 - Remover formulário de e-mail/senha, link de cadastro e “Esqueci minha senha”.
 - Desativar ou redirecionar de forma explícita `/signup`, `/forgot-password` e
   `/reset-password`, preservando um retorno claro ao login social.

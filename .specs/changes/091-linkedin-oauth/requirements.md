@@ -3,7 +3,6 @@
 ## Provedores e interface
 
 - Manter “Continuar com Google”.
-- Adicionar Facebook com o provedor Supabase `facebook`.
 - Adicionar LinkedIn pelo provedor atual `linkedin_oidc`; não usar o provedor
   legado `linkedin`.
 - Centralizar o início do OAuth em uma ação com allowlist explícita de
@@ -13,16 +12,15 @@
 
 ## Configuração e segredos
 
-- Configurar aplicativos próprios no Meta for Developers e LinkedIn Developers.
+- Configurar aplicativo próprio no LinkedIn Developers.
 - Usar no provedor o callback Supabase
   `https://aeaweherkrqmlqnxsmib.supabase.co/auth/v1/callback`.
 - Manter `https://mapadapesquisa.com.br/auth/callback` na allowlist de redirects
   do Supabase e registrar separadamente os redirects de preview/teste.
-- Solicitar do Facebook apenas `email` e `public_profile` no escopo inicial.
 - Habilitar “Sign In with LinkedIn using OpenID Connect”.
 - Armazenar Client IDs/secrets apenas nos painéis dos provedores e do Supabase;
   nunca em código, Git, logs ou variáveis `NEXT_PUBLIC_*`.
-- Criar flags server-side fail-closed para Facebook e LinkedIn.
+- Criar flag server-side fail-closed para LinkedIn.
 
 ## Continuidade da conta
 
@@ -38,8 +36,8 @@
 
 ## Privacidade e operação
 
-- Atualizar Termos/Privacidade para identificar Meta e LinkedIn como provedores
-  de autenticação e explicar os dados mínimos recebidos.
+- Atualizar Termos/Privacidade para identificar LinkedIn como provedor de
+  autenticação e explicar os dados mínimos recebidos.
 - Preservar o e-mail como atributo de identidade/contato e como chave de convite
   do orientador; esta Change não remove e-mails do produto.
 - Tratar cancelamento, acesso negado, falta de e-mail e erro do provedor sem

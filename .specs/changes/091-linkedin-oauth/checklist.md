@@ -1,7 +1,7 @@
 # Checklist
 
-- [ ] Aplicativos Meta e LinkedIn controlados pelo responsável.
-- [ ] Facebook e `linkedin_oidc` configurados no Supabase correto.
+- [ ] Aplicativo LinkedIn controlado pelo responsável.
+- [ ] `linkedin_oidc` configurado no Supabase correto.
 - [ ] Segredos ausentes do código, cliente e logs.
 - [ ] Flags fail-closed e ação OAuth central implementadas.
 - [ ] Callback e erros generalizados por provedor.

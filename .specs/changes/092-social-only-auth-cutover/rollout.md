@@ -4,13 +4,13 @@
 
 - C91 concluída e CPD aprovado.
 - Nenhuma conta necessária depende exclusivamente de senha.
-- Três provedores públicos e saudáveis.
+- Dois provedores públicos e saudáveis.
 - Responsável disponível para suporte e rollback.
 
 ## Ativação
 
 1. Publicar a interface social-only com bloqueio reversível controlado.
-2. Fazer smoke com contas novas e existentes nos três provedores.
+2. Fazer smoke com contas novas e existentes nos dois provedores.
 3. Desativar novos cadastros/entrada por senha no Supabase após autorização.
 4. Repetir E2E de perfis e observar erros de Auth/callback.
 5. Manter janela ampliada de observação e suporte.

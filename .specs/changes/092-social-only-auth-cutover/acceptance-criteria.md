@@ -1,6 +1,6 @@
 # Critérios de aceite
 
-1. A tela de login mostra somente Google, Facebook e LinkedIn.
+1. A tela de login mostra somente Google e LinkedIn.
 2. Cadastro, recuperação e redefinição por senha não são oferecidos nem aceitos
    por ações públicas da aplicação.
 3. Rotas antigas retornam ao login social com explicação, sem página quebrada.

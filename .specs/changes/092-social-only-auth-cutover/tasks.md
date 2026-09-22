@@ -9,6 +9,6 @@
 5. Redirecionar rotas legadas com mensagem clara.
 6. Bloquear novos fluxos de senha no Supabase/servidor após autorização.
 7. Atualizar textos legais, ajuda, analytics e documentação operacional.
-8. Executar a matriz E2E completa nos três provedores e nos dois perfis.
+8. Executar a matriz E2E completa nos dois provedores e nos dois perfis.
 9. Publicar gradualmente, observar erros e executar CPD.
 10. Atualizar roadmap, estado e Pó Mágico após homologação.

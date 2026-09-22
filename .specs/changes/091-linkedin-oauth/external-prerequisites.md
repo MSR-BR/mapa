@@ -1,14 +1,5 @@
 # Pré-requisitos externos
 
-## Facebook
-
-- Aplicativo Meta pertencente ao responsável pelo produto.
-- Produto Facebook Login configurado com o callback do Supabase.
-- Domínio, URLs de Privacidade, Termos e exclusão de dados preenchidos.
-- Permissões mínimas `email` e `public_profile`.
-- Contas de teste enquanto o app estiver em desenvolvimento.
-- Aplicativo em modo Live e aprovações aplicáveis antes da liberação pública.
-
 ## LinkedIn
 
 - Aplicativo LinkedIn pertencente ao responsável pelo produto.
@@ -27,7 +18,6 @@
 
 Referências oficiais:
 
-- https://supabase.com/docs/guides/auth/social-login/auth-facebook
 - https://supabase.com/docs/guides/auth/social-login/auth-linkedin
 - https://supabase.com/docs/guides/auth/redirect-urls
 - https://supabase.com/docs/guides/auth/auth-identity-linking

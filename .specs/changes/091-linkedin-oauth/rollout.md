@@ -8,7 +8,7 @@
 4. Validar identidade e dados existentes por provedor.
 5. Configurar produção ainda com flags desligadas.
 6. Ativar um provedor por vez e observar callback, erros e suporte.
-7. Homologar ambos mantendo senha/e-mail como contingência.
+7. Homologar o LinkedIn mantendo senha/e-mail como contingência.
 
 ## Recuperação
 

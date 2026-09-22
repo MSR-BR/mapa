@@ -1,8 +1,8 @@
 # Tarefas
 
 1. Inventariar o fluxo atual, redirects, sessões e contas de teste controladas.
-2. Criar os aplicativos Meta e LinkedIn e registrar callbacks/domínios legais.
-3. Configurar Facebook e LinkedIn OIDC no Supabase sem expor segredos.
+2. Criar o aplicativo LinkedIn e registrar callback/domínios legais.
+3. Configurar LinkedIn OIDC no Supabase sem expor segredos.
 4. Criar contrato central de provedores, flags e ação OAuth com allowlist.
 5. Generalizar callback e mensagens hoje específicas do Google.
 6. Adicionar botões acessíveis e estados de falha/cancelamento.

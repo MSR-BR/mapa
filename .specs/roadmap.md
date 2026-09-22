@@ -86,8 +86,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 088 | Homologação E2E e rollout de modos | Concluída | Duas contas, persistência, concorrência, RLS, projetos próprios/supervisionados, PDF/DOCX, integrações, DNS externo e produção foram homologados; deployment final READY em v17092026.1. |
 | 089 | Orientador obrigatório para avanço do Aluno | Concluída | Interface, quatro APIs e trigger PostgreSQL impedem avanço estudantil sem e-mail e aprovação; migration, E2E, RLS, 123 testes, smoke autenticado e produção v19092026.1 foram aprovados. |
 | 090 | Orientação do campo do Mapa Rápido | Planejada — próxima | Placeholder passa a orientar palavras-chave ou tema com a cópia exata solicitada, sem alterar IA, validação ou avanço. |
-| 091 | Login com Facebook e LinkedIn OIDC | Planejada | Google é preservado; Facebook e LinkedIn OIDC entram atrás de flags, com callbacks, privacidade e continuidade das contas homologados antes de qualquer corte. |
-| 092 | Corte seguro para autenticação somente social | Planejada — bloqueada pela C91 | Cadastro, entrada e recuperação por senha saem apenas depois que todos os usuários necessários tiverem acesso por Google, Facebook ou LinkedIn sem mudança de identidade ou dados. |
+| 091 | Login com LinkedIn OIDC | Planejada | Google é preservado; LinkedIn OIDC entra atrás de flag, com callback, privacidade e continuidade das contas homologados antes de qualquer corte. |
+| 092 | Corte seguro para autenticação somente social | Planejada — bloqueada pela C91 | Cadastro, entrada e recuperação por senha saem apenas depois que todos os usuários necessários tiverem acesso por Google ou LinkedIn sem mudança de identidade ou dados. |
 
 ## Marcos
 

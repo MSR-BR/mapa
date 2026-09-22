@@ -9,8 +9,8 @@
 
 - Próxima Change especificada: 090; nenhuma execução funcional foi iniciada.
 - Changes concluídas: 001–089 conforme `.specs/roadmap.md`.
-- Changes planejadas: 090 (placeholder do Mapa Rápido), 091 (Facebook e
-  LinkedIn OIDC) e 092 (corte seguro do login por senha).
+- Changes planejadas: 090 (placeholder do Mapa Rápido), 091 (LinkedIn OIDC) e
+  092 (corte seguro do login por senha).
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
   mas só avançam após informar o e-mail e receber a aprovação do Orientador.
 - Projetos criados no modo Orientador permanecem autônomos, sem supervisor
@@ -38,9 +38,9 @@
 - A jornada usa quatro macroetapas e passos internos navegáveis para trás.
 - DNS externo funcional permanece aceito. Qualquer delegação ou alteração de
   e-mail/DNS exige Change e autorização próprias.
-- O alvo de autenticação é Google + Facebook + LinkedIn OIDC. E-mail/senha só
-  poderá ser retirado após a homologação dos dois novos provedores e a prova de
-  continuidade das contas existentes.
+- O alvo de autenticação é Google + LinkedIn OIDC. E-mail/senha só poderá ser
+  retirado após a homologação do novo provedor e a prova de continuidade das
+  contas existentes.
 - “Retirar login por e-mail” significa retirar cadastro, entrada, recuperação e
   troca de senha. O endereço de e-mail permanece como identidade/contato e no
   vínculo entre Aluno e Orientador.
@@ -91,7 +91,7 @@ deployment final.
 - SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
   autenticação de e-mail exige inventário da zona, autorização e Change
   específica.
-- C91 depende da criação e liberação de aplicativos próprios no Meta e LinkedIn,
-  dos segredos configurados somente nesses provedores/Supabase e da validação
-  dos callbacks. C92 permanece bloqueada até essa homologação e o tratamento de
-  todas as contas que ainda dependam exclusivamente de senha.
+- C91 depende da criação e liberação de aplicativo próprio no LinkedIn, dos
+  segredos configurados somente no provedor/Supabase e da validação do callback.
+  C92 permanece bloqueada até essa homologação e o tratamento de todas as contas
+  que ainda dependam exclusivamente de senha.

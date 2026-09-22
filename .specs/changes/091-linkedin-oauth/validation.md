@@ -10,8 +10,8 @@
 
 ## Produção controlada
 
-- Uma conta nova por Google, Facebook e LinkedIn.
-- Uma conta existente por senha com e-mail verificado vinculada a cada provedor.
+- Uma conta nova por Google e LinkedIn.
+- Uma conta existente por senha com e-mail verificado vinculada ao LinkedIn.
 - Casos de e-mail diferente, e-mail indisponível e consentimento cancelado.
 - Logout, nova entrada, recarga, sessão expirada e duas abas.
 - Perfil Aluno e Orientador, troca de modo, projetos próprios, revisão vinculada,
