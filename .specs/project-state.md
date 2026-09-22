@@ -2,15 +2,15 @@
 
 ## Blueprint
 
-- Primário: APP v2.5.
+- Primário: APP v2.6.
 - Secundários: SOFTWARE e AI SYSTEM.
 
 ## Estado atual
 
-- Próxima Change especificada: 090; nenhuma execução funcional foi iniciada.
-- Changes concluídas: 001–089 conforme `.specs/roadmap.md`.
-- Changes planejadas: 090 (placeholder do Mapa Rápido), 091 (LinkedIn OIDC) e
-  092 (corte seguro do login por senha).
+- Próxima Change especificada: 091; nenhuma execução funcional foi iniciada.
+- Changes concluídas: 001–090 conforme `.specs/roadmap.md`.
+- Changes planejadas: 091 (LinkedIn OIDC) e 092 (corte seguro do login por
+  senha).
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
   mas só avançam após informar o e-mail e receber a aprovação do Orientador.
 - Projetos criados no modo Orientador permanecem autônomos, sem supervisor
@@ -51,6 +51,12 @@
 
 ## Estado validado mais recente
 
+A C90 foi homologada na Vercel em 22/09/2026. O Mapa Rápido mostra o placeholder
+exato solicitado no componente compartilhado da landing page e do dashboard,
+sem alterar sugestões, seleção ou avanço. O deployment
+`dpl_BBVx5u3EUhR8pJ5Dito77vaSV7R1` está READY no domínio canônico, versão
+`v22092026.1`; health, bundle, smoke DOM desktop/móvel e logs passaram.
+
 A C89 foi homologada no Supabase e na Vercel. A migration
 `20260919123000_c089_require_student_advisor_approval.sql` instalou a função e
 o trigger de proteção; consultas antes/depois confirmaram `false/false` e
@@ -78,6 +84,9 @@ deployment final.
 
 - `npm run check`: lint, tipos, 123/123 testes, PDF/DOCX e build Next.js
   16.3.5 aprovados.
+- C90: teste direcionado 55/55, build adicional, placeholder renderizado em
+  desktop e viewport móvel de 390 px e texto antigo ausente.
+- Commit funcional da C90: `40ae82f`.
 - PostgreSQL 17 isolado: rascunho permitido, bypass do Aluno negado, revisão
   pendente válida, aprovação do Orientador válida e projeto de Orientador
   autônomo.

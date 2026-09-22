@@ -660,3 +660,17 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
 - Health `status=ok`, quatro provedores configurados; Research Starter HTTP
   200 com três referências; Gemini estruturado válido; nenhum erro ou HTTP 500
   encontrado nos logs pós-rollout.
+
+## Change 090 — Orientação do campo do Mapa Rápido (22/09/2026)
+
+- Placeholder publicado exatamente como: “Informe as palavras-chave (mínimo
+  duas) ou escreva o tema da pesquisa.”
+- O componente compartilhado atende landing page e dashboard; sugestões,
+  seleção em um clique e avanço não foram alterados.
+- Gate final: lint, tipos, 123/123 testes, PDF/DOCX e build Next.js 16.3.5.
+- Smoke DOM headless expandiu o Mapa Rápido e confirmou o campo renderizado em
+  desktop e viewport móvel de 390 px; o texto antigo ficou ausente.
+- Commit funcional `40ae82f`; versão `v22092026.1`; deployment
+  `dpl_BBVx5u3EUhR8pJ5Dito77vaSV7R1` READY e promovido ao domínio canônico.
+- Health `status=ok`, quatro integrações configuradas, home HTTP 200, dashboard
+  anônimo redirecionado ao login e nenhum erro encontrado nos logs pós-rollout.
