@@ -110,10 +110,8 @@ deployment final.
 
 ## Questões em aberto
 
-- A credencial atual da CLI Supabase nesta estação recebe HTTP 403 para operações
-  de organização. A C89 foi aplicada e verificada pelo SQL Editor autenticado do
-  projeto correto. Antes de uma próxima migration, regularizar o acesso da CLI
-  ou repetir o fluxo autorizado com conferência integral do artefato.
-- SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
-  autenticação de e-mail exige inventário da zona, autorização e Change
-  específica.
+- A C93 eliminou o HTTP 403 da Supabase CLI, confirmou a organização/projeto
+  corretos e reconciliou o histórico remoto da C89 sem reaplicar schema.
+- A C94 confirmou SPF, DKIM, MX e DNSSEC. A C95 aguarda somente autenticação do
+  responsável no Registro.br para publicar DMARC em modo `p=none` e executar o
+  CPD final.
