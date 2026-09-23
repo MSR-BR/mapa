@@ -1,14 +1,12 @@
 # Tarefas
 
-1. Emitir relatório de prontidão da C91 e inventário das contas somente por
-   senha.
-2. Vincular de forma assistida uma identidade social às contas afetadas e
-   confirmar o acesso; não forçar fusão por e-mail divergente.
-3. Preparar comunicação, suporte, janela de rollout e rollback.
-4. Remover a interface e as ações de senha/cadastro/recuperação.
-5. Redirecionar rotas legadas com mensagem clara.
-6. Bloquear novos fluxos de senha no Supabase/servidor após autorização.
-7. Atualizar textos legais, ajuda, analytics e documentação operacional.
-8. Executar a matriz E2E completa nos dois provedores e nos dois perfis.
-9. Publicar gradualmente, observar erros e executar CPD.
-10. Atualizar roadmap, estado e Pó Mágico após homologação.
+1. Cancelar formalmente C91 e registrar que nenhum aplicativo LinkedIn foi criado.
+2. Restringir a allowlist e o callback ao Google.
+3. Remover ações e componentes de senha, cadastro e recuperação.
+4. Redirecionar as rotas legadas com mensagem Google-only.
+5. Atualizar Privacidade, analytics, testes, runbook e arquitetura.
+6. Executar lint, tipos, testes, segurança, exportações e build.
+7. Publicar preview, validar Google e regressões de perfil.
+8. Promover o mesmo artefato, remover a flag LinkedIn e bloquear e-mail/senha no Supabase.
+9. Verificar health, rotas, callback, logs e rollback.
+10. Concluir CPD, Pó Mágico, roadmap e estado do projeto.

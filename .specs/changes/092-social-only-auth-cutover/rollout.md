@@ -1,25 +1,18 @@
 # Rollout e recuperação
 
-## Pré-condições inegociáveis
-
-- C91 concluída e CPD aprovado.
-- Nenhuma conta necessária depende exclusivamente de senha.
-- Dois provedores públicos e saudáveis.
-- Responsável disponível para suporte e rollback.
-
 ## Ativação
 
-1. Publicar a interface social-only com bloqueio reversível controlado.
-2. Fazer smoke com contas novas e existentes nos dois provedores.
-3. Desativar novos cadastros/entrada por senha no Supabase após autorização.
-4. Repetir E2E de perfis e observar erros de Auth/callback.
-5. Manter janela ampliada de observação e suporte.
+1. Manter Google ativo e LinkedIn inativo no Supabase.
+2. Publicar a interface Google-only em preview.
+3. Validar botão, callback, conta existente, logout e rotas antigas.
+4. Promover o mesmo artefato para produção.
+5. Desativar e-mail/senha no Supabase e remover a flag LinkedIn da Vercel.
+6. Repetir smoke e observar erros de Auth/callback.
 
 ## Recuperação
 
-- Se um único provedor falhar, desligar sua flag e orientar os demais.
-- Se houver bloqueio relevante de contas, reativar temporariamente senha no
-  servidor e na interface, sem recriar usuários nem alterar IDs.
-- Se houver duplicação de identidade, interromper o rollout e investigar; não
-  apagar ou mesclar contas diretamente.
-- Rotacionar imediatamente qualquer credencial exposta e revisar logs.
+- Se Google falhar antes do corte remoto, não promover.
+- Se houver bloqueio relevante depois do corte, reativar temporariamente o
+  provedor de e-mail no Supabase e restaurar o deployment anterior.
+- Não recriar, apagar ou mesclar usuários diretamente.
+- Não alterar IDs, autoria, projetos, revisões ou RLS durante rollback.

@@ -1,8 +1,8 @@
 # Objetivo — Change 091
 
-**Status:** em implementação; camada da aplicação publicada atrás de flag desligada, com configuração e homologação externas pendentes.
+**Status:** cancelada em 22/09/2026 por decisão do responsável.
 
-Adicionar “Continuar com LinkedIn” ao acesso do Mapa da Pesquisa, preservando
-temporariamente Google e e-mail/senha. A Change deve homologar o provedor, o
-callback PKCE, a continuidade das contas existentes e a segurança antes de
-qualquer retirada do login por senha.
+A integração LinkedIn OIDC foi preparada atrás de flag desligada, mas não foi
+ativada. O LinkedIn exige associação a uma Página da organização; como não será
+criada uma Página pública para o produto, a iniciativa foi encerrada sem criar
+aplicativo, credencial ou identidade LinkedIn. A C92 remove o código preparado.

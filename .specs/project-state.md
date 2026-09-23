@@ -7,10 +7,10 @@
 
 ## Estado atual
 
-- Change 091 em implementação: camada da aplicação e rollout protegido prontos;
-  aplicativo LinkedIn, configuração Supabase e homologação real pendentes.
+- Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
 - Changes concluídas: 001–090 conforme `.specs/roadmap.md`.
-- Change 092 planejada e bloqueada pela homologação completa da C91.
+- Change 092 em implementação autorizada: autenticação exclusiva pelo Google,
+  sem entrada, cadastro ou recuperação por senha na aplicação.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
   mas só avançam após informar o e-mail e receber a aprovação do Orientador.
 - Projetos criados no modo Orientador permanecem autônomos, sem supervisor
@@ -40,23 +40,20 @@
 - A jornada usa quatro macroetapas e passos internos navegáveis para trás.
 - DNS externo funcional permanece aceito. Qualquer delegação ou alteração de
   e-mail/DNS exige Change e autorização próprias.
-- O alvo de autenticação é Google + LinkedIn OIDC. E-mail/senha só poderá ser
-  retirado após a homologação do novo provedor e a prova de continuidade das
-  contas existentes.
+- O alvo de autenticação é exclusivamente Google OAuth. LinkedIn foi cancelado.
 - “Retirar login por e-mail” significa retirar cadastro, entrada, recuperação e
   troca de senha. O endereço de e-mail permanece como identidade/contato e no
   vínculo entre Aluno e Orientador.
-- Identidades com e-mails ausentes ou divergentes não podem ser fundidas
-  automaticamente; a preservação de `user.id`, projetos e RLS é gate do corte.
+- Usuários, identidades e senhas existentes não são apagados no corte; isso
+  preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
 
-A camada da aplicação da C91 foi publicada atrás de flag desligada em
-`v22092026.2`, deployment `dpl_BkrNPsVRQhYvTpcR2EmwcwGJZaaT`. O gate local
-passou com 128 testes, build, segurança e smoke responsivo; produção confirmou
-health 200, Google/senha preservados e LinkedIn oculto. O estado público do
-Supabase confirmou Google/e-mail ativos e LinkedIn OIDC inativo; ativação e
-matriz real de continuidade permanecem pendentes e a C92 continua bloqueada.
+A C91 foi cancelada em 22/09/2026 porque o LinkedIn exige uma Página elegível
+e o responsável decidiu não criar uma Página pública para o produto. Nenhum
+aplicativo ou segredo LinkedIn foi criado. A C92 foi autorizada com alvo
+Google-only; a aplicação já removeu LinkedIn e os fluxos de senha, aguardando
+gate completo, deploy, smoke Google e corte remoto do provedor de e-mail.
 
 A C90 foi homologada na Vercel em 22/09/2026. O Mapa Rápido mostra o placeholder
 exato solicitado no componente compartilhado da landing page e do dashboard,
@@ -109,7 +106,6 @@ deployment final.
 - SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
   autenticação de e-mail exige inventário da zona, autorização e Change
   específica.
-- C91 depende da criação e liberação de aplicativo próprio no LinkedIn, dos
-  segredos configurados somente no provedor/Supabase e da validação do callback.
-  C92 permanece bloqueada até essa homologação e o tratamento de todas as contas
-  que ainda dependam exclusivamente de senha.
+- A C92 ainda precisa confirmar uma sessão Google real no artefato publicado,
+  desativar o provedor de e-mail no Supabase e concluir a observação pós-deploy.
+  O rollback preserva o deployment anterior e as identidades existentes.

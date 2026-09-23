@@ -47,10 +47,10 @@ test("analytics sends only enumerated parameters and never free text", () => {
   delete (globalThis as { window?: unknown }).window;
 });
 
-test("analytics accepts enumerated social providers without free text", () => {
+test("analytics accepts Google as the only social provider", () => {
   const calls = installWindow("accepted");
-  trackAnalyticsEvent("login_started", { result: "started", source: "linkedin" });
-  assert.equal((calls[0]?.[2] as Record<string, string>).source, "linkedin");
+  trackAnalyticsEvent("login_started", { result: "started", source: "google" });
+  assert.equal((calls[0]?.[2] as Record<string, string>).source, "google");
   delete (globalThis as { window?: unknown }).window;
 });
 

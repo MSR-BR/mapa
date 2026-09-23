@@ -1,3 +1,5 @@
+> **Status: cancelada em 22/09/2026.** O responsável decidiu não criar uma Página pública no LinkedIn e manter somente o login Google. Este arquivo permanece como histórico e não autoriza implementação ou ativação do LinkedIn.
+
 # Validação
 
 ## Local e contrato

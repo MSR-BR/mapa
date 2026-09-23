@@ -1,13 +1,8 @@
-# Checklist
+# Checklist de encerramento
 
-- [ ] Aplicativo LinkedIn controlado pelo responsável.
-- [ ] `linkedin_oidc` configurado no Supabase correto.
-- [x] Segredos ausentes do código, cliente e logs.
-- [x] Flags fail-closed e ação OAuth central implementadas.
-- [x] Callback e erros generalizados por provedor.
-- [ ] Continuidade das contas existentes aprovada.
-- [ ] Perfis, projetos, revisão e RLS aprovados.
-- [x] Termos/Privacidade atualizados.
-- [ ] Rollout gradual e rollback testados.
-- [x] E-mail/senha preservado durante a C91.
-- [ ] CPD e Pó Mágico atualizados após homologação.
+- [x] Criação do aplicativo LinkedIn abortada antes do envio.
+- [x] Nenhuma credencial LinkedIn criada ou armazenada.
+- [x] Provedor LinkedIn mantido inativo no Supabase.
+- [x] Código e interface LinkedIn removidos pela C92.
+- [ ] Flag remota obsoleta removida da Vercel após publicação da C92.
+- [x] Pó Mágico registra a decisão Google-only.

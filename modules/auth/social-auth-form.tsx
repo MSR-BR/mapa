@@ -16,7 +16,7 @@ type SocialAuthFormProps = {
   label: string;
   mark: string;
   provider: SocialAuthProvider;
-  source: Extract<AnalyticsSource, "google" | "linkedin">;
+  source: Extract<AnalyticsSource, "google">;
 };
 
 function SocialAuthSubmitButton({ label, mark, source }: Pick<SocialAuthFormProps, "label" | "mark" | "source">) {
@@ -49,7 +49,7 @@ export function SocialAuthErrorNotice({ code, message }: { code: SocialAuthError
     trackAnalyticsEvent("login_failed", {
       reason_code: "provider_unavailable",
       result: "failed",
-      source: code === "google" || code === "linkedin" ? code : "unknown",
+      source: code === "google" ? code : "unknown",
     });
   }, [code]);
 

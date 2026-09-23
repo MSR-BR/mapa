@@ -10,7 +10,7 @@ O Mapa da Pesquisa será uma aplicação web responsiva, organizada como monóli
 - Interface: React, componentes acessíveis e CSS utilitário.
 - API: Route Handlers/Server Actions com contratos validados.
 - Persistência: PostgreSQL gerenciado pelo Supabase, com migrações versionadas.
-- Autenticação: Supabase Auth com e-mail/senha e recuperação de senha.
+- Autenticação: Supabase Auth exclusivamente com Google OAuth; e-mail permanece como identidade e contato.
 - Processamento: jobs assíncronos persistidos para geração e exportação.
 - Geração por IA: adaptador de provedor, com saída estruturada e validação de schema.
 - Documentos: geração server-side de DOCX e PDF.
@@ -38,7 +38,7 @@ flowchart LR
 
 ### Identidade
 
-Cadastro, login, logout, sessão, recuperação de senha e isolamento de dados por usuário.
+Login Google, logout, sessão persistente e isolamento de dados por usuário.
 
 ### Projetos
 

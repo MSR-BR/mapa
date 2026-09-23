@@ -1,4 +1,4 @@
-export const LEGAL_TERMS_VERSION = "1.2.0";
+export const LEGAL_TERMS_VERSION = "1.3.0";
 
 export const LEGAL_PROFILE_COPY = {
   student: {
@@ -29,9 +29,9 @@ export const LEGAL_CONTENT = {
     title: "Privacidade",
     paragraphs: [
       "Podemos armazenar identificadores da conta e do perfil, e-mail, papel (estudante ou orientador), projetos, entradas, referências, justificativas, comentários, vínculos de orientação, histórico de validações e registros do aceite.",
-      "Se você escolher autenticação social, Google ou LinkedIn poderá fornecer ao serviço os dados básicos autorizados para acesso, como identificador, nome, foto e e-mail, conforme a disponibilidade do provedor. O Mapa não recebe sua senha dessas plataformas.",
+      "Ao acessar com o Google, o provedor poderá fornecer ao serviço os dados básicos autorizados, como identificador, nome, foto e e-mail. O Mapa não recebe sua senha do Google.",
       "Usamos esses dados para autenticação, continuidade entre dispositivos, vínculo aluno–orientador, geração do mapa, associação de referências, suporte, segurança e notificações transacionais.",
-      "O conteúdo necessário à geração e à busca bibliográfica pode ser enviado, de forma controlada pelo backend, a provedores técnicos como Supabase, Vercel, Gemini, Research Starter, Resend e Google Analytics quando você autorizar analytics. Google e LinkedIn participam da autenticação somente quando você escolhe o respectivo acesso social. Cada provedor trata os dados segundo seus próprios termos.",
+      "O conteúdo necessário à geração e à busca bibliográfica pode ser enviado, de forma controlada pelo backend, a provedores técnicos como Supabase, Vercel, Gemini, Research Starter, Resend e Google Analytics quando você autorizar analytics. O Google participa da autenticação quando você escolhe esse acesso. Cada provedor trata os dados segundo seus próprios termos.",
       "Não vendemos dados pessoais. Restringimos o acesso por autenticação, políticas de segurança e regras de acesso por proprietário. Projetos e comentários não ficam disponíveis para outros usuários sem vínculo autorizado.",
       "Mantemos os dados enquanto a conta ou o projeto forem necessários ao serviço e para registros de segurança, suporte e validação. Quando um projeto é excluído, ele deixa de aparecer na aplicação e a purga dos derivados segue o procedimento de retenção do piloto, com alvo de até 30 dias; cópias de backup podem levar mais tempo para serem substituídas.",
       "Para solicitar suporte ou exercer direitos sobre seus dados, escreva para suporte@mapadapesquisa.com.br.",

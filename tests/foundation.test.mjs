@@ -50,19 +50,17 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /public-mode-card-quick/);
   assert.match(publicStart, /useState<"quick" \| "advanced">\("advanced"\)/);
   assert.match(publicStart, /ResearchPromptInput/);
-  assert.match(loginPage, /hiddenFields/);
   assert.match(loginPage, /label="Google"/);
-  assert.match(loginPage, /label="LinkedIn"/);
-  assert.match(loginPage, /linkedin_oidc/);
-  assert.match(loginPage, /signup\?next=/);
-  assert.match(signupPage, /hiddenFields/);
-  assert.match(signupPage, /login\?next=/);
+  assert.match(loginPage, /Acesse ou crie sua conta com o Google/);
+  assert.doesNotMatch(loginPage, /LinkedIn|linkedin_oidc|modules\/auth\/auth-form|forgot-password|signup\?next=/);
+  assert.match(signupPage, /redirect/);
+  assert.match(signupPage, /google-only/);
   assert.match(authActions, /readSafeAuthDestination/);
-  assert.match(authActions, /emailRedirectTo:.*encodeURIComponent\(next\)/);
   assert.match(authActions, /signInWithOAuth/);
   assert.match(authActions, /readSocialAuthProvider/);
   assert.match(authActions, /provider,/);
   assert.match(authActions, /provider=\$\{provider\}/);
+  assert.doesNotMatch(authActions, /signInWithPassword|signUp|resetPasswordForEmail|updateUser/);
   assert.match(await readProjectFile("app/auth/callback/route.ts"), /buildLoginErrorPath/);
   assert.match(quickStart, /requestSubmit/);
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
@@ -502,7 +500,7 @@ test("defines an owner-scoped projects schema with RLS", async () => {
   assert.doesNotMatch(migration, /auth\.role\(\)|security definer/i);
 });
 
-test("protects the dashboard beyond the auth proxy", async () => {
+test("protects the dashboard and retires password routes", async () => {
   const [dashboard, projectAuth, proxy, proxyEntry, authActions, recoveryPage, confirmRoute] = await Promise.all([
     readProjectFile("app/dashboard/page.tsx"),
     readProjectFile("modules/projects/auth.ts"),
@@ -518,13 +516,11 @@ test("protects the dashboard beyond the auth proxy", async () => {
   assert.match(dashboard, /loadActorContext\(\)/);
   assert.match(projectAuth, /auth\.getClaims\(\)/);
   assert.match(projectAuth, /redirect\("\/login"\)/);
-  assert.match(authActions, /signInWithPassword/);
-  assert.match(authActions, /resetPasswordForEmail/);
-  assert.match(authActions, /auth\/confirm\?type=recovery/);
-  assert.match(authActions, /Se o e-mail estiver cadastrado/);
-  assert.match(recoveryPage, /caso o e-mail pertença a uma conta/);
-  assert.match(confirmRoute, /verifyOtp/);
-  assert.match(confirmRoute, /safeNext/);
+  assert.doesNotMatch(authActions, /signInWithPassword|resetPasswordForEmail|updatePassword|signUp/);
+  assert.match(recoveryPage, /redirect/);
+  assert.match(recoveryPage, /google-only/);
+  assert.match(confirmRoute, /google-only/);
+  assert.doesNotMatch(confirmRoute, /verifyOtp|token_hash|recovery/);
 });
 
 test("sanitizes auth callback destinations", async () => {

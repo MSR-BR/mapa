@@ -18,7 +18,7 @@ export type AnalyticsEventName =
 
 export type AnalyticsAuthState = "anonymous" | "authenticated";
 export type AnalyticsProfileRole = "student" | "advisor" | "unknown";
-export type AnalyticsSource = "home" | "dashboard" | "resume" | "email" | "advisor_dashboard" | "google" | "linkedin" | "unknown";
+export type AnalyticsSource = "home" | "dashboard" | "resume" | "email" | "advisor_dashboard" | "google" | "unknown";
 export type AnalyticsEntryMode = "quick" | "advanced" | "unknown";
 export type AnalyticsProductType = "tcc" | "monograph" | "dissertation" | "thesis" | "article" | "other" | "unknown";
 export type AnalyticsStage = "discovery" | "problem" | "definition" | "literature" | "methodology" | "final" | "unknown";
@@ -51,7 +51,7 @@ export const ANALYTICS_CONSENT_KEY = "mapa.analytics-consent.v1";
 const ENUMS: Record<keyof AnalyticsEventParams, readonly string[]> = {
   auth_state: ["anonymous", "authenticated"],
   profile_role: ["student", "advisor", "unknown"],
-  source: ["home", "dashboard", "resume", "email", "advisor_dashboard", "google", "linkedin", "unknown"],
+  source: ["home", "dashboard", "resume", "email", "advisor_dashboard", "google", "unknown"],
   entry_mode: ["quick", "advanced", "unknown"],
   product_type: ["tcc", "monograph", "dissertation", "thesis", "article", "other", "unknown"],
   stage: ["discovery", "problem", "definition", "literature", "methodology", "final", "unknown"],

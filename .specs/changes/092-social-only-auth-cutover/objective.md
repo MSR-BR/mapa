@@ -1,8 +1,8 @@
 # Objetivo — Change 092
 
-**Status:** planejada e bloqueada pela homologação integral da C91.
+**Status:** em implementação autorizada em 22/09/2026.
 
-Concluir a migração para autenticação exclusivamente social na interface, com
-Google e LinkedIn, retirando cadastro, entrada, recuperação e troca de
-senha por e-mail. O corte só pode ocorrer quando todas as contas existentes
-tiverem caminho social comprovado, sem perder identidade, projetos ou acesso.
+Concluir a migração para autenticação exclusivamente pelo Google, retirando da
+aplicação cadastro, entrada, recuperação e troca de senha por e-mail. O endereço
+de e-mail continua como identidade, contato e vínculo Aluno–Orientador. A C91
+foi cancelada e LinkedIn não faz parte do produto.

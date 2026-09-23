@@ -1,56 +1,20 @@
-# Evidências de implementação protegida — 22/09/2026
+# Encerramento da Change 091 — 22/09/2026
 
-## Estado
+## Resultado
 
-A camada da aplicação está publicada com
-`LINKEDIN_AUTH_ENABLED=false` em `v22092026.2`. A Change 091 ainda não está homologada porque
-o aplicativo LinkedIn e o provedor `linkedin_oidc` no Supabase não foram
-configurados nem testados com contas reais controladas.
+A Change 091 foi cancelada antes da configuração externa. O formulário do
+LinkedIn Developers recebeu apenas o nome provisório “Mapa da Pesquisa”, mas
+não foi enviado porque nenhuma Página elegível estava associada à conta.
+Nenhum aplicativo, Client ID ou Client Secret foi criado.
 
-## Implementado
+## Limpeza
 
-- contrato central com allowlist exclusiva para `google` e
-  `linkedin_oidc`;
-- flags server-side fail-closed verificadas também na Server Action;
-- callback PKCE generalizado, erros por provedor e destino interno sanitizado;
-- botões acessíveis, estado de envio e telemetria enumerada sem PII;
-- e-mail/senha, cadastro, recuperação e Google preservados;
-- Privacidade atualizada para a versão 1.2.0;
-- `LINKEDIN_AUTH_ENABLED=false` criado para Preview e Production na Vercel.
+- linkedin_oidc foi removido da allowlist da aplicação;
+- botão, mensagens, estilos e telemetria LinkedIn foram removidos;
+- LINKEDIN_AUTH_ENABLED saiu do contrato de ambiente;
+- a flag remota desligada será eliminada da Vercel após o deploy da C92;
+- o provedor LinkedIn permanece inativo no Supabase;
+- Privacidade passou a descrever somente autenticação Google.
 
-## Verificações locais
-
-- lint, TypeScript, auditoria de segurança, exportações e build: aprovados;
-- 128 testes aprovados;
-- navegador desktop 1440×1000 e móvel 390×844: conteúdo, botões de 50 px,
-  ausência de overflow horizontal, overlay ou erro de runtime;
-- flags ligadas no teste isolado: Google e LinkedIn renderizados;
-- flags ausentes/desligadas: ambos ocultos e senha preservada;
-- scanner: nenhum segredo ou token encontrado.
-
-## Deployment protegido
-
-- commit funcional: `59fbf9a`;
-- deployment: `dpl_BkrNPsVRQhYvTpcR2EmwcwGJZaaT`, estado READY;
-- domínio canônico: health 200 em `v22092026.2`;
-- login: Google e senha presentes; LinkedIn ausente com a flag desligada;
-- callback externo recusado e reduzido ao destino interno `/dashboard`;
-- dashboard anônimo redireciona ao login;
-- logs pós-deploy: nenhum erro encontrado.
-
-## Estado externo observado
-
-O endpoint público de configuração do Supabase respondeu 200: Google e e-mail
-ativos; `linkedin_oidc` inativo. A consulta não acessou dados de usuários nem
-exibiu a chave pública usada na requisição.
-
-## Pendências para homologação
-
-1. Criar/confirmar aplicativo LinkedIn sob controle do responsável e habilitar
-   “Sign In with LinkedIn using OpenID Connect”.
-2. Cadastrar o callback Supabase e configurar Client ID/Secret somente no painel
-   Supabase.
-3. Homologar conta nova, mesma conta/e-mail verificado, e-mail diferente,
-   cancelamento e ausência de e-mail.
-4. Revalidar Aluno, Orientador, troca de modo, projetos, revisão e RLS.
-5. Ativar a flag, observar produção e só então concluir CPD/Pó Mágico da C91.
+O histórico dos requisitos originais foi preservado com aviso explícito de
+cancelamento. Nenhum dado de usuário ou projeto foi alterado.

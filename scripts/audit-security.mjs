@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 
 const repositoryFiles = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard"], { encoding: "utf8" })
   .split("\n")
@@ -10,7 +10,12 @@ const repositoryFiles = execFileSync("git", ["ls-files", "--cached", "--others",
 const textFiles = repositoryFiles.filter((file) => !/\.(?:png|jpe?g|gif|webp|pdf|woff2?|ttf|ico)$/i.test(file));
 const contents = new Map();
 for (const file of textFiles) {
-  contents.set(file, await readFile(file, "utf8"));
+  try {
+    await access(file);
+    contents.set(file, await readFile(file, "utf8"));
+  } catch {
+    // Tracked files removed in the working tree are intentionally absent.
+  }
 }
 
 const findings = [];

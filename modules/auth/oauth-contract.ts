@@ -4,11 +4,6 @@ export const SOCIAL_AUTH_PROVIDERS = {
     flagName: "GOOGLE_AUTH_ENABLED",
     label: "Google",
   },
-  linkedin_oidc: {
-    errorCode: "linkedin",
-    flagName: "LINKEDIN_AUTH_ENABLED",
-    label: "LinkedIn",
-  },
 } as const;
 
 export type SocialAuthProvider = keyof typeof SOCIAL_AUTH_PROVIDERS;
@@ -32,7 +27,6 @@ export function isSocialAuthProviderEnabled(
 ) {
   const values = environment ?? {
     GOOGLE_AUTH_ENABLED: process.env.GOOGLE_AUTH_ENABLED,
-    LINKEDIN_AUTH_ENABLED: process.env.LINKEDIN_AUTH_ENABLED,
   };
   return values[SOCIAL_AUTH_PROVIDERS[provider].flagName] === "true";
 }
@@ -42,7 +36,7 @@ export function getSocialAuthErrorCode(provider: SocialAuthProvider): SocialAuth
 }
 
 export function readSocialAuthErrorCode(value: unknown): SocialAuthErrorCode | null {
-  return value === "google" || value === "linkedin" || value === "access"
+  return value === "google" || value === "access"
     ? value
     : null;
 }

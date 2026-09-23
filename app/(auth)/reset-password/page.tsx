@@ -1,13 +1,5 @@
-import { AuthForm } from "@/modules/auth/auth-form";
-import { updatePassword } from "@/modules/auth/actions";
+import { redirect } from "next/navigation";
 
-export default function ResetPasswordPage() {
-  return (
-    <>
-      <p className="eyebrow">Nova senha</p>
-      <h1>Defina uma nova senha</h1>
-      <p className="auth-summary">Escolha uma senha com pelo menos oito caracteres.</p>
-      <AuthForm action={updatePassword} passwordOnly submitLabel="Atualizar senha" />
-    </>
-  );
+export default function LegacyPasswordPage() {
+  redirect("/login?notice=google-only");
 }
