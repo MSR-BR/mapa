@@ -12,7 +12,7 @@ Nenhum aplicativo, Client ID ou Client Secret foi criado.
 - linkedin_oidc foi removido da allowlist da aplicação;
 - botão, mensagens, estilos e telemetria LinkedIn foram removidos;
 - LINKEDIN_AUTH_ENABLED saiu do contrato de ambiente;
-- a flag remota desligada será eliminada da Vercel após o deploy da C92;
+- a flag remota desligada foi eliminada de Preview e Production pela C92;
 - o provedor LinkedIn permanece inativo no Supabase;
 - Privacidade passou a descrever somente autenticação Google.
 

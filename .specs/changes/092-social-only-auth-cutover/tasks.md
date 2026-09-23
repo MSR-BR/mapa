@@ -7,6 +7,6 @@
 5. Atualizar Privacidade, analytics, testes, runbook e arquitetura.
 6. Executar lint, tipos, testes, segurança, exportações e build.
 7. Publicar preview, validar Google e regressões de perfil.
-8. Promover o mesmo artefato, remover a flag LinkedIn e bloquear e-mail/senha no Supabase.
+8. Promover o commit validado, remover a flag LinkedIn e bloquear e-mail/senha no Supabase.
 9. Verificar health, rotas, callback, logs e rollback.
 10. Concluir CPD, Pó Mágico, roadmap e estado do projeto.

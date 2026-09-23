@@ -1,6 +1,6 @@
 # Objetivo — Change 092
 
-**Status:** em implementação autorizada em 22/09/2026.
+**Status:** concluída em produção em 22/09/2026.
 
 Concluir a migração para autenticação exclusivamente pelo Google, retirando da
 aplicação cadastro, entrada, recuperação e troca de senha por e-mail. O endereço

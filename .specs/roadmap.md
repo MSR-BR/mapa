@@ -87,7 +87,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 089 | Orientador obrigatório para avanço do Aluno | Concluída | Interface, quatro APIs e trigger PostgreSQL impedem avanço estudantil sem e-mail e aprovação; migration, E2E, RLS, 123 testes, smoke autenticado e produção v19092026.1 foram aprovados. |
 | 090 | Orientação do campo do Mapa Rápido | Concluída | Placeholder exato publicado no componente compartilhado; comportamento preservado, 123 testes, build, smoke responsivo, health e logs aprovados em `v22092026.1`. |
 | 091 | Login com LinkedIn OIDC | Cancelada | O LinkedIn exige associação a uma Página; nenhuma Página ou credencial foi criada. A preparação protegida foi removida pela C92. |
-| 092 | Autenticação exclusiva pelo Google | Em implementação | Google é o único login público; LinkedIn, senha, cadastro e recuperação por e-mail foram retirados da aplicação com rotas legadas e rollback preservados. |
+| 092 | Autenticação exclusiva pelo Google | Concluída | Google é o único login público; LinkedIn e senha foram retirados, o provedor Email foi desativado sem apagar identidades, e sessão real, rotas legadas, responsividade, segurança e rollback foram homologados em produção. |
 
 ## Marcos
 

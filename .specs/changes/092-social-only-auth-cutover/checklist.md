@@ -5,8 +5,8 @@
 - [x] Senha/cadastro/recuperação removidos da aplicação.
 - [x] Rotas antigas redirecionadas.
 - [x] Privacidade e analytics atualizados.
-- [ ] Gate completo local aprovado.
-- [ ] Google real validado em preview/produção.
-- [ ] E-mail/senha desabilitado no Supabase.
-- [ ] Flag LinkedIn removida da Vercel.
-- [ ] CPD e Pó Mágico concluídos.
+- [x] Gate completo local aprovado.
+- [x] Google real validado em preview/produção.
+- [x] E-mail/senha desabilitado no Supabase.
+- [x] Flag LinkedIn removida da Vercel.
+- [x] CPD e Pó Mágico concluídos.

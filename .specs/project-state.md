@@ -8,9 +8,9 @@
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes concluídas: 001–090 conforme `.specs/roadmap.md`.
-- Change 092 em implementação autorizada: autenticação exclusiva pelo Google,
-  sem entrada, cadastro ou recuperação por senha na aplicação.
+- Changes 001–090 e 092 concluídas conforme `.specs/roadmap.md`.
+- Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
+  e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
   mas só avançam após informar o e-mail e receber a aprovação do Orientador.
 - Projetos criados no modo Orientador permanecem autônomos, sem supervisor
@@ -49,11 +49,17 @@
 
 ## Estado validado mais recente
 
-A C91 foi cancelada em 22/09/2026 porque o LinkedIn exige uma Página elegível
-e o responsável decidiu não criar uma Página pública para o produto. Nenhum
-aplicativo ou segredo LinkedIn foi criado. A C92 foi autorizada com alvo
-Google-only; a aplicação já removeu LinkedIn e os fluxos de senha, aguardando
-gate completo, deploy, smoke Google e corte remoto do provedor de e-mail.
+A C92 foi homologada em 22/09/2026. Google é o único método público de
+autenticação; Email foi desativado no Supabase sem excluir identidades e a flag
+LinkedIn foi removida da Vercel. Login e logout Google reais passaram antes e
+depois do corte. O deployment `dpl_8ppqxCmDQEYDdMSFuGQuFgBk1PL1` está READY
+no domínio canônico, versão `v22092026.3`; health, rotas legadas, callback,
+logs e telas desktop/móvel passaram. O novo aceite legal permanece para o
+próprio usuário concluir.
+
+A C91 foi cancelada porque o LinkedIn exige uma Página elegível e o responsável
+decidiu não criar uma Página pública para o produto. Nenhum aplicativo, Client
+ID ou Client Secret LinkedIn foi criado.
 
 A C90 foi homologada na Vercel em 22/09/2026. O Mapa Rápido mostra o placeholder
 exato solicitado no componente compartilhado da landing page e do dashboard,
@@ -86,7 +92,12 @@ deployment final.
 
 ## Validação local mais recente
 
-- `npm run check`: lint, tipos, 123/123 testes, PDF/DOCX e build Next.js
+- C92: `npm run check` aprovou lint, tipos, 128/128 testes, PDF/DOCX e build
+  Next.js 16.3.5; auditoria de segurança e `git diff --check` também passaram.
+- C92: login Google real, estado remoto dos provedores, redirects, callback,
+  health, logs e viewport móvel de 390 px aprovados.
+- Commit funcional da C92: `c75cb84`.
+- C90: `npm run check`: lint, tipos, 123/123 testes, PDF/DOCX e build Next.js
   16.3.5 aprovados.
 - C90: teste direcionado 55/55, build adicional, placeholder renderizado em
   desktop e viewport móvel de 390 px e texto antigo ausente.
@@ -106,6 +117,3 @@ deployment final.
 - SPF e DMARC não apareceram no preflight somente leitura. Qualquer reforço de
   autenticação de e-mail exige inventário da zona, autorização e Change
   específica.
-- A C92 ainda precisa confirmar uma sessão Google real no artefato publicado,
-  desativar o provedor de e-mail no Supabase e concluir a observação pós-deploy.
-  O rollback preserva o deployment anterior e as identidades existentes.

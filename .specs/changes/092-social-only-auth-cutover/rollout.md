@@ -5,7 +5,7 @@
 1. Manter Google ativo e LinkedIn inativo no Supabase.
 2. Publicar a interface Google-only em preview.
 3. Validar botão, callback, conta existente, logout e rotas antigas.
-4. Promover o mesmo artefato para produção.
+4. Promover o commit validado para produção.
 5. Desativar e-mail/senha no Supabase e remover a flag LinkedIn da Vercel.
 6. Repetir smoke e observar erros de Auth/callback.
 

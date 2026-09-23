@@ -166,3 +166,29 @@ integrações e produção saudável. DNS externo e MX foram preservados.
   janela própria.
 - Registrar como release final um deployment cujo health ainda apresenta versão
   antiga.
+
+# Retrospectiva — Change 092
+
+## Resultado
+
+O produto passou a oferecer somente autenticação Google. LinkedIn foi cancelado
+sem criar aplicativo ou segredo; Email/senha foi retirado da aplicação e
+desativado no Supabase sem apagar contas, dados ou possibilidade de rollback.
+
+## O que funcionou
+
+- Validar uma sessão Google real antes e depois do corte remoto.
+- Desativar apenas o provedor Email e manter cadastro global para novas contas
+  Google.
+- Tratar rotas antigas e callbacks forjados de forma segura e previsível.
+- Simular viewport mobile pelo protocolo de emulação e medir `scrollWidth`, em
+  vez de confiar no tamanho mínimo de janela do navegador headless.
+- Preservar identidades e o deployment anterior para recuperação rápida.
+
+## O que evitar
+
+- Desligar cadastro global e bloquear involuntariamente novos usuários Google.
+- Apagar identidades de senha para cumprir uma mudança de interface.
+- Aceitar consentimento legal em nome do usuário durante um smoke autenticado.
+- Classificar o recorte mínimo de uma janela headless como overflow real sem
+  conferir as métricas do viewport emulado.

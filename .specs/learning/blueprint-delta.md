@@ -77,3 +77,12 @@ smoke de e-mail apenas se a zona efetivamente mudar.
 
 A versão exibida pelo health deve corresponder ao commit/deployment final.
 Overrides de ambiente públicos fazem parte da reconciliação de release.
+
+## Corte de provedores de autenticação
+
+Mudanças de provedor devem distinguir: interface pública, allowlist do callback,
+ações legadas, configuração remota do provedor e política global de cadastro.
+O gate exige sessão real antes/depois do corte, inventário sem exposição de
+segredos, preservação de identidades, redirects legados, callback fail-closed,
+observação de logs e rollback documentado. Consentimentos novos continuam sendo
+ato do próprio usuário.

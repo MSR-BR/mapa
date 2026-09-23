@@ -49,3 +49,7 @@
 19. Rollout de autenticação/RLS e manutenção de DNS precisam de janelas e gates
     independentes. DNS externo funcional deve ser preservado na ausência de
     autorização explícita para delegação.
+20. Em cortes de autenticação social, separar cadastro global de provedor é
+    essencial: manter novos usuários permitidos pode ser necessário para OAuth,
+    enquanto apenas Email/senha é desativado. O rollout deve preservar
+    identidades, validar sessão real antes e depois do corte e manter rollback.
