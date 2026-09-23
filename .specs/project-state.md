@@ -7,10 +7,10 @@
 
 ## Estado atual
 
-- Próxima Change especificada: 091; nenhuma execução funcional foi iniciada.
+- Change 091 em implementação: camada da aplicação e rollout protegido prontos;
+  aplicativo LinkedIn, configuração Supabase e homologação real pendentes.
 - Changes concluídas: 001–090 conforme `.specs/roadmap.md`.
-- Changes planejadas: 091 (LinkedIn OIDC) e 092 (corte seguro do login por
-  senha).
+- Change 092 planejada e bloqueada pela homologação completa da C91.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
   mas só avançam após informar o e-mail e receber a aprovação do Orientador.
 - Projetos criados no modo Orientador permanecem autônomos, sem supervisor
@@ -50,6 +50,12 @@
   automaticamente; a preservação de `user.id`, projetos e RLS é gate do corte.
 
 ## Estado validado mais recente
+
+A camada da aplicação da C91 foi validada localmente em 22/09/2026 com
+`linkedin_oidc`, allowlist fechada, destinos internos, flags fail-closed,
+erros por provedor, telemetria enumerada e privacidade 1.2.0. O estado público
+do Supabase confirmou Google/e-mail ativos e LinkedIn OIDC inativo; ativação e
+matriz real de continuidade permanecem pendentes e a C92 continua bloqueada.
 
 A C90 foi homologada na Vercel em 22/09/2026. O Mapa Rápido mostra o placeholder
 exato solicitado no componente compartilhado da landing page e do dashboard,

@@ -47,6 +47,13 @@ test("analytics sends only enumerated parameters and never free text", () => {
   delete (globalThis as { window?: unknown }).window;
 });
 
+test("analytics accepts enumerated social providers without free text", () => {
+  const calls = installWindow("accepted");
+  trackAnalyticsEvent("login_started", { result: "started", source: "linkedin" });
+  assert.equal((calls[0]?.[2] as Record<string, string>).source, "linkedin");
+  delete (globalThis as { window?: unknown }).window;
+});
+
 test("reference buckets are stable and bounded", () => {
   assert.equal(getReferenceCountBucket(0), "0");
   assert.equal(getReferenceCountBucket(3), "1_5");

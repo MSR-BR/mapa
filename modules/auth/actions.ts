@@ -6,19 +6,19 @@ import { getAppUrl } from "@/lib/app-url";
 import { createClient } from "@/lib/supabase/server";
 
 import type { AuthActionState } from "./types";
+import {
+  buildLoginErrorPath,
+  getSocialAuthErrorCode,
+  isSocialAuthProviderEnabled,
+  readSafeAuthDestination,
+  readSocialAuthProvider,
+} from "./oauth-contract";
 import { readEmail, readPassword } from "./validation";
 
 const invalidCredentials: AuthActionState = {
   message: "Não foi possível entrar com os dados informados.",
   status: "error",
 };
-
-function readSafeDestination(formData: FormData) {
-  const value = formData.get("next");
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/dashboard?continue=1";
-}
 
 export async function login(
   _previousState: AuthActionState,
@@ -33,21 +33,32 @@ export async function login(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) return invalidCredentials;
-  redirect(readSafeDestination(formData));
+  redirect(readSafeAuthDestination(formData.get("next")));
 }
 
-export async function loginWithGoogle(formData: FormData) {
-  const next = readSafeDestination(formData);
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    options: {
-      redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
-    provider: "google",
-  });
+export async function loginWithSocialProvider(formData: FormData) {
+  const next = readSafeAuthDestination(formData.get("next"));
+  const provider = readSocialAuthProvider(formData.get("provider"));
 
-  if (error || !data.url) redirect("/login?error=google");
-  redirect(data.url);
+  if (!provider) redirect(buildLoginErrorPath("access", next));
+
+  const errorCode = getSocialAuthErrorCode(provider);
+  if (!isSocialAuthProviderEnabled(provider)) {
+    redirect(buildLoginErrorPath(errorCode, next));
+  }
+
+  const supabase = await createClient();
+  const result = await supabase.auth.signInWithOAuth({
+    options: {
+      redirectTo: `${getAppUrl()}/auth/callback?provider=${provider}&next=${encodeURIComponent(next)}`,
+    },
+    provider,
+  }).catch(() => null);
+
+  if (!result || result.error || !result.data.url) {
+    redirect(buildLoginErrorPath(errorCode, next));
+  }
+  redirect(result.data.url);
 }
 
 export async function signUp(
@@ -65,7 +76,7 @@ export async function signUp(
   }
 
   const supabase = await createClient();
-  const next = readSafeDestination(formData);
+  const next = readSafeAuthDestination(formData.get("next"));
   const { data, error } = await supabase.auth.signUp({
     email,
     options: { emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(next)}` },

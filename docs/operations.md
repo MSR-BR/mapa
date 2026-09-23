@@ -85,6 +85,17 @@ falhas de entrega de e-mail permanecem nos logs do Resend.
 - `www.mapadapesquisa.com.br` não é publicado nesta fase; o domínio raiz é o único endereço canônico.
 - Depois de alterar qualquer domínio, validar o fluxo completo “tema → login → callback → geração”; uma Site URL correta sem a Redirect URL permitida faz o Supabase descartar o callback PKCE solicitado.
 
+### Login social — C91
+
+- Google e LinkedIn são controlados separadamente por flags server-side: `GOOGLE_AUTH_ENABLED` e `LINKEDIN_AUTH_ENABLED`. Ausência ou valor diferente de `true` mantém o provedor oculto e bloqueado também na Server Action.
+- O LinkedIn deve usar exclusivamente o provedor Supabase `linkedin_oidc`; o provedor legado `linkedin` não é aceito pela aplicação.
+- No LinkedIn Developers, habilitar “Sign In with LinkedIn using OpenID Connect” e cadastrar exatamente o callback `https://aeaweherkrqmlqnxsmib.supabase.co/auth/v1/callback`.
+- Client ID e Client Secret ficam somente no LinkedIn e no painel Supabase Auth. Não criar variáveis `NEXT_PUBLIC_*` nem registrar esses valores em código, logs ou documentação.
+- A aplicação retorna por `https://mapadapesquisa.com.br/auth/callback`, que deve permanecer na allowlist do Supabase. O parâmetro `next` aceita somente caminhos internos e não reflete nomes arbitrários de provedor.
+- O Supabase pode vincular automaticamente identidades com o mesmo e-mail verificado. E-mail diferente cria identidade/conta separada; não fazer merge manual em `auth.users`.
+- Antes de ativar a flag, validar com contas controladas: conta nova, conta existente por senha com o mesmo e-mail verificado, e-mail diferente, cancelamento, Aluno, Orientador, projetos próprios, revisão vinculada e RLS.
+- Rollback: definir apenas `LINKEDIN_AUTH_ENABLED=false` e fazer novo deployment. Google e e-mail/senha continuam disponíveis durante toda a C91.
+
 ## Change 053 — Auditoria de regressão (25/08/2026)
 
 - A auditoria reexecutou os fluxos rápido e avançado, descoberta de propostas,

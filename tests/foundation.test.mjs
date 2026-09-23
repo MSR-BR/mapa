@@ -51,15 +51,19 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /useState<"quick" \| "advanced">\("advanced"\)/);
   assert.match(publicStart, /ResearchPromptInput/);
   assert.match(loginPage, /hiddenFields/);
-  assert.match(loginPage, /Continuar com Google/);
+  assert.match(loginPage, /label="Google"/);
+  assert.match(loginPage, /label="LinkedIn"/);
+  assert.match(loginPage, /linkedin_oidc/);
   assert.match(loginPage, /signup\?next=/);
   assert.match(signupPage, /hiddenFields/);
   assert.match(signupPage, /login\?next=/);
-  assert.match(authActions, /readSafeDestination/);
+  assert.match(authActions, /readSafeAuthDestination/);
   assert.match(authActions, /emailRedirectTo:.*encodeURIComponent\(next\)/);
   assert.match(authActions, /signInWithOAuth/);
-  assert.match(authActions, /provider: "google"/);
-  assert.match(await readProjectFile("app/auth/callback/route.ts"), /error=google/);
+  assert.match(authActions, /readSocialAuthProvider/);
+  assert.match(authActions, /provider,/);
+  assert.match(authActions, /provider=\$\{provider\}/);
+  assert.match(await readProjectFile("app/auth/callback/route.ts"), /buildLoginErrorPath/);
   assert.match(quickStart, /requestSubmit/);
   assert.match(quickStart, /PENDING_PROJECT_MAX_AGE_MS/);
   assert.match(quickStart, /pendingDraftRead/);
@@ -524,10 +528,14 @@ test("protects the dashboard beyond the auth proxy", async () => {
 });
 
 test("sanitizes auth callback destinations", async () => {
-  const callback = await readProjectFile("app/auth/callback/route.ts");
+  const [callback, oauthContract] = await Promise.all([
+    readProjectFile("app/auth/callback/route.ts"),
+    readProjectFile("modules/auth/oauth-contract.ts"),
+  ]);
 
-  assert.match(callback, /startsWith\("\/"\)/);
-  assert.match(callback, /!value\.startsWith\("\/\/"\)/);
+  assert.match(callback, /readSafeAuthDestination/);
+  assert.match(oauthContract, /value\.startsWith\("\/"\)/);
+  assert.match(oauthContract, /value\.startsWith\("\/\/"\)/);
   assert.match(callback, /exchangeCodeForSession/);
 });
 
