@@ -2,8 +2,8 @@
 
 ## Estado
 
-A camada da aplicação está pronta para deployment com
-`LINKEDIN_AUTH_ENABLED=false`. A Change 091 ainda não está homologada porque
+A camada da aplicação está publicada com
+`LINKEDIN_AUTH_ENABLED=false` em `v22092026.2`. A Change 091 ainda não está homologada porque
 o aplicativo LinkedIn e o provedor `linkedin_oidc` no Supabase não foram
 configurados nem testados com contas reais controladas.
 
@@ -21,12 +21,22 @@ configurados nem testados com contas reais controladas.
 ## Verificações locais
 
 - lint, TypeScript, auditoria de segurança, exportações e build: aprovados;
-- 127 testes aprovados antes do teste adicional de analytics social;
+- 128 testes aprovados;
 - navegador desktop 1440×1000 e móvel 390×844: conteúdo, botões de 50 px,
   ausência de overflow horizontal, overlay ou erro de runtime;
 - flags ligadas no teste isolado: Google e LinkedIn renderizados;
 - flags ausentes/desligadas: ambos ocultos e senha preservada;
 - scanner: nenhum segredo ou token encontrado.
+
+## Deployment protegido
+
+- commit funcional: `59fbf9a`;
+- deployment: `dpl_BkrNPsVRQhYvTpcR2EmwcwGJZaaT`, estado READY;
+- domínio canônico: health 200 em `v22092026.2`;
+- login: Google e senha presentes; LinkedIn ausente com a flag desligada;
+- callback externo recusado e reduzido ao destino interno `/dashboard`;
+- dashboard anônimo redireciona ao login;
+- logs pós-deploy: nenhum erro encontrado.
 
 ## Estado externo observado
 

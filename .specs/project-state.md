@@ -51,10 +51,11 @@
 
 ## Estado validado mais recente
 
-A camada da aplicação da C91 foi validada localmente em 22/09/2026 com
-`linkedin_oidc`, allowlist fechada, destinos internos, flags fail-closed,
-erros por provedor, telemetria enumerada e privacidade 1.2.0. O estado público
-do Supabase confirmou Google/e-mail ativos e LinkedIn OIDC inativo; ativação e
+A camada da aplicação da C91 foi publicada atrás de flag desligada em
+`v22092026.2`, deployment `dpl_BkrNPsVRQhYvTpcR2EmwcwGJZaaT`. O gate local
+passou com 128 testes, build, segurança e smoke responsivo; produção confirmou
+health 200, Google/senha preservados e LinkedIn oculto. O estado público do
+Supabase confirmou Google/e-mail ativos e LinkedIn OIDC inativo; ativação e
 matriz real de continuidade permanecem pendentes e a C92 continua bloqueada.
 
 A C90 foi homologada na Vercel em 22/09/2026. O Mapa Rápido mostra o placeholder
