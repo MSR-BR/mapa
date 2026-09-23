@@ -90,7 +90,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 092 | Autenticação exclusiva pelo Google | Concluída | Google é o único login público; LinkedIn e senha foram retirados, o provedor Email foi desativado sem apagar identidades, e sessão real, rotas legadas, responsividade, segurança e rollback foram homologados em produção. |
 | 093 | Regularização operacional da Supabase CLI | Concluída | A credencial foi associada à organização correta, o 403 foi eliminado, o projeto voltou a aparecer vinculado e saudável, e o histórico remoto da C89 foi reconciliado após verificação dos objetos. |
 | 094 | Auditoria SPF/DMARC | Concluída | NS, hosting, MX, SPF do Return-Path, DKIM e DNSSEC estão corretos; a única lacuna confirmada é DMARC. |
-| 095 | Reforço SPF/DMARC | Em implementação | SPF já está correto; DMARC em modo de monitoramento está especificado e aguarda somente autenticação do responsável no Registro.br para publicação e CPD. |
+| 095 | Reforço SPF/DMARC | Concluída | DMARC `p=none` publicado e propagado sem alterar A/MX/SPF/DKIM/DNSSEC; envio, health, Supabase, testes e CPD aprovados. |
 
 ## Marcos
 

@@ -2,8 +2,8 @@
 
 - [x] C94 confirma SPF/DKIM/recebimento existentes.
 - [x] Valor DMARC inicial definido e documentado.
-- [ ] Responsável autenticado no Registro.br.
-- [ ] TXT DMARC publicado.
-- [ ] Propagação autoritativa e recursiva confirmada.
-- [ ] Site, health, envio e recebimento revalidados.
-- [ ] CPD e Pó Mágico concluídos.
+- [x] Responsável autenticado no Registro.br.
+- [x] TXT DMARC publicado.
+- [x] Propagação autoritativa e recursiva confirmada.
+- [x] Site, health, envio e recebimento revalidados.
+- [x] CPD e Pó Mágico concluídos.

@@ -86,3 +86,23 @@ O gate exige sessão real antes/depois do corte, inventário sem exposição de
 segredos, preservação de identidades, redirects legados, callback fail-closed,
 observação de logs e rollback documentado. Consentimentos novos continuam sendo
 ato do próprio usuário.
+
+
+## Mudanças DNS e autenticação de e-mail
+
+Tratar qualquer mutação DNS como release externo mínimo: confirmar conta,
+titular e FQDN; inventariar a zona; definir um único delta e rollback; ler
+antes/depois; validar servidores autoritativos e resolvedores públicos; e
+executar smoke somente nos fluxos afetados. Falha da interface do provedor não
+autoriza automação genérica: usar apenas endpoints oficiais da própria sessão,
+com payload exato e readback completo.
+
+Para DMARC, confirmar primeiro MX, DKIM, SPF e Return-Path. Não duplicar SPF no
+apex quando o provedor usa subdomínio técnico. Começar em `p=none`, manter
+relatórios agregados e exigir Change própria antes de enforcement. Segredos de
+produção não devem ser exportados para o runner; prefira o caminho server-side
+já implantado para o smoke.
+
+Quando um corte de autenticação remove senha, atualizar ou reclassificar os
+runners remotos que dependiam dela. Nunca reativar um provedor retirado apenas
+para fazer um teste legado passar.

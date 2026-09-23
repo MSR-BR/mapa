@@ -192,3 +192,33 @@ desativado no Supabase sem apagar contas, dados ou possibilidade de rollback.
 - Aceitar consentimento legal em nome do usuário durante um smoke autenticado.
 - Classificar o recorte mínimo de uma janela headless como overflow real sem
   conferir as métricas do viewport emulado.
+
+
+# Retrospectiva — Changes 093–095
+
+## Resultado
+
+A CLI Supabase voltou a operar no projeto correto, o histórico da C89 foi
+reconciliado sem reaplicar schema, a zona de e-mail foi auditada e o DMARC foi
+publicado em modo de monitoramento com propagação imediata. Aplicação, envio,
+recebimento configurado, banco, testes e segurança permaneceram saudáveis.
+
+## O que funcionou
+
+- Confirmar organização, projeto e conta titular antes de qualquer escrita.
+- Separar inventário DNS, decisão e mutação em Changes distintas.
+- Ler a zona inteira antes e depois e alterar um único registro reversível.
+- Validar autoritativos e resolvedor público, não apenas a confirmação da UI.
+- Testar o envio pelo caminho real da produção sem trazer o segredo Resend para
+  o ambiente local.
+- Diagnosticar o carregamento quebrado da UI como cabeçalho XSRF, preservando o
+  escopo e usando apenas a API oficial da própria sessão.
+
+## O que evitar
+
+- Editar o primeiro domínio visível sem confirmar titular e FQDN.
+- Adicionar SPF no domínio raiz quando o Return-Path já usa `send`.
+- Ativar `quarantine` ou `reject` antes de observar relatórios DMARC.
+- Recuperar ou copiar segredo de produção somente para executar smoke local.
+- Interpretar um E2E por senha quebrado após Google-only como defeito do produto
+  ou reativar Email para satisfazer o teste.

@@ -8,7 +8,7 @@
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes 001–090 e 092 concluídas conforme `.specs/roadmap.md`.
+- Changes 001–090 e 092–095 concluídas conforme `.specs/roadmap.md`.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -48,6 +48,19 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C95 foi concluída em 23/09/2026. O Registro.br publicou
+`_dmarc.mapadapesquisa.com.br` como
+`v=DMARC1; p=none; rua=mailto:suporte@mapadapesquisa.com.br`. Os dois
+autoritativos e o Cloudflare responderam o novo TXT; A, MX, DKIM, SPF do
+Return-Path, DNSSEC e nameservers foram preservados. O site e health retornaram
+HTTP 200, e o envio técnico pelo suporte de produção passou. O CPD aprovou 128
+testes, build, segurança, 18 migrations alinhadas, trigger remoto ativo e duas
+provas PostgreSQL 17 do modo Aluno/Orientador.
+
+A C93 eliminou o 403 da CLI e reconciliou apenas o histórico da migration C89
+após verificar a função e o trigger existentes. A C94 inventariou a zona e
+confirmou que não deveria ser criado SPF adicional no domínio raiz.
 
 A C92 foi homologada em 22/09/2026. Google é o único método público de
 autenticação; Email foi desativado no Supabase sem excluir identidades e a flag
@@ -92,6 +105,12 @@ deployment final.
 
 ## Validação local mais recente
 
+- C93–C95: `npm run check` aprovou lint, tipos, 128/128 testes,
+  exportações e build; `security:audit`, `git diff --check`, migrations,
+  advisors, trigger remoto e PostgreSQL 17 isolado também passaram.
+- C95: DMARC confirmado nos dois autoritativos, resolvedor local e Cloudflare;
+  site/health e envio real pelo endpoint de suporte retornaram HTTP 200.
+- Pó Mágico evoluído para `v20260923.001`, com APP blueprint `v2.7`.
 - C92: `npm run check` aprovou lint, tipos, 128/128 testes, PDF/DOCX e build
   Next.js 16.3.5; auditoria de segurança e `git diff --check` também passaram.
 - C92: login Google real, estado remoto dos provedores, redirects, callback,
@@ -110,8 +129,9 @@ deployment final.
 
 ## Questões em aberto
 
-- A C93 eliminou o HTTP 403 da Supabase CLI, confirmou a organização/projeto
-  corretos e reconciliou o histórico remoto da C89 sem reaplicar schema.
-- A C94 confirmou SPF, DKIM, MX e DNSSEC. A C95 aguarda somente autenticação do
-  responsável no Registro.br para publicar DMARC em modo `p=none` e executar o
-  CPD final.
+- Observar os relatórios agregados do DMARC em `p=none`; qualquer evolução
+  para `quarantine` ou `reject` exige nova Change, análise dos remetentes
+  legítimos e rollback próprio.
+- O runner remoto sintético baseado em senha ficou incompatível com a decisão
+  Google-only da C92. Não reativar Email para executá-lo; uma futura automação
+  remota deve usar autenticação suportada ou credenciais efêmeras próprias.
