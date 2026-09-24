@@ -2,13 +2,15 @@
 
 ## Blueprint
 
-- Primário: APP v2.6.
+- Primário: APP v2.7.
 - Secundários: SOFTWARE e AI SYSTEM.
+- Transversal: DIGITAL DISCOVERY & GROWTH v1.0.
 
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes 001–090 e 092–095 concluídas conforme `.specs/roadmap.md`.
+- Changes 001–090 e 092–096 concluídas conforme `.specs/roadmap.md`.
+- Changes 097–099 estão planejadas; C100 permanece futura e bloqueada até existir baseline limpo e nova autorização.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -48,6 +50,8 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C96 foi concluída em 23/09/2026 sem mutação de produção. A auditoria confirmou coleta GA4 ativa, 42 eventos e 11 dimensões, mas encontrou atribuição contaminada pelo parâmetro `source`, zero key events, funil vazio, filtro interno em Testing, ausência de vínculo Search Console e duas homes canônicas. Lighthouse mobile marcou 95/LCP 2,9 s na raiz e 76/LCP 7,1 s em `/home.html`. A skill `digital-discovery-audit` foi validada e o Pó Mágico evoluiu para `v20260923.002` com o blueprint transversal Digital Discovery & Growth v1.0. C097–C100 foram especificadas e não executadas.
 
 A C95 foi concluída em 23/09/2026. O Registro.br publicou
 `_dmarc.mapadapesquisa.com.br` como
@@ -105,6 +109,10 @@ deployment final.
 
 ## Validação local mais recente
 
+- C96: auditoria read-only de código, produção, GA4, Search Console, DNS e Lighthouse; nenhum deploy ou ajuste externo foi feito.
+- C96: `quick_validate.py` aprovou a skill pessoal `digital-discovery-audit`.
+- C96: GA4 confirmou 34 usuários, 3,1 mil eventos e zero key events em 16–22/09; Search Console e Ads têm zero vínculos.
+- C96: Pó Mágico `v20260923.002`, com Digital Discovery & Growth blueprint v1.0.
 - C93–C95: `npm run check` aprovou lint, tipos, 128/128 testes,
   exportações e build; `security:audit`, `git diff --check`, migrations,
   advisors, trigger remoto e PostgreSQL 17 isolado também passaram.
@@ -129,6 +137,10 @@ deployment final.
 
 ## Questões em aberto
 
+- Executar C097 antes de usar GA4 para aquisição: o parâmetro `source` contaminou source/medium e gerou 84 sessões Unassigned no período auditado.
+- Criar/obter acesso ao Search Console em C098; a conta auditada não tinha acesso às propriedades de domínio ou prefixo e o GA4 não tem vínculo.
+- Consolidar a raiz e `/home.html` em C099 e corrigir o LCP mobile de 7,1 s da landing.
+- Manter Google Ads bloqueado até C097–C099, 14 dias de baseline limpo, Consent Mode v2 e autorização explícita de campanha/gasto.
 - Observar os relatórios agregados do DMARC em `p=none`; qualquer evolução
   para `quarantine` ou `reject` exige nova Change, análise dos remetentes
   legítimos e rollback próprio.

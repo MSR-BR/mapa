@@ -91,6 +91,11 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 093 | Regularização operacional da Supabase CLI | Concluída | A credencial foi associada à organização correta, o 403 foi eliminado, o projeto voltou a aparecer vinculado e saudável, e o histórico remoto da C89 foi reconciliado após verificação dos objetos. |
 | 094 | Auditoria SPF/DMARC | Concluída | NS, hosting, MX, SPF do Return-Path, DKIM e DNSSEC estão corretos; a única lacuna confirmada é DMARC. |
 | 095 | Reforço SPF/DMARC | Concluída | DMARC `p=none` publicado e propagado sem alterar A/MX/SPF/DKIM/DNSSEC; envio, health, Supabase, testes e CPD aprovados. |
+| 096 | Auditoria transversal de SEO, indexação e GA4 | Concluída | Código, site público, GA4, Search Console, DNS e Lighthouse auditados sem mutação; skill e blueprint de divulgação criados; atribuição contaminada, ausência de key events e fragmentação canônica priorizadas. |
+| 097 | Integridade de atribuição e taxonomia GA4 | Planejada | Renomear parâmetros de produto, reparar source/medium, alinhar macroetapas, definir eventos principais, reconstruir funil e observar baseline limpo. |
+| 098 | Search Console e baseline de indexação | Planejada | Verificar propriedade de domínio, enviar sitemap, inspecionar URLs, vincular GA4 e registrar baseline orgânico. |
+| 099 | Consolidação canônica, SEO e desempenho | Planejada | Unificar a home na raiz, redirecionar home.html, corrigir indexação, cards sociais, dados estruturados e LCP mobile. |
+| 100 | Prontidão para Google Ads e Consent Mode v2 | Futura / bloqueada | Preparar consentimento, conversão, UTMs, orçamento e stop-loss somente após C097–C099 e 14 dias de dados limpos; campanha exige autorização posterior. |
 
 ## Marcos
 
