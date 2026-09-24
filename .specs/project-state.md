@@ -4,17 +4,17 @@
 
 - Primário: APP v2.7.
 - Secundários: SOFTWARE e AI SYSTEM.
-- Transversal: DIGITAL DISCOVERY & GROWTH v1.2.
+- Transversal: DIGITAL DISCOVERY & GROWTH v1.3.
 
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes 001–090 e 092–096 concluídas conforme `.specs/roadmap.md`.
+- Changes 001–090, 092–096 e 098–099 concluídas conforme `.specs/roadmap.md`.
 - C097 está implantada e em observação até 08/10/2026.
-- C098 foi concluída: propriedade, DNS, sitemap, inspeções, baseline e vínculo
-  GA4 comprovados em 24/09/2026.
-- C099 está planejada; C100 permanece futura e bloqueada até existir baseline
-  limpo e nova autorização.
+- C099 foi concluída: raiz canônica única, redirect legado, indexação, cards,
+  dados estruturados, poster e desempenho publicados em 24/09/2026.
+- C100 permanece futura e bloqueada até existir baseline limpo e nova
+  autorização.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -54,6 +54,25 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C099 foi concluída em 24/09/2026. A raiz incorporou a landing e preservou os
+modos Rápido/Avançado; `/home.html` responde 308; sitemap contém somente a
+raiz; rotas privadas emitem noindex sem bloqueio contraditório no robots; OG,
+Twitter, WebApplication e Offer gratuito foram publicados. O card social
+1200×630 e o poster WebP têm geração e hashes reproduzíveis.
+
+O deployment `dpl_5fuuXKdrcddu8FsNzQDBuyVh4Sex` está READY no domínio
+canônico, versão `v24092026.1`. Health, metadados, redirect, assets, vídeo,
+alternância Rápido/Avançado, viewport móvel de 390 px e logs passaram.
+Lighthouse móvel final marcou 95–96 em performance, 100 em acessibilidade, 96
+em boas práticas e 100 em SEO; LCP variou entre 2,7 e 3,0 s, contra 7,1 s na
+landing antiga. O Search Console aceitou novamente o sitemap e passou de duas
+para uma página descoberta.
+
+O Pó Mágico evoluiu para `v20260924.003`, com Digital Discovery & Growth v1.3:
+uma migração canônica só fecha após provar redirect, canonical, sitemap,
+robots/noindex crawlable, readback do provedor e múltiplas amostras de
+desempenho em produção.
 
 A C098 criou e verificou em 24/09/2026 a propriedade de domínio
 `sc-domain:mapadapesquisa.com.br` por um único TXT no apex. O registro propagou
@@ -126,6 +145,12 @@ deployment final.
 
 ## Validação local mais recente
 
+- C99: `npm run check` aprovou lint, tipos, 129/129 testes, PDF/DOCX e build
+  Next.js 16.3.5.
+- C99: auditoria de segurança, auditoria de dependências sem vulnerabilidades,
+  `git diff --check`, HTTP, CDP móvel, dois Lighthouse de produção, health e
+  logs passaram.
+- Commits funcionais da C99: `c3d93f3` e `5b33f1c`.
 - C96: auditoria read-only de código, produção, GA4, Search Console, DNS e Lighthouse; nenhum deploy ou ajuste externo foi feito.
 - C96: `quick_validate.py` aprovou a skill pessoal `digital-discovery-audit`.
 - C96: GA4 confirmou 34 usuários, 3,1 mil eventos e zero key events em 16–22/09; Search Console e Ads têm zero vínculos.
@@ -156,7 +181,8 @@ deployment final.
 
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
   decisões de aquisição.
-- Consolidar a raiz e `/home.html` em C099 e corrigir o LCP mobile de 7,1 s da landing.
+- Acompanhar o LCP de campo da raiz; as amostras de laboratório da C099 ficaram
+  em 2,7–3,0 s e ainda não constituem aprovação de Core Web Vitals.
 - Manter Google Ads bloqueado até C097–C099, 14 dias de baseline limpo, Consent Mode v2 e autorização explícita de campanha/gasto.
 - Observar os relatórios agregados do DMARC em `p=none`; qualquer evolução
   para `quarantine` ou `reject` exige nova Change, análise dos remetentes

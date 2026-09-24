@@ -94,7 +94,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 096 | Auditoria transversal de SEO, indexação e GA4 | Concluída | Código, site público, GA4, Search Console, DNS e Lighthouse auditados sem mutação; skill e blueprint de divulgação criados; atribuição contaminada, ausência de key events e fragmentação canônica priorizadas. |
 | 097 | Integridade de atribuição e taxonomia GA4 | Implantada / em observação | Taxonomia `app_*`, key events, funil e teste controlado publicados; baseline pós-migração em observação até 08/10/2026. |
 | 098 | Search Console e baseline de indexação | Concluída | Propriedade de domínio verificada por DNS; sitemap processado com duas páginas; URLs, canonicals, baseline e vínculo GA4 comprovados. |
-| 099 | Consolidação canônica, SEO e desempenho | Planejada | Unificar a home na raiz, redirecionar home.html, corrigir indexação, cards sociais, dados estruturados e LCP mobile. |
+| 099 | Consolidação canônica, SEO e desempenho | Concluída | Raiz única, 308 legado, sitemap com uma URL, noindex crawlable, card social, WebApplication, poster otimizado, Lighthouse 95–96 e Search Console reconciliado em `v24092026.1`. |
 | 100 | Prontidão para Google Ads e Consent Mode v2 | Futura / bloqueada | Preparar consentimento, conversão, UTMs, orçamento e stop-loss somente após C097–C099 e 14 dias de dados limpos; campanha exige autorização posterior. |
 
 ## Marcos
