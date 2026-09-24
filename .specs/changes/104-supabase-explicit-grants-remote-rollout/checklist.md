@@ -9,8 +9,9 @@
 - [x] Security Advisor classificado: zero erros e quatro warnings explicados.
 - [x] Smoke anônimo aprovado.
 - [ ] Prova autenticada compatível com Google-only aprovada.
-- [ ] Migration C104 aplicada e readback aprovado.
-- [ ] Limpeza e restauração das fixtures comprovadas.
-- [x] Decisão do release gate registrada: `BLOCKED` para produção até nova
-  autorização exata das mutações.
+- [x] Migration C104 aplicada e readback aprovado.
+- [x] Ausência de mutação das fixtures comprovada: o runner parou no HTTP 422
+  antes da leitura dos perfis, troca de modos ou criação de registros.
+- [x] Decisão do release gate registrada: `PASS_WITH_ACCEPTED_RISK`; falta uma
+  prova autenticada pós-migration por mecanismo compatível com Google-only.
 - [x] Roadmap, estado e perfil de segurança atualizados.

@@ -22,11 +22,11 @@
 - C103 está concluída localmente: o estado versionado do Supabase tem oito
   tabelas, doze funções, grants/RLS explícitos e gate PostgreSQL descartável;
   não houve acesso remoto nem nova migration.
-- C104 está implementada localmente e com rollout pendente. A leitura remota
-  confirmou projeto, 18 migrations, RLS, 28 policies, 12 funções, bucket
-  privado, schema `private` não exposto e negação anônima. Também encontrou
-  privilégios legados excedentes; a 19ª migration remove esses acessos e passou
-  em todos os gates locais, mas ainda não foi aplicada em produção.
+- C104 foi aplicada em produção no projeto confirmado. A 19ª migration removeu
+  privilégios legados excedentes; readback, grants, RLS, 28 policies, 12
+  funções, schema `private`, negação anônima e gates PostgreSQL 17 passaram. O
+  E2E autenticado pós-migration segue pendente porque o runner legado usa senha
+  e foi recusado antes de qualquer mutação pelo ambiente Google-only.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -76,7 +76,9 @@ policies, doze funções, zero views/sequences próprias, bucket privado e três
 policies de Storage. O Security Advisor retornou quatro warnings e nenhum erro:
 três RPCs `SECURITY DEFINER` intencionais, com `auth.uid()`, modo/propriedade,
 `search_path` vazio e `EXECUTE` mínimo, e proteção de senha vazada não aplicável
-ao login público Google-only.
+ao login público Google-only. A reconsulta pós-migration pelo conector não teve
+permissão; essa evidência foi mantida como leitura imediatamente anterior ao
+push, e não como uma nova aprovação.
 
 A mesma auditoria provou uma lacuna não detectada pela C103: defaults legados
 mantinham `TRUNCATE`, `TRIGGER` e `REFERENCES` para `authenticated`, acesso
@@ -87,8 +89,12 @@ Auth, schemas expostos nem os defaults globais de objetos futuros. O gate agora
 simula os defaults legados e falha para privilégios excedentes. `npm run check`
 aprovou 141/141 testes e build; os gates PostgreSQL 17 de 19 migrations, modo
 Aluno/Orientador e aprovação humana passaram; `security:gate` terminou em
-`PASS_WITH_ACCEPTED_RISK` e zero vulnerabilidades. Aplicação remota, readback e
-fixtures autenticadas permanecem pendentes de autorização exata.
+`PASS_WITH_ACCEPTED_RISK` e zero vulnerabilidades. Após autorização exata, o
+dry-run listou somente a C104, a migration foi aplicada sem Vault/seeds/roles e
+o readback confirmou 19 migrations e ACLs mínimas. O runner autenticado recebeu
+HTTP 422 antes de ler perfis, trocar modos ou criar registros; nenhuma fixture
+ou estado real foi alterado. A decisão da C104 é `PASS_WITH_ACCEPTED_RISK`, com
+E2E Google-only pós-migration ainda pendente.
 
 A C103 foi concluída localmente em 24/09/2026. As 18 migrations foram
 inventariadas e aplicadas em PostgreSQL 17 descartável. O manifesto confirmou
@@ -214,6 +220,9 @@ deployment final.
 
 ## Validação local mais recente
 
+- C104: migration `20260924222657` aplicada no projeto de produção
+  `aeaweherkrqmlqnxsmib`; histórico, readback de ACL/RLS e smokes anônimos
+  aprovados; runner autenticado bloqueado pré-mutação por depender de senha.
 - C103: `npm run check` aprovou lint, tipos, grants explícitos, 140/140 testes,
   PDF/DOCX e build Next.js 16.3.5.
 - C103: `npm run supabase:release-gate`, migration local legada, matriz RLS por
@@ -263,9 +272,9 @@ deployment final.
 
 ## Questões em aberto
 
-- Aplicar a migration C104 no projeto `aeaweherkrqmlqnxsmib` somente após
-  autorização exata; repetir ACLs, migration history, Security Advisor, smoke
-  anônimo e matriz autenticada reversível antes de encerrar a Change.
+- Criar uma prova remota autenticada compatível com Google OAuth para concluir
+  o E2E pós-migration da C104 sem reativar Email/senha nem usar `service_role`
+  como atalho.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
   plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para

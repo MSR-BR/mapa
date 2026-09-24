@@ -42,7 +42,7 @@
 | Rate limit distribuído | Parcial | limite atual é em memória por instância |
 | Varredura antimalware de anexos recebidos | Não implementado/risco aceito | anexos são limitados e encaminhados internamente |
 | Restore de backup e E2E autenticado | Verificação operacional | requer execução periódica separada |
-| Grants explícitos Supabase pós-30/10/2026 | Correção local validada / rollout pendente | C104 confirmou remoto com 8 tabelas, 28 policies e 12 funções, encontrou `TRUNCATE`/`TRIGGER`/`REFERENCES` legados e preparou migration mínima; aplicação e E2E aguardam autorização exata |
+| Grants explícitos Supabase pós-30/10/2026 | Aplicado / E2E Google pendente | C104 removeu `TRUNCATE`/`TRIGGER`/`REFERENCES` legados em produção e confirmou 19 migrations, 8 tabelas, 28 policies, 12 funções e ACLs mínimas; runner autenticado parou pré-mutação por depender de senha |
 
 ## Regras obrigatórias
 

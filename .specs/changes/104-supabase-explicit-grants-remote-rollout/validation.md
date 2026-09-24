@@ -60,11 +60,45 @@ exponha uma operação de `TRUNCATE`.
 - `npm run check`: lint, tipos, 141/141 testes, PDF/DOCX e build aprovados.
 - `npm run security:gate`: `PASS_WITH_ACCEPTED_RISK`, zero vulnerabilidades.
 
-## Limite de autoridade e decisão
+## Rollout autorizado em produção
 
-`BLOCKED` para mutação de produção. O executor recusou o runner autenticado
-porque ele troca modos e cria/remove fixtures remotas; não foi feita tentativa
-de contorno. A migration também não foi aplicada. É necessária autorização
-explícita para o arquivo e o projeto exatos, seguida por readback e E2E
-reversível. Nenhum dado, Auth provider, DNS, Vercel ou configuração global foi
-alterado nesta fase.
+- Autorização exata recebida para o commit `26ac954`, a migration
+  `20260924222657_c104_reduce_legacy_explicit_grants.sql` e o projeto
+  `aeaweherkrqmlqnxsmib`.
+- Preflight confirmou `HEAD=26ac9548643c635a97128b8aca7c4635c24ae0ef`,
+  SHA-256
+  `2ec9765710c696b9be3517eb1748f3f7d02be82f8c06fd8a5a2d1ecf5e08d470`,
+  projeto vinculado saudável e somente a C104 pendente.
+- O dry-run listou exclusivamente a C104. O push foi executado com Vault,
+  seeds e roles fora do escopo.
+- O histórico remoto passou de 18 para 19 migrations e ficou integralmente
+  alinhado ao repositório.
+- O readback confirmou oito tabelas com RLS, 28 policies, doze funções, zero
+  views/sequences próprias, grants de tabela mínimos, `service_role` restrito
+  à leitura de eventos de papel e nenhum `EXECUTE` próprio para `anon` ou
+  `service_role`.
+- O smoke anônimo, `supabase:verify`, `supabase:verify-rls`,
+  `supabase:verify-explicit-grants` e `supabase:release-gate` passaram após a
+  aplicação.
+- A reconsulta do Security Advisor pelo conector não foi autorizada pelo
+  provedor. A leitura imediatamente anterior ao push permanece como evidência:
+  zero erros e quatro warnings já classificados.
+
+## Fixture autenticada e limpeza
+
+O runner reversível foi iniciado após a autorização, mas a primeira
+autenticação foi recusada com HTTP 422. O código autentica as duas contas antes
+de ler perfis, trocar modos ou criar projetos; portanto a falha ocorreu antes
+de qualquer mutação e não houve fixture para remover nem estado para restaurar.
+O motivo é a incompatibilidade do runner legado por senha com o login público
+Google-only definido na C92. Email/senha não foi reativado e não houve contorno
+por `service_role` ou credencial administrativa.
+
+## Decisão do release gate
+
+`PASS_WITH_ACCEPTED_RISK` para a migration C104 aplicada em produção. O artefato
+exato, o destino, o histórico, as ACLs e os gates do banco foram comprovados; a
+aplicação não alterou dados, Auth, Vercel, DNS, Vault ou defaults globais. A
+C104 permanece parcialmente aberta apenas para uma prova autenticada
+pós-migration por mecanismo compatível com Google OAuth. Até essa prova, não se
+declara o E2E remoto autenticado como aprovado.
