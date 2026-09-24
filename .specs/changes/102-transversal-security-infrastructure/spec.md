@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementada e validada localmente em 24/09/2026. Não publicada; nenhuma alteração remota foi autorizada ou executada.
+Concluída e publicada em produção em 24/09/2026.
 
 ## Contexto
 
@@ -62,7 +62,7 @@ Reverter o commit funcional da C102 restaura os logs e a auditoria anteriores. A
 
 ## Gate de implantação
 
-A publicação somente poderá ocorrer após validação local completa, revisão do commit candidato exato e autorização explícita do responsável. A implantação e a verificação pós-release não fazem parte da autorização desta etapa local.
+A publicação foi autorizada após validação local completa e revisão do commit candidato exato. A evidência está em `cpd-2026-09-24.md`.
 
 ## Validação local
 
@@ -70,4 +70,4 @@ A publicação somente poderá ocorrer após validação local completa, revisã
 - `npm run security:gate`: auditoria S3 em `PASS_WITH_ACCEPTED_RISK`, `npm audit` com zero vulnerabilidades e `git diff --check` aprovado.
 - `security_fast_check.py --mode worktree`: aprovado, 17 arquivos inspecionados e zero gatilhos sensíveis.
 - Testes direcionados de observabilidade e segurança: 11/11 aprovados após o reforço final do sanitizador.
-- Nenhuma consulta, migration, configuração ou publicação remota foi executada.
+- A única configuração remota alterada no CPD foi o identificador público `NEXT_PUBLIC_APP_VERSION`; nenhuma consulta, migration, grant ou policy Supabase foi executada.

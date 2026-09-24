@@ -17,9 +17,8 @@
   autorização.
 - C101 está publicada em produção. O Gemini 3.6 Flash mede as 13 operações sem
   conteúdo sensível; plano e limites foram preservados até existir baseline.
-- C102 está implementada e validada localmente no commit `2ecf44f`, sem
-  publicação ou mutação remota. O projeto agora possui classificação
-  `S3_SENSITIVE`, gate de release e logs de runtime sanitizados.
+- C102 está publicada em produção na versão `v24092026.3`. O projeto possui
+  classificação `S3_SENSITIVE`, gate de release e logs de runtime sanitizados.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -60,15 +59,19 @@
 
 ## Estado validado mais recente
 
-A C102 foi implementada localmente em 24/09/2026. A auditoria transversal
+A C102 foi concluída e publicada em 24/09/2026. A auditoria transversal
 confirmou autenticação/autorização central, RLS nas oito tabelas públicas,
 CSP, proteção de origem, webhook assinado, bucket privado e rate limits
 públicos. Logs diretos de runtime foram substituídos por eventos estruturados
 que descartam mensagens brutas e identificadores de usuário. O gate terminou
 em `PASS_WITH_ACCEPTED_RISK`: rate limit por instância, ausência de antivírus
 em anexos recebidos, provas remotas periódicas e grants explícitos do Supabase
-permanecem visíveis como limites. O commit funcional é `2ecf44f`; não houve
-deploy, migration, consulta remota ou alteração de provedor.
+permanecem visíveis como limites. O commit de release é `e1c2d68` e o
+deployment `dpl_DRGswwUxxkeknfoD5mhkE6RMrXUH` está READY no domínio
+canônico, versão `v24092026.3`. Health, cabeçalhos, rejeição do webhook sem
+assinatura e logs sem erros passaram. Não houve migration, grant, policy ou
+consulta Supabase; apenas o identificador público de versão foi atualizado na
+Vercel. O rollback permanece `dpl_FhQ6hF6zvk2zWhHcN9HDcw1km13B`.
 
 A C101 foi implementada localmente em 24/09/2026. As 13 operações Gemini agora
 têm observabilidade estruturada de modelo, duração, tokens, término, avisos e
@@ -214,8 +217,6 @@ deployment final.
 
 ## Questões em aberto
 
-- Autorizar separadamente a publicação da C102 quando o commit candidato e o
-  destino forem confirmados.
 - Executar a C103 local para preparar grants explícitos antes de 30/10/2026;
   a aplicação remota permanece isolada na C104 e bloqueada por autorização.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
