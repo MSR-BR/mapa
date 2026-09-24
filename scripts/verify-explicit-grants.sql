@@ -77,6 +77,25 @@ begin
     end if;
   end loop;
 
+  foreach table_name in array array[
+    'projects', 'generation_jobs', 'research_structures',
+    'research_workflows', 'user_profiles', 'legal_consents', 'bug_reports'
+  ] loop
+    if has_table_privilege('authenticated', format('public.%I', table_name), 'TRUNCATE')
+      or has_table_privilege('authenticated', format('public.%I', table_name), 'REFERENCES')
+      or has_table_privilege('authenticated', format('public.%I', table_name), 'TRIGGER')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'SELECT')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'INSERT')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'UPDATE')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'DELETE')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'TRUNCATE')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'REFERENCES')
+      or has_table_privilege('service_role', format('public.%I', table_name), 'TRIGGER')
+    then
+      raise exception 'legacy_table_privilege_remains:%', table_name;
+    end if;
+  end loop;
+
   if has_table_privilege('anon', 'public.user_profiles', 'SELECT,INSERT,UPDATE,DELETE')
     or not has_table_privilege('authenticated', 'public.user_profiles', 'SELECT,INSERT')
     or has_table_privilege('authenticated', 'public.user_profiles', 'UPDATE,DELETE')
@@ -102,8 +121,22 @@ begin
   if has_table_privilege('anon', 'public.user_profile_role_events', 'SELECT,INSERT,UPDATE,DELETE')
     or has_table_privilege('authenticated', 'public.user_profile_role_events', 'SELECT,INSERT,UPDATE,DELETE')
     or not has_table_privilege('service_role', 'public.user_profile_role_events', 'SELECT')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'INSERT')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'UPDATE')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'DELETE')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'TRUNCATE')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'REFERENCES')
+    or has_table_privilege('service_role', 'public.user_profile_role_events', 'TRIGGER')
   then
     raise exception 'role_events_privilege_mismatch';
+  end if;
+
+  if has_schema_privilege('public', 'private', 'USAGE')
+    or has_schema_privilege('anon', 'private', 'USAGE')
+    or has_schema_privilege('service_role', 'private', 'USAGE')
+    or not has_schema_privilege('authenticated', 'private', 'USAGE')
+  then
+    raise exception 'private_schema_privilege_mismatch';
   end if;
 
   foreach function_signature in array array[
@@ -116,6 +149,7 @@ begin
     'private.project_reviewable_by_active_advisor(uuid,uuid)'
   ] loop
     if has_function_privilege('anon', function_signature, 'EXECUTE')
+      or has_function_privilege('service_role', function_signature, 'EXECUTE')
       or not has_function_privilege('authenticated', function_signature, 'EXECUTE')
     then
       raise exception 'api_function_privilege_mismatch:%', function_signature;
@@ -131,6 +165,7 @@ begin
   ] loop
     if has_function_privilege('anon', function_signature, 'EXECUTE')
       or has_function_privilege('authenticated', function_signature, 'EXECUTE')
+      or has_function_privilege('service_role', function_signature, 'EXECUTE')
     then
       raise exception 'trigger_function_exposed:%', function_signature;
     end if;

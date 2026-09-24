@@ -99,7 +99,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 101 | Eficiência, custo e observabilidade do Gemini | Concluída | Treze operações instrumentadas com tokens, duração, modelo e falhas sanitizadas; produção em `v24092026.2`, limites preservados e plano inalterado até existir baseline por operação. |
 | 102 | Infraestrutura transversal de segurança | Concluída | Perfil S3, logs sanitizados, auditoria ampliada e gate de release publicados em `v24092026.3`; health, cabeçalhos e logs aprovados. |
 | 103 | Prontidão para grants explícitos do Supabase | Concluída localmente | Manifesto de oito tabelas e doze funções, verificador rápido e gate PostgreSQL 17 aprovados; estado completo sem migration redundante e sem acesso remoto. |
-| 104 | Rollout remoto dos grants explícitos | Futura / bloqueada | Aplicar somente após C103 aprovada e autorização específica; provar grants, RLS, funções, E2E e rollback em produção. |
+| 104 | Rollout remoto dos grants explícitos | Implementada localmente / rollout pendente | Projeto e 18 migrations remotas confirmados; auditoria encontrou privilégios legados excedentes. Migration mínima, gate de 19 migrations e testes passaram; aplicação e fixtures remotas aguardam autorização exata. |
 
 ## Marcos
 

@@ -10,9 +10,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert", "update", "delete"]
+        "authenticated": ["select", "insert", "update", "delete"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.generation_jobs",
@@ -22,9 +23,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert", "update", "delete"]
+        "authenticated": ["select", "insert", "update", "delete"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.research_structures",
@@ -34,9 +36,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert", "update", "delete"]
+        "authenticated": ["select", "insert", "update", "delete"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.research_workflows",
@@ -46,9 +49,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert", "update", "delete"]
+        "authenticated": ["select", "insert", "update", "delete"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.user_profiles",
@@ -58,9 +62,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert"]
+        "authenticated": ["select", "insert"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.legal_consents",
@@ -70,9 +75,10 @@
       "privileges": {
         "public": [],
         "anon": [],
-        "authenticated": ["select", "insert", "update"]
+        "authenticated": ["select", "insert", "update"],
+        "service_role": []
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.bug_reports",
@@ -80,10 +86,12 @@
       "rls": true,
       "policies": ["bug_reports_insert_anonymous", "bug_reports_insert_authenticated", "bug_reports_select_reporter_or_admin", "bug_reports_update_admin"],
       "privileges": {
+        "public": [],
         "anon": ["insert"],
-        "authenticated": ["select", "insert", "update"]
+        "authenticated": ["select", "insert", "update"],
+        "service_role": []
       },
-      "migration": "20260821153000_create_bug_reports.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "name": "public.user_profile_role_events",
@@ -96,7 +104,7 @@
         "authenticated": [],
         "service_role": ["select"]
       },
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     }
   ],
   "views": [],
@@ -108,7 +116,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.claim_pending_advisor_projects()",
@@ -116,7 +124,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.switch_active_role(text,bigint,uuid)",
@@ -124,39 +132,39 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.is_bug_report_admin()",
       "consumer": "policies de triagem para authenticated",
       "security": "invoker",
       "searchPath": "fixed",
-      "execute": {"public": false, "anon": false, "authenticated": true},
-      "migration": "20260823120000_harden_bug_report_admin_search_path.sql"
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.enforce_user_profile_role_version()",
       "consumer": "trigger interno",
       "security": "invoker",
       "searchPath": "empty",
-      "execute": {"public": false, "anon": false, "authenticated": false},
-      "migration": "20260916163351_account_mode_database_foundation.sql"
+      "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.audit_user_profile_role_change()",
       "consumer": "trigger interno",
       "security": "definer",
       "searchPath": "empty",
-      "execute": {"public": false, "anon": false, "authenticated": false},
-      "migration": "20260916163351_account_mode_database_foundation.sql"
+      "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.enforce_project_authoring_role()",
       "consumer": "trigger interno",
       "security": "invoker",
       "searchPath": "empty",
-      "execute": {"public": false, "anon": false, "authenticated": false},
-      "migration": "20260916163351_account_mode_database_foundation.sql"
+      "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.restrict_advisor_workflow_update()",
@@ -164,7 +172,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "public.enforce_student_advisor_workflow_progress()",
@@ -172,7 +180,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
-      "migration": "20260919123000_c089_require_student_advisor_approval.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "private.current_active_role()",
@@ -180,7 +188,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "private.project_owned_in_active_mode(uuid,uuid)",
@@ -188,7 +196,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
       "signature": "private.project_reviewable_by_active_advisor(uuid,uuid)",
@@ -196,7 +204,7 @@
       "security": "definer",
       "searchPath": "empty",
       "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
-      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     }
   ],
   "managedDependencies": [

@@ -41,6 +41,19 @@ begin
 end
 $$;
 
+-- Reproduz os privilégios padrão legados dos projetos Supabase existentes.
+-- A migration C104 deve produzir o mesmo estado mínimo com ou sem esses
+-- defaults, que serão alterados pela plataforma em 30/10/2026.
+alter default privileges for role postgres in schema public
+  grant select, insert, update, delete, truncate, references, trigger
+  on tables to anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  revoke execute on functions from public;
+alter default privileges for role postgres in schema public
+  grant execute on functions to anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  grant usage, select, update on sequences to anon, authenticated, service_role;
+
 grant usage on schema auth to anon, authenticated, service_role;
 grant execute on function auth.uid(), auth.jwt()
   to anon, authenticated, service_role;

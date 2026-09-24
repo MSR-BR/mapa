@@ -22,6 +22,11 @@
 - C103 está concluída localmente: o estado versionado do Supabase tem oito
   tabelas, doze funções, grants/RLS explícitos e gate PostgreSQL descartável;
   não houve acesso remoto nem nova migration.
+- C104 está implementada localmente e com rollout pendente. A leitura remota
+  confirmou projeto, 18 migrations, RLS, 28 policies, 12 funções, bucket
+  privado, schema `private` não exposto e negação anônima. Também encontrou
+  privilégios legados excedentes; a 19ª migration remove esses acessos e passou
+  em todos os gates locais, mas ainda não foi aplicada em produção.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -61,6 +66,29 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C104 foi preparada em 24/09/2026 contra o projeto confirmado
+`aeaweherkrqmlqnxsmib` (`mapa-da-pesquisa`, PostgreSQL 17, saudável). As 18
+migrations remotas coincidiam com o repositório antes da correção. A Data API
+recusou o schema `private` com `PGRST106`, o papel anônimo não acessou projetos
+ou workflows, e a leitura de metadados confirmou oito tabelas com RLS, 28
+policies, doze funções, zero views/sequences próprias, bucket privado e três
+policies de Storage. O Security Advisor retornou quatro warnings e nenhum erro:
+três RPCs `SECURITY DEFINER` intencionais, com `auth.uid()`, modo/propriedade,
+`search_path` vazio e `EXECUTE` mínimo, e proteção de senha vazada não aplicável
+ao login público Google-only.
+
+A mesma auditoria provou uma lacuna não detectada pela C103: defaults legados
+mantinham `TRUNCATE`, `TRIGGER` e `REFERENCES` para `authenticated`, acesso
+amplo de `service_role` às tabelas e `EXECUTE` excedente em funções. A migration
+`20260924222657_c104_reduce_legacy_explicit_grants.sql` revoga tudo nos objetos
+próprios e recompõe somente o contrato do manifesto. Ela não muda RLS, dados,
+Auth, schemas expostos nem os defaults globais de objetos futuros. O gate agora
+simula os defaults legados e falha para privilégios excedentes. `npm run check`
+aprovou 141/141 testes e build; os gates PostgreSQL 17 de 19 migrations, modo
+Aluno/Orientador e aprovação humana passaram; `security:gate` terminou em
+`PASS_WITH_ACCEPTED_RISK` e zero vulnerabilidades. Aplicação remota, readback e
+fixtures autenticadas permanecem pendentes de autorização exata.
 
 A C103 foi concluída localmente em 24/09/2026. As 18 migrations foram
 inventariadas e aplicadas em PostgreSQL 17 descartável. O manifesto confirmou
@@ -235,9 +263,9 @@ deployment final.
 
 ## Questões em aberto
 
-- Executar a C104 somente após autorização específica: comparar migrations,
-  schemas expostos, ACLs, RLS, funções, Security Advisor e E2E no Supabase
-  remoto antes de 30/10/2026.
+- Aplicar a migration C104 no projeto `aeaweherkrqmlqnxsmib` somente após
+  autorização exata; repetir ACLs, migration history, Security Advisor, smoke
+  anônimo e matriz autenticada reversível antes de encerrar a Change.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
   plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para

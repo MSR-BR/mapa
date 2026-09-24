@@ -48,12 +48,16 @@ apply_sql supabase/migrations/20260818230000_harden_advisor_workflow_updates.sql
 apply_sql supabase/migrations/20260819090000_add_legal_consents.sql
 apply_sql supabase/migrations/20260819100000_add_profile_role_to_legal_consents.sql
 apply_sql supabase/migrations/20260821142835_harden_security_definer_execute_grants.sql
+apply_sql supabase/migrations/20260821153000_create_bug_reports.sql
+apply_sql supabase/migrations/20260823120000_harden_bug_report_admin_search_path.sql
 apply_sql supabase/migrations/20260911190000_lock_user_profile_role.sql
 apply_sql scripts/verify-mode-aware-rls-seed.sql
 apply_sql supabase/migrations/20260916163351_account_mode_database_foundation.sql
 apply_sql supabase/migrations/20260917003926_c087_grant_switch_active_role.sql
 apply_sql supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql
 apply_sql supabase/migrations/20260917015508_c087_fix_project_insert_returning.sql
+apply_sql supabase/migrations/20260919123000_c089_require_student_advisor_approval.sql
+apply_sql supabase/migrations/20260924222657_c104_reduce_legacy_explicit_grants.sql
 
 result="$(docker exec "$container_name" \
   psql \
@@ -68,4 +72,4 @@ if [ "$result" != "mode_aware_rls_ok" ]; then
   exit 1
 fi
 
-echo "C87 validada em PostgreSQL 17 isolado: modo, autoria, vínculo, filhos, RPC, grants e trigger aprovados."
+echo "C104 validada em PostgreSQL 17 isolado: modo, autoria, vínculo, filhos, RPC e grants mínimos aprovados."

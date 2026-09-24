@@ -16,7 +16,7 @@ test("keeps every owned Supabase object aligned with the explicit access manifes
   assert.deepEqual(result.errors, []);
   assert.deepEqual(result.summary, {
     functions: 12,
-    migrations: 18,
+    migrations: 19,
     sequences: 0,
     tables: 8,
     views: 0,
@@ -45,4 +45,19 @@ test("fails when a future migration broadens a protected table grant", async () 
   });
   const result = auditExplicitGrants(input);
   assert.ok(result.errors.some((error) => error.includes("Grant amplo proibido em public.projects")));
+});
+
+test("fails when legacy default privileges are not explicitly removed", async () => {
+  const input = await loadExplicitGrantAudit(projectRoot);
+  const migration = input.migrations.find(({ name }) => name.includes("c104_reduce_legacy_explicit_grants"));
+  assert.ok(migration);
+  migration.sql = migration.sql.replace(
+    /revoke all privileges on table[\s\S]*?from public, anon, authenticated, service_role;/,
+    "",
+  );
+  const result = auditExplicitGrants(input);
+  assert.ok(result.errors.some((error) => (
+    error.includes("Privilégios divergentes para authenticated")
+    || error.includes("Privilégios divergentes para service_role")
+  )));
 });

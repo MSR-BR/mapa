@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultProjectRoot = path.resolve(scriptDirectory, "..");
 const tablePrivileges = ["select", "insert", "update", "delete", "truncate", "references", "trigger"];
+const legacyDataApiRoles = ["anon", "authenticated", "service_role"];
 const knownTypeStarters = new Set([
   "bigint", "boolean", "date", "double", "integer", "json", "jsonb", "numeric",
   "real", "smallint", "text", "time", "timestamp", "uuid", "varchar",
@@ -199,7 +200,10 @@ export function auditExplicitGrants({ manifest, migrations }) {
       errors.push(`Policies finais divergentes em ${table.name}: esperado [${[...expectedPolicies].join(", ")}], obtido [${[...actualPolicies].join(", ")}]`);
     }
 
-    const state = new Map();
+    const state = new Map([
+      ["public", new Set()],
+      ...legacyDataApiRoles.map((role) => [role, new Set(tablePrivileges)]),
+    ]);
     const touched = new Map();
     for (const statement of privilegeStatements) {
       const [, action, privilegesSql, kind, objectsSql, , rolesSql] = statement;
@@ -240,7 +244,10 @@ export function auditExplicitGrants({ manifest, migrations }) {
     if (functionEntry.searchPath === "fixed" && !hasSearchPath) errors.push(`search_path fixo ausente em ${functionEntry.signature}`);
     if (actualSecurity === "definer" && !hasEmptySearchPath) errors.push(`SECURITY DEFINER sem search_path vazio em ${functionEntry.signature}`);
 
-    const state = new Map([["public", new Set(["execute"])]]);
+    const state = new Map([
+      ["public", new Set(["execute"])],
+      ...legacyDataApiRoles.map((role) => [role, new Set(["execute"])]),
+    ]);
     const touched = new Map();
     for (const statement of privilegeStatements) {
       const [, action, privilegesSql, kind, objectsSql, , rolesSql] = statement;
