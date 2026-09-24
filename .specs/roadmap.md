@@ -97,6 +97,9 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 099 | Consolidação canônica, SEO e desempenho | Concluída | Raiz única, 308 legado, sitemap com uma URL, noindex crawlable, card social, WebApplication, poster otimizado, Lighthouse 95–96 e Search Console reconciliado em `v24092026.1`. |
 | 100 | Prontidão para Google Ads e Consent Mode v2 | Futura / bloqueada | Preparar consentimento, conversão, UTMs, orçamento e stop-loss somente após C097–C099 e 14 dias de dados limpos; campanha exige autorização posterior. |
 | 101 | Eficiência, custo e observabilidade do Gemini | Concluída | Treze operações instrumentadas com tokens, duração, modelo e falhas sanitizadas; produção em `v24092026.2`, limites preservados e plano inalterado até existir baseline por operação. |
+| 102 | Infraestrutura transversal de segurança | Implementada localmente / não publicada | Perfil S3, logs sanitizados, auditoria ampliada e gate de release aprovados; publicação depende de autorização explícita. |
+| 103 | Prontidão para grants explícitos do Supabase | Futura | Auditar integralmente o pacote de 30/10/2026, preparar migration e verificadores locais, sem mutação remota. |
+| 104 | Rollout remoto dos grants explícitos | Futura / bloqueada | Aplicar somente após C103 aprovada e autorização específica; provar grants, RLS, funções, E2E e rollback em produção. |
 
 ## Marcos
 

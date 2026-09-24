@@ -17,6 +17,9 @@
   autorização.
 - C101 está publicada em produção. O Gemini 3.6 Flash mede as 13 operações sem
   conteúdo sensível; plano e limites foram preservados até existir baseline.
+- C102 está implementada e validada localmente no commit `2ecf44f`, sem
+  publicação ou mutação remota. O projeto agora possui classificação
+  `S3_SENSITIVE`, gate de release e logs de runtime sanitizados.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -56,6 +59,16 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C102 foi implementada localmente em 24/09/2026. A auditoria transversal
+confirmou autenticação/autorização central, RLS nas oito tabelas públicas,
+CSP, proteção de origem, webhook assinado, bucket privado e rate limits
+públicos. Logs diretos de runtime foram substituídos por eventos estruturados
+que descartam mensagens brutas e identificadores de usuário. O gate terminou
+em `PASS_WITH_ACCEPTED_RISK`: rate limit por instância, ausência de antivírus
+em anexos recebidos, provas remotas periódicas e grants explícitos do Supabase
+permanecem visíveis como limites. O commit funcional é `2ecf44f`; não houve
+deploy, migration, consulta remota ou alteração de provedor.
 
 A C101 foi implementada localmente em 24/09/2026. As 13 operações Gemini agora
 têm observabilidade estruturada de modelo, duração, tokens, término, avisos e
@@ -158,6 +171,11 @@ deployment final.
 
 ## Validação local mais recente
 
+- C102: `npm run check` aprovou lint, tipos, 137/137 testes, PDF/DOCX e build
+  Next.js 16.3.5.
+- C102: `npm run security:gate` aprovou a auditoria S3 com riscos aceitos
+  explícitos, zero vulnerabilidades e diff limpo; a verificação independente
+  da skill também passou sem gatilhos sensíveis.
 - C101: `npm run check` aprovou lint, tipos, 133/133 testes, PDF/DOCX e build
   Next.js 16.3.5.
 - C101: auditoria de segurança, fast check do worktree e `git diff --check`
@@ -196,6 +214,10 @@ deployment final.
 
 ## Questões em aberto
 
+- Autorizar separadamente a publicação da C102 quando o commit candidato e o
+  destino forem confirmados.
+- Executar a C103 local para preparar grants explícitos antes de 30/10/2026;
+  a aplicação remota permanece isolada na C104 e bloqueada por autorização.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
   plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
