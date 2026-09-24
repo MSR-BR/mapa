@@ -15,9 +15,9 @@ test("keeps the branded foundation and locale in the App Router", async () => {
   ]);
 
   assert.match(layout, /<html lang="pt-BR"/);
-  assert.match(layout, /title: "Mapa da Pesquisa"/);
+  assert.match(layout, /title: \{ default: "Mapa da Pesquisa"/);
   assert.match(page, /Vamos construir o mapa da sua pesquisa\?/);
-  assert.match(page, /Defina e organize os tópicos fundamentais da pesquisa/);
+  assert.match(page, /Da situação-problema ao projeto de pesquisa/);
   assert.doesNotMatch(page, /Comece pela ideia/);
   assert.match(page, /PublicStartForm/);
   assert.match(page, /auth\/callback\?code=/);
@@ -40,7 +40,7 @@ test("requests login only after the public central execution", async () => {
     readProjectFile("modules/profile/storage.ts"),
   ]);
 
-  assert.doesNotMatch(home, /href="\/login"/);
+  assert.match(home, /href="\/login"/);
   assert.match(publicStart, /localStorage\.setItem/);
   assert.match(publicStart, /savedAt: Date\.now\(\)/);
   assert.match(publicStart, /login\?next=/);
@@ -1387,28 +1387,53 @@ test("registers Change 079 premium promo while preserving version 1", async () =
   assert.ok(videoV2.byteLength > 2_000_000);
 });
 
-test("embeds the supplied promotional video in the public landing page", async () => {
-  const [landing, styles, roadmap, video, poster] = await Promise.all([
-    readProjectFile("app/home.html/page.tsx"),
+test("consolidates discovery, video and project start on the canonical root", async () => {
+  const [landing, layout, authLayout, config, sitemap, robots, styles, roadmap, video, poster, socialCard] = await Promise.all([
+    readProjectFile("app/page.tsx"),
+    readProjectFile("app/layout.tsx"),
+    readProjectFile("app/(auth)/layout.tsx"),
+    readProjectFile("next.config.ts"),
+    readProjectFile("app/sitemap.ts"),
+    readProjectFile("app/robots.ts"),
     readProjectFile("app/globals.css"),
     readProjectFile(".specs/roadmap.md"),
     readFile(new URL("../public/media/mapa-da-pesquisa-apresentacao.mp4", import.meta.url)),
-    readFile(new URL("../public/media/mapa-da-pesquisa-apresentacao-poster.png", import.meta.url)),
+    readFile(new URL("../public/media/mapa-da-pesquisa-apresentacao-poster.webp", import.meta.url)),
+    readFile(new URL("../public/brand/mapa-da-pesquisa-social-card.png", import.meta.url)),
   ]);
 
   assert.match(roadmap, /081 \| Vídeo de apresentação na landing page \| Concluída/);
+  assert.match(landing, /PublicStartForm/);
+  assert.match(landing, /id="criar-mapa"/);
   assert.match(landing, /id="apresentacao"/);
   assert.match(landing, /<video/);
   assert.match(landing, /preload="none"/);
   assert.match(landing, /playsInline/);
   assert.match(landing, /mapa-da-pesquisa-apresentacao\.mp4/);
-  assert.match(landing, /mapa-da-pesquisa-apresentacao-poster\.png/);
+  assert.match(landing, /mapa-da-pesquisa-apresentacao-poster\.webp/);
+  assert.match(landing, /"@type": "WebApplication"/);
+  assert.match(landing, /price: 0/);
+  assert.match(landing, /priceCurrency: "BRL"/);
+  assert.doesNotMatch(landing, /FAQPage/);
+  assert.match(config, /source: "\/home\.html"[\s\S]*destination: "\/"[\s\S]*permanent: true/);
+  assert.match(config, /X-Robots-Tag/);
+  assert.match(authLayout, /robots: \{ index: false, follow: false, noarchive: true \}/);
+  assert.match(sitemap, /https:\/\/mapadapesquisa\.com\.br\//);
+  assert.doesNotMatch(sitemap, /home\.html/);
+  assert.match(robots, /allow: "\/"/);
+  assert.doesNotMatch(robots, /"\/login"|"\/auth\/"/);
+  assert.match(layout, /summary_large_image/);
+  assert.match(layout, /mapa-da-pesquisa-social-card\.png/);
   assert.match(styles, /\.landing-video \{ display:grid/);
+  assert.match(styles, /\.landing-start \{ display:grid/);
   assert.match(styles, /@media \(max-width: 520px\).*\.landing-actions \{ display:grid; grid-template-columns:1fr; \}/);
   assert.equal(video.subarray(4, 8).toString("ascii"), "ftyp");
-  assert.equal(poster.subarray(1, 4).toString("ascii"), "PNG");
+  assert.equal(poster.subarray(0, 4).toString("ascii"), "RIFF");
+  assert.equal(socialCard.subarray(1, 4).toString("ascii"), "PNG");
   assert.ok(video.byteLength > 10_000_000);
-  assert.ok(poster.byteLength > 500_000);
+  assert.ok(poster.byteLength < 100_000);
+  assert.equal(socialCard.readUInt32BE(16), 1200);
+  assert.equal(socialCard.readUInt32BE(20), 630);
 });
 
 

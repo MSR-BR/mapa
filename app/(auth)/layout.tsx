@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, noarchive: true },
+};
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

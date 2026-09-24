@@ -87,8 +87,13 @@ if (unguardedProjectRoutes.length > 0) {
 }
 
 const dangerousHtml = repositoryFiles.filter((file) => file !== "scripts/audit-security.mjs" && (contents.get(file) ?? "").includes("dangerouslySetInnerHTML"));
-if (dangerousHtml.length === 1 && dangerousHtml[0] === "app/home.html/page.tsx") {
-  pass("xss", "Único uso de HTML bruto está limitado ao JSON-LD estático da landing page.");
+const rootPage = contents.get("app/page.tsx") ?? "";
+const rootJsonLdIsSerialized =
+  rootPage.includes('type="application/ld+json"') &&
+  rootPage.includes("JSON.stringify(structuredData)") &&
+  rootPage.includes("nonce={nonce}");
+if (dangerousHtml.length === 1 && dangerousHtml[0] === "app/page.tsx" && rootJsonLdIsSerialized) {
+  pass("xss", "Único uso de HTML bruto está limitado ao JSON-LD serializado e protegido por nonce da página pública.");
 } else if (dangerousHtml.length === 0) pass("xss", "Nenhum uso de HTML bruto foi encontrado.");
 else warn("xss", `Revisar usos de HTML bruto: ${dangerousHtml.join(", ")}`);
 
@@ -109,9 +114,21 @@ if (proxy.includes("Content-Security-Policy") && proxy.includes("nonce-")) {
   warn("csp", "CSP dinâmica com nonce ainda não foi encontrada.");
 }
 
-if ((contents.get("app/dashboard/layout.tsx") ?? "").includes("index: false") && (contents.get("app/robots.ts") ?? "").includes("/dashboard/")) {
-  pass("privacy-indexing", "Dashboard e rotas privadas estão fora de indexação.");
-} else fail("privacy-indexing", "Revisar robots e metadata das áreas privadas.");
+const robots = contents.get("app/robots.ts") ?? "";
+const privateLayouts = ["app/dashboard/layout.tsx", "app/admin/bugs/page.tsx", "app/(auth)/layout.tsx"];
+const privateMetadataNoindex = privateLayouts.every((file) => (contents.get(file) ?? "").includes("index: false"));
+const privateHeaderPatterns = ["/login", "/auth/:path*", "/dashboard/:path*", "/admin/:path*"];
+const privateHeadersNoindex =
+  nextConfig.includes("X-Robots-Tag") &&
+  nextConfig.includes("noindex, nofollow, noarchive") &&
+  privateHeaderPatterns.every((pattern) => nextConfig.includes(pattern));
+const crawlableNoindexRoutes = ["/dashboard/", "/admin/", "/login", "/auth/"].every((route) => !robots.includes(`"${route}"`));
+
+if (privateMetadataNoindex && privateHeadersNoindex && crawlableNoindexRoutes) {
+  pass("privacy-indexing", "Áreas privadas emitem noindex por metadata e cabeçalho, sem bloqueio contraditório no robots.txt.");
+} else {
+  fail("privacy-indexing", "Revisar metadata, X-Robots-Tag e crawlability das áreas privadas.");
+}
 
 warn("remote-verification", "Verificação RLS remota e fluxo E2E dependem de credenciais de teste e acesso à API Supabase; não são inferidos por esta auditoria estática.");
 

@@ -19,9 +19,20 @@ export const metadata: Metadata = {
   title: { default: "Mapa da Pesquisa", template: "%s | Mapa da Pesquisa" },
   description: "Formule a situação-problema em cinco perguntas, escolha o produto acadêmico e construa um mapa de pesquisa com IA, Research Starter e validação humana.",
   keywords: ["mapa da pesquisa", "situação-problema", "projeto de pesquisa", "TCC", "monografia", "dissertação", "tese", "revisão da literatura", "Research Starter"],
-  alternates: { canonical: "/" },
-  openGraph: { title: "Mapa da Pesquisa | Da situação-problema ao projeto", description: "Cinco perguntas, seis produtos acadêmicos e um mapa de pesquisa revisável com referências verificáveis.", locale: "pt_BR", siteName: "Mapa da Pesquisa", type: "website", images: [{ url: "/brand/mapa-da-pesquisa-wordmark.png", alt: "Mapa da Pesquisa" }] },
-  twitter: { card: "summary", title: "Mapa da Pesquisa", description: "Formule, escolha o nível e construa seu projeto de pesquisa." },
+  openGraph: {
+    title: "Mapa da Pesquisa | Da situação-problema ao projeto",
+    description: "Cinco perguntas, seis produtos acadêmicos e um mapa de pesquisa revisável com referências verificáveis.",
+    locale: "pt_BR",
+    siteName: "Mapa da Pesquisa",
+    type: "website",
+    images: [{ url: "/brand/mapa-da-pesquisa-social-card.png", width: 1200, height: 630, alt: "Mapa da Pesquisa — da situação-problema ao projeto de pesquisa" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mapa da Pesquisa | Da situação-problema ao projeto",
+    description: "Formule, escolha o nível e construa seu projeto de pesquisa.",
+    images: ["/brand/mapa-da-pesquisa-social-card.png"],
+  },
   icons: {
     icon: "/brand/mapa-da-pesquisa-app-icon.png",
     shortcut: "/brand/mapa-da-pesquisa-app-icon.png",

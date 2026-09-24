@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  async redirects() {
+    return [
+      {
+        source: "/home.html",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -25,6 +34,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      ...["/login", "/signup", "/forgot-password", "/reset-password", "/auth/:path*", "/dashboard/:path*", "/admin/:path*", "/api/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      })),
     ];
   },
 };
