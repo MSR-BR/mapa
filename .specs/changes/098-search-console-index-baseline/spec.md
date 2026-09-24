@@ -1,6 +1,6 @@
 # Change 098 — Search Console e baseline de indexação
 
-Status: planejada; não executada
+Status: concluída em 24/09/2026
 
 ## Objetivo
 

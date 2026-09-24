@@ -4,13 +4,17 @@
 
 - Primário: APP v2.7.
 - Secundários: SOFTWARE e AI SYSTEM.
-- Transversal: DIGITAL DISCOVERY & GROWTH v1.0.
+- Transversal: DIGITAL DISCOVERY & GROWTH v1.2.
 
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
 - Changes 001–090 e 092–096 concluídas conforme `.specs/roadmap.md`.
-- Changes 097–099 estão planejadas; C100 permanece futura e bloqueada até existir baseline limpo e nova autorização.
+- C097 está implantada e em observação até 08/10/2026.
+- C098 foi concluída: propriedade, DNS, sitemap, inspeções, baseline e vínculo
+  GA4 comprovados em 24/09/2026.
+- C099 está planejada; C100 permanece futura e bloqueada até existir baseline
+  limpo e nova autorização.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -50,6 +54,19 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C098 criou e verificou em 24/09/2026 a propriedade de domínio
+`sc-domain:mapadapesquisa.com.br` por um único TXT no apex. O registro propagou
+nos dois autoritativos, no resolvedor local e no Cloudflare; A, MX, DMARC, DKIM,
+SPF, DS e DNSKEY permaneceram intactos. A raiz está indexada, `/home.html` está
+acessível mas ainda desconhecida e autocanônica, `/login` está bloqueada por
+`robots.txt`, e HTTP redireciona para HTTPS. Performance e Pages ainda
+processam; Core Web Vitals não tem volume suficiente. O sitemap foi processado
+com sucesso, com duas páginas descobertas e zero vídeos. A associação com a
+propriedade GA4 `550650234` e o stream `15460310071` foi confirmada e está
+visível nos dois produtos. A C098 foi encerrada sem alteração de código ou
+deploy.
+O Pó Mágico evoluiu para `v20260924.002`, com Digital Discovery & Growth v1.2.
 
 A C96 foi concluída em 23/09/2026 sem mutação de produção. A auditoria confirmou coleta GA4 ativa, 42 eventos e 11 dimensões, mas encontrou atribuição contaminada pelo parâmetro `source`, zero key events, funil vazio, filtro interno em Testing, ausência de vínculo Search Console e duas homes canônicas. Lighthouse mobile marcou 95/LCP 2,9 s na raiz e 76/LCP 7,1 s em `/home.html`. A skill `digital-discovery-audit` foi validada e o Pó Mágico evoluiu para `v20260923.002` com o blueprint transversal Digital Discovery & Growth v1.0. C097–C100 foram especificadas e não executadas.
 
@@ -137,8 +154,8 @@ deployment final.
 
 ## Questões em aberto
 
-- Executar C097 antes de usar GA4 para aquisição: o parâmetro `source` contaminou source/medium e gerou 84 sessões Unassigned no período auditado.
-- Criar/obter acesso ao Search Console em C098; a conta auditada não tinha acesso às propriedades de domínio ou prefixo e o GA4 não tem vínculo.
+- Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
+  decisões de aquisição.
 - Consolidar a raiz e `/home.html` em C099 e corrigir o LCP mobile de 7,1 s da landing.
 - Manter Google Ads bloqueado até C097–C099, 14 dias de baseline limpo, Consent Mode v2 e autorização explícita de campanha/gasto.
 - Observar os relatórios agregados do DMARC em `p=none`; qualquer evolução

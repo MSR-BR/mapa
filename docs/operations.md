@@ -718,3 +718,26 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   `dpl_BBVx5u3EUhR8pJ5Dito77vaSV7R1` READY e promovido ao domínio canônico.
 - Health `status=ok`, quatro integrações configuradas, home HTTP 200, dashboard
   anônimo redirecionado ao login e nenhum erro encontrado nos logs pós-rollout.
+
+## Change 098 — Search Console e baseline de indexação (24/09/2026)
+
+- Propriedade canônica: `sc-domain:mapadapesquisa.com.br`.
+- Verificação: TXT no apex; não remover enquanto a propriedade for usada.
+- Antes de qualquer edição DNS, inventariar a zona; depois, comparar A, MX,
+  DMARC, DKIM, SPF do subdomínio de envio, DS e DNSKEY nos dois autoritativos e
+  em resolvedor independente.
+- Sitemap operacional: `https://mapadapesquisa.com.br/sitemap.xml`.
+- Em 24/09/2026 o endpoint respondeu HTTP 200, `application/xml`, inclusive para
+  Googlebot, passou em `xmllint` e o Search Console concluiu o processamento com
+  duas páginas descobertas e zero vídeos.
+- Baseline agregado inicial: Performance e Page indexing em processamento; Core
+  Web Vitals sem dados de uso suficientes nos últimos 90 dias.
+- Inspeção inicial: raiz indexada; `/home.html` acessível, desconhecida e
+  autocanônica; `/login` bloqueada por `robots.txt`; HTTP 308 para HTTPS.
+- Associação confirmada com GA4 `Mapa da Pesquisa (550650234)` e stream Web
+  `15460310071`; o vínculo aparece no Search Console e em GA4 Admin > Product
+  links > Search Console links.
+- Não iniciar Google Ads nesta Change. Canonicals, sitemap consolidado e LCP
+  pertencem à C099.
+- Pó Mágico sucessor: `po_magico_v20260924.002.md`, com blueprint Digital
+  Discovery & Growth v1.2.
