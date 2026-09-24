@@ -5,11 +5,14 @@ import "./globals.css";
 import { AnalyticsConsent } from "@/modules/analytics/analytics-consent";
 
 const geistSans = Geist({
+  display: "optional",
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
+  display: "optional",
+  preload: false,
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });

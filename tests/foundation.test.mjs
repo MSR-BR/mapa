@@ -9,13 +9,17 @@ const readProjectFile = (path) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
 test("keeps the branded foundation and locale in the App Router", async () => {
-  const [layout, page] = await Promise.all([
+  const [layout, page, brandLogo] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("app/page.tsx"),
+    readProjectFile("modules/branding/brand-logo.tsx"),
   ]);
 
   assert.match(layout, /<html lang="pt-BR"/);
   assert.match(layout, /title: \{ default: "Mapa da Pesquisa"/);
+  assert.match(layout, /display: "optional"/);
+  assert.match(layout, /preload: false/);
+  assert.match(brandLogo, /sizes=\{config\.sizes\}/);
   assert.match(page, /Vamos construir o mapa da sua pesquisa\?/);
   assert.match(page, /Da situação-problema ao projeto de pesquisa/);
   assert.doesNotMatch(page, /Comece pela ideia/);

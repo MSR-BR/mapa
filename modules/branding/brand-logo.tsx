@@ -9,24 +9,27 @@ type BrandLogoProps = {
   priority?: boolean;
 };
 
-const logoConfig: Record<BrandLogoVariant, { src: string; width: number; height: number; alt: string }> = {
+const logoConfig: Record<BrandLogoVariant, { src: string; width: number; height: number; alt: string; sizes: string }> = {
   wordmark: {
     src: "/brand/mapa-da-pesquisa-wordmark.png",
     width: 1050,
     height: 289,
     alt: "Mapa da Pesquisa",
+    sizes: "(max-width: 520px) 173px, 272px",
   },
   mark: {
     src: "/brand/mapa-da-pesquisa-mark.png",
     width: 711,
     height: 858,
     alt: "Mapa da Pesquisa",
+    sizes: "70px",
   },
   "app-icon": {
     src: "/brand/mapa-da-pesquisa-app-icon.png",
     width: 919,
     height: 937,
     alt: "Mapa da Pesquisa",
+    sizes: "52px",
   },
 };
 
@@ -43,6 +46,7 @@ export function BrandLogo({ variant = "wordmark", className, decorative = false,
       alt={decorative ? "" : config.alt}
       aria-hidden={decorative ? true : undefined}
       priority={priority}
+      sizes={config.sizes}
     />
   );
 }
