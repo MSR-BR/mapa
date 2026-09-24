@@ -9,15 +9,14 @@
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes 001–090, 092–096 e 098–099 concluídas conforme `.specs/roadmap.md`.
+- Changes 001–090, 092–096, 098–099 e 101 concluídas conforme `.specs/roadmap.md`.
 - C097 está implantada e em observação até 08/10/2026.
 - C099 foi concluída: raiz canônica única, redirect legado, indexação, cards,
   dados estruturados, poster e desempenho publicados em 24/09/2026.
 - C100 permanece futura e bloqueada até existir baseline limpo e nova
   autorização.
-- C101 está implementada e validada localmente. A revisão candidata mantém o
-  Gemini 3.6 Flash, mede as 13 operações sem conteúdo sensível e aguarda
-  autorização explícita para publicação em produção.
+- C101 está publicada em produção. O Gemini 3.6 Flash mede as 13 operações sem
+  conteúdo sensível; plano e limites foram preservados até existir baseline.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -63,7 +62,11 @@ têm observabilidade estruturada de modelo, duração, tokens, término, avisos 
 falhas normalizadas. Prompts, conteúdo gerado, dados pessoais, segredos e
 mensagens brutas do provedor não entram nos logs. Os limites foram
 centralizados sem redução, o modelo padrão continua `gemini-3.6-flash` e o
-raciocínio continua `minimal`. Nenhuma mudança remota foi feita.
+raciocínio continua `minimal`. O deployment
+`dpl_FhQ6hF6zvk2zWhHcN9HDcw1km13B` está READY no domínio canônico, versão
+`v24092026.2`. Health, smokes Gemini isolado/canônico, telemetria sanitizada e
+logs sem erros passaram. O rollback permanece
+`dpl_5fuuXKdrcddu8FsNzQDBuyVh4Sex` (`v24092026.1`).
 
 A C099 foi concluída em 24/09/2026. A raiz incorporou a landing e preservou os
 modos Rápido/Avançado; `/home.html` responde 308; sitemap contém somente a
@@ -193,8 +196,8 @@ deployment final.
 
 ## Questões em aberto
 
-- Publicar a revisão candidata da C101 após autorização explícita e observar
-  sete dias de métricas agregadas antes de alterar limites ou plano Gemini.
+- Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
+  plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
   decisões de aquisição.
 - Acompanhar o LCP de campo da raiz; as amostras de laboratório da C099 ficaram

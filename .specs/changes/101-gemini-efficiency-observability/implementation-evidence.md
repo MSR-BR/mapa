@@ -50,3 +50,16 @@ A aplicação passou a emitir um evento estruturado para cada operação Gemini 
 ## Próxima leitura
 
 Após a publicação, observar ao menos sete dias de eventos agregados por operação antes de reduzir limites ou avaliar mudança de plano. A decisão deve considerar volume, tokens médios e p95, taxa de falha, `finishReason`, tentativas e concentração de custo por operação.
+
+## Rollout de produção
+
+- Commit funcional: `db6744505f310c2defcd8e06986bbca57bf031cf`.
+- Deployment: `dpl_FhQ6hF6zvk2zWhHcN9HDcw1km13B`.
+- Versão: `v24092026.2`.
+- Destino: `https://mapadapesquisa.com.br`.
+- Artefato validado antes da promoção com health `ok`.
+- Smoke isolado: 237 tokens de entrada, 103 de saída, 340 no total e `finishReason=stop`.
+- Smoke canônico: 237 tokens de entrada, 94 de saída, 331 no total e `finishReason=stop`.
+- Ambos os eventos tiveram `warningCount=0`, `attempt=1` e nenhum conteúdo acadêmico nos logs.
+- Varredura de erros após a promoção: limpa.
+- Rollback confirmado: deployment anterior `dpl_5fuuXKdrcddu8FsNzQDBuyVh4Sex`, versão `v24092026.1`.

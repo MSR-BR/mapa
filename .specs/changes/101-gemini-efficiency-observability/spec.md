@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementada localmente; publicação pendente de autorização para a revisão exata.
+Concluída e publicada em produção em 24/09/2026.
 
 ## Contexto
 
@@ -54,3 +54,7 @@ Remover o invólucro de observabilidade e restaurar as chamadas diretas a `gener
 - `npm run security:audit`: aprovado, com a limitação remota já conhecida.
 - `security_fast_check.py --mode worktree`: aprovado, sem gatilhos sensíveis.
 - `git diff --check`: aprovado.
+- Deployment `dpl_FhQ6hF6zvk2zWhHcN9HDcw1km13B`: READY e promovido para o domínio canônico.
+- Health canônico: `status=ok`, versão `v24092026.2` e quatro provedores configurados.
+- Smokes Gemini isolado e canônico: respostas estruturadas válidas e eventos `gemini_generation_completed` sanitizados.
+- Logs pós-release: nenhum erro encontrado.

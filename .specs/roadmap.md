@@ -96,7 +96,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 098 | Search Console e baseline de indexação | Concluída | Propriedade de domínio verificada por DNS; sitemap processado com duas páginas; URLs, canonicals, baseline e vínculo GA4 comprovados. |
 | 099 | Consolidação canônica, SEO e desempenho | Concluída | Raiz única, 308 legado, sitemap com uma URL, noindex crawlable, card social, WebApplication, poster otimizado, Lighthouse 95–96 e Search Console reconciliado em `v24092026.1`. |
 | 100 | Prontidão para Google Ads e Consent Mode v2 | Futura / bloqueada | Preparar consentimento, conversão, UTMs, orçamento e stop-loss somente após C097–C099 e 14 dias de dados limpos; campanha exige autorização posterior. |
-| 101 | Eficiência, custo e observabilidade do Gemini | Implementada localmente / release pendente | Treze operações instrumentadas com tokens, duração, modelo e falhas sanitizadas; limites preservados e plano inalterado até existir baseline por operação. |
+| 101 | Eficiência, custo e observabilidade do Gemini | Concluída | Treze operações instrumentadas com tokens, duração, modelo e falhas sanitizadas; produção em `v24092026.2`, limites preservados e plano inalterado até existir baseline por operação. |
 
 ## Marcos
 
