@@ -9,7 +9,7 @@
 - Supabase: projeto `aeaweherkrqmlqnxsmib`, plano Free, região `sa-east-1`.
 - Gemini e Research Starter: chaves exclusivamente server-side.
 
-## GA4 — Change 054
+## GA4 — Changes 054 e 097
 
 O Measurement ID `G-MKFYYRZG87` só é carregado depois que o usuário aceita
 métricas. Ao recusar, o script e os eventos não essenciais não são carregados.
@@ -33,18 +33,20 @@ acadêmico, e-mail, nome, UUID, comentário, resposta de provedor ou stack trace
 `export_pdf_failed`, `support_opened`, `support_submitted` e
 `bug_report_submitted`.
 
-Os parâmetros são limitados a `auth_state`, `profile_role`, `source`,
-`entry_mode`, `product_type`, `stage`, `result`, `reason_code`,
-`reference_count_bucket`, `has_advisor` e `stage_number`. A camada central
-converte qualquer valor fora da lista para `unknown`.
+Desde 24/09/2026, os parâmetros de produto são limitados a
+`app_auth_state`, `app_role`, `app_surface`, `app_entry_mode`,
+`app_product_type`, `app_stage`, `app_result`, `app_reason_code`,
+`app_reference_count_bucket`, `app_has_advisor`, `app_macro_stage` e
+`app_step`. A camada central converte qualquer valor fora da lista para
+`unknown`. `source`, `medium`, `campaign`, `term` e `content` ficam reservados
+para aquisição e UTMs.
 
 ### Como acompanhar o uso
 
-No GA4, cadastrar em **Administração → Definições personalizadas → Dimensões
-personalizadas** os parâmetros `auth_state`, `profile_role`, `source`,
-`entry_mode`, `product_type`, `stage`, `result`, `reason_code`,
-`reference_count_bucket` e `has_advisor` como dimensões de evento. Não criar
-dimensões para prompts, títulos, e-mails ou identificadores.
+No GA4, as doze dimensões `app_*` acima estão cadastradas como dimensões de
+evento. As onze dimensões anteriores permanecem somente para consulta histórica
+e não recebem novas emissões. Não criar dimensões para prompts, títulos,
+e-mails ou identificadores.
 
 Criar os funis com as sequências:
 
@@ -52,6 +54,10 @@ Criar os funis com as sequências:
 2. `project_start` → `project_completed` (conclusão em coorte de 7/30 dias);
 3. `advisor_link_succeeded` → `stage_submitted` → `advisor_approved` (validação
    do orientador).
+
+A exploração operacional “Mapa — Jornada principal” usa o funil aberto
+`login_success` → `project_start` → `stage_completed` → `project_completed`.
+Os key events primários são `project_start` e `project_completed`.
 
 Para “começou e não terminou”, usar uma exploração de coorte sem evento
 `beforeunload`: `project_start` sem `project_completed` em 7 ou 30 dias. A
@@ -362,6 +368,31 @@ clicável para `https://mapadapesquisa.com.br` e apresenta o registro CBL/ISBN
 - Definições personalizadas e relatórios do GA4 são configuração operacional
   externa e estão documentados acima; não há PII nos parâmetros.
 - Versão de código: `v25082026.6`.
+
+## Change 097 — Integridade de atribuição e taxonomia GA4 (24/09/2026)
+
+- Os nomes de eventos foram preservados, mas todo contexto de produto migrou
+  para doze parâmetros prefixados `app_*`; `source` e `stage_number` deixaram
+  de ser emitidos.
+- Macroetapas 1–4 e passos internos agora são dimensões distintas por
+  `app_macro_stage` e `app_step`.
+- As doze novas dimensões foram registradas no GA4 sem apagar as onze dimensões
+  legadas. A data de 24/09/2026 é uma quebra de série para dimensões de produto.
+- `project_start` e `project_completed` são key events. `advisor_approved`
+  continua diagnóstico, e o evento padrão `purchase`, sem dados de stream, é
+  ignorado pelos relatórios operacionais.
+- O funil “Mapa — Jornada principal” foi corrigido e configurado como aberto,
+  com dados em todas as quatro etapas.
+- Um teste público controlado capturou `project_start` exatamente uma vez com
+  contexto `app_*` e sem o parâmetro reservado `source`.
+- O filtro Internal Traffic permanece em Testing até provar a marcação
+  `traffic_type=internal`; ativá-lo antes disso pode excluir dados válidos de
+  forma irreversível.
+- A retenção permanece em dois meses para eventos e quatorze meses para
+  usuários. O baseline limpo será observado de 24/09 a 08/10/2026; Google Ads
+  permanece fora do escopo.
+- Commit `bdb7608`; deployment
+  `dpl_9Cbsri68KvXY6t4ppoPsn2WtqNz4` READY no domínio canônico.
 
 ## Change 055 — Auditoria live da descoberta (26/08/2026)
 
