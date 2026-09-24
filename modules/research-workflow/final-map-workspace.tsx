@@ -18,7 +18,7 @@ import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
-import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
 import { WorkflowProgress } from "./workflow-progress";
@@ -74,8 +74,9 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
   const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage: "final" });
-    trackAnalyticsEvent("stage_started", { stage: "final", stage_number: "6", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(finalMap.references.length) });
+    const analyticsPosition = getAnalyticsWorkflowPosition("final_map");
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: "dashboard", ...analyticsPosition });
+    trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(finalMap.references.length) });
   }, [activeRole, finalMap.references.length]);
 
   function topicReferenceIds(topicIds: string[]) {
@@ -89,7 +90,8 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
     setOperation(action);
     setMessage(null);
     setErrors([]);
-    if (action === "complete") trackAnalyticsEvent("stage_submitted", { stage: "final", stage_number: "6", profile_role: activeRole });
+    const analyticsPosition = getAnalyticsWorkflowPosition("final_map");
+    if (action === "complete") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
       const response = await fetch(`/api/projects/${projectId}/final-map`, {
         body: JSON.stringify({ action, revision: workflow.revision, targetStep }),
@@ -99,14 +101,14 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
       if (payload.workflow) setWorkflow(payload.workflow);
       if (response.status === 422) {
-        trackAnalyticsEvent("stage_blocked", { stage: "final", stage_number: "6", result: "blocked", reason_code: "validation" });
+        trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise as pendências antes de concluir."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o mapa final.");
       if (action === "complete") {
-        trackAnalyticsEvent("stage_completed", { stage: "final", stage_number: "6", result: "success", profile_role: activeRole });
-        trackAnalyticsEvent("project_completed", { stage: "final", result: "success", reference_count_bucket: getReferenceCountBucket(finalMap.references.length), profile_role: activeRole });
+        trackAnalyticsEvent("stage_completed", { ...analyticsPosition, app_result: "success", app_role: activeRole });
+        trackAnalyticsEvent("project_completed", { ...analyticsPosition, app_result: "success", app_reference_count_bucket: getReferenceCountBucket(finalMap.references.length), app_role: activeRole });
         router.push("/dashboard");
         return;
       }

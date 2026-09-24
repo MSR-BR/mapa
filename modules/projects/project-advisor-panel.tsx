@@ -21,7 +21,7 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
     const nextState = await updateProjectAdvisor(previousState, formData);
     if (nextState.status === "success") {
       setEditing(!nextState.value?.trim());
-      trackAnalyticsEvent(nextState.linked ? "advisor_link_succeeded" : "advisor_link_pending", { profile_role: "student", source: "dashboard", has_advisor: nextState.linked ? "yes" : "unknown", reason_code: nextState.linked ? undefined : "advisor_pending" });
+      trackAnalyticsEvent(nextState.linked ? "advisor_link_succeeded" : "advisor_link_pending", { app_role: "student", app_surface: "dashboard", app_has_advisor: nextState.linked ? "yes" : "unknown", app_reason_code: nextState.linked ? undefined : "advisor_pending" });
     }
     return nextState;
   }, {
@@ -55,7 +55,7 @@ export function ProjectAdvisorPanel({ advisorEmail, advisorLinked, projectId }: 
           </button>
         </div>
       ) : (
-        <form action={formAction} onSubmit={() => trackAnalyticsEvent("advisor_link_started", { profile_role: "student", source: "dashboard" })}>
+        <form action={formAction} onSubmit={() => trackAnalyticsEvent("advisor_link_started", { app_role: "student", app_surface: "dashboard" })}>
           <input name="projectId" type="hidden" value={projectId} />
           <input name="profileRoleVersion" type="hidden" value={roleVersion} />
           <label>

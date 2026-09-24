@@ -38,7 +38,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   const autoTriggered = useRef(false);
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: autoGenerate ? "resume" : "dashboard" });
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: autoGenerate ? "resume" : "dashboard" });
   }, [activeRole, autoGenerate]);
 
   useEffect(() => {
@@ -72,8 +72,8 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
     setMessage(null);
     const isRetry = operation === "generation" && snapshot.job?.status === "failed";
     trackAnalyticsEvent(isRetry ? "generation_retry" : operation === "literature" ? "literature_optimization_started" : "generation_started", {
-      stage: operation === "literature" ? "literature" : "unknown",
-      result: isRetry ? "retry" : "started",
+      app_stage: operation === "literature" ? "literature" : "unknown",
+      app_result: isRetry ? "retry" : "started",
     });
     const idempotencyKey = crypto.randomUUID();
     const poll = window.setInterval(() => { void refresh(); }, 1_500);
@@ -91,10 +91,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       setDirty(false);
       setMessage("Estrutura gerada e validada.");
       const referenceBucket = getReferenceCountBucket(next.references.length);
-      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_completed" : "generation_completed", { result: "success", reference_count_bucket: referenceBucket, stage: operation === "literature" ? "literature" : "unknown" });
+      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_completed" : "generation_completed", { app_result: "success", app_reference_count_bucket: referenceBucket, app_stage: operation === "literature" ? "literature" : "unknown" });
     } catch (error) {
       const reasonCode = error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response";
-      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_failed" : "generation_failed", { result: "failed", reason_code: reasonCode, stage: operation === "literature" ? "literature" : "unknown" });
+      trackAnalyticsEvent(operation === "literature" ? "literature_optimization_failed" : "generation_failed", { app_result: "failed", app_reason_code: reasonCode, app_stage: operation === "literature" ? "literature" : "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível gerar a estrutura.");
       await refresh();
     } finally {
@@ -146,7 +146,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível salvar.");
       setDirty(false);
       setSnapshot((current) => ({ ...current, revision: payload.revision, structure: draft }));
-      trackAnalyticsEvent("project_draft_saved", { source: "dashboard", result: "success" });
+      trackAnalyticsEvent("project_draft_saved", { app_surface: "dashboard", app_result: "success" });
       router.push("/dashboard");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível salvar.");

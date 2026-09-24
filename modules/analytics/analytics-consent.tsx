@@ -35,13 +35,13 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
         // Storage can be unavailable in private browsing; the event remains best effort.
       }
       if (alreadySent) return;
-      setAnalyticsContext({ auth_state: "authenticated" });
+      setAnalyticsContext({ app_auth_state: "authenticated" });
       let attempts = 0;
       const send = () => {
         if (!active) return;
         if (typeof (window as Window & { gtag?: unknown }).gtag === "function") {
           try { window.sessionStorage.setItem(sessionKey, "1"); } catch { /* best effort */ }
-          trackAnalyticsEvent("login_success", { auth_state: "authenticated", source: "unknown" });
+          trackAnalyticsEvent("login_success", { app_auth_state: "authenticated", app_surface: "unknown" });
           return;
         }
         if (attempts++ < 20) window.setTimeout(send, 250);
@@ -57,10 +57,10 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
         let hadSessionEvent = false;
         try { hadSessionEvent = window.sessionStorage.getItem(sessionKey) === "1"; } catch { /* best effort */ }
         if (hadSessionEvent) {
-          trackAnalyticsEvent("logout", { auth_state: "authenticated" });
+          trackAnalyticsEvent("logout", { app_auth_state: "authenticated" });
         }
         try { window.sessionStorage.removeItem(sessionKey); } catch { /* best effort */ }
-        setAnalyticsContext({ auth_state: "anonymous", profile_role: "unknown" });
+        setAnalyticsContext({ app_auth_state: "anonymous", app_role: "unknown" });
       }
     });
     return () => {

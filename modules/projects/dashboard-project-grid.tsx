@@ -61,8 +61,8 @@ export function DashboardProjectGrid({
 
   async function integrate() {
     if (selectedIds.length < 2 || selectedIds.length > 4) return;
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard" });
-    trackAnalyticsEvent("project_integration_started", { profile_role: activeRole, source: "dashboard", result: "started" });
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: "dashboard" });
+    trackAnalyticsEvent("project_integration_started", { app_role: activeRole, app_surface: "dashboard", app_result: "started" });
     setIntegrating(true);
     setMessage(null);
     setProgress({ percent: 12, step: INTEGRATION_STEPS[0] });
@@ -90,12 +90,12 @@ export function DashboardProjectGrid({
         percent: 100,
         step: `Integração concluída: ${sourceTitles.join(", ")}`,
       });
-      trackAnalyticsEvent("project_integration_completed", { profile_role: activeRole, source: "dashboard", result: "success", reference_count_bucket: "unknown" });
+      trackAnalyticsEvent("project_integration_completed", { app_role: activeRole, app_surface: "dashboard", app_result: "success", app_reference_count_bucket: "unknown" });
       window.setTimeout(() => {
         router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
       }, 700);
     } catch (error) {
-      trackAnalyticsEvent("project_integration_failed", { profile_role: activeRole, source: "dashboard", result: "failed", reason_code: "unknown" });
+      trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
       setIntegrating(false);
       setProgress({ percent: 0, step: INTEGRATION_STEPS[0] });

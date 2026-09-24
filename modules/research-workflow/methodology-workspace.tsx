@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
-import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
@@ -224,8 +224,9 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   ];
 
   useEffect(() => {
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage: "methodology" });
-    trackAnalyticsEvent("stage_started", { stage: "methodology", stage_number: "6", profile_role: activeRole, has_advisor: "unknown" });
+    const analyticsPosition = getAnalyticsWorkflowPosition("methodology_matrix");
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: "dashboard", ...analyticsPosition });
+    trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_has_advisor: "unknown" });
   }, [activeRole]);
 
   function applyWorkflow(next: ResearchWorkflow) {
@@ -268,7 +269,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
     setOperation(action);
     setMessage(null);
     setErrors([]);
-    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage: "methodology", stage_number: "6", profile_role: activeRole });
+    const analyticsPosition = getAnalyticsWorkflowPosition("methodology_matrix");
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
       const includePlan = action === "save" || action === "validate";
       const response = await fetch(`/api/projects/${projectId}/methodology`, {
@@ -285,20 +287,20 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
       if (payload.workflow) applyWorkflow(payload.workflow);
       if (response.status === 422) {
-        trackAnalyticsEvent("stage_blocked", { stage: "methodology", stage_number: "6", result: "blocked", reason_code: "validation" });
+        trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise a matriz metodológica."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
       setMessage(payload.message ?? null);
-      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage: "methodology", stage_number: "6", result: "success", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(references.length) });
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
       } else {
         router.refresh();
       }
     } catch (error) {
-      trackAnalyticsEvent("stage_blocked", { stage: "methodology", stage_number: "6", result: "failed", reason_code: "provider_invalid_response" });
+      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a metodologia.");
     } finally {
       setOperation(null);

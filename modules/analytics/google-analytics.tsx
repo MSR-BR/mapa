@@ -13,7 +13,7 @@ export function GoogleAnalytics({ measurementId, nonce }: { measurementId: strin
       attempts += 1;
       if (typeof (window as Window & { gtag?: unknown }).gtag === "function") {
         window.clearInterval(timer);
-        trackAnalyticsEvent("consent_choice", { result: "accepted", auth_state: "anonymous", profile_role: "unknown" });
+        trackAnalyticsEvent("consent_choice", { app_result: "accepted", app_auth_state: "anonymous", app_role: "unknown" });
       } else if (attempts >= 20) {
         window.clearInterval(timer);
       }

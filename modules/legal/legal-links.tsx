@@ -46,7 +46,7 @@ export function LegalLinks({ defaultEmail = "" }: { defaultEmail?: string }) {
     <nav aria-label="Informações legais" className="legal-links">
       <button onClick={() => setPanel("terms")} type="button">Termos de uso</button>
       <button onClick={() => setPanel("privacy")} type="button">Privacidade</button>
-      <button onClick={() => { trackAnalyticsEvent("support_opened", { source: "home" }); setPanel("support"); }} type="button">Suporte</button>
+      <button onClick={() => { trackAnalyticsEvent("support_opened", { app_surface: "home" }); setPanel("support"); }} type="button">Suporte</button>
       <button onClick={() => setPanel("bug")} type="button">Relatar problema</button>
       <button onClick={() => setPanel("credits")} type="button">Créditos</button>
       <span>{APP_VERSION}</span>
@@ -79,7 +79,7 @@ export function LegalLinks({ defaultEmail = "" }: { defaultEmail?: string }) {
               const payload = await response.json().catch(() => null);
               setSupportStatus(response.ok ? "Mensagem enviada. Responderemos por e-mail." : (payload?.error || "Não foi possível enviar agora."));
               if (response.ok) {
-                trackAnalyticsEvent("support_submitted", { source: "home", result: "success" });
+                trackAnalyticsEvent("support_submitted", { app_surface: "home", app_result: "success" });
                 formElement.reset();
               }
             } catch {

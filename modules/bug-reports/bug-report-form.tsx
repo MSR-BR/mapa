@@ -31,7 +31,7 @@ export function BugReportForm({ defaultEmail = "" }: Props) {
             return;
           }
           formElement.reset();
-          trackAnalyticsEvent("bug_report_submitted", { source: "home", result: "success" });
+          trackAnalyticsEvent("bug_report_submitted", { app_surface: "home", app_result: "success" });
           setStatus({ kind: "success", text: "Relato registrado. A equipe recebeu a solicitação e poderá responder por e-mail." });
         } catch {
           setStatus({ kind: "error", text: "Não foi possível registrar agora. Tente novamente." });

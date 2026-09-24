@@ -129,13 +129,13 @@ export function QuickStartForm({
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
     const source = resumeDraft ? "resume" : "dashboard";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source, entry_mode: entryMode, product_type: productType });
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: source, app_entry_mode: entryMode, app_product_type: productType });
     trackAnalyticsEvent(resumeDraft ? "project_resumed" : "project_start", {
-      entry_mode: entryMode,
-      product_type: productType,
-      source,
-      result: "started",
-      profile_role: activeRole,
+      app_entry_mode: entryMode,
+      app_product_type: productType,
+      app_surface: source,
+      app_result: "started",
+      app_role: activeRole,
     });
   }
 

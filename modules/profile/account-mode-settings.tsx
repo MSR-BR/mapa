@@ -65,10 +65,10 @@ export function AccountModeSettings({ activeRole, roleVersion }: Props) {
     handledRequestRef.current = state.requestId;
     if (state.status === "success" && state.activeRole) {
       trackAnalyticsEvent("profile_mode_changed", {
-        auth_state: "authenticated",
-        profile_role: state.activeRole,
-        result: "success",
-        source: "dashboard",
+        app_auth_state: "authenticated",
+        app_role: state.activeRole,
+        app_result: "success",
+        app_surface: "dashboard",
       });
       publishModeRefresh(state.requestId);
       router.replace("/dashboard");
@@ -77,11 +77,11 @@ export function AccountModeSettings({ activeRole, roleVersion }: Props) {
     }
     if (state.status === "conflict") {
       trackAnalyticsEvent("profile_mode_changed", {
-        auth_state: "authenticated",
-        profile_role: activeRole,
-        reason_code: "duplicate_action",
-        result: "failed",
-        source: "dashboard",
+        app_auth_state: "authenticated",
+        app_role: activeRole,
+        app_reason_code: "duplicate_action",
+        app_result: "failed",
+        app_surface: "dashboard",
       });
       router.refresh();
     }

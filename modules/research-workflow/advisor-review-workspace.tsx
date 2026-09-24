@@ -6,7 +6,7 @@ import { ADVISOR_REVIEW_LABELS, currentAdvisorReview } from "./advisor-review";
 import { buildFinalMap, type FinalMap, type FinalMapTopic } from "./final-map";
 import { buildReferenceCodeMap, withCitationMarkers } from "./reference-citations";
 import type { AdvisorReview, DiscoveryReference, ResearchWorkflow, ResearchWorkflowContent, ValidatedElement } from "./schema";
-import { setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 
 type AdvisorAction = "approve" | "request_changes" | "save_comment";
@@ -339,10 +339,9 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
 
   useEffect(() => {
     if (!review) return;
-    const stage = review.step === "problem_statement" ? "problem" : review.step === "literature_topics" ? "literature" : review.step === "methodology_matrix" ? "methodology" : review.step === "final_map" ? "final" : "definition";
-    const stageNumber = review.step === "problem_statement" ? "1" : review.step === "general_objective" ? "2" : review.step === "specific_objectives" ? "3" : review.step === "literature_topics" ? "4" : review.step === "development_topics" ? "5" : "6";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: "advisor", source: "advisor_dashboard", stage });
-    trackAnalyticsEvent("advisor_review_opened", { stage, stage_number: stageNumber, profile_role: "advisor" });
+    const analyticsPosition = getAnalyticsWorkflowPosition(review.step);
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: "advisor", app_surface: "advisor_dashboard", ...analyticsPosition });
+    trackAnalyticsEvent("advisor_review_opened", { ...analyticsPosition, app_role: "advisor" });
   }, [review]);
 
   async function submit(action: AdvisorAction) {
@@ -350,8 +349,6 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
     setBusyAction(action);
     setError(null);
     setMessage(null);
-    const stage = review.step === "problem_statement" ? "problem" : review.step === "literature_topics" ? "literature" : review.step === "methodology_matrix" ? "methodology" : review.step === "final_map" ? "final" : "definition";
-    const stageNumber = review.step === "problem_statement" ? "1" : review.step === "general_objective" ? "2" : review.step === "specific_objectives" ? "3" : review.step === "literature_topics" ? "4" : review.step === "development_topics" ? "5" : "6";
     try {
       const response = await fetch(`/api/projects/${projectId}/advisor-review`, {
         body: JSON.stringify({
@@ -367,10 +364,11 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
       if (!response.ok || !payload.workflow) throw new Error(payload.error ?? "Não foi possível salvar a validação.");
       setWorkflow(payload.workflow);
       setMessage(payload.message ?? "Validação salva.");
-      if (action === "approve") trackAnalyticsEvent("advisor_approved", { stage, stage_number: stageNumber, profile_role: "advisor", result: "success" });
+      const analyticsPosition = getAnalyticsWorkflowPosition(review.step);
+      if (action === "approve") trackAnalyticsEvent("advisor_approved", { ...analyticsPosition, app_role: "advisor", app_result: "success" });
       if (action === "request_changes") {
-        trackAnalyticsEvent("advisor_correction_requested", { stage, stage_number: stageNumber, profile_role: "advisor", reason_code: "advisor_correction" });
-        trackAnalyticsEvent("stage_revision_requested", { stage, stage_number: stageNumber, profile_role: "advisor", reason_code: "advisor_correction" });
+        trackAnalyticsEvent("advisor_correction_requested", { ...analyticsPosition, app_role: "advisor", app_reason_code: "advisor_correction" });
+        trackAnalyticsEvent("stage_revision_requested", { ...analyticsPosition, app_role: "advisor", app_reason_code: "advisor_correction" });
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Não foi possível salvar a validação.");

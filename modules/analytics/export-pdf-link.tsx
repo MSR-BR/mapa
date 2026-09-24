@@ -6,14 +6,14 @@ import {
   getReferenceCountBucket,
   trackAnalyticsEvent,
   type AnalyticsProductType,
-  type AnalyticsSource,
+  type AnalyticsSurface,
 } from "./analytics";
 
 type ExportPdfLinkProps = {
   href: string;
   referenceCount: number;
   productType?: AnalyticsProductType;
-  source?: AnalyticsSource;
+  source?: AnalyticsSurface;
   children: ReactNode;
 };
 
@@ -26,10 +26,12 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
   async function download(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
     trackAnalyticsEvent("export_pdf_started", {
-      stage: "final",
-      product_type: productType,
-      source,
-      reference_count_bucket: getReferenceCountBucket(referenceCount),
+      app_stage: "final",
+      app_macro_stage: "4",
+      app_step: "final_map",
+      app_product_type: productType,
+      app_surface: source,
+      app_reference_count_bucket: getReferenceCountBucket(referenceCount),
     });
 
     try {
@@ -45,14 +47,16 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
       anchor.remove();
       URL.revokeObjectURL(objectUrl);
       trackAnalyticsEvent("export_pdf_completed", {
-        result: "success",
-        stage: "final",
-        product_type: productType,
-        source,
-        reference_count_bucket: getReferenceCountBucket(referenceCount),
+        app_result: "success",
+        app_stage: "final",
+        app_macro_stage: "4",
+        app_step: "final_map",
+        app_product_type: productType,
+        app_surface: source,
+        app_reference_count_bucket: getReferenceCountBucket(referenceCount),
       });
     } catch {
-      trackAnalyticsEvent("export_pdf_failed", { result: "failed", stage: "final", product_type: productType, source, reason_code: "network" });
+      trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: "network" });
       window.location.assign(href);
     }
   }

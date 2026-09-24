@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import {
   trackAnalyticsEvent,
-  type AnalyticsSource,
+  type AnalyticsSurface,
 } from "@/modules/analytics/analytics";
 
 import type { SocialAuthErrorCode, SocialAuthProvider } from "./oauth-contract";
@@ -16,7 +16,7 @@ type SocialAuthFormProps = {
   label: string;
   mark: string;
   provider: SocialAuthProvider;
-  source: Extract<AnalyticsSource, "google">;
+  source: Extract<AnalyticsSurface, "google">;
 };
 
 function SocialAuthSubmitButton({ label, mark, source }: Pick<SocialAuthFormProps, "label" | "mark" | "source">) {
@@ -35,7 +35,7 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
     <form
       action={action}
       className="social-auth-form"
-      onSubmit={() => trackAnalyticsEvent("login_started", { result: "started", source })}
+      onSubmit={() => trackAnalyticsEvent("login_started", { app_result: "started", app_surface: source })}
     >
       <input name="next" type="hidden" value={destination} />
       <input name="provider" type="hidden" value={provider} />
@@ -47,9 +47,9 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
 export function SocialAuthErrorNotice({ code, message }: { code: SocialAuthErrorCode; message: string }) {
   useEffect(() => {
     trackAnalyticsEvent("login_failed", {
-      reason_code: "provider_unavailable",
-      result: "failed",
-      source: code === "google" ? code : "unknown",
+      app_reason_code: "provider_unavailable",
+      app_result: "failed",
+      app_surface: code === "google" ? code : "unknown",
     });
   }, [code]);
 

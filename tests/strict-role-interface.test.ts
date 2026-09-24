@@ -151,7 +151,7 @@ test("records real role context and a PII-free mode-change event", () => {
 
   assert.match(analytics, /"profile_mode_changed"/);
   assert.equal((settings.match(/trackAnalyticsEvent\("profile_mode_changed"/g) ?? []).length, 2);
-  assert.match(workspaces, /profile_role: activeRole/);
+  assert.match(workspaces, /app_role: activeRole/);
   assert.doesNotMatch(settings, /email\s*:|projectId\s*:|project_id\s*:|project_title\s*:/i);
   assert.doesNotMatch(analytics, /email\??:|projectId\??:|project_id\??:/);
 });

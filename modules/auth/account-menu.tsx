@@ -60,7 +60,7 @@ export function AccountMenu({ accountModeSwitchEnabled, activeRole, avatarUrl, d
         </div>
         {accountModeSwitchEnabled && activeRole ? <Link className="account-menu-link" href="/dashboard/settings">Configurações</Link> : null}
         {isBugReportAdminEmail(email) ? <Link className="account-menu-admin-link" href="/admin/bugs">Relatos de problemas</Link> : null}
-        <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { auth_state: "authenticated", profile_role: activeRole ?? "unknown", source: "dashboard" })}><button type="submit">Sair</button></form>
+        <form action={logout} onSubmit={() => trackAnalyticsEvent("logout", { app_auth_state: "authenticated", app_role: activeRole ?? "unknown", app_surface: "dashboard" })}><button type="submit">Sair</button></form>
       </div>
     </details>
   );

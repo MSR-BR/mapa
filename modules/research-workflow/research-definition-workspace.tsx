@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
-import { getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { STUDENT_ADVISOR_REQUIRED_MESSAGE } from "./advisor-requirement";
 import { pendingAdvisorReview } from "./advisor-review";
@@ -87,9 +87,9 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
         : "Enviar para validação";
 
   useEffect(() => {
-    const stage = step === "problem_statement" ? "problem" : "definition";
-    setAnalyticsContext({ auth_state: "authenticated", profile_role: activeRole, source: "dashboard", stage });
-    if (step) trackAnalyticsEvent("stage_started", { stage, stage_number: step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3", profile_role: activeRole, has_advisor: "unknown" });
+    const analyticsPosition = getAnalyticsWorkflowPosition(step ?? "unknown");
+    setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: "dashboard", ...analyticsPosition });
+    if (step) trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_has_advisor: "unknown" });
   }, [activeRole, step]);
 
   function applyWorkflow(nextWorkflow: ResearchWorkflow) {
@@ -108,9 +108,8 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
     setOperation(action);
     setMessage(null);
     setErrors([]);
-    const stage = step === "problem_statement" ? "problem" : "definition";
-    const stageNumber = step === "problem_statement" ? "1" : step === "general_objective" ? "2" : "3";
-    if (action === "validate") trackAnalyticsEvent("stage_submitted", { stage, stage_number: stageNumber, profile_role: activeRole });
+    const analyticsPosition = getAnalyticsWorkflowPosition(step);
+    if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
       const response = await fetch(`/api/projects/${projectId}/definition`, {
         body: JSON.stringify({
@@ -137,12 +136,12 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
       };
       if (payload.workflow) applyWorkflow(payload.workflow);
       if (response.status === 422) {
-        trackAnalyticsEvent("stage_blocked", { stage, stage_number: stageNumber, result: "blocked", reason_code: "validation" });
+        trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
         setErrors(payload.errors ?? ["Revise o conteúdo antes de validar."]);
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
-      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { stage, stage_number: stageNumber, result: "success", profile_role: activeRole, reference_count_bucket: getReferenceCountBucket(references.length) });
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });

@@ -87,9 +87,9 @@ export function PublicStartForm() {
     }
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
-    setAnalyticsContext({ auth_state: "anonymous", profile_role: "unknown", source: "home", entry_mode: entryMode, product_type: productType });
-    trackAnalyticsEvent("project_start", { entry_mode: entryMode, product_type: productType, source: "home", result: "started" });
-    trackAnalyticsEvent("login_started", { source: "home" });
+    setAnalyticsContext({ app_auth_state: "anonymous", app_role: "unknown", app_surface: "home", app_entry_mode: entryMode, app_product_type: productType });
+    trackAnalyticsEvent("project_start", { app_entry_mode: entryMode, app_product_type: productType, app_surface: "home", app_result: "started" });
+    trackAnalyticsEvent("login_started", { app_surface: "home" });
 
     try {
       localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify(mode === "quick"
