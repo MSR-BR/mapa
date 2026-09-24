@@ -15,6 +15,9 @@
   dados estruturados, poster e desempenho publicados em 24/09/2026.
 - C100 permanece futura e bloqueada até existir baseline limpo e nova
   autorização.
+- C101 está implementada e validada localmente. A revisão candidata mantém o
+  Gemini 3.6 Flash, mede as 13 operações sem conteúdo sensível e aguarda
+  autorização explícita para publicação em produção.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -54,6 +57,13 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C101 foi implementada localmente em 24/09/2026. As 13 operações Gemini agora
+têm observabilidade estruturada de modelo, duração, tokens, término, avisos e
+falhas normalizadas. Prompts, conteúdo gerado, dados pessoais, segredos e
+mensagens brutas do provedor não entram nos logs. Os limites foram
+centralizados sem redução, o modelo padrão continua `gemini-3.6-flash` e o
+raciocínio continua `minimal`. Nenhuma mudança remota foi feita.
 
 A C099 foi concluída em 24/09/2026. A raiz incorporou a landing e preservou os
 modos Rápido/Avançado; `/home.html` responde 308; sitemap contém somente a
@@ -145,6 +155,10 @@ deployment final.
 
 ## Validação local mais recente
 
+- C101: `npm run check` aprovou lint, tipos, 133/133 testes, PDF/DOCX e build
+  Next.js 16.3.5.
+- C101: auditoria de segurança, fast check do worktree e `git diff --check`
+  aprovados.
 - C99: `npm run check` aprovou lint, tipos, 129/129 testes, PDF/DOCX e build
   Next.js 16.3.5.
 - C99: auditoria de segurança, auditoria de dependências sem vulnerabilidades,
@@ -179,6 +193,8 @@ deployment final.
 
 ## Questões em aberto
 
+- Publicar a revisão candidata da C101 após autorização explícita e observar
+  sete dias de métricas agregadas antes de alterar limites ou plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
   decisões de aquisição.
 - Acompanhar o LCP de campo da raiz; as amostras de laboratório da C099 ficaram

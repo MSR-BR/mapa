@@ -4,6 +4,7 @@ import { createGoogleGenerativeAI, type GoogleLanguageModelOptions } from "@ai-s
 import { generateText, Output } from "ai";
 import { z } from "zod";
 
+import { observeGeminiGeneration } from "@/lib/observability/gemini-usage";
 import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
@@ -35,6 +36,22 @@ import {
 } from "./schema";
 
 export const GENERATION_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
+
+export const GEMINI_OUTPUT_TOKEN_BUDGETS = {
+  broaden_research_query: 160,
+  generate_development_topics: 3_200,
+  generate_general_objective: 700,
+  generate_literature_topics: 3_200,
+  generate_methodology_plan: 5_000,
+  generate_problem_candidates: 4_500,
+  generate_research_structure: 8_000,
+  generate_specific_objectives: 2_400,
+  interpret_research_request: 500,
+  merge_research_structures: 8_000,
+  regenerate_problem_statement: 700,
+  review_final_map_coherence: 2_400,
+  suggest_research_prompts: 500,
+} as const;
 
 type ResearchRequestInput = Pick<
   Project,
@@ -210,8 +227,12 @@ function assertDiscoveryReferenceIds(referenceIds: string[], discovery: Proposal
 }
 
 export async function suggestResearchPrompts(prompt: string) {
-  const { output } = await generateText({
-    maxOutputTokens: 500,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.suggest_research_prompts,
+    operation: "suggest_research_prompts",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.suggest_research_prompts,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: promptSuggestionsSchema }),
     prompt: [
@@ -232,8 +253,7 @@ export async function suggestResearchPrompts(prompt: string) {
         thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
-    temperature: 0.45,
-  });
+  }));
 
   return promptSuggestionsSchema.parse(output).suggestions.map((suggestion) => ({
     kind: suggestion.kind,
@@ -245,8 +265,12 @@ export async function broadenResearchQuery(
   project: ResearchRequestInput,
   currentQuery: string,
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 160,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.broaden_research_query,
+    operation: "broaden_research_query",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.broaden_research_query,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: broaderResearchQuerySchema }),
     prompt: [
@@ -269,8 +293,7 @@ export async function broadenResearchQuery(
         thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
-    temperature: 0.1,
-  });
+  }));
 
   return broaderResearchQuerySchema.parse(output).searchTerms.join(" ").trim();
 }
@@ -314,8 +337,12 @@ export async function interpretResearchRequest(
     })}`,
   ].join("\n");
 
-  const { output } = await generateText({
-    maxOutputTokens: 500,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.interpret_research_request,
+    operation: "interpret_research_request",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.interpret_research_request,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: interpretedResearchRequestSchema }),
     prompt,
@@ -324,8 +351,7 @@ export async function interpretResearchRequest(
         thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
-    temperature: 0.1,
-  });
+  }));
 
   return interpretedResearchRequestSchema.parse({
     knowledgeArea: output.knowledgeArea.trim(),
@@ -367,8 +393,13 @@ export async function generateProblemCandidates(
   // reparo evita transformar um desvio pontual da IA em falha definitiva do mapa.
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
-      const { output } = await generateText({
-        maxOutputTokens: 4_500,
+      const { output } = await observeGeminiGeneration({
+        attempt,
+        configuredModel: GENERATION_MODEL,
+        maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_problem_candidates,
+        operation: "generate_problem_candidates",
+      }, () => generateText({
+        maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_problem_candidates,
         model: getGoogleProvider()(GENERATION_MODEL),
         output: Output.object({ schema: generatedProblemCandidatesSchema }),
         prompt: [
@@ -383,8 +414,7 @@ export async function generateProblemCandidates(
             thinkingConfig: { thinkingLevel: "minimal" },
           } satisfies GoogleLanguageModelOptions,
         },
-        temperature: attempt === 1 ? 0.35 : 0.15,
-      });
+      }));
 
       const candidates = output.candidates.map((candidate) => ({
         ...candidate,
@@ -416,8 +446,12 @@ export async function regenerateProblemStatement(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 700,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.regenerate_problem_statement,
+    operation: "regenerate_problem_statement",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.regenerate_problem_statement,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedDefinitionSchema }),
     prompt: [
@@ -432,8 +466,7 @@ export async function regenerateProblemStatement(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.25,
-  });
+  }));
   const result = generatedDefinitionSchema.parse(output);
   assertDiscoveryReferenceIds(result.referenceIds, discovery);
   return result;
@@ -445,8 +478,12 @@ export async function generateGeneralObjective(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 700,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_general_objective,
+    operation: "generate_general_objective",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_general_objective,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedDefinitionSchema }),
     prompt: [
@@ -463,8 +500,7 @@ export async function generateGeneralObjective(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.2,
-  });
+  }));
   const result = generatedDefinitionSchema.parse(output);
   assertDiscoveryReferenceIds(result.referenceIds, discovery);
   return result;
@@ -476,8 +512,12 @@ export async function generateSpecificObjectives(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 2_400,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_specific_objectives,
+    operation: "generate_specific_objectives",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_specific_objectives,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedSpecificObjectivesSchema }),
     prompt: [
@@ -494,8 +534,7 @@ export async function generateSpecificObjectives(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.25,
-  });
+  }));
   const objectives = generatedSpecificObjectivesSchema.parse(output).objectives;
   assertDiscoveryReferenceIds(objectives.flatMap((objective) => objective.referenceIds), discovery);
   return objectives;
@@ -520,8 +559,12 @@ export async function generateLiteratureTopics(
   acceptedConcepts: string[] = [],
   studentContext: string[] = [],
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 3_200,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_literature_topics,
+    operation: "generate_literature_topics",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_literature_topics,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedChapterTopicsSchema }),
     prompt: [
@@ -541,8 +584,7 @@ export async function generateLiteratureTopics(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.25,
-  });
+  }));
   const topics = generatedChapterTopicsSchema.parse(output).topics.map((topic) => ({
     ...topic,
     exceptionJustification: null,
@@ -562,8 +604,12 @@ export async function generateDevelopmentTopics(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await generateText({
-    maxOutputTokens: 3_200,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_development_topics,
+    operation: "generate_development_topics",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_development_topics,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedChapterTopicsSchema }),
     prompt: [
@@ -587,8 +633,7 @@ export async function generateDevelopmentTopics(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.25,
-  });
+  }));
   const topics = generatedChapterTopicsSchema.parse(output).topics;
   assertGeneratedTopicLinks(topics, new Set([...specificObjectives.map((objective) => objective.id), generalObjectiveId]), discovery);
   return topics;
@@ -614,8 +659,12 @@ export async function generateMethodologyPlan(
   }));
   const existingByObjective = new Map(existingRows.map((row) => [row.objectiveId, row.id]));
 
-  const { output } = await generateText({
-    maxOutputTokens: 5_000,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_methodology_plan,
+    operation: "generate_methodology_plan",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_methodology_plan,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedMethodologyPlanSchema }),
     prompt: [
@@ -643,8 +692,7 @@ export async function generateMethodologyPlan(
       `Evidências verificadas: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.22,
-  });
+  }));
 
   const generated = generatedMethodologyPlanSchema.parse(output);
   const reconciledRows = reconcileGeneratedMethodologyRows(
@@ -669,8 +717,12 @@ export async function generateMethodologyPlan(
 
 export async function reviewFinalMapCoherence(finalMap: FinalMap) {
   const allowedElementIds = new Set(finalMap.nodes.filter((node) => /^[0-9a-f-]{36}$/i.test(node.id)).map((node) => node.id));
-  const { output } = await generateText({
-    maxOutputTokens: 2_400,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.review_final_map_coherence,
+    operation: "review_final_map_coherence",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.review_final_map_coherence,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedCoherenceReviewSchema }),
     prompt: [
@@ -696,8 +748,7 @@ export async function reviewFinalMapCoherence(finalMap: FinalMap) {
       })))}`,
     ].join("\n"),
     providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-    temperature: 0.1,
-  });
+  }));
 
   return generatedCoherenceReviewSchema.parse(output).findings
     .map((finding) => ({
@@ -735,8 +786,12 @@ export async function generateResearchStructure(
     `Evidências verificadas: ${JSON.stringify(evidence)}`,
   ].join("\n");
 
-  const { output } = await generateText({
-    maxOutputTokens: 8_000,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_research_structure,
+    operation: "generate_research_structure",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_research_structure,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedStructureSchema }),
     prompt,
@@ -745,8 +800,7 @@ export async function generateResearchStructure(
         thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
-    temperature: 0.25,
-  });
+  }));
 
   const structure = normalizeGeneratedStructure(output);
   const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
@@ -775,8 +829,12 @@ export async function mergeResearchStructures(
     `Referências verificadas: ${JSON.stringify(references)}`,
   ].join("\n");
 
-  const { output } = await generateText({
-    maxOutputTokens: 8_000,
+  const { output } = await observeGeminiGeneration({
+    configuredModel: GENERATION_MODEL,
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.merge_research_structures,
+    operation: "merge_research_structures",
+  }, () => generateText({
+    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.merge_research_structures,
     model: getGoogleProvider()(GENERATION_MODEL),
     output: Output.object({ schema: generatedStructureSchema }),
     prompt,
@@ -785,8 +843,7 @@ export async function mergeResearchStructures(
         thinkingConfig: { thinkingLevel: "minimal" },
       } satisfies GoogleLanguageModelOptions,
     },
-    temperature: 0.2,
-  });
+  }));
   const structure = normalizeGeneratedStructure(output);
   const invalidReferenceIds = validateReferenceIds(
     structure,

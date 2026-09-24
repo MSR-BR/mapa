@@ -3,6 +3,10 @@ import test from "node:test";
 
 import { GET } from "../app/api/health/route";
 import {
+  GEMINI_OPERATIONS,
+  observeGeminiGeneration,
+} from "../lib/observability/gemini-usage";
+import {
   attachRequestId,
   getRequestId,
   logOperationalEvent,
@@ -120,4 +124,86 @@ test("operational logger emits JSON without arbitrary message fields", () => {
   } finally {
     console.info = previous;
   }
+});
+
+test("Gemini observer records usage without logging generated content", async () => {
+  const previous = console.info;
+  let output = "";
+  console.info = (value?: unknown) => { output = String(value); };
+  try {
+    const result = await observeGeminiGeneration({
+      configuredModel: "gemini-3.6-flash",
+      maxOutputTokens: 500,
+      operation: "suggest_research_prompts",
+    }, async () => ({
+      finishReason: "stop" as const,
+      output: "private-academic-content",
+      response: { modelId: "gemini-3.6-flash" },
+      totalUsage: {
+        inputTokenDetails: {
+          cacheReadTokens: 4,
+          cacheWriteTokens: 2,
+          noCacheTokens: 96,
+        },
+        inputTokens: 100,
+        outputTokenDetails: {
+          reasoningTokens: 20,
+          textTokens: 60,
+        },
+        outputTokens: 80,
+        totalTokens: 180,
+      },
+      warnings: [],
+    }));
+
+    assert.equal(result.output, "private-academic-content");
+    const parsed = JSON.parse(output) as Record<string, unknown>;
+    assert.equal(parsed.event, "gemini_generation_completed");
+    assert.equal(parsed.operation, "suggest_research_prompts");
+    assert.equal(parsed.inputTokens, 100);
+    assert.equal(parsed.outputTokens, 80);
+    assert.equal(parsed.reasoningTokens, 20);
+    assert.equal(parsed.totalTokens, 180);
+    assert.equal(parsed.status, "succeeded");
+    assert.doesNotMatch(output, /private-academic-content/);
+  } finally {
+    console.info = previous;
+  }
+});
+
+test("Gemini observer classifies failures without logging provider messages", async () => {
+  const previous = console.error;
+  let output = "";
+  console.error = (value?: unknown) => { output = String(value); };
+  try {
+    const providerError = Object.assign(
+      new Error("secret-key-and-private-prompt"),
+      { statusCode: 429 },
+    );
+
+    await assert.rejects(
+      observeGeminiGeneration({
+        configuredModel: "gemini-3.6-flash",
+        maxOutputTokens: 700,
+        operation: "generate_general_objective",
+      }, async () => {
+        throw providerError;
+      }),
+      providerError,
+    );
+
+    const parsed = JSON.parse(output) as Record<string, unknown>;
+    assert.equal(parsed.event, "gemini_generation_failed");
+    assert.equal(parsed.errorCode, "rate_limited");
+    assert.equal(parsed.httpStatus, 429);
+    assert.equal(parsed.status, "failed");
+    assert.doesNotMatch(output, /secret-key-and-private-prompt/);
+  } finally {
+    console.error = previous;
+  }
+});
+
+test("Gemini operation inventory is unique and complete", () => {
+  assert.equal(GEMINI_OPERATIONS.length, 13);
+  assert.equal(new Set(GEMINI_OPERATIONS).size, 13);
 });

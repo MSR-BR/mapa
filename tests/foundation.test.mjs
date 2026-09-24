@@ -357,6 +357,24 @@ test("recovers the Gemini 3 pipeline and preserves AI-generated final titles", a
   assert.match(spec, /\*\*Status:\*\* concluída/);
 });
 
+test("observes all Gemini operations without deprecated sampling controls", async () => {
+  const [gemini, observer, spec] = await Promise.all([
+    readProjectFile("modules/generation/gemini.ts"),
+    readProjectFile("lib/observability/gemini-usage.ts"),
+    readProjectFile(".specs/changes/101-gemini-efficiency-observability/spec.md"),
+  ]);
+
+  assert.equal((gemini.match(/observeGeminiGeneration\(\{/g) ?? []).length, 13);
+  assert.equal((gemini.match(/=> generateText\(\{/g) ?? []).length, 13);
+  assert.equal((gemini.match(/thinkingLevel: "minimal"/g) ?? []).length, 13);
+  assert.doesNotMatch(gemini, /temperature:|topP:|topK:/);
+  assert.match(gemini, /GEMINI_OUTPUT_TOKEN_BUDGETS/);
+  assert.match(observer, /gemini_generation_completed/);
+  assert.match(observer, /gemini_generation_failed/);
+  assert.doesNotMatch(observer, /prompt:|responseText:|error\.message/);
+  assert.match(spec, /Não há justificativa[^\n]+mudar o plano Gemini agora/);
+});
+
 test("provides persistent editing with loss protection and retry", async () => {
   const [workspace, saveRoute] = await Promise.all([
     readProjectFile("modules/generation/generation-workspace.tsx"),
