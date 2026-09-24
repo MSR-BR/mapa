@@ -218,7 +218,19 @@ if (privateMetadataNoindex && privateHeadersNoindex && crawlableNoindexRoutes) {
 
 warn("distributed-rate-limit", "O rate limit permanece em memória e é válido por instância; distribuição depende de uma futura decisão orientada por evidência.");
 warn("attachment-malware-scan", "Anexos recebidos por e-mail são limitados, mas não passam por antivírus antes do encaminhamento interno.");
-warn("supabase-explicit-grants", "Prontidão para grants explícitos obrigatórios em 30/10/2026 está isolada nas C103/C104; nenhuma conclusão remota é inferida aqui.");
+const explicitGrantManifest = contents.get("supabase/explicit-access-manifest.json") ?? "";
+const explicitGrantVerifier = contents.get("scripts/verify-explicit-grants.mjs") ?? "";
+const explicitGrantLocalGate = contents.get("scripts/verify-explicit-grants-local.sh") ?? "";
+if (
+  explicitGrantManifest.includes('"public.projects"')
+  && explicitGrantManifest.includes('"public.user_profile_role_events"')
+  && explicitGrantVerifier.includes("auditExplicitGrantRepository")
+  && explicitGrantLocalGate.includes("verify-explicit-grants.sql")
+) {
+  pass("supabase-explicit-grants", "Oito tabelas, doze funções e ausência de views/sequences têm contrato local e gate PostgreSQL descartável.");
+} else {
+  fail("supabase-explicit-grants", "Manifesto ou verificadores locais de grants explícitos estão ausentes/incompletos.");
+}
 warn("remote-verification", "Verificação RLS remota, restore e fluxo E2E dependem de credenciais e execução operacional; não são inferidos por esta auditoria estática.");
 
 const failures = findings.filter((finding) => finding.status === "fail");

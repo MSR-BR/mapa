@@ -23,17 +23,20 @@
     "supabase:verify-mode-aware-rls": "sh scripts/verify-mode-aware-rls.sh",
     "supabase:verify-mode-aware-rls-remote": "node --env-file-if-exists=.env.local scripts/verify-mode-aware-rls-remote.mjs",
     "supabase:verify-student-advisor-gate": "sh scripts/verify-student-advisor-gate.sh",
+    "supabase:verify-explicit-grants": "node scripts/verify-explicit-grants.mjs",
+    "supabase:verify-explicit-grants-local": "sh scripts/verify-explicit-grants-local.sh",
+    "supabase:release-gate": "npm run supabase:verify-explicit-grants && npm run supabase:verify-explicit-grants-local",
     "research-starter:verify": "node --env-file-if-exists=.env.local scripts/verify-research-starter.mjs",
     "research-starter:verify:production": "node --env-file-if-exists=.env.local scripts/verify-research-starter-production.mjs",
     "research-proposals:verify": "node --conditions=react-server --env-file-if-exists=.env.local --import tsx scripts/verify-proposal-discovery.ts",
     "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",
     "exports:verify": "node --import tsx scripts/verify-exports.ts",
     "security:audit": "node scripts/audit-security.mjs",
-    "security:gate": "npm run security:audit && npm audit --audit-level=high && git diff --check",
-    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts",
+    "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
+    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run exports:verify && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run supabase:verify-explicit-grants && npm run test && npm run exports:verify && npm run build"
   },
   "dependencies": {
     "@ai-sdk/google": "3.0.99",

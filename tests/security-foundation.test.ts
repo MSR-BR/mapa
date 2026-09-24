@@ -7,10 +7,11 @@ const readProjectFile = (path: string) => (
 );
 
 test("registers the S3 security profile and a remote-aware release gate", async () => {
-  const [profile, gate, spec, packageJson] = await Promise.all([
+  const [profile, gate, c102Spec, c103Spec, packageJson] = await Promise.all([
     readProjectFile(".specs/security/profile.md"),
     readProjectFile(".specs/security/release-gate.md"),
     readProjectFile(".specs/changes/102-transversal-security-infrastructure/spec.md"),
+    readProjectFile(".specs/changes/103-supabase-explicit-grants-readiness/spec.md"),
     readProjectFile("package.json"),
   ]);
 
@@ -19,8 +20,10 @@ test("registers the S3 security profile and a remote-aware release gate", async 
   assert.match(profile, /Rate limit distribuído \| Parcial/);
   assert.match(gate, /PASS_WITH_ACCEPTED_RISK/);
   assert.match(gate, /Aprovação técnica local não autoriza mutação remota/);
-  assert.match(spec, /nenhuma alteração remota foi autorizada ou executada/i);
+  assert.match(c102Spec, /nenhuma consulta, migration, grant ou policy Supabase foi executada/i);
+  assert.match(c103Spec, /Nenhuma consulta, migration, grant, policy\s+ou alteração foi executada no Supabase remoto/i);
   assert.match(packageJson, /"security:gate"/);
+  assert.match(packageJson, /"supabase:release-gate"/);
 });
 
 test("keeps public abuse, webhook and private upload controls explicit", async () => {

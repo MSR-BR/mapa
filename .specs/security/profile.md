@@ -42,7 +42,7 @@
 | Rate limit distribuído | Parcial | limite atual é em memória por instância |
 | Varredura antimalware de anexos recebidos | Não implementado/risco aceito | anexos são limitados e encaminhados internamente |
 | Restore de backup e E2E autenticado | Verificação operacional | requer execução periódica separada |
-| Grants explícitos Supabase pós-30/10/2026 | Pendente C103/C104 | mudança isolada e reversível |
+| Grants explícitos Supabase pós-30/10/2026 | Verificado localmente / remoto pendente | manifesto, verificador estático e PostgreSQL 17 da C103; C104 exige autorização |
 
 ## Regras obrigatórias
 

@@ -25,6 +25,18 @@ npm run check
 
 Mudanças Supabase também exigem os verificadores locais específicos da migration. Uma auditoria estática não comprova o estado remoto.
 
+Para qualquer criação ou alteração de tabela, view, função, sequence, grant ou
+RLS do Supabase:
+
+```bash
+npm run supabase:release-gate
+```
+
+Esse comando primeiro compara todas as migrations com o manifesto de acesso e
+depois as aplica em PostgreSQL 17 descartável. Ele não se conecta ao projeto
+remoto. Os verificadores `supabase:verify-rls` e
+`supabase:verify-authenticated-rls` são remotos e exigem autorização separada.
+
 ## 3. Autoridade
 
 Aprovação técnica local não autoriza mutação remota. Deploy, migration, configuração de provedor, DNS, segredo ou campanha exigem autorização explícita para o alvo exato.

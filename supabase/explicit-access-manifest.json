@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "scope": ["public", "private"],
+  "tables": [
+    {
+      "name": "public.projects",
+      "consumer": "clientes autenticados por JWT; proprietário no modo ativo e orientador vinculado",
+      "rls": true,
+      "policies": ["projects_select_own", "projects_insert_own", "projects_update_own", "projects_delete_own", "projects_select_advised"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert", "update", "delete"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.generation_jobs",
+      "consumer": "proprietário autenticado do projeto no modo ativo",
+      "rls": true,
+      "policies": ["generation_jobs_select_own", "generation_jobs_insert_own", "generation_jobs_update_own", "generation_jobs_delete_own"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert", "update", "delete"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.research_structures",
+      "consumer": "proprietário autenticado do projeto no modo ativo",
+      "rls": true,
+      "policies": ["research_structures_select_own", "research_structures_insert_own", "research_structures_update_own", "research_structures_delete_own"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert", "update", "delete"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.research_workflows",
+      "consumer": "proprietário autenticado no modo de autoria e orientador vinculado",
+      "rls": true,
+      "policies": ["research_workflows_select_own", "research_workflows_insert_own", "research_workflows_update_own", "research_workflows_delete_own", "research_workflows_select_advised", "research_workflows_update_advised"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert", "update", "delete"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.user_profiles",
+      "consumer": "titular autenticado; troca de modo somente pela RPC versionada",
+      "rls": true,
+      "policies": ["user_profiles_select_own", "user_profiles_insert_own"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.legal_consents",
+      "consumer": "titular autenticado no modo ativo",
+      "rls": true,
+      "policies": ["legal_consents_select_own", "legal_consents_insert_own", "legal_consents_update_own"],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": ["select", "insert", "update"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "name": "public.bug_reports",
+      "consumer": "envio público/autenticado; leitura do remetente; triagem autenticada autorizada",
+      "rls": true,
+      "policies": ["bug_reports_insert_anonymous", "bug_reports_insert_authenticated", "bug_reports_select_reporter_or_admin", "bug_reports_update_admin"],
+      "privileges": {
+        "anon": ["insert"],
+        "authenticated": ["select", "insert", "update"]
+      },
+      "migration": "20260821153000_create_bug_reports.sql"
+    },
+    {
+      "name": "public.user_profile_role_events",
+      "consumer": "triggers de auditoria; leitura operacional privilegiada",
+      "rls": true,
+      "policies": [],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": ["select"]
+      },
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    }
+  ],
+  "views": [],
+  "sequences": [],
+  "functions": [
+    {
+      "signature": "public.set_project_advisor(uuid,text)",
+      "consumer": "cliente autenticado no modo Aluno",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "public.claim_pending_advisor_projects()",
+      "consumer": "cliente autenticado no modo Orientador",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "public.switch_active_role(text,bigint,uuid)",
+      "consumer": "titular autenticado com versão e idempotência",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "public.is_bug_report_admin()",
+      "consumer": "policies de triagem para authenticated",
+      "security": "invoker",
+      "searchPath": "fixed",
+      "execute": {"public": false, "anon": false, "authenticated": true},
+      "migration": "20260823120000_harden_bug_report_admin_search_path.sql"
+    },
+    {
+      "signature": "public.enforce_user_profile_role_version()",
+      "consumer": "trigger interno",
+      "security": "invoker",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": false},
+      "migration": "20260916163351_account_mode_database_foundation.sql"
+    },
+    {
+      "signature": "public.audit_user_profile_role_change()",
+      "consumer": "trigger interno",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": false},
+      "migration": "20260916163351_account_mode_database_foundation.sql"
+    },
+    {
+      "signature": "public.enforce_project_authoring_role()",
+      "consumer": "trigger interno",
+      "security": "invoker",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": false},
+      "migration": "20260916163351_account_mode_database_foundation.sql"
+    },
+    {
+      "signature": "public.restrict_advisor_workflow_update()",
+      "consumer": "trigger interno",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "public.enforce_student_advisor_workflow_progress()",
+      "consumer": "trigger interno",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": false, "service_role": false},
+      "migration": "20260919123000_c089_require_student_advisor_approval.sql"
+    },
+    {
+      "signature": "private.current_active_role()",
+      "consumer": "policies RLS para authenticated",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "private.project_owned_in_active_mode(uuid,uuid)",
+      "consumer": "policies RLS para authenticated",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    },
+    {
+      "signature": "private.project_reviewable_by_active_advisor(uuid,uuid)",
+      "consumer": "policies RLS para authenticated",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {"public": false, "anon": false, "authenticated": true, "service_role": false},
+      "migration": "20260917003928_c087_harden_mode_aware_rls.sql"
+    }
+  ],
+  "managedDependencies": [
+    {
+      "name": "storage.objects",
+      "owner": "Supabase Storage",
+      "decision": "policies próprias limitadas ao bucket privado bug-report-attachments"
+    }
+  ]
+}

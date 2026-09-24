@@ -9,7 +9,7 @@
 ## Estado atual
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
-- Changes 001–090, 092–096, 098–099 e 101 concluídas conforme `.specs/roadmap.md`.
+- Changes 001–090, 092–096, 098–099 e 101–103 concluídas conforme `.specs/roadmap.md`.
 - C097 está implantada e em observação até 08/10/2026.
 - C099 foi concluída: raiz canônica única, redirect legado, indexação, cards,
   dados estruturados, poster e desempenho publicados em 24/09/2026.
@@ -19,6 +19,9 @@
   conteúdo sensível; plano e limites foram preservados até existir baseline.
 - C102 está publicada em produção na versão `v24092026.3`. O projeto possui
   classificação `S3_SENSITIVE`, gate de release e logs de runtime sanitizados.
+- C103 está concluída localmente: o estado versionado do Supabase tem oito
+  tabelas, doze funções, grants/RLS explícitos e gate PostgreSQL descartável;
+  não houve acesso remoto nem nova migration.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -58,6 +61,15 @@
   preserva rollback. Identidades divergentes não são fundidas automaticamente.
 
 ## Estado validado mais recente
+
+A C103 foi concluída localmente em 24/09/2026. As 18 migrations foram
+inventariadas e aplicadas em PostgreSQL 17 descartável. O manifesto confirmou
+oito tabelas públicas com RLS, 28 policies, doze funções com `EXECUTE` mínimo,
+zero views e zero sequences próprias. O verificador rápido agora integra
+`npm run check`, e `npm run supabase:release-gate` reproduz a prova pesada. O
+estado já estava completo, portanto nenhuma migration foi criada. Consultas,
+testes autenticados, Dashboard e alterações do Supabase remoto não foram
+executados; permanecem isolados na C104 e exigem autorização específica.
 
 A C102 foi concluída e publicada em 24/09/2026. A auditoria transversal
 confirmou autenticação/autorização central, RLS nas oito tabelas públicas,
@@ -174,6 +186,12 @@ deployment final.
 
 ## Validação local mais recente
 
+- C103: `npm run check` aprovou lint, tipos, grants explícitos, 140/140 testes,
+  PDF/DOCX e build Next.js 16.3.5.
+- C103: `npm run supabase:release-gate`, migration local legada, matriz RLS por
+  modo e gate Aluno–Orientador passaram em PostgreSQL 17 descartável.
+- C103: `npm run security:audit` passou com riscos transversais aceitos; os
+  verificadores remotos não rodaram por ausência de autorização.
 - C102: `npm run check` aprovou lint, tipos, 137/137 testes, PDF/DOCX e build
   Next.js 16.3.5.
 - C102: `npm run security:gate` aprovou a auditoria S3 com riscos aceitos
@@ -217,8 +235,9 @@ deployment final.
 
 ## Questões em aberto
 
-- Executar a C103 local para preparar grants explícitos antes de 30/10/2026;
-  a aplicação remota permanece isolada na C104 e bloqueada por autorização.
+- Executar a C104 somente após autorização específica: comparar migrations,
+  schemas expostos, ACLs, RLS, funções, Security Advisor e E2E no Supabase
+  remoto antes de 30/10/2026.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
   plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para
