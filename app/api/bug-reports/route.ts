@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import {
+  logSanitizedOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
 import { checkRateLimit, getRequestClientKey } from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -77,6 +81,7 @@ async function notifyTeam(input: {
 }
 
 export async function POST(request: Request) {
+  const requestContext = startRequest(request);
   const rate = checkRateLimit(getRequestClientKey(request, "bug-report"), 5, 60 * 60_000);
   if (!rate.allowed) {
     return NextResponse.json(
@@ -132,7 +137,11 @@ export async function POST(request: Request) {
       upsert: false,
     });
     if (upload.error) {
-      console.error("bug_report_attachment_upload_failed", upload.error);
+      logSanitizedOperationalFailure(
+        "bug_report_attachment_upload_failed",
+        requestContext,
+        upload.error,
+      );
       return NextResponse.json({ error: "Não foi possível armazenar o anexo." }, { status: 502 });
     }
   }
@@ -154,7 +163,7 @@ export async function POST(request: Request) {
     user_agent: parsed.data.userAgent || null,
   });
   if (insertError) {
-    console.error("bug_report_insert_failed", insertError);
+    logSanitizedOperationalFailure("bug_report_insert_failed", requestContext, insertError);
     return NextResponse.json({ error: "Não foi possível registrar o relato agora." }, { status: 502 });
   }
 
@@ -172,7 +181,7 @@ export async function POST(request: Request) {
       subject: parsed.data.subject,
     });
   } catch (error) {
-    console.error("bug_report_notification_failed", error);
+    logSanitizedOperationalFailure("bug_report_notification_failed", requestContext, error);
   }
 
   return NextResponse.json({ emailSent, id: reportId, ok: true });

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { logSanitizedOperationalFailure } from "@/lib/observability/request-context";
 import { isResearchMapV2EnabledForClaims } from "@/modules/research-workflow/rollout";
 import {
   createResearchWorkflow,
@@ -155,8 +156,9 @@ export async function createProject(
         .update({ deleted_at: now, updated_at: now })
         .eq("id", data.id)
         .eq("owner_id", userId);
-      console.error("research_workflow_creation_failed", {
-        message: workflowError instanceof Error ? workflowError.message : "unknown-error",
+      logSanitizedOperationalFailure("research_workflow_creation_failed", {
+        requestId: crypto.randomUUID(),
+      }, workflowError, {
         projectId: data.id,
       });
       return { message: "Não foi possível iniciar o novo mapa.", status: "error" };

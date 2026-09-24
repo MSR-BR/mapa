@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+import {
+  logSanitizedOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
 import { toJson } from "@/modules/generation/types";
 import { authorizeProjectRoute } from "@/modules/projects/auth";
 import { discoverResearchProposals } from "@/modules/research-workflow/discovery-service";
@@ -16,6 +20,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 export const maxDuration = 120;
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const requestContext = startRequest(request);
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
 
@@ -105,9 +110,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
           : "unexpected";
     const stage = error instanceof DiscoveryError ? error.stage : "literature";
     const retryable = error instanceof DiscoveryError ? error.retryable : true;
-    console.error("proposal_discovery_failed", {
+    logSanitizedOperationalFailure("proposal_discovery_failed", requestContext, error, {
       errorCode,
-      message: error instanceof Error ? error.message : "unknown-error",
       projectId: id,
       stage,
     });

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+import {
+  logSanitizedOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
 import { GENERATION_MODEL, mergeResearchStructures } from "@/modules/generation/gemini";
 import { STRUCTURE_PROMPT_VERSION } from "@/modules/generation/prompts/structure-v1";
 import { isResearchStructure, RESEARCH_STRUCTURE_SCHEMA_VERSION, type ResearchStructure } from "@/modules/generation/schema";
@@ -252,6 +256,7 @@ function workflowToResearchStructure(workflow: ResearchWorkflow, project: Projec
 }
 
 export async function POST(request: Request) {
+  const requestContext = startRequest(request);
   const body: unknown = await request.json().catch(() => null);
   const projectIds = body && typeof body === "object" && "projectIds" in body && Array.isArray(body.projectIds)
     ? [...new Set(body.projectIds.map(String))]
@@ -359,10 +364,8 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ projectId: integrated.id, sourceTitles });
   } catch (error) {
-    console.error("project_integration_failed", {
-      message: error instanceof Error ? error.message : "unknown-error",
+    logSanitizedOperationalFailure("project_integration_failed", requestContext, error, {
       projectCount: projectIds.length,
-      userId,
     });
     return NextResponse.json({ error: "Não foi possível integrar os projetos agora." }, { status: 502 });
   }

@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getAppUrl } from "@/lib/app-url";
+import { logSanitizedOperationalFailure } from "@/lib/observability/request-context";
 import type { Database } from "@/lib/supabase/database.types";
 import { ADVISOR_REVIEW_LABELS } from "@/modules/research-workflow/advisor-review";
 import type { AdvisorReviewStep } from "@/modules/research-workflow/schema";
@@ -85,6 +86,7 @@ export async function sendProjectNotification(input: NotificationInput) {
   if (!apiKey || !recipient) return { status: "skipped" as const };
 
   const actorEmail = cleanEmail(input.actorEmail);
+  const requestContext = { requestId: crypto.randomUUID() };
   const copy = COPY[input.kind];
   const projectUrl = new URL(`/dashboard/projects/${input.projectId}`, getAppUrl()).toString();
   const comment = input.comment?.trim();
@@ -115,19 +117,19 @@ export async function sendProjectNotification(input: NotificationInput) {
     });
 
     if (!response.ok) {
-      console.error("project_notification_email_failed", {
-        projectId: input.projectId,
+      logSanitizedOperationalFailure("project_notification_email_failed", requestContext, {
         status: response.status,
-        type: input.kind,
+      }, {
+        notificationType: input.kind,
+        projectId: input.projectId,
       });
       return { status: "failed" as const };
     }
     return { status: "sent" as const };
   } catch (error) {
-    console.error("project_notification_email_failed", {
-      message: error instanceof Error ? error.message : "network-error",
+    logSanitizedOperationalFailure("project_notification_email_failed", requestContext, error, {
+      notificationType: input.kind,
       projectId: input.projectId,
-      type: input.kind,
     });
     return { status: "failed" as const };
   }

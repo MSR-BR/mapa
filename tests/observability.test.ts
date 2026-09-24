@@ -8,8 +8,10 @@ import {
 } from "../lib/observability/gemini-usage";
 import {
   attachRequestId,
+  classifyOperationalError,
   getRequestId,
   logOperationalEvent,
+  logSanitizedOperationalFailure,
   startRequest,
 } from "../lib/observability/request-context";
 import { getProviderHealth } from "../lib/observability/provider-health";
@@ -123,6 +125,51 @@ test("operational logger emits JSON without arbitrary message fields", () => {
     assert.equal("prompt" in parsed, false);
   } finally {
     console.info = previous;
+  }
+});
+
+test("operational failures normalize provider metadata without leaking messages", () => {
+  assert.deepEqual(classifyOperationalError({
+    code: "PGRST116",
+    message: "private academic content",
+    status: 406,
+  }), {
+    errorCode: "PGRST116",
+    httpStatus: 406,
+  });
+  assert.deepEqual(classifyOperationalError({
+    code: "unsafe code with private text",
+    message: "private academic content",
+    status: 999,
+  }), {
+    errorCode: "unexpected",
+  });
+
+  const previous = console.error;
+  let output = "";
+  console.error = (value?: unknown) => { output = String(value); };
+  try {
+    logSanitizedOperationalFailure(
+      "test_failure",
+      { requestId: "test-2" },
+      { code: "provider_error", message: "private academic content", statusCode: 503 },
+      {
+        errorCode: "unsafe code with private text",
+        httpStatus: 999,
+        projectCount: 2,
+        userId: "private-user",
+      },
+    );
+    const parsed = JSON.parse(output) as Record<string, unknown>;
+    assert.equal(parsed.event, "test_failure");
+    assert.equal(parsed.errorCode, "provider_error");
+    assert.equal(parsed.httpStatus, 503);
+    assert.equal(parsed.projectCount, 2);
+    assert.equal("message" in parsed, false);
+    assert.equal("userId" in parsed, false);
+    assert.doesNotMatch(output, /private academic content|private-user/);
+  } finally {
+    console.error = previous;
   }
 });
 

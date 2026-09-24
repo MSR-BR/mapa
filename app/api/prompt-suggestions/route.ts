@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 
+import {
+  logSanitizedOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
 import { suggestResearchPrompts } from "@/modules/generation/gemini";
 import { checkRateLimit, getRequestClientKey } from "@/lib/security/rate-limit";
 
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
+  const requestContext = startRequest(request);
   const rate = checkRateLimit(getRequestClientKey(request, "prompt-suggestions"), 15, 60_000);
   if (!rate.allowed) {
     return NextResponse.json(
@@ -32,9 +37,8 @@ export async function POST(request: Request) {
       { headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (error) {
-    console.error("prompt_suggestions_failed", {
-      message: error instanceof Error ? error.message : "unknown-error",
-      promptLength: prompt.length,
+    logSanitizedOperationalFailure("prompt_suggestions_failed", requestContext, error, {
+      queryLength: prompt.length,
     });
     return NextResponse.json(
       { error: "Não foi possível preparar sugestões agora." },

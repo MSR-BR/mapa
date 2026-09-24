@@ -1,13 +1,17 @@
 const REQUEST_ID_HEADER = "x-request-id";
 const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._:-]{1,100}$/;
+const SAFE_ERROR_CODE_PATTERN = /^[a-zA-Z0-9._:-]{1,80}$/;
 const SAFE_LOG_FIELDS = new Set([
+  "attachmentCount",
   "attempt",
   "code",
   "durationMs",
   "errorCode",
   "httpStatus",
   "jobId",
+  "notificationType",
   "projectId",
+  "projectCount",
   "queryLength",
   "rankedPapers",
   "searchQualityStatus",
@@ -29,6 +33,26 @@ function sanitizeFields(fields: Record<string, string | number | boolean | null 
   return Object.fromEntries(
     Object.entries(fields).filter(([key, value]) => SAFE_LOG_FIELDS.has(key) && value !== undefined),
   );
+}
+
+function safeErrorCode(value: unknown) {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim();
+  return SAFE_ERROR_CODE_PATTERN.test(normalized) ? normalized : null;
+}
+
+function safeHttpStatus(value: unknown) {
+  return typeof value === "number" && Number.isInteger(value) && value >= 100 && value <= 599
+    ? value
+    : null;
+}
+
+export function classifyOperationalError(error: unknown) {
+  if (!error || typeof error !== "object") return { errorCode: "unexpected" };
+  const candidate = error as { code?: unknown; status?: unknown; statusCode?: unknown };
+  const errorCode = safeErrorCode(candidate.code) ?? "unexpected";
+  const httpStatus = safeHttpStatus(candidate.statusCode) ?? safeHttpStatus(candidate.status);
+  return httpStatus === null ? { errorCode } : { errorCode, httpStatus };
 }
 
 export function getRequestId(request: Request) {
@@ -73,6 +97,20 @@ export function logOperationalFailure(
     timestamp: new Date().toISOString(),
     ...safeFields,
   }));
+}
+
+export function logSanitizedOperationalFailure(
+  event: string,
+  context: Pick<RequestContext, "requestId">,
+  error: unknown,
+  fields: Record<string, string | number | boolean | null | undefined> = {},
+) {
+  const classified = classifyOperationalError(error);
+  logOperationalFailure(event, context, {
+    ...fields,
+    errorCode: safeErrorCode(fields.errorCode) ?? classified.errorCode,
+    httpStatus: safeHttpStatus(fields.httpStatus) ?? classified.httpStatus,
+  });
 }
 
 export function elapsedMs(context: RequestContext) {

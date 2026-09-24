@@ -1,6 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { access, readFile } from "node:fs/promises";
 
+const classification = "S3_SENSITIVE";
+const snapshot = {
+  commit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+  dirty: execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim().length > 0,
+};
+
 const repositoryFiles = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard"], { encoding: "utf8" })
   .split("\n")
   .map((file) => file.trim())
@@ -114,6 +120,86 @@ if (proxy.includes("Content-Security-Policy") && proxy.includes("nonce-")) {
   warn("csp", "CSP dinâmica com nonce ainda não foi encontrada.");
 }
 
+const securityProfile = contents.get(".specs/security/profile.md") ?? "";
+const releaseGate = contents.get(".specs/security/release-gate.md") ?? "";
+if (
+  securityProfile.includes("S3_SENSITIVE")
+  && securityProfile.includes("Ações que exigem autorização explícita")
+  && releaseGate.includes("PASS_WITH_ACCEPTED_RISK")
+  && releaseGate.includes("Aprovação técnica local não autoriza mutação remota")
+) {
+  pass("security-governance", "Perfil S3, riscos residuais, autoridade e gate de release estão documentados.");
+} else {
+  fail("security-governance", "Perfil de segurança ou gate de release está ausente/incompleto.");
+}
+
+const publicMutationControls = [
+  "app/api/bug-reports/route.ts",
+  "app/api/prompt-suggestions/route.ts",
+  "app/api/support/route.ts",
+];
+const missingRateLimits = publicMutationControls.filter((file) => !(contents.get(file) ?? "").includes("checkRateLimit"));
+if (missingRateLimits.length === 0) {
+  pass("public-abuse-controls", "Relatos de bugs, sugestões e suporte aplicam limitação de taxa.");
+} else {
+  fail("public-abuse-controls", `Rotas públicas sem limitação de taxa: ${missingRateLimits.join(", ")}`);
+}
+
+const inboundRoute = contents.get("app/api/inbound/resend/route.ts") ?? "";
+if (
+  inboundRoute.includes("RESEND_WEBHOOK_SECRET")
+  && inboundRoute.includes("webhooks.verify")
+  && inboundRoute.includes("MAX_FORWARD_ATTACHMENT_BYTES")
+) {
+  pass("inbound-webhook", "Webhook de suporte exige assinatura e limita o volume agregado de anexos.");
+} else {
+  fail("inbound-webhook", "Assinatura ou limite de anexos do webhook de suporte não foi encontrado.");
+}
+
+const researchStarterRoute = contents.get("app/api/research-starter/reports/route.ts") ?? "";
+if (researchStarterRoute.includes("requireAuthenticatedUser")) {
+  pass("provider-auth", "Proxy do Research Starter exige usuário autenticado.");
+} else {
+  fail("provider-auth", "Proxy do Research Starter não contém guarda de autenticação.");
+}
+
+const bugRoute = contents.get("app/api/bug-reports/route.ts") ?? "";
+const bugMigration = contents.get("supabase/migrations/20260821153000_create_bug_reports.sql") ?? "";
+if (
+  bugRoute.includes("MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024")
+  && bugRoute.includes("image/png")
+  && bugRoute.includes("safeFileName")
+  && bugRoute.includes("upsert: false")
+  && /values\s*\('bug-report-attachments',\s*'bug-report-attachments',\s*false\)/i.test(bugMigration)
+  && bugMigration.includes("bug_report_attachments_select_owner_or_admin")
+) {
+  pass("private-upload", "Anexos de bugs são limitados, normalizados e armazenados em bucket privado com policy.");
+} else {
+  fail("private-upload", "Controles de tipo, tamanho, nome, bucket privado ou policy de anexos estão incompletos.");
+}
+
+const centralizedLoggers = new Set([
+  "lib/observability/gemini-usage.ts",
+  "lib/observability/request-context.ts",
+]);
+const directRuntimeLogs = repositoryFiles.filter((file) => (
+  /^(?:app|lib|modules)\/.*\.(?:ts|tsx)$/.test(file)
+  && !centralizedLoggers.has(file)
+  && /console\.(?:error|warn|info)\s*\(/.test(contents.get(file) ?? "")
+));
+const requestLogger = contents.get("lib/observability/request-context.ts") ?? "";
+if (
+  directRuntimeLogs.length === 0
+  && requestLogger.includes("logSanitizedOperationalFailure")
+  && requestLogger.includes("SAFE_ERROR_CODE_PATTERN")
+) {
+  pass("log-privacy", "Logs de runtime passam pelos observadores com allowlist e classificação sanitizada de falhas.");
+} else if (directRuntimeLogs.length > 0) {
+  fail("log-privacy", `Logs diretos fora dos observadores centrais: ${directRuntimeLogs.join(", ")}`);
+} else {
+  fail("log-privacy", "O observador central não contém o sanitizador esperado.");
+}
+
 const robots = contents.get("app/robots.ts") ?? "";
 const privateLayouts = ["app/dashboard/layout.tsx", "app/admin/bugs/page.tsx", "app/(auth)/layout.tsx"];
 const privateMetadataNoindex = privateLayouts.every((file) => (contents.get(file) ?? "").includes("index: false"));
@@ -130,8 +216,24 @@ if (privateMetadataNoindex && privateHeadersNoindex && crawlableNoindexRoutes) {
   fail("privacy-indexing", "Revisar metadata, X-Robots-Tag e crawlability das áreas privadas.");
 }
 
-warn("remote-verification", "Verificação RLS remota e fluxo E2E dependem de credenciais de teste e acesso à API Supabase; não são inferidos por esta auditoria estática.");
+warn("distributed-rate-limit", "O rate limit permanece em memória e é válido por instância; distribuição depende de uma futura decisão orientada por evidência.");
+warn("attachment-malware-scan", "Anexos recebidos por e-mail são limitados, mas não passam por antivírus antes do encaminhamento interno.");
+warn("supabase-explicit-grants", "Prontidão para grants explícitos obrigatórios em 30/10/2026 está isolada nas C103/C104; nenhuma conclusão remota é inferida aqui.");
+warn("remote-verification", "Verificação RLS remota, restore e fluxo E2E dependem de credenciais e execução operacional; não são inferidos por esta auditoria estática.");
 
 const failures = findings.filter((finding) => finding.status === "fail");
-console.log(JSON.stringify({ generatedAt: new Date().toISOString(), filesScanned: repositoryFiles.length, findings }, null, 2));
+const warnings = findings.filter((finding) => finding.status === "warning");
+const result = failures.length > 0
+  ? "BLOCKED"
+  : warnings.length > 0
+    ? "PASS_WITH_ACCEPTED_RISK"
+    : "PASS";
+console.log(JSON.stringify({
+  classification,
+  filesScanned: repositoryFiles.length,
+  findings,
+  generatedAt: new Date().toISOString(),
+  result,
+  snapshot,
+}, null, 2));
 if (failures.length > 0) process.exitCode = 1;

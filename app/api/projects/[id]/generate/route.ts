@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { logOperationalFailure, startRequest } from "@/lib/observability/request-context";
+import {
+  logOperationalEvent,
+  logOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
 import {
   broadenResearchQuery,
   GENERATION_MODEL,
@@ -119,7 +123,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       topic: interpreted.researchQuery,
     }, { requestId: requestContext.requestId });
     if (report.references.length === 0) {
-      console.warn("research_starter_retry_broader_interval", {
+      logOperationalEvent("research_starter_retry_broader_interval", requestContext, {
         projectId: id,
         rankedPapers: report.coverage.rankedPapers,
         searchQualityStatus: report.coverage.searchQualityStatus,
@@ -139,7 +143,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         interpreted.researchQuery,
       );
       if (broaderQuery.toLocaleLowerCase("en") !== interpreted.researchQuery.toLocaleLowerCase("en")) {
-        console.warn("research_starter_retry_broader_query", {
+        logOperationalEvent("research_starter_retry_broader_query", requestContext, {
           projectId: id,
           queryLength: broaderQuery.length,
         });

@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import {
+  logOperationalEvent,
+  logSanitizedOperationalFailure,
+  startRequest,
+} from "@/lib/observability/request-context";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -59,6 +65,7 @@ function isSupportRecipient(values: string[] | null | undefined) {
 }
 
 export async function POST(request: Request) {
+  const requestContext = startRequest(request);
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const webhookSecret = process.env.RESEND_WEBHOOK_SECRET?.trim();
   if (!apiKey || !webhookSecret) {
@@ -91,10 +98,11 @@ export async function POST(request: Request) {
   const resend = new Resend(apiKey);
   const received = await resend.emails.receiving.get(event.data.email_id);
   if (received.error || !received.data) {
-    console.error("support_inbound_receive_failed", {
-      emailId: event.data.email_id,
-      status: received.error?.statusCode ?? "unknown",
-    });
+    logSanitizedOperationalFailure(
+      "support_inbound_receive_failed",
+      requestContext,
+      received.error,
+    );
     return NextResponse.json({ error: "Não foi possível recuperar a mensagem recebida." }, { status: 502 });
   }
 
@@ -161,15 +169,15 @@ export async function POST(request: Request) {
   );
 
   if (resendResponse.error) {
-    console.error("support_inbound_forward_failed", {
-      emailId: email.id,
-      status: resendResponse.error.statusCode ?? "unknown",
-    });
+    logSanitizedOperationalFailure(
+      "support_inbound_forward_failed",
+      requestContext,
+      resendResponse.error,
+    );
     return NextResponse.json({ error: "Não foi possível encaminhar a mensagem." }, { status: 502 });
   }
 
-  console.info("support_inbound_forwarded", {
-    emailId: email.id,
+  logOperationalEvent("support_inbound_forwarded", requestContext, {
     attachmentCount: attachments.length,
   });
   return NextResponse.json({ ok: true, emailId: email.id });
