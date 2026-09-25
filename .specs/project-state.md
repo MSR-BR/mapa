@@ -22,11 +22,11 @@
 - C103 está concluída localmente: o estado versionado do Supabase tem oito
   tabelas, doze funções, grants/RLS explícitos e gate PostgreSQL descartável;
   não houve acesso remoto nem nova migration.
-- C104 foi aplicada em produção no projeto confirmado. A 19ª migration removeu
+- C104 foi concluída em produção no projeto confirmado. A 19ª migration removeu
   privilégios legados excedentes; readback, grants, RLS, 28 policies, 12
   funções, schema `private`, negação anônima e gates PostgreSQL 17 passaram. O
-  E2E autenticado pós-migration segue pendente porque o runner legado usa senha
-  e foi recusado antes de qualquer mutação pelo ambiente Google-only.
+  E2E Google Aluno–Orientador aprovou bloqueio, revisão, avanço, autonomia do
+  Orientador, limpeza das fixtures e restauração dos perfis originais.
 - Autenticação exclusiva pelo Google homologada em produção; entrada, cadastro
   e recuperação por senha foram retirados e o provedor Email foi desativado.
 - Projetos criados no modo Aluno podem ser editados e salvos como rascunho,
@@ -91,10 +91,13 @@ aprovou 141/141 testes e build; os gates PostgreSQL 17 de 19 migrations, modo
 Aluno/Orientador e aprovação humana passaram; `security:gate` terminou em
 `PASS_WITH_ACCEPTED_RISK` e zero vulnerabilidades. Após autorização exata, o
 dry-run listou somente a C104, a migration foi aplicada sem Vault/seeds/roles e
-o readback confirmou 19 migrations e ACLs mínimas. O runner autenticado recebeu
-HTTP 422 antes de ler perfis, trocar modos ou criar registros; nenhuma fixture
-ou estado real foi alterado. A decisão da C104 é `PASS_WITH_ACCEPTED_RISK`, com
-E2E Google-only pós-migration ainda pendente.
+o readback confirmou 19 migrations e ACLs mínimas. O runner legado recebeu HTTP
+422 antes de qualquer mutação, e a prova foi concluída pela interface real com
+duas contas Google autorizadas. O Aluno ficou bloqueado até a aprovação do
+Orientador, avançou para Objetivo geral após a revisão, e o Orientador criou um
+projeto próprio sem supervisão. As fixtures foram excluídas e os perfis
+restaurados. A decisão final da C104 é `PASS_WITH_ACCEPTED_RISK`, sem pendência
+própria da change.
 
 A C103 foi concluída localmente em 24/09/2026. As 18 migrations foram
 inventariadas e aplicadas em PostgreSQL 17 descartável. O manifesto confirmou
@@ -221,8 +224,8 @@ deployment final.
 ## Validação local mais recente
 
 - C104: migration `20260924222657` aplicada no projeto de produção
-  `aeaweherkrqmlqnxsmib`; histórico, readback de ACL/RLS e smokes anônimos
-  aprovados; runner autenticado bloqueado pré-mutação por depender de senha.
+  `aeaweherkrqmlqnxsmib`; histórico, readback de ACL/RLS, smokes anônimos e E2E
+  Google Aluno–Orientador aprovados; fixtures removidas e perfis restaurados.
 - C103: `npm run check` aprovou lint, tipos, grants explícitos, 140/140 testes,
   PDF/DOCX e build Next.js 16.3.5.
 - C103: `npm run supabase:release-gate`, migration local legada, matriz RLS por
@@ -272,9 +275,6 @@ deployment final.
 
 ## Questões em aberto
 
-- Criar uma prova remota autenticada compatível com Google OAuth para concluir
-  o E2E pós-migration da C104 sem reativar Email/senha nem usar `service_role`
-  como atalho.
 - Observar sete dias de métricas agregadas da C101 antes de alterar limites ou
   plano Gemini.
 - Observar a C097 até 08/10/2026 antes de usar o baseline pós-migração para

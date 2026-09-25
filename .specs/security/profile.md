@@ -42,7 +42,7 @@
 | Rate limit distribuído | Parcial | limite atual é em memória por instância |
 | Varredura antimalware de anexos recebidos | Não implementado/risco aceito | anexos são limitados e encaminhados internamente |
 | Restore de backup e E2E autenticado | Verificação operacional | requer execução periódica separada |
-| Grants explícitos Supabase pós-30/10/2026 | Aplicado / E2E Google pendente | C104 removeu `TRUNCATE`/`TRIGGER`/`REFERENCES` legados em produção e confirmou 19 migrations, 8 tabelas, 28 policies, 12 funções e ACLs mínimas; runner autenticado parou pré-mutação por depender de senha |
+| Grants explícitos Supabase pós-30/10/2026 | Aplicado / E2E aprovado | C104 removeu `TRUNCATE`/`TRIGGER`/`REFERENCES` legados em produção, confirmou 19 migrations, 8 tabelas, 28 policies, 12 funções e ACLs mínimas, e aprovou o fluxo Google Aluno–Orientador com limpeza e restauração |
 
 ## Regras obrigatórias
 

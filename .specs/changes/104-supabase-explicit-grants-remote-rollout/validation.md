@@ -94,11 +94,44 @@ O motivo é a incompatibilidade do runner legado por senha com o login público
 Google-only definido na C92. Email/senha não foi reativado e não houve contorno
 por `service_role` ou credencial administrativa.
 
+A prova foi retomada pela interface real de produção com duas sessões Google
+autorizadas pelo proprietário:
+
+- a conta pessoal, originalmente em modo Orientador, foi alternada para Aluno;
+- o fluxo rápido exigiu o e-mail do orientador antes da primeira decisão;
+- o projeto temporário foi enviado e permaneceu bloqueado em “Aguardando
+  validação”;
+- a conta institucional, em modo Orientador, abriu o mesmo projeto pela relação
+  de supervisão, salvou comentário e aprovou a Problemática;
+- ao retornar à conta Aluno, o projeto estava em `Etapa 2/4`, `Objetivo geral`,
+  comprovando que somente a aprovação do orientador avançou o workflow;
+- a conta Orientador também criou um projeto próprio sem campo de orientador e
+  sem supervisão obrigatória;
+- os dois projetos temporários foram excluídos, a conta pessoal voltou ao modo
+  Orientador original e a conta institucional permaneceu Orientador.
+
+Não foram usados senha, `service_role`, bypass de RLS nem edição direta de
+registros. A limpeza foi confirmada nos dois painéis.
+
+## Revalidação final
+
+- As 19 migrations locais e remotas permanecem alinhadas.
+- O readback remoto manteve oito tabelas com RLS, 28 policies, doze funções,
+  zero views/sequences próprias e ACLs mínimas.
+- `npm run supabase:verify` e `npm run supabase:verify-rls` passaram.
+- `npm run supabase:release-gate` aprovou as 19 migrations em PostgreSQL 17
+  descartável.
+- `npm run check` aprovou lint, tipos, 141/141 testes, PDF/DOCX e build.
+- `npm run security:gate` terminou em `PASS_WITH_ACCEPTED_RISK`, sem
+  vulnerabilidades; a checagem independente terminou em `PASS`.
+- O Security Advisor retornou zero erros e os mesmos quatro warnings aceitos:
+  três RPCs `SECURITY DEFINER` intencionais para usuários autenticados e a
+  proteção de senha vazada não aplicável ao login público Google-only.
+
 ## Decisão do release gate
 
-`PASS_WITH_ACCEPTED_RISK` para a migration C104 aplicada em produção. O artefato
-exato, o destino, o histórico, as ACLs e os gates do banco foram comprovados; a
-aplicação não alterou dados, Auth, Vercel, DNS, Vault ou defaults globais. A
-C104 permanece parcialmente aberta apenas para uma prova autenticada
-pós-migration por mecanismo compatível com Google OAuth. Até essa prova, não se
-declara o E2E remoto autenticado como aprovado.
+`PASS_WITH_ACCEPTED_RISK` para a C104 concluída em produção. O artefato exato, o
+destino, o histórico, as ACLs, os gates do banco e o E2E autenticado Google-only
+foram comprovados. A aplicação não alterou Auth, Vercel, DNS, Vault nem defaults
+globais. As únicas mutações de validação foram reversíveis, ficaram limitadas às
+duas contas autorizadas e foram integralmente limpas ou restauradas.

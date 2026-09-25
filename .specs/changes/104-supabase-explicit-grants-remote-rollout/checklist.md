@@ -8,10 +8,11 @@
 - [x] Grants, RLS, policies, funções e defaults auditados.
 - [x] Security Advisor classificado: zero erros e quatro warnings explicados.
 - [x] Smoke anônimo aprovado.
-- [ ] Prova autenticada compatível com Google-only aprovada.
+- [x] Prova autenticada compatível com Google-only aprovada: Aluno bloqueado,
+  Orientador com acesso vinculado, aprovação persistida e avanço para Etapa 2.
 - [x] Migration C104 aplicada e readback aprovado.
-- [x] Ausência de mutação das fixtures comprovada: o runner parou no HTTP 422
-  antes da leitura dos perfis, troca de modos ou criação de registros.
-- [x] Decisão do release gate registrada: `PASS_WITH_ACCEPTED_RISK`; falta uma
-  prova autenticada pós-migration por mecanismo compatível com Google-only.
+- [x] Limpeza comprovada: projetos temporários excluídos, conta pessoal
+  restaurada ao modo Orientador e conta institucional mantida no modo original.
+- [x] Decisão final registrada: `PASS_WITH_ACCEPTED_RISK`, sem pendência própria
+  da C104.
 - [x] Roadmap, estado e perfil de segurança atualizados.
