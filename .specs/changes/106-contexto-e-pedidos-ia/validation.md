@@ -17,13 +17,16 @@
 
 ## Produção
 
-- Commit funcional `20f9db53b04076f457417cd0fb614b68a2a2487c` testado
-  novamente: `npm run check` e `npm run security:gate` aprovados.
-- Deployment `dpl_2nqArKwJiaaB66HVHPfxAs37d7Vx` ficou READY com domínio
-  inicialmente inalterado; health imutável `ok` em `v01102026.2`, login 200,
+- C106 inicial `20f9db5` / `v01102026.2` foi publicada e passou no smoke.
+  Uma revisão de interface apontou dois detalhes menores corrigidos no commit
+  final `71b1e16824339ffc1ff4abad8dc47d1b35a5378a`.
+- Commit final: `npm run check` e `npm run security:gate` aprovados; o teste
+  Chromium/WebKit agora inclui retorno automático à aba de contexto após sucesso.
+- Deployment `dpl_C3gTCk8DzC5uUfwWjsE8oLYMYS5P` ficou READY com domínio
+  inicialmente inalterado; health imutável `ok` em `v01102026.3`, login 200,
   mutação sem sessão 401 e origem externa 403. Depois foi promovido.
 - Domínio `https://mapadapesquisa.com.br`: health `ok`, versão
-  `v01102026.2`, quatro provedores configurados, home/login 200, API anônima
+  `v01102026.3`, quatro provedores configurados, home/login 200, API anônima
   401 e cross-site 403. Navegador isolado confirmou o login com Google.
 - UI privada foi provada localmente pelo componente real em quatro cenários;
   não houve E2E autenticado em produção nem chamada real ao Gemini nesta change.

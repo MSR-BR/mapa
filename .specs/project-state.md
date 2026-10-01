@@ -8,7 +8,7 @@
 
 ## Estado atual
 
-- C106 concluída e publicada em `v01102026.2`: problemática, objetivos,
+- C106 concluída e publicada em `v01102026.3`: problemática, objetivos,
   capítulos e metodologia distinguem contexto acadêmico persistente de pedido
   pontual à IA; o ⓘ explica o uso e os placeholders não trazem exemplos.
   Contexto recém-digitado chega à regeneração sem virar instrução exportada;
