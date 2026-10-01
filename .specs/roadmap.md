@@ -101,7 +101,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 103 | Prontidão para grants explícitos do Supabase | Concluída localmente | Manifesto de oito tabelas e doze funções, verificador rápido e gate PostgreSQL 17 aprovados; estado completo sem migration redundante e sem acesso remoto. |
 | 104 | Rollout remoto dos grants explícitos | Concluída | Migration mínima do commit `26ac954` aplicada no projeto correto; 19 migrations, ACLs, RLS, policies, funções e smokes reconciliados. E2E Google com Aluno e Orientador aprovado; fixtures removidas e perfis restaurados. |
 | 105 | Preenchimento de referências por DOI | Concluída | Crossref/DataCite, cadastro manual preservado, 154 testes, Chromium/WebKit desktop/mobile e gate de segurança aprovados; produção v01102026.1 homologada com consulta autenticada e sem alteração dos projetos originais. |
-| 106 | Contexto acadêmico e pedidos pontuais à IA | Em validação | Contexto permanente separado de pedido usado uma vez na regeneração, com ⓘ, placeholders sem exemplos e cobertura de definição, capítulos e metodologia; CPD pendente. |
+| 106 | Contexto acadêmico e pedidos pontuais à IA | Concluída | Contexto persistente separado de pedido usado uma vez na regeneração, com ⓘ, placeholders sem exemplos, 156 testes, UI Chromium/WebKit desktop/mobile e produção `v01102026.2` homologada; E2E autenticado real não executado. |
 
 ## Marcos
 

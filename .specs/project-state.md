@@ -8,6 +8,14 @@
 
 ## Estado atual
 
+- C106 concluída e publicada em `v01102026.2`: problemática, objetivos,
+  capítulos e metodologia distinguem contexto acadêmico persistente de pedido
+  pontual à IA; o ⓘ explica o uso e os placeholders não trazem exemplos.
+  Contexto recém-digitado chega à regeneração sem virar instrução exportada;
+  156 testes, build, segurança e UI isolada Chromium/WebKit desktop/mobile
+  aprovados. Health, login e bloqueios anônimo/cross-site confirmados no
+  domínio canônico. E2E autenticado de regeneração real não foi executado.
+
 - C105 concluída e publicada em `v01102026.1`: referências por DOI via
   Crossref/DataCite, metadados parciais editáveis, cadastro manual preservado,
   154 testes e Chromium/WebKit desktop/mobile aprovados. Consultas reais e

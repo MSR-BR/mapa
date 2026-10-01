@@ -6,4 +6,4 @@
 - [x] Priorizar orientações da etapa no prompt, sem perder notas na regeneração.
 - [x] Atualizar testes de cópia e acrescentar teste de escopo/limites.
 - [x] Aprovar gate local completo e teste de UI Chromium/WebKit.
-- [ ] Executar CPD e smoke da versão publicada.
+- [x] Executar CPD e smoke da versão publicada.
