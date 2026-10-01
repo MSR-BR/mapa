@@ -605,16 +605,23 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .manual-reference-modal :is(input, textarea, button):focus-visible { outline: 3px solid #73af91; outline-offset: 2px; }
 .manual-reference-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; border-top: 1px solid #e0e9e4; padding-top: 0.85rem; }
 .definition-editor { border: 1px solid #c7d7cf; border-radius: 1.2rem; padding: clamp(1.1rem, 3vw, 1.6rem); background: var(--surface); box-shadow: 0 1rem 3rem rgb(20 35 29 / 6%); }
-.definition-editor-with-note { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr); gap: 1rem; align-items: start; }
+.definition-editor { container-type: inline-size; }
+.definition-editor-with-note { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: start; }
+.definition-editor-with-note > * { min-width: 0; }
+@container (min-width: 52rem) {
+  .definition-editor-with-note { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+}
 .definition-editor label { display: grid; gap: 0.55rem; color: #24372e; font-size: 0.82rem; font-weight: 800; }
 .definition-editor textarea { width: 100%; min-height: 8.5rem; border: 1px solid #b9cbc2; border-radius: 0.85rem; padding: 0.9rem; resize: vertical; background: #fbfdfc; color: var(--foreground); font: inherit; font-size: 1rem; line-height: 1.55; }
 .definition-editor textarea:focus { border-color: #4c8d70; outline: 3px solid rgb(76 141 112 / 14%); }
 .definition-editor small { color: #72827a; font-size: 0.72rem; font-weight: 500; }
 .student-justification { border: 1px solid #d8e4de; border-radius: 0.95rem; padding: 0.8rem; background: #f7faf8; color: #50645b; }
 .student-justification textarea { min-height: 7rem; background: #ffffff; font-size: 0.86rem; }
-.ai-guidance-field { display: grid; align-content: start; gap: 0.55rem; }
-.ai-guidance-heading { display: flex; align-items: center; gap: 0.45rem; color: #2e5140; font-size: 0.8rem; }
+.ai-guidance-field { display: grid; min-width: 0; align-content: start; gap: 0.55rem; }
+.ai-guidance-heading { display: flex; align-items: start; justify-content: space-between; gap: 0.45rem; color: #2e5140; font-size: 0.8rem; }
+.ai-guidance-heading strong { min-width: 0; }
 .ai-guidance-heading .methodology-help { flex: none; }
+.ai-guidance-heading .methodology-help-popover { left: auto; right: 0; max-width: calc(100vw - 4rem); }
 .ai-guidance-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .ai-guidance-tabs button { border: 1px solid #bdcfc4; border-radius: 0.5rem; padding: 0.35rem 0.55rem; background: #fff; color: #35614d; font: inherit; font-size: 0.72rem; font-weight: 750; cursor: pointer; }
 .ai-guidance-tabs button[aria-pressed="true"] { border-color: #237351; background: #e8f4ec; color: #19583d; }
@@ -622,11 +629,14 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .ai-guidance-field textarea { width: 100%; min-height: 7rem; background: #fff; font-size: 0.86rem; }
 .methodology-stage-request { margin: 0.8rem 0; border: 1px solid #d8e4de; border-radius: 0.95rem; padding: 0.8rem; background: #f7faf8; }
 .methodology-stage-request textarea { min-height: 5rem; }
-.specific-objective-list { display: grid; gap: 1rem; }
-.specific-objective-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.58fr) auto auto; align-items: end; gap: 0.75rem; }
-.specific-objective-row textarea { min-height: 6.5rem; }
-.specific-objective-row > button, .add-specific-objective { border: 1px solid #bdccc5; border-radius: 0.7rem; padding: 0.65rem 0.8rem; background: transparent; color: #52655b; font: inherit; font-size: 0.75rem; font-weight: 750; cursor: pointer; }
-.specific-objective-row > button:disabled, .add-specific-objective:disabled { cursor: not-allowed; opacity: 0.42; }
+.definition-editor-cards { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.specific-objective-list { display: grid; gap: 1.25rem; }
+.objective-card { min-width: 0; border: 1px solid #c7d7cf; border-radius: 1.2rem; padding: clamp(1rem, 2.5vw, 1.6rem); background: var(--surface); box-shadow: 0 0.5rem 1.5rem rgb(20 35 29 / 4%); }
+.specific-general-editor { border-top: 3px solid #438369; }
+.objective-card .definition-editor-with-note > label > textarea { min-height: 10rem; field-sizing: content; font-weight: 500; }
+.objective-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.65rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e0e9e4; }
+.objective-card-actions > button, .add-specific-objective { min-height: 2.75rem; border: 1px solid #bdccc5; border-radius: 0.7rem; padding: 0.65rem 0.8rem; background: transparent; color: #52655b; font: inherit; font-size: 0.75rem; font-weight: 750; cursor: pointer; }
+.objective-card-actions > button:disabled, .add-specific-objective:disabled { cursor: not-allowed; opacity: 0.42; }
 .add-specific-objective { justify-self: start; color: var(--accent); }
 .definition-findings { border: 1px solid #e2aaa4; border-radius: 0.9rem; padding: 0.9rem 1rem; background: #fff3f1; color: #7f3029; }
 .definition-findings ul { margin: 0.55rem 0 0; padding-left: 1.2rem; }
@@ -1037,8 +1047,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
   .manual-reference-actions { align-items: stretch; flex-direction: column; }
   .manual-reference-actions .definition-button { width: 100%; }
   .definition-editor-with-note { grid-template-columns: 1fr; }
-  .specific-objective-row { grid-template-columns: 1fr; }
-  .specific-objective-row > button { justify-self: start; }
+  .objective-card-actions > button { flex: 1 1 12rem; }
   .definition-actions { align-items: stretch; flex-direction: column; }
   .definition-button { width: 100%; }
   .coverage-panel > div { grid-template-columns: auto 1fr; }

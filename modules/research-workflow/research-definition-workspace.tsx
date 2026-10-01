@@ -257,7 +257,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
 
       <ManualReferencePanel onWorkflow={applyWorkflow} projectId={projectId} workflow={workflow} />
 
-      <div className="definition-editor">
+      <div className={`definition-editor${step === "specific_objectives" ? " definition-editor-cards" : ""}`}>
         {step === "problem_statement" ? (
           <div className="definition-editor-with-note">
             <label>
@@ -278,34 +278,41 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
           </div>
         ) : (
           <div className="specific-objective-list">
-            <div className="definition-editor-with-note specific-general-editor">
-              <label>
-                Objetivo geral (revisável nesta etapa)
-                <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
-                <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
-              </label>
-              <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
-            </div>
-            {specifics.map((objective, index) => (
-              <div className="specific-objective-row" key={objective.id}>
+            <article aria-label="Objetivo geral" className="objective-card specific-general-editor">
+              <div className="definition-editor-with-note">
                 <label>
-                  Objetivo específico {index + 1}
-                  <textarea maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
+                  Objetivo geral (revisável nesta etapa)
+                  <textarea rows={6} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+                  <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
                 </label>
-                <AiGuidanceField key={regenerationEpoch} context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
-                <button
-                  aria-label={`Remover objetivo específico ${index + 1}`}
-                  disabled={specifics.length <= 3}
-                  onClick={() => setSpecifics((current) => current.filter((item) => item.id !== objective.id))}
-                  type="button"
-                >Remover</button>
-                <button
-                  className="promote-specific-objective"
-                  disabled={specifics.length <= 3}
-                  onClick={() => promoteSpecificObjective(objective)}
-                  type="button"
-                >Usar como objetivo geral</button>
+                <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
               </div>
+            </article>
+            {specifics.map((objective, index) => (
+              <article aria-label={`Objetivo específico ${index + 1}`} className="objective-card specific-objective-row" key={objective.id}>
+                <div className="definition-editor-with-note">
+                  <label>
+                    Objetivo específico {index + 1}
+                    <textarea rows={6} maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
+                    <small>{objective.content.length}/700 caracteres</small>
+                  </label>
+                  <AiGuidanceField key={regenerationEpoch} context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
+                </div>
+                <footer className="objective-card-actions">
+                  <button
+                    aria-label={`Remover objetivo específico ${index + 1}`}
+                    disabled={specifics.length <= 3}
+                    onClick={() => setSpecifics((current) => current.filter((item) => item.id !== objective.id))}
+                    type="button"
+                  >Remover</button>
+                  <button
+                    className="promote-specific-objective"
+                    disabled={specifics.length <= 3}
+                    onClick={() => promoteSpecificObjective(objective)}
+                    type="button"
+                  >Usar como objetivo geral</button>
+                </footer>
+              </article>
             ))}
             <button
               className="add-specific-objective"
