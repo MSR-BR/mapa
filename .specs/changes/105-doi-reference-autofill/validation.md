@@ -37,4 +37,18 @@
 - Teste de navegador usa componente e CSS reais com HTTP simulado; prova de
   provedores reais foi independente. Produção é registrada separadamente no CPD.
 
-Resultado remoto, candidato exato e readback serão registrados no CPD da change.
+## Prova de produção
+
+- Commit funcional `05e6c0c`, deployment `dpl_8xigUYSP1oE295BdJo931NA7axiL`,
+  domínio canônico em `v01102026.1`; detalhes em `cpd-2026-10-01.md`.
+- Landing, login e health retornaram 200 com versão correta. Consulta anônima
+  retornou 401 e tentativa cross-site retornou 403.
+- Safari, sessão Google já autenticada, perfil Orientador: consulta Crossref
+  preencheu título, autor, revista e publicação; abstract ausente ficou vazio.
+- Ao trocar para DOI DataCite, valores automáticos antigos foram substituídos,
+  a revista indisponível ficou vazia e o abstract manual foi preservado.
+- Salvar permaneceu habilitado com metadados incompletos. O formulário foi
+  cancelado sem salvar e recarregado; a referência original permaneceu intacta.
+- Não foi executada gravação de teste em produção, mudança de perfil ou E2E
+  Aluno–Orientador completo. Gravação do formulário foi verificada com HTTP
+  simulado e o schema de persistência foi validado pelos testes locais.

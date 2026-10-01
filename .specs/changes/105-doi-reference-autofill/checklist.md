@@ -8,4 +8,4 @@
 - [x] Prova real de Crossref e DataCite sem credenciais.
 - [x] Testes de navegador e revisão final aprovados.
 - [x] Dependências corrigidas e gates finais aprovados.
-- [ ] Deploy, smoke canônico e documentação final do CPD concluídos.
+- [x] Deploy, smoke canônico e documentação final do CPD concluídos.

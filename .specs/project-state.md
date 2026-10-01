@@ -8,8 +8,11 @@
 
 ## Estado atual
 
-- C105 em validação: consulta de referências por DOI com preenchimento parcial
-  editável, Crossref/DataCite no backend e publicação autorizada em 01/10/2026.
+- C105 concluída e publicada em `v01102026.1`: referências por DOI via
+  Crossref/DataCite, metadados parciais editáveis, cadastro manual preservado,
+  154 testes e Chromium/WebKit desktop/mobile aprovados. Consultas reais e
+  preservação do texto manual homologadas na sessão autenticada de produção,
+  sem salvar referências de teste. CPD em `changes/105-doi-reference-autofill/`.
 
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
 - Changes 001–090, 092–096, 098–099 e 101–103 concluídas conforme `.specs/roadmap.md`.

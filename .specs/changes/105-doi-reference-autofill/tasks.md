@@ -7,5 +7,5 @@
 - [x] Adicionar testes unitários e verificador de navegador isolado.
 - [x] Concluir correção das dependências e repetir gates.
 - [x] Homologar Chromium/WebKit, desktop/mobile.
-- [ ] Homologar produção.
-- [ ] Commit, push, deploy, readback e registro final do CPD.
+- [x] Homologar produção (consultas reais e edição sem salvar no projeto original).
+- [x] Commit, push, deploy, readback e registro final do CPD.
