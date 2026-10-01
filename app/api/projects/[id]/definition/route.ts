@@ -20,6 +20,7 @@ import {
   STUDENT_ADVISOR_REQUIRED_MESSAGE,
 } from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
+import { regenerationGuidanceSchema, scopedRegenerationGuidance } from "@/modules/research-workflow/regeneration-guidance";
 import {
   validateGeneralObjective,
   validateProblemStatement,
@@ -55,6 +56,7 @@ const requestSchema = z.object({
   // Treat that as the absence of a promotion instead of rejecting the whole
   // operation before the workflow action is reached.
   promoteObjectiveId: z.string().uuid().nullable().optional(),
+  regenerationGuidance: regenerationGuidanceSchema,
   revision: z.number().int().positive(),
   step: z.enum(["problem_statement", "general_objective", "specific_objectives"]),
   studentJustification: z.string().optional().nullable(),
@@ -373,7 +375,17 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const problem = currentElement(content, "problem_statement");
     const general = currentElement(content, "general_objective");
     const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
-    const studentContext = studentContextNotes(content);
+    const allowedLabels = step === "problem_statement"
+      ? new Map([["problem", "a problemática"]])
+      : step === "general_objective"
+        ? new Map([["general", "o objetivo geral"]])
+        : new Map([["general", "o objetivo geral"], ...content.elements.filter((item) => item.type === "specific_objective").map((item, index): [string, string] => [item.id, `o objetivo específico ${index + 1}`])]);
+    let studentContext: string[];
+    try {
+      studentContext = [...scopedRegenerationGuidance(parsed.data.regenerationGuidance, allowedLabels), ...studentContextNotes(content)];
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Pedido inválido." }, { status: 400 });
+    }
     if (!problem) return NextResponse.json({ error: "Problemática não encontrada." }, { status: 409 });
     if (step === "problem_statement") {
       const generated = await regenerateProblemStatement(candidate, generationDiscovery, studentContext);

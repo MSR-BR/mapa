@@ -16,6 +16,7 @@ import {
   STUDENT_ADVISOR_REQUIRED_MESSAGE,
 } from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
+import { currentGuidanceNotesSchema, regenerationGuidanceSchema, scopedCurrentGuidanceNotes, scopedRegenerationGuidance } from "@/modules/research-workflow/regeneration-guidance";
 import {
   FINAL_TITLE_MAX_LENGTH,
   methodologyPlanInputSchema,
@@ -43,6 +44,8 @@ export const maxDuration = 120;
 const requestSchema = z.object({
   action: z.enum(["back", "initialize", "regenerate", "save", "validate"]),
   classification: z.unknown().optional(),
+  currentGuidanceNotes: currentGuidanceNotesSchema,
+  regenerationGuidance: regenerationGuidanceSchema,
   revision: z.number().int().positive(),
   rows: z.unknown().optional(),
   title: z.unknown().optional(),
@@ -448,8 +451,25 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   let plan: MethodologyPlanInput;
+  let currentNotes = new Map<string, string | null>();
   try {
     if (action === "initialize" || action === "regenerate") {
+      const existingRows = workflow.content.methodologyRows;
+      const suppliedNotes = action === "regenerate"
+        ? scopedCurrentGuidanceNotes(parsed.data.currentGuidanceNotes, new Set(existingRows.map((row) => row.id)))
+        : [];
+      currentNotes = new Map(existingRows.map((row) => [row.id, row.studentJustification]));
+      for (const { id, note } of suppliedNotes) currentNotes.set(id, note);
+      const guidance = action === "regenerate"
+        ? scopedRegenerationGuidance(parsed.data.regenerationGuidance, new Map([
+          ["methodology", "a metodologia e o título final"],
+          ...existingRows.map((row, index): [string, string] => [row.id, `a linha metodológica ${index + 1}`]),
+        ]))
+        : [];
+      const generationContent = researchWorkflowContentSchema.parse({
+        ...workflow.content,
+        methodologyRows: existingRows.map((row) => ({ ...row, studentJustification: currentNotes.get(row.id) ?? null })),
+      });
       const previousPlan = action === "regenerate" ? planFromContent(workflow.content) : null;
       const improvementNotes = previousPlan
         ? validateMethodologyPlan(previousPlan, {
@@ -468,7 +488,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
         context.literature,
         context.development,
         discoveryWithWorkflowReferences(context.discovery, workflow.content),
-        workflow.content.methodologyRows.map((row) => ({
+        generationContent.methodologyRows.map((row) => ({
           analysisTreatment: row.analysisTreatment,
           associatedTopicIds: row.associatedTopicIds,
           dataCollection: row.dataCollection,
@@ -479,7 +499,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           warnings: row.warnings,
         })),
         improvementNotes,
-        studentContextNotes(workflow.content),
+        [
+          ...guidance,
+          ...generationContent.methodologyRows.flatMap((row, index) => row.studentJustification?.trim()
+            ? [`Contexto salvo da linha metodológica ${index + 1}: ${row.studentJustification.trim()}`]
+            : []),
+          ...studentContextNotes(generationContent),
+        ],
       );
     } else {
       plan = planFromRequest(parsed.data);
@@ -498,6 +524,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     rows: plan.rows.map((row) => ({
       ...row,
       associatedTopicIds: [...new Set(row.associatedTopicIds.filter((topicId) => allowedTopicIdsForPlan.has(topicId)))],
+      studentJustification: action === "regenerate" ? currentNotes.get(row.id) ?? null : row.studentJustification,
     })),
   };
   let content = replaceMethodology(reconciledWorkflowContent, plan, workflow.sourceRevision, action === "initialize" || action === "regenerate" ? "ai" : "user");

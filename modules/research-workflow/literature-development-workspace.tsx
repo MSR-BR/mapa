@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+import { AiGuidanceField } from "./ai-guidance-field";
 import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
@@ -56,6 +57,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
   const [topics, setTopics] = useState<ChapterTopicInput[]>(() => readTopics(initialWorkflow, chapter));
+  const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -78,7 +80,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const justificationLabel = isSelfDirectedProject ? "Justificativa deste tópico (opcional)" : "Justificativa deste tópico *";
   const validateButtonLabel = "Validar etapa";
 
   useEffect(() => {
@@ -94,6 +95,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     setKeywords(next.content.discovery?.interpreted.keywords.join(", ") ?? "");
   }
 
+  function updateRequest(id: string, value: string) {
+    setRegenerationRequests((current) => ({ ...current, [id]: value }));
+  }
+
   async function submit(action: Exclude<Operation, null>, extra: Record<string, unknown> = {}) {
     if (busy) return;
     if (action === "regenerate" && changed && !window.confirm("A nova sugestão substituirá suas edições atuais. Deseja continuar?")) return;
@@ -107,6 +112,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     try {
       const requestBody: Record<string, unknown> = { action, revision: workflow.revision, step: chapter, ...extra };
       if (action === "save" || action === "validate") requestBody.topics = topics;
+      if (action === "regenerate") {
+        requestBody.currentGuidanceNotes = topics.filter((topic) => savedTopics.some((saved) => saved.id === topic.id)).map((topic) => ({ id: topic.id, note: topic.studentJustification }));
+        requestBody.regenerationGuidance = topics.flatMap((topic) => regenerationRequests[topic.id]?.trim() ? [{ id: topic.id, instruction: regenerationRequests[topic.id].trim() }] : []);
+      }
       const response = await fetch(`/api/projects/${projectId}/chapters`, {
         body: JSON.stringify(requestBody),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
@@ -119,6 +128,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
+      if (action === "regenerate") setRegenerationRequests({});
       applyWorkflow(payload.workflow);
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
@@ -278,10 +288,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
                 />
               </label>
             ) : null}
-            <label className="student-justification topic-student-justification">
-              {justificationLabel}
-              <textarea maxLength={1000} onChange={(event) => updateTopic(topic.id, { studentJustification: event.target.value || null })} placeholder="Por que este tópico deve permanecer no capítulo?" value={topic.studentJustification ?? ""} />
-            </label>
+            <AiGuidanceField className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={!isSelfDirectedProject} />
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
             {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral (OEG)</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
             <button className="remove-topic" disabled={topics.length <= 3} onClick={() => setTopics((current) => current.filter((item) => item.id !== topic.id))} type="button">Remover tópico</button>
@@ -331,7 +338,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
 
       <div className="definition-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
+        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
         <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
             <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
       </div>

@@ -7,6 +7,7 @@ import { ResearchActivityIcon } from "@/modules/generation/research-activity-ico
 import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { pendingAdvisorReview } from "./advisor-review";
+import { AiGuidanceField } from "./ai-guidance-field";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
 import { FINAL_TITLE_MAX_LENGTH, FINAL_TITLE_RECOMMENDED_LENGTH, methodologyCompatibilityWarnings, type MethodologyPlanInput } from "./methodology-validation";
@@ -20,9 +21,10 @@ type Operation = "back" | "initialize" | "regenerate" | "save" | "validate" | nu
 type ClassificationDraft = MethodologyPlanInput["classification"];
 type MethodologyRowDraft = MethodologyPlanInput["rows"][number];
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
-type MethodologyHelpTopic = "approach" | "nature" | "objectives";
+type MethodologyHelpTopic = "approach" | "nature" | "objectives" | "regeneration";
 
 const METHODOLOGY_HELP: Record<MethodologyHelpTopic, { body: string; title: string }> = {
+  regeneration: { body: "Este pedido será usado somente na próxima regeneração.", title: "Pedido pontual" },
   approach: {
     body: "Qualitativa interpreta sentidos, experiências, documentos ou processos. Quantitativa mede variáveis e usa números/estatística. Mista combina as duas quando a pesquisa precisa interpretar e medir.",
     title: "Abordagem",
@@ -167,6 +169,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [analysisText, setAnalysisText] = useState(() => listToText(classificationDraft(initialWorkflow).analysisTechniques));
   const [ethicsText, setEthicsText] = useState(() => listToEthicsText(classificationDraft(initialWorkflow).ethicsWarnings));
   const [rows, setRows] = useState<MethodologyRowDraft[]>(() => rowsDraft(initialWorkflow));
+  const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -174,7 +177,6 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const initialized = useRef(false);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const rowJustificationLabel = isSelfDirectedProject ? "Justificativa da linha (opcional)" : "Justificativa da linha *";
   const validateButtonLabel = "Validar etapa";
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
@@ -241,6 +243,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
     setRows(rowsDraft(next));
   }
 
+  function updateRequest(id: string, value: string) {
+    setRegenerationRequests((current) => ({ ...current, [id]: value }));
+  }
+
   function toggleHelp(topic: MethodologyHelpTopic, event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
@@ -276,6 +282,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       const response = await fetch(`/api/projects/${projectId}/methodology`, {
         body: JSON.stringify({
           action,
+          currentGuidanceNotes: action === "regenerate" ? rows.filter((row) => workflow.content.methodologyRows.some((saved) => saved.id === row.id)).map((row) => ({ id: row.id, note: row.studentJustification })) : undefined,
+          regenerationGuidance: action === "regenerate" ? ["methodology", ...rows.map((row) => row.id)].flatMap((id) => regenerationRequests[id]?.trim() ? [{ id, instruction: regenerationRequests[id].trim() }] : []) : undefined,
           classification: includePlan ? currentClassification : undefined,
           revision: workflow.revision,
           rows: includePlan ? rows : undefined,
@@ -292,6 +300,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
+      if (action === "regenerate") setRegenerationRequests({});
       setMessage(payload.message ?? null);
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       if (action === "validate" || action === "back") {
@@ -440,6 +449,11 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         <small>Até {FINAL_TITLE_MAX_LENGTH} caracteres. Acima de {FINAL_TITLE_RECOMMENDED_LENGTH}, o sistema apenas recomenda encurtar; você pode avançar.</small>
       </div>
 
+      <div className="methodology-stage-request ai-guidance-field">
+        <div className="ai-guidance-heading"><strong>Pedido para regenerar toda a metodologia (opcional)</strong><span className="methodology-help"><button aria-expanded={openHelp === "regeneration"} aria-label="Como usar o pedido para regenerar" className="methodology-help-button" onClick={(event) => toggleHelp("regeneration", event)} type="button">i</button>{openHelp === "regeneration" ? <span className="methodology-help-popover" role="tooltip"><strong>Pedido pontual</strong><span>Esta orientação será enviada somente na próxima regeneração. Não altera a justificativa metodológica nem será salva no mapa.</span></span> : null}</span></div>
+        <textarea aria-label="Pedido para regenerar toda a metodologia" maxLength={1000} onChange={(event) => updateRequest("methodology", event.target.value)} placeholder="Descreva os ajustes desejados para o título, a classificação ou a matriz na próxima regeneração." value={regenerationRequests.methodology ?? ""} />
+      </div>
+
       <aside className="methodology-classification" aria-label="Classificação metodológica">
         <div>
           <label><span className="methodology-field-heading">Natureza * {helpButton("nature")}</span><select onChange={(event) => setClassification((current) => ({ ...current, nature: event.target.value as ClassificationDraft["nature"] }))} value={classification.nature}><option>Aplicada</option><option>Básica</option></select></label>
@@ -454,7 +468,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         <label>Procedimentos *<input onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
         <label>Instrumentos *<input onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
         <label>Técnicas de análise *<input onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
-        <label>Justificativa *<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
+        <label>Justificativa metodológica *<textarea maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
         <label>Avisos éticos ou de acesso<textarea maxLength={2400} onChange={(event) => setEthicsText(event.target.value)} placeholder="Opcional. Se houver mais de um aviso, coloque um por linha." value={ethicsText} /></label>
       </aside>
 
@@ -481,8 +495,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
               <label role="cell">Análise/tratamento *<textarea maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
               <label role="cell">Resultado esperado *<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
               <details className="methodology-row-note">
-                <summary>{rowJustificationLabel}</summary>
-                <textarea maxLength={1000} onChange={(event) => updateRow(row.id, { studentJustification: event.target.value || null })} placeholder="Por que esta linha metodológica é necessária?" value={row.studentJustification ?? ""} />
+                <summary>Contexto e pedido para regenerar — {objective?.label ?? `linha ${index + 1}`}</summary>
+                <AiGuidanceField context={row.studentJustification ?? ""} contextPlaceholder="Explique a contribuição desta linha metodológica e o contexto que deve orientar a análise." label={`Contexto e orientações para a IA — ${objective?.label ?? `linha ${index + 1}`}`} onContextChange={(value) => updateRow(row.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(row.id, value)} request={regenerationRequests[row.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para esta linha na próxima regeneração." required={!isSelfDirectedProject} />
               </details>
               <details className="methodology-topic-links">
                 <summary>{row.associatedTopicIds.filter((topicId) => topics.some((topic) => topic.id === topicId)).length} tópicos associados</summary>
@@ -526,7 +540,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
 
       <div className="definition-actions">
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar sugestão</button>
+        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
         <button aria-describedby={rows.length === 0 ? "methodology-empty-explanation" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{rows.length === 0 ? "Matriz necessária para validar" : validateButtonLabel}</button>
       </div>

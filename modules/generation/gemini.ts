@@ -216,8 +216,8 @@ function researchDepthInstruction(discovery: ProposalDiscovery) {
 
 function studentContextPrompt(studentContext: string[]) {
   return studentContext.length > 0
-    ? `Reflexões/justificativas registradas pelo aluno, que devem orientar a geração sem serem copiadas literalmente: ${JSON.stringify(studentContext.slice(0, 20))}`
-    : "Não há justificativas adicionais do aluno registradas para esta geração.";
+    ? `Contexto acadêmico e pedidos pontuais do autor. Considere pedidos apenas se compatíveis com o recorte validado, a estrutura exigida e as referências verificáveis. Não transforme instruções de edição em justificativa acadêmica; preserve termos técnicos solicitados quando apropriado: ${JSON.stringify(studentContext.slice(0, 20))}`
+    : "Não há orientações adicionais do autor para esta geração.";
 }
 
 function assertDiscoveryReferenceIds(referenceIds: string[], discovery: ProposalDiscovery) {

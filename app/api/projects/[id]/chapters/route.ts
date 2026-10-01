@@ -20,6 +20,7 @@ import {
   STUDENT_ADVISOR_REQUIRED_MESSAGE,
 } from "@/modules/research-workflow/advisor-requirement";
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
+import { currentGuidanceNotesSchema, regenerationGuidanceSchema, scopedCurrentGuidanceNotes, scopedRegenerationGuidance } from "@/modules/research-workflow/regeneration-guidance";
 import {
   chapterTopicsInputSchema,
   objectiveCoverageLabel,
@@ -56,6 +57,8 @@ const requestSchema = z.object({
   conceptStatus: z.enum(["accepted", "rejected"]).optional(),
   keywords: z.array(z.string().trim().min(2).max(160)).min(1).max(10).optional(),
   revision: z.number().int().positive(),
+  currentGuidanceNotes: currentGuidanceNotesSchema,
+  regenerationGuidance: regenerationGuidanceSchema,
   step: z.enum(["literature", "development"]),
   topics: z.unknown().optional(),
 });
@@ -113,7 +116,7 @@ function replaceTopics(
       revision: previous ? previous.revision + 1 : 1,
       sourceRevision,
       status: previous?.approvedContent === topic.title ? "validated" : actor === "ai" ? "suggested" : "edited",
-      studentJustification: previous?.studentJustification ?? null,
+      studentJustification: topic.studentJustification ?? null,
       type,
       updatedBy: actor,
     };
@@ -219,6 +222,7 @@ async function saveWorkflow(
 async function generatedLiteratureTopics(
   context: NonNullable<ReturnType<typeof validateContext>>,
   content: ResearchWorkflowContent,
+  guidance = studentContextNotes(content),
 ) {
   const acceptedConcepts = content.knowledgeSuggestions
     .filter((suggestion) => suggestion.status === "accepted")
@@ -229,7 +233,7 @@ async function generatedLiteratureTopics(
     context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
     discoveryWithWorkflowReferences(context.discovery, content),
     acceptedConcepts,
-    studentContextNotes(content),
+    guidance,
   );
   return generated.map((topic) => ({ ...topic, id: crypto.randomUUID() }));
 }
@@ -376,8 +380,30 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     content = replaceTopics(content, step, submittedTopics.topics, workflow.sourceRevision, "user");
   } else if (action === "regenerate") {
     const existing = topicsFromContent(content, step);
+    let oneTimeGuidance: string[];
+    try {
+      const currentNotes = scopedCurrentGuidanceNotes(parsed.data.currentGuidanceNotes, new Set(existing.map((topic) => topic.id)));
+      const noteById = new Map(currentNotes.map((entry) => [entry.id, entry.note]));
+      content = researchWorkflowContentSchema.parse({
+        ...content,
+        elements: content.elements.map((element) => noteById.has(element.id)
+          ? { ...element, studentJustification: noteById.get(element.id) }
+          : element),
+        chapterTopicDetails: content.chapterTopicDetails.map((detail) => detail.chapter === step && noteById.has(detail.topicId)
+          ? { ...detail, studentJustification: noteById.get(detail.topicId) }
+          : detail),
+      });
+      oneTimeGuidance = scopedRegenerationGuidance(parsed.data.regenerationGuidance, new Map(existing.map((topic, index) => [topic.id, `o tópico ${step === "literature" ? "2" : "4"}.${index + 1}`])));
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Orientação inválida." }, { status: 400 });
+    }
+    const currentTopics = topicsFromContent(content, step);
+    const stageNotes = currentTopics.flatMap((topic, index) => topic.studentJustification?.trim()
+      ? [`Contexto salvo do tópico ${step === "literature" ? "2" : "4"}.${index + 1}: ${topic.studentJustification.trim()}`]
+      : []);
+    const guidance = [...oneTimeGuidance, ...stageNotes, ...studentContextNotes(content)];
     const generated = step === "literature"
-      ? await generatedLiteratureTopics(context, content)
+      ? await generatedLiteratureTopics(context, content, guidance)
       : (await generateDevelopmentTopics(
           context.problem.approvedContent!,
           context.general.approvedContent!,
@@ -385,9 +411,9 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
           context.specifics.map((item) => ({ content: item.approvedContent!, id: item.id })),
           topicsFromContent(content, "literature"),
           discoveryWithWorkflowReferences(context.discovery, content),
-          studentContextNotes(content),
+          guidance,
         )).map((topic) => ({ ...topic, id: crypto.randomUUID() }));
-    const stable = generated.map((topic, index) => ({ ...topic, id: existing[index]?.id ?? topic.id }));
+    const stable = generated.map((topic, index) => ({ ...topic, id: currentTopics[index]?.id ?? topic.id, studentJustification: currentTopics[index]?.studentJustification ?? null }));
     content = replaceTopics(content, step, stable, workflow.sourceRevision, "ai");
   }
 
