@@ -13,4 +13,6 @@
 - Revisão do diff: apenas JSX/CSS, versão pública e teste/documentação; nenhum
   handler de persistência, geração, autenticação ou autorização foi alterado.
 - Rollback de interface: deployment anterior `dpl_C3gTCk8DzC5uUfwWjsE8oLYMYS5P`.
-- Evidências de publicação serão registradas no CPD após o smoke.
+- Deployment READY e promovido após health `ok`/versão `.4`, login 200 e
+  negação anônima 401. Domínio canônico confirmou home/login 200, CSS novo,
+  versão `.4`, anônimo 401 e cross-site 403. Detalhes no CPD.

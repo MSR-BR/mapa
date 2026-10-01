@@ -102,7 +102,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 104 | Rollout remoto dos grants explícitos | Concluída | Migration mínima do commit `26ac954` aplicada no projeto correto; 19 migrations, ACLs, RLS, policies, funções e smokes reconciliados. E2E Google com Aluno e Orientador aprovado; fixtures removidas e perfis restaurados. |
 | 105 | Preenchimento de referências por DOI | Concluída | Crossref/DataCite, cadastro manual preservado, 154 testes, Chromium/WebKit desktop/mobile e gate de segurança aprovados; produção v01102026.1 homologada com consulta autenticada e sem alteração dos projetos originais. |
 | 106 | Contexto acadêmico e pedidos pontuais à IA | Concluída | Contexto persistente separado de pedido usado uma vez na regeneração, com ⓘ, placeholders sem exemplos, 156 testes, UI Chromium/WebKit desktop/mobile e produção final `v01102026.3` homologada; E2E autenticado real não executado. |
-| 107 | Cards responsivos de objetivos | Validada localmente | Objetivo geral e OEs separados, ações no rodapé, 28 cenários de layout Chromium/WebKit e gates aprovados; publicação em andamento. |
+| 107 | Cards responsivos de objetivos | Concluída | Objetivo geral e OEs separados, ações no rodapé, 28 cenários de layout Chromium/WebKit e 156 testes aprovados; produção `v01102026.4`, health/CSS/login e bloqueios 401/403 confirmados. |
 
 ## Marcos
 

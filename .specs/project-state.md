@@ -8,6 +8,14 @@
 
 ## Estado atual
 
+- C107 concluída e publicada em `v01102026.4`: objetivo geral revisável e
+  cada OE em card independente, ações no rodapé e colunas adaptadas à largura
+  disponível. Corrige a compressão/sobreposição reportada após C106. Workspace
+  real com fixture sintética passou 28 cenários Chromium/WebKit, 320–1440 px,
+  Aluno/Orientador; 156 testes e build aprovados. Produção confirmou versão,
+  CSS dos cards, home/login e negação anônima/cross-site. Sem alterações de IA,
+  persistência, banco ou regras de perfil.
+
 - C106 concluída e publicada em `v01102026.3`: problemática, objetivos,
   capítulos e metodologia distinguem contexto acadêmico persistente de pedido
   pontual à IA; o ⓘ explica o uso e os placeholders não trazem exemplos.
