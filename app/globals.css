@@ -595,7 +595,14 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .manual-reference-modal label { display: grid; gap: 0.35rem; color: #52645b; font-size: 0.74rem; font-weight: 850; }
 .manual-reference-modal input, .manual-reference-modal textarea { width: 100%; border: 1px solid #b9cbc2; border-radius: 0.72rem; padding: 0.72rem 0.85rem; background: #fbfdfc; color: var(--foreground); font: inherit; }
 .manual-reference-modal textarea { min-height: 5.5rem; resize: vertical; line-height: 1.5; }
-.manual-reference-modal label:nth-of-type(5) textarea { min-height: 8rem; }
+.manual-reference-modal .manual-reference-abstract textarea { min-height: 8rem; }
+.manual-reference-dialog { width: min(calc(100% - 1.5rem), 40rem); max-width: none; max-height: 92dvh; margin: auto; padding: 0; border: 0; border-radius: 1.2rem; background: transparent; }
+.manual-reference-dialog::backdrop { background: rgb(13 26 20 / 48%); backdrop-filter: blur(8px); }
+.manual-reference-dialog .manual-reference-modal { width: 100%; max-height: 90dvh; }
+.manual-reference-lookup { display: grid; gap: 0.6rem; padding: 0.85rem; border: 1px solid #b8ccc2; border-radius: 0.85rem; background: #f1f8f4; }
+.manual-reference-lookup .definition-button { justify-self: start; }
+.manual-reference-lookup input { min-width: 0; }
+.manual-reference-modal :is(input, textarea, button):focus-visible { outline: 3px solid #73af91; outline-offset: 2px; }
 .manual-reference-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; border-top: 1px solid #e0e9e4; padding-top: 0.85rem; }
 .definition-editor { border: 1px solid #c7d7cf; border-radius: 1.2rem; padding: clamp(1.1rem, 3vw, 1.6rem); background: var(--surface); box-shadow: 0 1rem 3rem rgb(20 35 29 / 6%); }
 .definition-editor-with-note { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr); gap: 1rem; align-items: start; }

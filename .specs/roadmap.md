@@ -101,6 +101,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 103 | Prontidão para grants explícitos do Supabase | Concluída localmente | Manifesto de oito tabelas e doze funções, verificador rápido e gate PostgreSQL 17 aprovados; estado completo sem migration redundante e sem acesso remoto. |
 | 104 | Rollout remoto dos grants explícitos | Concluída | Migration mínima do commit `26ac954` aplicada no projeto correto; 19 migrations, ACLs, RLS, policies, funções e smokes reconciliados. E2E Google com Aluno e Orientador aprovado; fixtures removidas e perfis restaurados. |
 
+| 105 | Preenchimento de referências por DOI | Validada localmente / CPD em andamento | Crossref/DataCite, cadastro manual preservado, 154 testes, Chromium/WebKit desktop/mobile e gate de segurança aprovados; publicação autorizada em 01/10/2026. |
+
 ## Marcos
 
 - M0: arquitetura e especificações aprovadas — concluído.

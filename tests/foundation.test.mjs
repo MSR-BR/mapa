@@ -479,9 +479,9 @@ test("uses the standard Next.js runtime expected by Vercel", async () => {
   assert.equal(manifest.scripts.build, "next build");
   assert.equal(manifest.scripts.start, "next start");
   assert.equal(manifest.engines.node, "22.x");
-  assert.equal(manifest.dependencies.next, "16.3.5");
+  assert.equal(manifest.dependencies.next, "16.3.8");
   assert.equal(manifest.dependencies.resend, "^6.28.0");
-  assert.equal(manifest.devDependencies["eslint-config-next"], "16.3.5");
+  assert.equal(manifest.devDependencies["eslint-config-next"], "16.3.8");
   assert.equal(manifest.devDependencies["@tailwindcss/postcss"], "4.3.3");
   assert.equal(manifest.devDependencies.tailwindcss, "4.3.3");
   assert.equal(manifest.overrides.postcss, "8.5.28");

@@ -14,13 +14,15 @@ import {
   type ResearchWorkflowContent,
 } from "@/modules/research-workflow/schema";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+import { canonicalDoiUrl, doiLookupProvenanceSchema, normalizeDoi, sameReferenceDoi } from "@/modules/research-workflow/doi-reference";
 
 const manualReferenceInputSchema = z.object({
   abstract: z.string().trim().max(5_000).optional(),
   authors: z.string().trim().max(1_200).optional(),
-  doi: z.string().trim().max(240).optional(),
+  doi: z.string().trim().max(300).optional(),
   journal: z.string().trim().max(240).optional(),
   title: z.string().trim().min(3).max(500),
+  metadataLookup: doiLookupProvenanceSchema.optional(),
   volumeIssuePages: z.string().trim().max(240).optional(),
 });
 
@@ -38,8 +40,7 @@ function splitAuthors(value: string | undefined) {
   return (value ?? "")
     .split(/[;\n]/)
     .map((author) => author.trim())
-    .filter(Boolean)
-    .slice(0, 8);
+    .filter(Boolean);
 }
 
 function yearFromPublication(value: string | undefined) {
@@ -49,6 +50,8 @@ function yearFromPublication(value: string | undefined) {
 
 function doiUrl(doi: string | null) {
   if (!doi) return null;
+  const normalized = normalizeDoi(doi);
+  if (normalized) return canonicalDoiUrl(normalized);
   if (/^https?:\/\//i.test(doi)) {
     try {
       return new URL(doi).toString();
@@ -61,6 +64,8 @@ function doiUrl(doi: string | null) {
 }
 
 function normalizedReferenceKey(reference: DiscoveryReference) {
+  const doi = reference.doi ? normalizeDoi(reference.doi) : null;
+  if (doi) return `doi:${doi}`;
   return (reference.doi ?? reference.title ?? reference.referenceId)
     .toLocaleLowerCase("pt-BR")
     .normalize("NFD")
@@ -123,12 +128,19 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   }
 
   const input = parsed.data.reference;
-  const doi = nullableText(input.doi);
-  const reference = discoveryReferenceSchema.parse({
+  const doi = input.doi?.trim() ? normalizeDoi(input.doi) : null;
+  if (input.doi?.trim() && !doi) {
+    return NextResponse.json({ error: "Confira o DOI ou deixe esse campo vazio para salvar manualmente." }, { status: 400 });
+  }
+  if (doi && [...(workflow.content.discovery?.references ?? []), ...workflow.content.referenceArchive].some((item) => sameReferenceDoi(item.doi, doi))) {
+    return NextResponse.json({ error: "Este DOI já está nas referências do mapa." }, { status: 409 });
+  }
+  const parsedReference = discoveryReferenceSchema.safeParse({
     abstract: nullableText(input.abstract),
     authors: splitAuthors(input.authors),
     doi,
     journal: nullableText(input.journal),
+    metadataLookup: doi && input.metadataLookup && sameReferenceDoi(input.metadataLookup.doi, doi) ? { ...input.metadataLookup, doi } : undefined,
     referenceId: `manual-${crypto.randomUUID()}`,
     source: "manual",
     title: input.title.trim(),
@@ -136,6 +148,10 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     volumeIssuePages: nullableText(input.volumeIssuePages),
     year: yearFromPublication(input.volumeIssuePages),
   });
+  if (!parsedReference.success) {
+    return NextResponse.json({ error: "Confira os campos. Separe autores por ponto e vírgula, com até 160 caracteres por nome." }, { status: 400 });
+  }
+  const reference = parsedReference.data;
   const content = upsertManualReference(workflow.content, reference);
   const saved = await saveWorkflow(workflow, content, supabase, userId);
   return saved

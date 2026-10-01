@@ -5,7 +5,7 @@
 - Classificação: `S3_SENSITIVE`.
 - Aplicação: Next.js gerenciado na Vercel.
 - Dados e autenticação: Supabase gerenciado, projeto `aeaweherkrqmlqnxsmib`.
-- Provedores server-side: Gemini, Research Starter e Resend.
+- Provedores server-side: Gemini, Research Starter, Resend e consulta bibliográfica pública Crossref/DataCite.
 - Fora do escopo: infraestrutura própria de host, Docker, proxy reverso ou PostgreSQL autogerenciado (`S4`).
 
 ## Ativos e dados protegidos
@@ -26,6 +26,7 @@
 3. Next.js → Gemini/Research Starter: somente backend, respostas tratadas como entrada não confiável.
 4. Resend → webhook: corpo aceito somente após verificação de assinatura.
 5. Aplicação → logs: somente eventos estruturados e campos permitidos; sem mensagens brutas, e-mails, prompts, respostas ou tokens.
+6. Next.js → Crossref/DataCite: somente DOI público, hosts fixos, sem redirecionamentos, timeout e tamanho limitado; metadados tratados como texto não confiável. Consulta exige autorização do proprietário e versão atual do perfil, sem enviar conteúdo privado do projeto aos provedores.
 
 ## Matriz de controles
 

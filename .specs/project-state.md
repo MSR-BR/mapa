@@ -8,6 +8,9 @@
 
 ## Estado atual
 
+- C105 em validação: consulta de referências por DOI com preenchimento parcial
+  editável, Crossref/DataCite no backend e publicação autorizada em 01/10/2026.
+
 - Change 091 cancelada antes da criação do aplicativo ou das credenciais LinkedIn.
 - Changes 001–090, 092–096, 098–099 e 101–103 concluídas conforme `.specs/roadmap.md`.
 - C097 está implantada e em observação até 08/10/2026.

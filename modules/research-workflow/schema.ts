@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { doiLookupProvenanceSchema } from "./doi-reference";
+
 import { researchIntakeSchema } from "@/modules/projects/research-intake";
 import { researchProductTypeSchema } from "./research-level-guidance";
 
@@ -198,9 +200,10 @@ export type CoherenceFinding = z.infer<typeof coherenceFindingSchema>;
 
 export const discoveryReferenceSchema = z.object({
   abstract: z.string().trim().max(5_000).nullable().default(null),
-  authors: z.array(z.string().trim().min(1).max(160)).max(8),
+  authors: z.array(z.string().trim().min(1).max(160)).max(100),
   doi: z.string().trim().max(240).nullable(),
   journal: z.string().trim().max(240).nullable().default(null),
+  metadataLookup: doiLookupProvenanceSchema.optional(),
   referenceId: z.string().trim().min(1).max(120),
   source: z.enum(["manual", "research_starter"]).default("research_starter"),
   title: z.string().trim().min(1).max(500).nullable(),
