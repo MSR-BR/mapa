@@ -58,6 +58,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
   const [topics, setTopics] = useState<ChapterTopicInput[]>(() => readTopics(initialWorkflow, chapter));
   const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
+  const [regenerationEpoch, setRegenerationEpoch] = useState(0);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -128,7 +129,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
-      if (action === "regenerate") setRegenerationRequests({});
+      if (action === "regenerate") {
+        setRegenerationRequests({});
+        setRegenerationEpoch((current) => current + 1);
+      }
       applyWorkflow(payload.workflow);
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
@@ -288,7 +292,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
                 />
               </label>
             ) : null}
-            <AiGuidanceField className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={!isSelfDirectedProject} />
+            <AiGuidanceField key={regenerationEpoch} className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={!isSelfDirectedProject} />
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
             {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral (OEG)</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
             <button className="remove-topic" disabled={topics.length <= 3} onClick={() => setTopics((current) => current.filter((item) => item.id !== topic.id))} type="button">Remover tópico</button>

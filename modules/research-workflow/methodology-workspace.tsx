@@ -170,6 +170,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [ethicsText, setEthicsText] = useState(() => listToEthicsText(classificationDraft(initialWorkflow).ethicsWarnings));
   const [rows, setRows] = useState<MethodologyRowDraft[]>(() => rowsDraft(initialWorkflow));
   const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
+  const [regenerationEpoch, setRegenerationEpoch] = useState(0);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -300,7 +301,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
-      if (action === "regenerate") setRegenerationRequests({});
+      if (action === "regenerate") {
+        setRegenerationRequests({});
+        setRegenerationEpoch((current) => current + 1);
+      }
       setMessage(payload.message ?? null);
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       if (action === "validate" || action === "back") {
@@ -450,7 +454,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       </div>
 
       <div className="methodology-stage-request ai-guidance-field">
-        <div className="ai-guidance-heading"><strong>Pedido para regenerar toda a metodologia (opcional)</strong><span className="methodology-help"><button aria-expanded={openHelp === "regeneration"} aria-label="Como usar o pedido para regenerar" className="methodology-help-button" onClick={(event) => toggleHelp("regeneration", event)} type="button">i</button>{openHelp === "regeneration" ? <span className="methodology-help-popover" role="tooltip"><strong>Pedido pontual</strong><span>Esta orientação será enviada somente na próxima regeneração. Não altera a justificativa metodológica nem será salva no mapa.</span></span> : null}</span></div>
+        <div className="ai-guidance-heading"><strong>Pedido para regenerar toda a metodologia (opcional)</strong><span className="methodology-help" data-methodology-help><button aria-expanded={openHelp === "regeneration"} aria-label="Como usar o pedido para regenerar" className="methodology-help-button" onClick={(event) => toggleHelp("regeneration", event)} type="button">i</button>{openHelp === "regeneration" ? <span className="methodology-help-popover" role="tooltip"><strong>Pedido pontual</strong><span>Esta orientação será enviada somente na próxima regeneração. Não altera a justificativa metodológica nem será salva no mapa.</span></span> : null}</span></div>
         <textarea aria-label="Pedido para regenerar toda a metodologia" maxLength={1000} onChange={(event) => updateRequest("methodology", event.target.value)} placeholder="Descreva os ajustes desejados para o título, a classificação ou a matriz na próxima regeneração." value={regenerationRequests.methodology ?? ""} />
       </div>
 
@@ -496,7 +500,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
               <label role="cell">Resultado esperado *<textarea maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
               <details className="methodology-row-note">
                 <summary>Contexto e pedido para regenerar — {objective?.label ?? `linha ${index + 1}`}</summary>
-                <AiGuidanceField context={row.studentJustification ?? ""} contextPlaceholder="Explique a contribuição desta linha metodológica e o contexto que deve orientar a análise." label={`Contexto e orientações para a IA — ${objective?.label ?? `linha ${index + 1}`}`} onContextChange={(value) => updateRow(row.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(row.id, value)} request={regenerationRequests[row.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para esta linha na próxima regeneração." required={!isSelfDirectedProject} />
+                <AiGuidanceField key={regenerationEpoch} context={row.studentJustification ?? ""} contextPlaceholder="Explique a contribuição desta linha metodológica e o contexto que deve orientar a análise." label={`Contexto e orientações para a IA — ${objective?.label ?? `linha ${index + 1}`}`} onContextChange={(value) => updateRow(row.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(row.id, value)} request={regenerationRequests[row.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para esta linha na próxima regeneração." required={!isSelfDirectedProject} />
               </details>
               <details className="methodology-topic-links">
                 <summary>{row.associatedTopicIds.filter((topicId) => topics.some((topic) => topic.id === topicId)).length} tópicos associados</summary>

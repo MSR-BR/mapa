@@ -45,6 +45,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
   const [generalJustification, setGeneralJustification] = useState(() => findElement(initialWorkflow, "general_objective")?.studentJustification ?? "");
   const [specifics, setSpecifics] = useState<ObjectiveDraft[]>(() => specificDrafts(initialWorkflow));
   const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
+  const [regenerationEpoch, setRegenerationEpoch] = useState(0);
   const [promotionId, setPromotionId] = useState<string | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -148,7 +149,10 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
-      if (action === "regenerate") setRegenerationRequests({});
+      if (action === "regenerate") {
+        setRegenerationRequests({});
+        setRegenerationEpoch((current) => current + 1);
+      }
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
@@ -261,7 +265,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
               <textarea maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
               <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
             </label>
-            <AiGuidanceField context={problemJustification} contextPlaceholder="Explique a relevância da pergunta e o recorte que deve orientar as próximas etapas." label="Contexto e orientações para a IA — problemática" onContextChange={setProblemJustification} onRequestChange={(value) => updateRequest("problem", value)} request={regenerationRequests.problem ?? ""} requestPlaceholder="Descreva como a IA deve ajustar a problemática na próxima regeneração." required={!isSelfDirectedProject} />
+            <AiGuidanceField key={regenerationEpoch} context={problemJustification} contextPlaceholder="Explique a relevância da pergunta e o recorte que deve orientar as próximas etapas." label="Contexto e orientações para a IA — problemática" onContextChange={setProblemJustification} onRequestChange={(value) => updateRequest("problem", value)} request={regenerationRequests.problem ?? ""} requestPlaceholder="Descreva como a IA deve ajustar a problemática na próxima regeneração." required={!isSelfDirectedProject} />
           </div>
         ) : step === "general_objective" ? (
           <div className="definition-editor-with-note">
@@ -270,7 +274,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
               <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
               <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
             </label>
-            <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo responde à problemática e o que deve permanecer nas próximas etapas." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral na próxima regeneração." required={!isSelfDirectedProject} />
+            <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo responde à problemática e o que deve permanecer nas próximas etapas." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral na próxima regeneração." required={!isSelfDirectedProject} />
           </div>
         ) : (
           <div className="specific-objective-list">
@@ -280,7 +284,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
                 <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
                 <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
               </label>
-              <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
+              <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
             </div>
             {specifics.map((objective, index) => (
               <div className="specific-objective-row" key={objective.id}>
@@ -288,7 +292,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
                   Objetivo específico {index + 1}
                   <textarea maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
                 </label>
-                <AiGuidanceField context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
+                <AiGuidanceField key={regenerationEpoch} context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
                 <button
                   aria-label={`Remover objetivo específico ${index + 1}`}
                   disabled={specifics.length <= 3}

@@ -14,7 +14,8 @@ const built = await build({
     function App() {
       const [context, setContext] = useState('');
       const [request, setRequest] = useState('');
-      return <AiGuidanceField context={context} contextPlaceholder="Explique o contexto acadêmico." label="Contexto e orientações para a IA — OE1" onContextChange={setContext} onRequestChange={setRequest} request={request} requestPlaceholder="Descreva o ajuste desejado." required />;
+      const [epoch, setEpoch] = useState(0);
+      return <><AiGuidanceField key={epoch} context={context} contextPlaceholder="Explique o contexto acadêmico." label="Contexto e orientações para a IA — OE1" onContextChange={setContext} onRequestChange={setRequest} request={request} requestPlaceholder="Descreva o ajuste desejado." required /><button onClick={() => { setRequest(''); setEpoch((value) => value + 1); }}>Simular regeneração concluída</button></>;
     }
     createRoot(document.getElementById('root')).render(<App/>);
   ` }, bundle: true, write: false, jsx: "automatic", define: { "process.env.NODE_ENV": '"production"' },
@@ -52,6 +53,11 @@ try {
         await expect(context).toHaveValue("A pesquisa exige este recorte.");
         await page.getByRole("button", { name: /Pedido para regenerar/ }).click();
         await expect(request).toHaveValue("Reformule o OE1.");
+        await page.getByRole("button", { name: "Simular regeneração concluída" }).click();
+        await expect(context).toBeVisible();
+        await expect(context).toHaveValue("A pesquisa exige este recorte.");
+        await page.getByRole("button", { name: /Pedido para regenerar/ }).click();
+        await expect(request).toHaveValue("");
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(errors, []);
         scenarios++;
