@@ -1,0 +1,117 @@
+{
+  "status": "LOCAL_DRAFT_NOT_IMPORTED",
+  "prepared_at": "2026-10-03",
+  "campaign_name": "Mapa | Search | BR | Ativacao | Piloto",
+  "account": {
+    "google_login": "mario.reis.junior@gmail.com",
+    "customer_id": null,
+    "required_scope": "dedicated_mapa_account",
+    "excluded_customer_id": "383-835-9068",
+    "billing_country": null,
+    "currency": null,
+    "timezone": null
+  },
+  "measurement": {
+    "ga4_property_id": "550650234",
+    "measurement_id": "G-MKFYYRZG87",
+    "primary_conversion_candidate": "project_start",
+    "conversion_action_id": null,
+    "ga4_receipt_and_attribution_verified": false,
+    "personalized_advertising": false,
+    "auto_tagging_required": true
+  },
+  "campaign": {
+    "status_after_import": "PAUSED",
+    "type": "SEARCH",
+    "country": "BR",
+    "location_match": "PRESENCE",
+    "language": "pt",
+    "search_partners": false,
+    "display_network": false,
+    "broad_match": false,
+    "remarketing": false,
+    "customer_match": false,
+    "automatic_recommendation_application": false,
+    "automatic_text_or_url_expansion": false,
+    "final_url": "https://mapadapesquisa.com.br/",
+    "final_url_suffix": "utm_source=google&utm_medium=cpc&utm_campaign=mapa_search_br_ativacao_piloto&utm_content=planejamento_rsa",
+    "display_paths": ["pesquisa", "projeto"],
+    "budget": {
+      "authorized_average_daily_eur": 2,
+      "account_currency_daily_amount": null,
+      "assumed_exchange_rate": null,
+      "recommended_review_days": 7,
+      "proposed_cost_pause_threshold_eur": 14,
+      "strict_total_cap_guaranteed": false,
+      "pause_mechanism_verified": false
+    },
+    "bidding": {
+      "strategy_proposal": "MAXIMIZE_CLICKS_WITH_CPC_LIMIT",
+      "cpc_limit_proposal_eur": 0.3,
+      "keyword_planner_verified": false,
+      "forecast": null
+    },
+    "ad_groups": [{
+      "name": "Planejamento Academico",
+      "audience_basis": "search_intent",
+      "demographic_restrictions": [],
+      "keywords": [
+        {"text": "criar projeto de pesquisa", "match": "EXACT"},
+        {"text": "organizar projeto de pesquisa", "match": "EXACT"},
+        {"text": "projeto de pesquisa com ia", "match": "PHRASE"},
+        {"text": "ferramenta projeto de pesquisa", "match": "PHRASE"},
+        {"text": "ferramenta para tcc", "match": "EXACT"},
+        {"text": "planejar projeto de pesquisa", "match": "EXACT"}
+      ],
+      "responsive_search_ad": {
+        "headlines": [
+          "Mapa da Pesquisa",
+          "Seu Projeto Ganha Estrutura",
+          "Organize Sua Pesquisa",
+          "Crie Seu Projeto Com IA",
+          "Comece Seu TCC Com Clareza",
+          "Da Ideia Ao Projeto",
+          "Objetivos E Metodologia",
+          "Planeje Sua Dissertação",
+          "Aluno Ou Orientador",
+          "Modo Rápido Ou Avançado",
+          "Acesso Gratuito",
+          "Referências Verificáveis",
+          "Sugestões Com Revisão Humana",
+          "Comece Pela Sua Ideia",
+          "Construa Seu Mapa De Pesquisa"
+        ],
+        "descriptions": [
+          "Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir.",
+          "Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.",
+          "Para TCC, dissertação, tese ou artigo. Escolha o modo Rápido ou Avançado e comece.",
+          "Estudantes e orientadores planejam pesquisas com sugestões de IA e revisão humana."
+        ]
+      },
+      "callouts": ["Acesso gratuito", "Rápido ou Avançado", "Aluno e Orientador", "Revisão humana"]
+    }],
+    "negative_keywords": [
+      {"text": "tcc pronto", "match": "PHRASE"},
+      {"text": "tcc prontos", "match": "PHRASE"},
+      {"text": "comprar tcc", "match": "PHRASE"},
+      {"text": "comprar monografia", "match": "PHRASE"},
+      {"text": "trabalho pronto", "match": "PHRASE"},
+      {"text": "trabalhos prontos", "match": "PHRASE"},
+      {"text": "tcc para copiar", "match": "PHRASE"},
+      {"text": "monografia pronta", "match": "PHRASE"},
+      {"text": "mapa astral", "match": "PHRASE"},
+      {"text": "mapa rodoviário", "match": "PHRASE"},
+      {"text": "mapa geografico", "match": "PHRASE"},
+      {"text": "mapa geográfico", "match": "PHRASE"},
+      {"text": "mapa do brasil", "match": "PHRASE"}
+    ]
+  },
+  "remote_changes_performed": [],
+  "launch_blockers": [
+    "authenticated_panel_control_or_suitable_verified_connection_missing",
+    "ga4_receipt_key_event_filter_and_attribution_unverified",
+    "dedicated_ads_account_currency_billing_unverified",
+    "keyword_planner_and_cpc_limit_unverified",
+    "pause_control_and_final_launch_readback_unverified"
+  ]
+}
