@@ -18,7 +18,7 @@ import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
-import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, getReferenceCountBucket, isWorkflowCompletionTransition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
 import { WorkflowProgress } from "./workflow-progress";
@@ -107,8 +107,12 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o mapa final.");
       if (action === "complete") {
-        trackAnalyticsEvent("stage_completed", { ...analyticsPosition, app_result: "success", app_role: activeRole });
-        trackAnalyticsEvent("project_completed", { ...analyticsPosition, app_result: "success", app_reference_count_bucket: getReferenceCountBucket(finalMap.references.length), app_role: activeRole });
+        if (isWorkflowCompletionTransition(workflow.state, payload.workflow.state)) {
+          trackAnalyticsEvent("stage_completed", { ...analyticsPosition, app_result: "success", app_role: activeRole });
+          trackAnalyticsEvent("project_completed", { ...analyticsPosition, app_result: "success", app_reference_count_bucket: getReferenceCountBucket(finalMap.references.length), app_role: activeRole });
+        } else {
+          trackAnalyticsEvent("advisor_link_pending", { ...analyticsPosition, app_role: activeRole, app_reason_code: "advisor_pending" });
+        }
         router.push("/dashboard");
         return;
       }

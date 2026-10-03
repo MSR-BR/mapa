@@ -88,9 +88,6 @@ export function PublicStartForm() {
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
     setAnalyticsContext({ app_auth_state: "anonymous", app_role: "unknown", app_surface: "home", app_entry_mode: entryMode, app_product_type: productType });
-    trackAnalyticsEvent("project_start", { app_entry_mode: entryMode, app_product_type: productType, app_surface: "home", app_result: "started" });
-    trackAnalyticsEvent("login_started", { app_surface: "home" });
-
     try {
       localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify(mode === "quick"
         ? { mode, prompt, savedAt: Date.now() }
@@ -99,6 +96,7 @@ export function PublicStartForm() {
       setError("Não foi possível guardar o rascunho neste navegador. Verifique as permissões de armazenamento e tente novamente.");
       return;
     }
+    trackAnalyticsEvent("login_started", { app_surface: "home" });
     setContinuing(true);
     router.push("/login?next=%2Fdashboard%3Fresume%3D1");
   }

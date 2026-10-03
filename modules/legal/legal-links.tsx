@@ -46,6 +46,7 @@ export function LegalLinks({ defaultEmail = "" }: { defaultEmail?: string }) {
     <nav aria-label="Informações legais" className="legal-links">
       <button onClick={() => setPanel("terms")} type="button">Termos de uso</button>
       <button onClick={() => setPanel("privacy")} type="button">Privacidade</button>
+      <button onClick={() => window.dispatchEvent(new Event("mapa:open-privacy-preferences"))} type="button">Preferências de cookies</button>
       <button onClick={() => { trackAnalyticsEvent("support_opened", { app_surface: "home" }); setPanel("support"); }} type="button">Suporte</button>
       <button onClick={() => setPanel("bug")} type="button">Relatar problema</button>
       <button onClick={() => setPanel("credits")} type="button">Créditos</button>

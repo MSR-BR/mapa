@@ -3,8 +3,12 @@ import test from "node:test";
 
 import {
   ANALYTICS_CONSENT_KEY,
+  ADS_CONSENT_KEY,
+  consentModeV2,
   getAnalyticsWorkflowPosition,
   getReferenceCountBucket,
+  isWorkflowCompletionTransition,
+  safeAnalyticsPageLocation,
   setAnalyticsContext,
   trackAnalyticsEvent,
 } from "../modules/analytics/analytics";
@@ -55,6 +59,48 @@ test("analytics accepts Google as the only social provider", () => {
   trackAnalyticsEvent("login_started", { app_result: "started", app_surface: "google" });
   assert.equal((calls[0]?.[2] as Record<string, string>).app_surface, "google");
   delete (globalThis as { window?: unknown }).window;
+});
+
+test("ads preference alone cannot send analytics events", () => {
+  const calls = installWindow("rejected");
+  const storage = (globalThis as { window: { localStorage: { setItem: (key: string, value: string) => void } } }).window.localStorage;
+  storage.setItem(ADS_CONSENT_KEY, "accepted");
+  assert.equal(trackAnalyticsEvent("project_completed", { app_result: "success" }), false);
+  assert.equal(calls.length, 0);
+  delete (globalThis as { window?: unknown }).window;
+});
+
+test("only a sent event returns success for conversion deduplication", () => {
+  const calls = installWindow("accepted");
+  assert.equal(trackAnalyticsEvent("project_start", { app_result: "success" }), true);
+  assert.equal(calls.length, 1);
+  delete (globalThis as { window?: unknown }).window;
+});
+
+test("page URLs strip project IDs and private parameters but preserve safe public campaign attribution", () => {
+  assert.equal(
+    safeAnalyticsPageLocation("https://mapadapesquisa.com.br/dashboard/projects/123e4567-e89b-12d3-a456-426614174000?created=1&email=a%40b.com"),
+    "https://mapadapesquisa.com.br/dashboard/projects/project",
+  );
+  assert.equal(
+    safeAnalyticsPageLocation("https://mapadapesquisa.com.br/?utm_source=google&utm_medium=cpc&utm_campaign=mapa_launch&gclid=AbC123&email=a%40b.com"),
+    "https://mapadapesquisa.com.br/?utm_source=google&utm_medium=cpc&utm_campaign=mapa_launch&gclid=AbC123",
+  );
+});
+
+test("Consent Mode v2 grants only separately chosen advertising signals", () => {
+  assert.deepEqual(consentModeV2(false), {
+    analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+  });
+  assert.deepEqual(consentModeV2(true), {
+    analytics_storage: "granted", ad_storage: "granted", ad_user_data: "granted", ad_personalization: "denied",
+  });
+});
+
+test("project completion counts only the persisted transition, not an advisor-pending 200", () => {
+  assert.equal(isWorkflowCompletionTransition("reviewing_map", "reviewing_map"), false);
+  assert.equal(isWorkflowCompletionTransition("reviewing_map", "completed"), true);
+  assert.equal(isWorkflowCompletionTransition("completed", "completed"), false);
 });
 
 test("reference buckets are stable and bounded", () => {

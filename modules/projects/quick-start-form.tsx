@@ -130,7 +130,7 @@ export function QuickStartForm({
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
     const source = resumeDraft ? "resume" : "dashboard";
     setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: source, app_entry_mode: entryMode, app_product_type: productType });
-    trackAnalyticsEvent(resumeDraft ? "project_resumed" : "project_start", {
+    if (resumeDraft) trackAnalyticsEvent("project_resumed", {
       app_entry_mode: entryMode,
       app_product_type: productType,
       app_surface: source,

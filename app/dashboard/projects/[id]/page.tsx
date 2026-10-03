@@ -6,6 +6,7 @@ import { loadGenerationSnapshot } from "@/modules/generation/storage";
 import { ActorAuthorizationError } from "@/modules/profile/authorization";
 import { authorizeProject } from "@/modules/projects/auth";
 import { PendingProjectCleanup } from "@/modules/projects/pending-project-cleanup";
+import { ProjectCreatedAnalytics } from "@/modules/projects/project-created-analytics";
 import { ProjectAdvisorPanel } from "@/modules/projects/project-advisor-panel";
 import { AdvisorReviewWorkspace } from "@/modules/research-workflow/advisor-review-workspace";
 import { FinalMapWorkspace } from "@/modules/research-workflow/final-map-workspace";
@@ -28,9 +29,9 @@ function IntegrationBanner({ source }: { source: string | null }) {
   ) : null;
 }
 
-export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string }> }) {
+export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string }> }) {
   const { id } = await params;
-  const { discover, generate } = await searchParams;
+  const { discover, generate, created, entry } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   let access;
@@ -61,6 +62,9 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const source = integrationSource(project.problem_statement);
   const isSelfDirectedProject = isOwner && access.project.authoring_role === "advisor";
   const isStudentAuthoredProject = isOwner && access.project.authoring_role === "student";
+  const createdAnalytics = created === "1" && isOwner
+    ? <ProjectCreatedAnalytics entryMode={entry === "quick" ? "quick" : "advanced"} projectId={id} />
+    : null;
 
   if (project.workflow_version === 2) {
     const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
@@ -86,6 +90,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     return (
       <main className="workspace-shell proposal-workspace-shell">
         <PendingProjectCleanup />
+        {createdAnalytics}
         <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
         <p className="eyebrow">Mapa da pesquisa</p>
         <h1>{project.title}</h1>
@@ -128,6 +133,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   return (
     <main className="workspace-shell narrow-workspace">
       <PendingProjectCleanup />
+      {createdAnalytics}
       <Link className="back-link" href="/dashboard">← Voltar aos projetos</Link>
       <p className="eyebrow">Mapa da pesquisa</p>
       <h1>{project.title}</h1>

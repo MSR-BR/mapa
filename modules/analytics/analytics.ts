@@ -59,6 +59,34 @@ export type AnalyticsEventParams = {
 export type AnalyticsContext = Pick<AnalyticsEventParams, "app_auth_state" | "app_role" | "app_surface" | "app_entry_mode" | "app_product_type" | "app_stage" | "app_has_advisor" | "app_macro_stage" | "app_step">;
 export type AnalyticsWorkflowPosition = Pick<AnalyticsEventParams, "app_stage" | "app_macro_stage" | "app_step">;
 export const ANALYTICS_CONSENT_KEY = "mapa.analytics-consent.v1";
+export const ADS_CONSENT_KEY = "mapa.ads-consent.v1";
+
+export function consentModeV2(ads: boolean) {
+  return {
+    analytics_storage: "granted" as const,
+    ad_storage: ads ? "granted" as const : "denied" as const,
+    ad_user_data: ads ? "granted" as const : "denied" as const,
+    ad_personalization: "denied" as const,
+  };
+}
+
+export function isWorkflowCompletionTransition(previousState: string, savedState: string): boolean {
+  return previousState !== "completed" && savedState === "completed";
+}
+
+/** Keep campaign attribution on public landing pages, never private URLs or arbitrary query values. */
+export function safeAnalyticsPageLocation(href: string): string {
+  const url = new URL(href);
+  const path = url.pathname.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "project");
+  const safe = new URL(path, url.origin);
+  if (path === "/") {
+    for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "gclid", "gbraid", "wbraid"]) {
+      const value = url.searchParams.get(key);
+      if (value && /^[a-zA-Z0-9_-]{1,250}$/.test(value)) safe.searchParams.set(key, value);
+    }
+  }
+  return safe.toString();
+}
 
 const ENUMS: Record<keyof AnalyticsEventParams, readonly string[]> = {
   app_auth_state: ["anonymous", "authenticated"],
@@ -121,13 +149,14 @@ function sanitize(params: AnalyticsEventParams): Record<string, string> {
 }
 
 export function trackAnalyticsEvent(name: AnalyticsEventName, params: AnalyticsEventParams = {}) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") return false;
   try {
-    if (window.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "accepted") return;
+    if (window.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "accepted") return false;
   } catch {
-    return;
+    return false;
   }
   const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
-  if (!gtag) return;
+  if (!gtag) return false;
   gtag("event", name, sanitize({ ...context, ...params }));
+  return true;
 }

@@ -6,7 +6,7 @@ import { ADVISOR_REVIEW_LABELS, currentAdvisorReview } from "./advisor-review";
 import { buildFinalMap, type FinalMap, type FinalMapTopic } from "./final-map";
 import { buildReferenceCodeMap, withCitationMarkers } from "./reference-citations";
 import type { AdvisorReview, DiscoveryReference, ResearchWorkflow, ResearchWorkflowContent, ValidatedElement } from "./schema";
-import { getAnalyticsWorkflowPosition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, isWorkflowCompletionTransition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 
 type AdvisorAction = "approve" | "request_changes" | "save_comment";
@@ -366,6 +366,9 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
       setMessage(payload.message ?? "Validação salva.");
       const analyticsPosition = getAnalyticsWorkflowPosition(review.step);
       if (action === "approve") trackAnalyticsEvent("advisor_approved", { ...analyticsPosition, app_role: "advisor", app_result: "success" });
+      if (action === "approve" && isWorkflowCompletionTransition(workflow.state, payload.workflow.state)) {
+        trackAnalyticsEvent("project_completed", { ...getAnalyticsWorkflowPosition("final_map"), app_role: "advisor", app_result: "success" });
+      }
       if (action === "request_changes") {
         trackAnalyticsEvent("advisor_correction_requested", { ...analyticsPosition, app_role: "advisor", app_reason_code: "advisor_correction" });
         trackAnalyticsEvent("stage_revision_requested", { ...analyticsPosition, app_role: "advisor", app_reason_code: "advisor_correction" });

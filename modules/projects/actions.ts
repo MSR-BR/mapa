@@ -166,7 +166,10 @@ export async function createProject(
   }
 
   revalidatePath("/dashboard");
-  redirect(`/dashboard/projects/${data.id}${useResearchMapV2 ? "?discover=1" : autoGenerate ? "?generate=1" : ""}`);
+  const query = new URLSearchParams({ created: "1", entry: legacyPromptMode ? "quick" : "advanced" });
+  if (useResearchMapV2) query.set("discover", "1");
+  else if (autoGenerate) query.set("generate", "1");
+  redirect(`/dashboard/projects/${data.id}?${query.toString()}`);
 }
 
 export async function updateProject(

@@ -3,21 +3,35 @@
 import { useEffect, useState } from "react";
 
 import { GoogleAnalytics } from "./google-analytics";
-import { ANALYTICS_CONSENT_KEY, setAnalyticsContext, trackAnalyticsEvent } from "./analytics";
+import { ADS_CONSENT_KEY, ANALYTICS_CONSENT_KEY, consentModeV2, setAnalyticsContext, trackAnalyticsEvent } from "./analytics";
 import { createClient } from "@/lib/supabase/client";
 
+type Preference = { analytics: boolean; ads: boolean };
+
 export function AnalyticsConsent({ measurementId, nonce }: { measurementId: string; nonce?: string }) {
-  const [choice, setChoice] = useState<"accepted" | "rejected" | null>(null);
+  const [choice, setChoice] = useState<Preference | null>(null);
+  const [draft, setDraft] = useState<Preference>({ analytics: false, ads: false });
+  const [open, setOpen] = useState(false);
+  const [storageError, setStorageError] = useState(false);
   useEffect(() => {
-    const stored = window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
-    if (stored === "accepted" || stored === "rejected") {
-      // The browser preference is external state; hydrate it after the first render.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setChoice(stored);
+    try {
+      const analytics = window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
+      const ads = window.localStorage.getItem(ADS_CONSENT_KEY);
+      if (analytics === "accepted" || analytics === "rejected") {
+        const saved = { analytics: analytics === "accepted", ads: ads === "accepted" };
+        queueMicrotask(() => { setChoice(saved); setDraft(saved); });
+      } else {
+        queueMicrotask(() => setOpen(true));
+      }
+    } catch {
+      queueMicrotask(() => { setStorageError(true); setOpen(true); });
     }
+    const reopen = () => setOpen(true);
+    window.addEventListener("mapa:open-privacy-preferences", reopen);
+    return () => window.removeEventListener("mapa:open-privacy-preferences", reopen);
   }, []);
   useEffect(() => {
-    if (choice !== "accepted" || !measurementId) return;
+    if (!choice?.analytics || !measurementId) return;
     let supabase: ReturnType<typeof createClient>;
     try {
       supabase = createClient();
@@ -67,14 +81,44 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
       active = false;
       listener.subscription.unsubscribe();
     };
-  }, [choice, measurementId]);
+  }, [choice?.analytics, measurementId]);
   if (!measurementId) return null;
-  function choose(value: "accepted" | "rejected") {
-    window.localStorage.setItem(ANALYTICS_CONSENT_KEY, value);
-    setChoice(value);
+  function save(next: Preference) {
+    try {
+      window.localStorage.setItem(ADS_CONSENT_KEY, next.ads ? "accepted" : "rejected");
+      window.localStorage.setItem(ANALYTICS_CONSENT_KEY, next.analytics ? "accepted" : "rejected");
+    } catch {
+      setStorageError(true);
+      return;
+    }
+    const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+    if (gtag) gtag("consent", "update", { ...consentModeV2(next.ads), analytics_storage: next.analytics ? "granted" : "denied" });
+    const changed = choice?.analytics !== next.analytics || choice?.ads !== next.ads;
+    const revokedAnalytics = Boolean(choice?.analytics && !next.analytics);
+    setChoice(next);
+    setDraft(next);
+    setOpen(false);
+    setStorageError(false);
+    window.dispatchEvent(new Event("mapa:privacy-preferences-saved"));
+    if (changed && next.analytics) {
+      let attempts = 0;
+      const timer = window.setInterval(() => {
+        if (trackAnalyticsEvent("consent_choice", { app_result: "accepted" }) || ++attempts >= 20) window.clearInterval(timer);
+      }, 250);
+    }
+    // An already loaded Google script cannot be removed; reload after revocation.
+    if (revokedAnalytics) window.location.reload();
   }
   return <>
-    {choice === "accepted" ? <GoogleAnalytics measurementId={measurementId} nonce={nonce} /> : null}
-    {choice === null ? <aside aria-label="Preferências de privacidade" className="analytics-consent"><strong>Privacidade e métricas</strong><p>Usamos métricas agregadas para melhorar o Mapa. Não enviamos prompts, projetos ou e-mails ao Google.</p><div><button onClick={() => choose("rejected")} type="button">Recusar</button><button className="analytics-consent-accept" onClick={() => choose("accepted")} type="button">Aceitar métricas</button></div></aside> : null}
+    {choice?.analytics ? <GoogleAnalytics adsConsent={choice.ads} measurementId={measurementId} nonce={nonce} /> : null}
+    {open ? <aside aria-label="Preferências de privacidade" className="analytics-consent" role="dialog">
+      <strong>Privacidade e métricas</strong>
+      <p>Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.</p>
+      <label><input checked={draft.analytics} onChange={(event) => setDraft({ ...draft, analytics: event.target.checked })} type="checkbox" /> Métricas de uso (GA4)</label>
+      <label><input checked={draft.ads} onChange={(event) => setDraft({ ...draft, ads: event.target.checked })} type="checkbox" /> Publicidade e medição de anúncios (opcional)</label>
+      <p>Personalização de anúncios permanece desativada. Ainda não há campanha de anúncios ativa no Mapa.</p>
+      {storageError ? <p role="alert">Não foi possível salvar sua preferência neste navegador. Verifique o armazenamento e tente novamente.</p> : null}
+      <div><button onClick={() => save({ analytics: false, ads: false })} type="button">Recusar todos</button>{choice ? <button onClick={() => setOpen(false)} type="button">Cancelar</button> : null}<button className="analytics-consent-accept" onClick={() => save(draft)} type="button">Salvar escolhas</button></div>
+    </aside> : null}
   </>;
 }
