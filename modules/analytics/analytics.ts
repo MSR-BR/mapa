@@ -88,6 +88,60 @@ export function safeAnalyticsPageLocation(href: string): string {
   return safe.toString();
 }
 
+/** GA attaches document context to every event, not just page_view. Never use raw titles/referrers. */
+export function safeAnalyticsPageContext(href: string, referrer = "") {
+  const pageLocation = safeAnalyticsPageLocation(href);
+  let pageReferrer = "";
+  try {
+    const previous = new URL(referrer);
+    if (["http:", "https:"].includes(previous.protocol)) {
+      const current = new URL(pageLocation);
+      pageReferrer = previous.origin === current.origin
+        ? new URL(new URL(safeAnalyticsPageLocation(previous.href)).pathname, previous.origin).toString()
+        : `${previous.origin}/`;
+    }
+  } catch { /* Missing or invalid referrer must not become free text. */ }
+  return { page_location: pageLocation, page_referrer: pageReferrer, page_title: "Mapa da Pesquisa" };
+}
+
+type AnalyticsWindow = Window & {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+};
+
+/** Queue sanitized configuration before loading the external tag, after explicit metrics consent. */
+export function initializeAnalyticsTag(measurementId: string, adsConsent: boolean): boolean {
+  if (typeof window === "undefined" || !measurementId) return false;
+  try {
+    if (window.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "accepted") return false;
+  } catch { return false; }
+  const target = window as AnalyticsWindow;
+  if (!target.gtag) {
+    target.dataLayer = target.dataLayer || [];
+    target.gtag = function (...args: unknown[]) {
+      // gtag.js expects the standard Arguments queue, not ordinary event arrays.
+      // eslint-disable-next-line prefer-rest-params -- Required by the Google tag queue protocol.
+      const command = arguments;
+      if (command[0] === "event") {
+        command[2] = { ...(args[2] as Record<string, unknown> | undefined), ...safeAnalyticsPageContext(window.location.href, document.referrer) };
+      }
+      target.dataLayer!.push(command);
+    };
+    target.gtag("consent", "default", {
+      analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", wait_for_update: 500,
+    });
+    target.gtag("consent", "update", consentModeV2(adsConsent));
+    target.gtag("js", new Date());
+    target.gtag("config", measurementId, {
+      send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
+      ...safeAnalyticsPageContext(window.location.href, document.referrer),
+    });
+  } else {
+    target.gtag("consent", "update", consentModeV2(adsConsent));
+  }
+  return true;
+}
+
 const ENUMS: Record<keyof AnalyticsEventParams, readonly string[]> = {
   app_auth_state: ["anonymous", "authenticated"],
   app_role: ["student", "advisor", "unknown"],
@@ -157,6 +211,6 @@ export function trackAnalyticsEvent(name: AnalyticsEventName, params: AnalyticsE
   }
   const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
   if (!gtag) return false;
-  gtag("event", name, sanitize({ ...context, ...params }));
+  gtag("event", name, { ...sanitize({ ...context, ...params }), ...safeAnalyticsPageContext(window.location.href, document.referrer) });
   return true;
 }

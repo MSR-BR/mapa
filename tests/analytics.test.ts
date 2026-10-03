@@ -9,6 +9,8 @@ import {
   getReferenceCountBucket,
   isWorkflowCompletionTransition,
   safeAnalyticsPageLocation,
+  safeAnalyticsPageContext,
+  initializeAnalyticsTag,
   setAnalyticsContext,
   trackAnalyticsEvent,
 } from "../modules/analytics/analytics";
@@ -21,8 +23,9 @@ function installWindow(consent: string | null) {
     getItem: (key: string) => storage.get(key) ?? null,
     setItem: (key: string, value: string) => { storage.set(key, value); },
   };
-  const windowValue = { localStorage, gtag: (...args: unknown[]) => calls.push(args) };
+  const windowValue = { localStorage, location: { href: "https://mapadapesquisa.com.br/" }, gtag: (...args: unknown[]) => calls.push(args) };
   Object.defineProperty(globalThis, "window", { configurable: true, value: windowValue });
+  Object.defineProperty(globalThis, "document", { configurable: true, value: { referrer: "" } });
   return calls;
 }
 
@@ -95,6 +98,49 @@ test("Consent Mode v2 grants only separately chosen advertising signals", () => 
   assert.deepEqual(consentModeV2(true), {
     analytics_storage: "granted", ad_storage: "granted", ad_user_data: "granted", ad_personalization: "denied",
   });
+});
+
+test("every custom event strips private document context, not only page_view", () => {
+  const calls = installWindow("accepted");
+  window.location.href = "https://mapadapesquisa.com.br/dashboard/projects/123e4567-e89b-12d3-a456-426614174000?email=secret%40example.com";
+  Object.defineProperty(globalThis, "document", { configurable: true, value: { title: "Private research title", referrer: "https://accounts.google.com/signin?email=secret%40example.com" } });
+  trackAnalyticsEvent("consent_choice", { app_result: "accepted" });
+  const params = calls[0]?.[2] as Record<string, string>;
+  assert.equal(params.page_location, "https://mapadapesquisa.com.br/dashboard/projects/project");
+  assert.equal(params.page_referrer, "https://accounts.google.com/");
+  assert.equal(params.page_title, "Mapa da Pesquisa");
+  assert.equal(JSON.stringify(params).includes("secret"), false);
+  delete (globalThis as { window?: unknown }).window;
+});
+
+test("tag bootstrap queues safe configuration and consent before any script can collect", () => {
+  installWindow("accepted");
+  const target = window as Window & { gtag?: (...args: unknown[]) => void; dataLayer?: unknown[][] };
+  delete target.gtag;
+  window.location.href = "https://mapadapesquisa.com.br/?private_note=secret&utm_source=google&utm_medium=cpc";
+  assert.equal(initializeAnalyticsTag("G-TEST", false), true);
+  assert.deepEqual(target.dataLayer?.map(command => command[0]), ["consent", "consent", "js", "config"]);
+  assert.equal(Array.isArray(target.dataLayer?.[0]), false);
+  const config = target.dataLayer?.[3]?.[2] as Record<string, unknown>;
+  assert.equal(config.send_page_view, false);
+  assert.equal(config.page_location, "https://mapadapesquisa.com.br/?utm_source=google&utm_medium=cpc");
+  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", { page_location: window.location.href, page_title: "secret" });
+  assert.equal(JSON.stringify(target.dataLayer).includes("secret"), false);
+  assert.equal(initializeAnalyticsTag("G-TEST", true), true);
+  assert.equal(target.dataLayer?.filter(command => command[0] === "config").length, 1);
+  delete (globalThis as { window?: unknown }).window;
+});
+
+test("referrer privacy preserves origin attribution but removes user-specific paths and queries", () => {
+  assert.equal(safeAnalyticsPageContext("https://mapadapesquisa.com.br/", "https://www.google.com/search?q=private-topic").page_referrer, "https://www.google.com/");
+  assert.equal(safeAnalyticsPageContext("https://mapadapesquisa.com.br/", "https://mapadapesquisa.com.br/dashboard/projects/123e4567-e89b-12d3-a456-426614174000?secret=1").page_referrer, "https://mapadapesquisa.com.br/dashboard/projects/project");
+  assert.equal(safeAnalyticsPageContext("https://mapadapesquisa.com.br/", "not a URL").page_referrer, "");
+});
+
+test("bootstrap cannot load measurement after a metrics refusal", () => {
+  installWindow("rejected");
+  assert.equal(initializeAnalyticsTag("G-TEST", true), false);
+  delete (globalThis as { window?: unknown }).window;
 });
 
 test("project completion counts only the persisted transition, not an advisor-pending 200", () => {
