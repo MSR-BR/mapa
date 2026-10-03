@@ -1,6 +1,6 @@
 # C100/C108 — preparo de medição para Google Ads (03/10/2026)
 
-Estado: implementação local validada; publicação e prova com dados reais pendentes. Nenhum vínculo Google Ads, campanha ou gasto foi criado.
+Estado: código testado e enviado à branch, mas **Production restaurada ao release anterior** após falha em navegação autenticada. Prova de conversão e atribuição com dados reais pendente. Nenhum vínculo Google Ads, campanha ou gasto foi criado.
 
 ## Código
 
@@ -19,10 +19,13 @@ Estado: implementação local validada; publicação e prova com dados reais pen
 ## Validação e próximos gates
 
 - Lint, TypeScript, build e suíte de testes passaram. O navegador local, com ID GA4 fictício, comprovou: pré-escolha/recusa sem tag; métricas sim/publicidade não; publicidade sim/métricas não sem tag; revogação com recarga sem tag; personalização sempre negada.
-- Após publicar: verificar Tag Assistant/DebugView na propriedade real, criação persistida, espera pelo orientador, aprovação final, ausência de PII e leitura de `source/medium` em nova janela. A anomalia histórica `dashboard`/`unknown` ainda não tem causa isolada.
+- Commits `fde1ebb` (funcional) e `1230d0d` (versão) na branch `codex/change-003-004`. Preview do commit funcional pronto, porém `degraded` porque Preview não tem Resend/Research Starter; não foi promovido.
+- Primeiro deploy de Production exibiu versão antiga por override de `NEXT_PUBLIC_APP_VERSION` e foi revertido. O segundo deployment `dpl_BmGkPZ2wAuh7oMrCxodytzBp34Vi` exibiu `v03102026.1`, health `ok` e landing HTTP 200 no domínio canônico. Porém uma visita autenticada ao dashboard falhou com `profile_unavailable`, causa `PGRST303` / `JWT issued at future` no log do servidor. O deployment estável anterior `dpl_5HNbcpExdtFzQRgNBYKPbGWLWC98` foi promovido novamente; a mesma sessão voltou a abrir projeto normalmente, e o health público voltou a `v01102026.4`/`ok`. O override público de versão em Production foi alinhado a `v01102026.4` enquanto a versão nova não é aprovada.
+- Bloqueio de release: investigar a origem do JWT futuro e repetir o smoke autenticado antes de promover. A causa não está demonstrada como mudança no código de analytics; saúde pública sozinha foi insuficiente.
+- Após uma publicação segura, ainda requer Tag Assistant/DebugView na propriedade real, criação persistida, espera pelo orientador, aprovação final, ausência de PII e leitura de `source/medium` em nova janela. A anomalia histórica `dashboard`/`unknown` ainda não tem causa isolada.
 - Não vincular/importar para Ads nem lançar campanha antes de corrigir/validar atribuição e aprovar a janela de observação pós-publicação. A conta `MSR-BR` pertence ao TERMO e fica fora de escopo.
 
 ## Reversão
 
-- Código: promover o deployment estável anterior no Vercel.
+- Código: o deployment estável `dpl_5HNbcpExdtFzQRgNBYKPbGWLWC98` está ativo. No plano atual, `vercel rollback` a uma versão anterior à última falhou com 402; `vercel promote <deployment-id>` restaurou o alias canônico. O deployment novo permanece pronto, mas não deve ser promovido sem corrigir e validar o erro autenticado.
 - GA4: se necessário, remarcar `project_start` como key event apenas após confirmar a semântica da versão em produção. Nenhum dado histórico foi apagado.
