@@ -6,6 +6,7 @@ import type { Database } from "@/lib/supabase/database.types";
 
 import { LEGAL_TERMS_VERSION } from "@/modules/legal/legal-content";
 import { resolveProfileRecord } from "./actor-policy";
+import { retryFutureJwtRead } from "./future-jwt-retry";
 import type { UserProfileRole } from "./types";
 
 export type ReadyUserProfile = {
@@ -39,14 +40,14 @@ export async function loadUserProfile(
   supabase: SupabaseClient<Database>,
   userId: string,
 ): Promise<UserProfile> {
-  const [{ data, error: profileError }, { data: consent, error: consentError }] = await Promise.all([
+  const [{ data, error: profileError }, { data: consent, error: consentError }] = await retryFutureJwtRead(() => Promise.all([
     supabase
       .from("user_profiles")
       .select("active_role,role_changed_at,role_version")
       .eq("user_id", userId)
       .maybeSingle(),
     supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId),
-  ]);
+  ]));
 
   if (profileError || consentError) {
     throw new UserProfileLoadError(
