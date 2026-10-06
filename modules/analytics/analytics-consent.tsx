@@ -116,7 +116,7 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
       <p>Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.</p>
       <label><input checked={draft.analytics} onChange={(event) => setDraft({ ...draft, analytics: event.target.checked })} type="checkbox" /> Métricas de uso (GA4)</label>
       <label><input checked={draft.ads} onChange={(event) => setDraft({ ...draft, ads: event.target.checked })} type="checkbox" /> Publicidade e medição de anúncios (opcional)</label>
-      <p>Personalização de anúncios permanece desativada. Ainda não há campanha de anúncios ativa no Mapa.</p>
+      <p>Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.</p>
       {storageError ? <p role="alert">Não foi possível salvar sua preferência neste navegador. Verifique o armazenamento e tente novamente.</p> : null}
       <div><button onClick={() => save({ analytics: false, ads: false })} type="button">Recusar todos</button>{choice ? <button onClick={() => setOpen(false)} type="button">Cancelar</button> : null}<button className="analytics-consent-accept" onClick={() => save(draft)} type="button">Salvar escolhas</button></div>
     </aside> : null}
