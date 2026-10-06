@@ -1,0 +1,318 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Paused
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- button "The budget simulator isn't available because this campaign is paused." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets" [expanded]:
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+    - menuitem "Audiences, keywords, and content" [expanded]:
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Keywords":
+      - generic: Keywords
+    - menuitem "Audiences":
+      - generic: Audiences
+    - menuitem "Locations":
+      - generic: Locations
+    - menuitem "Ad schedule":
+      - generic: Ad schedule
+    - menuitem "Advanced bid adjustments":
+      - generic: Advanced bid adjustments
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Keywords" [level=2]
+- button "Not applicable" [disabled]:
+  - generic: Not applicable
+  - img: arrow_drop_down
+- tablist:
+  - tab "Keywords":
+    - generic: Keywords
+  - tab "Negative keywords" [selected]:
+    - generic: Negative keywords
+  - tab "URL inclusions":
+    - generic: URL inclusions
+  - tab "URL exclusions":
+    - generic: URL exclusions
+- main:
+  - region "Primary toolbelt for Negative keywords":
+    - button "Add negative keywords":
+      - img: add
+    - img: filter_alt
+    - grid
+    - button "Add filter":
+      - generic: Add filter
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+  - grid "Negative keywords":
+    - row "Select all rows Negative keyword Added to Level Match type":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Negative keyword"
+      - columnheader "Added to"
+      - columnheader "Level":
+        - text: Level
+        - img: help_outline
+      - columnheader "Match type"
+    - row "Select row \"projetos de pesquisa prontos\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"projetos de pesquisa prontos\"":
+        - generic: "\"projetos de pesquisa prontos\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"pré projeto pronto\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"pré projeto pronto\"":
+        - generic: "\"pré projeto pronto\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"projeto de pesquisa pronto\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"projeto de pesquisa pronto\"":
+        - generic: "\"projeto de pesquisa pronto\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"comprar projeto\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"comprar projeto\"":
+        - generic: "\"comprar projeto\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"comprar monografia\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"comprar monografia\"":
+        - generic: "\"comprar monografia\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"comprar tcc\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"comprar tcc\"":
+        - generic: "\"comprar tcc\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"mapa astral\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"mapa astral\"":
+        - generic: "\"mapa astral\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"mapa do brasil\" Edit this Negative keyword, currently mapa do brasil Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"mapa do brasil\" Edit this Negative keyword, currently mapa do brasil":
+        - generic: "\"mapa do brasil\""
+        - button "Edit this Negative keyword, currently mapa do brasil"
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"mapa geografico\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"mapa geografico\"":
+        - generic: "\"mapa geografico\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"mapa geográfico\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"mapa geográfico\"":
+        - generic: "\"mapa geográfico\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"mapa rodoviário\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"mapa rodoviário\"":
+        - generic: "\"mapa rodoviário\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"monografia pronta\" Edit this Negative keyword, currently monografia pronta Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"monografia pronta\" Edit this Negative keyword, currently monografia pronta":
+        - generic: "\"monografia pronta\""
+        - button "Edit this Negative keyword, currently monografia pronta"
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"tcc para copiar\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"tcc para copiar\"":
+        - generic: "\"tcc para copiar\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+    - row "Select row \"tcc pronto\" Mapa | Search | BR | Ativacao | Piloto Campaign Phrase match":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "\"tcc pronto\"":
+        - generic: "\"tcc pronto\""
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Phrase match":
+        - generic: Phrase match
+  - generic: "Show rows:"
+  - 'button "Show rows: 30 selected."':
+    - generic: "30"
+    - img: arrow_drop_down
+  - generic: 1 - 17 of 17
+  - button "Go to the first page" [disabled]:
+    - img: first_page
+  - button "Go to the previous page" [disabled]:
+    - img: chevron_left
+  - button "Go to the next page" [disabled]:
+    - img: chevron_right
+  - button "Go to the last page" [disabled]:
+    - img: last_page
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- status: 1 to 17 of about 17

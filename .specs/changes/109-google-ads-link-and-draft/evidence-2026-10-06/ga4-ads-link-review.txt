@@ -1,0 +1,257 @@
+- banner:
+  - generic: Analytics
+  - button "Open the universal picker.":
+    - generic: All accounts
+    - img: chevron_right
+    - generic: Google Ads Account
+    - generic: Mapa da Pesquisa
+    - img: arrow_drop_down
+  - search:
+    - img: search
+    - textbox "Search":
+      - /placeholder: Try searching "where did my users come from"
+  - button "Switch products":
+  - button "Ask Advisor":
+    - img: search_spark
+  - button "Help entry menu":
+    - img: help
+  - button "Open the user account switcher panel."
+- navigation "Main pages":
+  - link "Home":
+    - generic: Home
+  - link "Reports":
+    - img: insert_chart_filled
+    - generic: Reports
+  - link "Explore":
+    - img: data_exploration
+    - generic: Explore
+  - link "Advertising":
+    - img: ads_click
+    - generic: Advertising
+- navigation "Settings pages":
+  - link "Tasks":
+    - img: task_alt
+    - generic: Tasks
+  - link "Admin":
+    - img: settings_filled
+    - generic: Admin
+- navigation "Secondary navigation":
+  - navigation "Secondary pages":
+    - button "Create":
+      - img: add
+      - text: Create
+      - img: arrow_drop_down
+  - tree:
+    - treeitem "Admin" [level=1]:
+      - button "Admin":
+        - generic: Admin
+    - treeitem "My preferences" [level=1]:
+      - button "My preferences":
+        - generic: My preferences
+    - treeitem "Account settings" [expanded] [level=1]:
+      - separator
+      - button "Account settings":
+        - generic: Account settings
+        - img: keyboard_arrow_up
+    - treeitem "Account" [level=2]:
+      - button "Account":
+        - img: arrow_right
+        - generic: Account
+    - treeitem "Property settings" [expanded] [level=1]:
+      - separator
+      - button "Property settings":
+        - generic: Property settings
+        - img: keyboard_arrow_up
+    - treeitem "Property" [level=2]:
+      - button "Property":
+        - img: arrow_right
+        - generic: Property
+    - treeitem "Data collection and modification" [level=2]:
+      - button "Data collection and modification":
+        - img: arrow_right
+        - generic: Data collection and modification
+    - treeitem "Data display" [level=2]:
+      - button "Data display":
+        - img: arrow_right
+        - generic: Data display
+    - treeitem "Product links" [expanded] [level=2]:
+      - button "Product links":
+        - img: arrow_drop_down
+        - generic: Product links
+    - treeitem "Google AdMob links" [level=3]:
+      - button "Google AdMob links":
+        - generic: Google AdMob links
+    - treeitem "Google AdSense links" [level=3]:
+      - button "Google AdSense links":
+        - generic: Google AdSense links
+    - treeitem "Google Ads links" [level=3]:
+      - button "Google Ads links":
+        - generic: Google Ads links
+    - treeitem "Ad Manager links" [level=3]:
+      - button "Ad Manager links":
+        - generic: Ad Manager links
+    - treeitem "BigQuery links" [level=3]:
+      - button "BigQuery links":
+        - generic: BigQuery links
+    - treeitem "Display & Video 360 links" [level=3]:
+      - button "Display & Video 360 links":
+        - generic: Display & Video 360 links
+    - treeitem "Floodlight links" [level=3]:
+      - button "Floodlight links":
+        - generic: Floodlight links
+    - treeitem "Google Business Profile links" [level=3]:
+      - button "Google Business Profile links":
+        - generic: Google Business Profile links
+    - treeitem "Merchant Center links" [level=3]:
+      - button "Merchant Center links":
+        - generic: Merchant Center links
+    - treeitem "Google Play links" [level=3]:
+      - button "Google Play links":
+        - generic: Google Play links
+    - treeitem "Search Ads 360 links" [level=3]:
+      - button "Search Ads 360 links":
+        - generic: Search Ads 360 links
+    - treeitem "Search Console links" [level=3]:
+      - button "Search Console links":
+        - generic: Search Console links
+    - treeitem "Meta links" [level=3]:
+      - button "Meta links":
+        - generic: Meta links
+    - treeitem "Pinterest links" [level=3]:
+      - button "Pinterest links":
+        - generic: Pinterest links
+    - treeitem "Reddit links" [level=3]:
+      - button "Reddit links":
+        - generic: Reddit links
+    - treeitem "Snap links" [level=3]:
+      - button "Snap links":
+        - generic: Snap links
+    - treeitem "TikTok links" [level=3]:
+      - button "TikTok links":
+        - generic: TikTok links
+  - separator
+- button "Nav toggle" [expanded]:
+  - img: keyboard_arrow_left
+- main:
+  - heading "Google Ads links" [level=1]
+  - img: search
+  - searchbox "Type to filter"
+  - button "Create a new GA integration link.":
+    - generic: Link
+  - tablist:
+    - tab "Completed (0)" [selected]:
+      - generic: Completed (0)
+    - tab "Approval needed (0)":
+      - generic: Approval needed (0)
+    - tab "Request sent (0)":
+      - generic: Request sent (0)
+    - tab "Cancelled (0)":
+      - generic: Cancelled (0)
+  - tabpanel "Completed (0)"
+  - table "Google Ads links":
+    - row "Account Name Account ID Account type Personalized Advertising Date linked Linked by Row details":
+      - columnheader "Account Name":
+        - button "Account Name":
+          - generic: Account Name
+      - columnheader "Account ID":
+        - button "Account ID":
+          - generic: Account ID
+      - columnheader "Account type":
+        - button "Account type":
+          - generic: Account type
+      - columnheader "Personalized Advertising":
+        - button "Personalized Advertising":
+          - generic: Personalized Advertising
+      - columnheader "Date linked":
+        - button "Date linked":
+          - generic: Date linked
+      - columnheader "Linked by":
+        - button "Linked by":
+          - generic: Linked by
+      - columnheader "Row details":
+        - generic: Row details
+  - generic: No links yet. Click "Link" to create one.
+  - generic: "Items per page:"
+  - combobox "Items per page:":
+    - generic: "5"
+  - status: 0 of 0
+  - button "First page" [disabled]:
+  - button "Previous page" [disabled]:
+  - button "Next page" [disabled]:
+  - button "Last page" [disabled]:
+- contentinfo:
+  - text: © 2026 Google |
+  - link "Analytics home":
+    - /url: https://www.google.com/analytics/?hl=en-US
+  - text: "|"
+  - link "Terms of Service":
+    - /url: https://www.google.com/analytics/tos.html?hl=en-US
+  - text: "|"
+  - link "Privacy Policy":
+    - /url: https://www.google.com/policies/privacy/?hl=en-US
+  - text: "|"
+  - button "Send feedback":
+    - img: feedback
+    - generic: Send feedback
+- button "Open context menu"
+- dialog "Create a link with Google Ads":
+  - button "Close this slider window":
+    - img: close
+  - heading "Create a link with Google Ads" [level=2]:
+    - generic: Create a link with Google Ads
+  - heading "Link setup" [level=3]
+  - text: By linking your Analytics property to your Google Ads account, you will enable data to flow between the products. Data exported from your Analytics property into Google Ads is subject to the Google Ads terms of service, while Google Ads data imported into Analytics is subject to the Analytics terms of service. By creating this link, your email address will be recorded and may be visible to authorized users of this Google Analytics property and/or the linked Google Ads account.
+  - link "Learn more about connecting Google Ads to Google Analytics":
+    - /url: https://support.google.com/analytics/answer/9379420?hl=en_US&utm_id=ad
+  - button "Editable Choose Google Ads accounts":
+    - generic: Editable
+    - img: create
+    - generic: Choose Google Ads accounts
+  - button "Editable Configure settings":
+    - generic: Editable
+    - img: create
+    - generic: Configure settings
+  - region:
+    - radiogroup:
+      - radio
+      - generic: Enable auto-tagging on selected Google Ads accounts (recommended)
+      - text: This option appends a unique ID to the end of the destination URL. This ID lets Analytics report the details of each click. If this option is selected when linking to a manager account, auto-tagging will be enabled on all Google Ads Accounts directly linked to the manager account.
+      - link:
+        - /url: https://support.google.com/analytics/answer/10723328?hl=en_US&utm_id=ad
+        - text: Learn more
+      - radio [checked]
+      - generic: Leave my auto-tagging settings as they are
+      - text: For accounts where auto-tagging is disabled, your data will appear as Google organic traffic until you manually add specific tags.
+      - link:
+        - /url: https://support.google.com/analytics/answer/10723132?hl=en_US&utm_id=ad
+        - text: Learn more
+  - button "Review and submit" [expanded] [active]:
+    - generic: "3"
+    - generic: Review and submit
+  - region "Review and submit":
+    - generic: Link to Google Ads accounts I manage
+    - list:
+      - generic: MSR-BR
+      - generic: 383-835-9068
+    - generic: Data configurations
+    - img: people
+    - generic: Enable Personalized Advertising
+    - generic: "OFF"
+    - generic: Google Analytics audience lists and events/parameters will be published to the linked Google Ads accounts for use in personalization. You can change this setting anytime while maintaining your link for other purposes.
+    - separator
+    - button "Enable Auto-Tagging Auto-tagging allows Analytics to associate Google Ads data automatically with customer clicks, enabling richer and more detailed reporting data than manual tagging across a number of Google Ads metrics and dimensions. Any Google Ads reporting features or ad units added in the future will only be available if auto-tagging is enabled.":
+      - img: sell
+      - generic: Enable Auto-Tagging
+      - generic: Auto-tagging allows Analytics to associate Google Ads data automatically with customer clicks, enabling richer and more detailed reporting data than manual tagging across a number of Google Ads metrics and dimensions. Any Google Ads reporting features or ad units added in the future will only be available if auto-tagging is enabled.
+    - separator
+    - img: groups
+    - generic: Allow access to Analytics features from within Google Ads
+    - generic: "OFF"
+    - text: Google Ads users with Standard or higher access levels in this Google Ads account will be able to make changes to this Analytics property using embedded Analytics features, such as audience builder, from within Google Ads. You can change these access settings at any time.
+    - link "Learn more about Ads integration":
+      - /url: https://support.google.com/analytics/answer/9379420?hl=en_US&utm_id=ad#useraccess
+    - text: .
+    - button "Back":
+      - generic: Back
+    - button "Submit":
+      - generic: Submit

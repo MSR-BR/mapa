@@ -8,7 +8,10 @@
 
 ## Estado atual
 
-- C111 concluída e publicada em `v06102026.3`: navegação independente do progresso, rascunhos/contexto, propostas com aceite, histórico paginado e recuperação. Migração dos 117 projetos preservou 4.105 versões antigas e criou 451 unidades iniciais. 182 testes, grants/RLS, Chromium/WebKit, exportações e build aprovados; runtime sem vulnerabilidades, alerta dev-only do ESLint registrado. CPD em `changes/111-free-navigation-versioned-context/`. C112 continua especificada.
+- C112 concluída e publicada em **`v06102026.4`**: Gemini principal, GPT complementar/fallback limitado e progresso identificado por provedor. Teto adicional US$5/mês com reserva prévia e bloqueio; 197 testes e smoke autenticado Gemini → GPT aprovados, sem alterar o conteúdo acadêmico vigente. Health canônico reconfirmado `ok` no fechamento documental de 06/10. [CPD C112](changes/112-collaborative-ai-provider-progress/cpd-2026-10-06.md).
+- C111 concluída e publicada inicialmente em `v06102026.3`, preservada na C112: navegação independente do progresso, rascunhos/contexto, propostas com aceite, histórico paginado e recuperação. Migração dos 117 projetos preservou 4.105 versões antigas e criou 451 unidades iniciais. 182 testes, grants/RLS, Chromium/WebKit, exportações e build aprovados; runtime sem vulnerabilidades, alerta dev-only do ESLint registrado. CPD em `changes/111-free-navigation-versioned-context/`.
+- C109 concluída e entregue à C110: vínculo GA4 550650234, conversão 7825220596 e objetivo exclusivo do Mapa na MSR-BR 383-835-9068. Piloto C110 ativo de 06 a 12/10, €2/dia em média, CPC máximo €0,30, regra horária >= €14 e acompanhamento diário. Última consulta de 06/10: Enabled / Eligible (Limited), RSA aprovado, 1 impressão, 0 cliques e €0,00. Diagnóstico recomenda outra estratégia de lances e informa aprendizado; nenhuma recomendação aplicada. TERMO preservado conforme registros de escopo/associações da C109.
+- C108 confirma coleta GA4 e agora dados processados no relatório de 06/10 (2 sessões, 7 eventos, 0 eventos-chave). Isso não comprova atribuição paga nem exclui tráfego técnico. Baseline, atribuição, segmentação interna e avaliação final do piloto permanecem abertas. [Fechamento documental e limites](changes/110-google-ads-controlled-pilot/cpd-documental-2026-10-06.md).
 
 - C107 concluída e publicada em `v01102026.4`: objetivo geral revisável e
   cada OE em card independente, ações no rodapé e colunas adaptadas à largura
@@ -37,8 +40,9 @@
 - C097 está implantada e em observação até 08/10/2026.
 - C099 foi concluída: raiz canônica única, redirect legado, indexação, cards,
   dados estruturados, poster e desempenho publicados em 24/09/2026.
-- C100 permanece futura e bloqueada até existir baseline limpo e nova
-  autorização.
+- C100 implantou consentimento e semântica dos eventos. O aceite completo da
+  medição permanece em acompanhamento na C108; a autorização revisada de 06/10
+  permitiu o piloto C110 após os checks operacionais, sem declarar a baseline concluída.
 - C101 está publicada em produção. O Gemini 3.6 Flash mede as 13 operações sem
   conteúdo sensível; plano e limites foram preservados até existir baseline.
 - C102 está publicada em produção na versão `v24092026.3`. O projeto possui
@@ -65,7 +69,7 @@
 - Aplicação Next.js publicada na Vercel em `https://mapadapesquisa.com.br`.
 - Supabase é responsável por banco e autenticação; RLS e triggers protegem os
   dados e as transições críticas.
-- Gemini e Research Starter são acessados somente pelo backend.
+- Gemini, GPT e Research Starter são acessados somente pelo backend.
 - `RESEARCH_STARTER_MAPA_API_KEY` permanece o nome canônico da credencial
   server-side do Research Starter.
 - Em produção, a mesma conta pode alternar o modo ativo entre Aluno e Orientador
@@ -79,7 +83,8 @@
   projetos de Orientador são autônomos.
 - Avisos acadêmicos orientam sem bloquear; integridade técnica, autorização e
   aprovação humana continuam obrigatórias.
-- A jornada usa quatro macroetapas e passos internos navegáveis para trás.
+- A jornada usa quatro macroetapas; etapas existentes podem ser revisitadas em
+  ambas as direções sem apagar conteúdo. Rascunhos não substituem contexto validado.
 - DNS externo funcional permanece aceito. Qualquer delegação ou alteração de
   e-mail/DNS exige Change e autorização próprias.
 - O alvo de autenticação é exclusivamente Google OAuth. LinkedIn foi cancelado.
@@ -305,7 +310,10 @@ deployment final.
   decisões de aquisição.
 - Acompanhar o LCP de campo da raiz; as amostras de laboratório da C099 ficaram
   em 2,7–3,0 s e ainda não constituem aprovação de Core Web Vitals.
-- Manter Google Ads bloqueado até C097–C099, 14 dias de baseline limpo, Consent Mode v2 e autorização explícita de campanha/gasto.
+- Acompanhar o piloto Google Ads autorizado em 06/10, sem aumentar orçamento/CPC
+  nem estender o término de 12/10 automaticamente. Baseline longa, atribuição de
+  sessões, segmentação interna e conversão paga continuam pendentes; a regra
+  horária >= €14 não constitui teto rígido instantâneo.
 - Observar os relatórios agregados do DMARC em `p=none`; qualquer evolução
   para `quarantine` ou `reject` exige nova Change, análise dos remetentes
   legítimos e rollback próprio.

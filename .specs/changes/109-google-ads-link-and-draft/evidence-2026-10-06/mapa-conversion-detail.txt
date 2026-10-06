@@ -1,0 +1,191 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Summary":
+      - generic: Summary
+    - menuitem "Leads Beta":
+      - generic: Leads
+      - generic: Beta
+    - menuitem "Conversions" [expanded]:
+      - generic: Conversions
+      - img: expand_more
+    - menuitem "All conversions":
+      - generic: All conversions
+    - menuitem "Conversion settings":
+      - generic: Conversion settings
+    - menuitem "Value rules":
+      - generic: Value rules
+    - menuitem "Custom variables":
+      - generic: Custom variables
+    - menuitem "Uploads":
+      - generic: Uploads
+    - menuitem "Measurement":
+      - generic: Measurement
+      - img: expand_more
+- link "Goals":
+  - /url: /aw/conversions?ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Mapa da Pesquisa (web) project_start" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Details" [selected]:
+    - generic: Details
+  - tab "Settings":
+    - generic: Settings
+- main:
+  - region "Settings":
+    - heading "Settings" [level=2]
+    - table "Settings":
+      - row "Conversion name Mapa da Pesquisa (web) project_start":
+        - cell "Conversion name":
+          - generic: Conversion name
+        - cell "Mapa da Pesquisa (web) project_start":
+          - generic: Mapa da Pesquisa (web) project_start
+      - row "Conversion type ID More information Not editable. Mouseover or press enter to show tooltip of explanation. 7825220596":
+        - cell "Conversion type ID More information Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: Conversion type ID
+          - button "More information":
+            - img: help_outline
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "7825220596":
+          - generic: "7825220596"
+      - row "Date created Not editable. Mouseover or press enter to show tooltip of explanation. 10/6/2026":
+        - cell "Date created Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: Date created
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "10/6/2026":
+          - generic: 10/6/2026
+      - row "Action optimization Engagements, Secondary action":
+        - cell "Action optimization":
+          - generic: Action optimization
+        - cell "Engagements, Secondary action":
+          - generic: Engagements, Secondary action
+      - row "Value Don't use a value":
+        - cell "Value":
+          - generic: Value
+        - cell "Don't use a value":
+          - generic: Don't use a value
+      - row "Source Not editable. Mouseover or press enter to show tooltip of explanation. Google Analytics (GA4)":
+        - cell "Source Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: Source
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "Google Analytics (GA4)":
+          - generic: Google Analytics (GA4)
+      - row "Platform Not editable. Mouseover or press enter to show tooltip of explanation. Website":
+        - cell "Platform Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: Platform
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "Website":
+          - generic: Website
+      - row "GA4 event Not editable. Mouseover or press enter to show tooltip of explanation. project_start":
+        - cell "GA4 event Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: GA4 event
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "project_start":
+          - generic: project_start
+      - row "GA4 property name Not editable. Mouseover or press enter to show tooltip of explanation. Mapa da Pesquisa":
+        - cell "GA4 property name Not editable. Mouseover or press enter to show tooltip of explanation.":
+          - generic: GA4 property name
+          - button "Not editable. Mouseover or press enter to show tooltip of explanation.": Not editable
+        - cell "Mapa da Pesquisa":
+          - generic: Mapa da Pesquisa
+      - row "Count One conversion":
+        - cell "Count":
+          - generic: Count
+        - cell "One conversion":
+          - generic: One conversion
+      - row "Click-through conversion window 90 days":
+        - cell "Click-through conversion window":
+          - generic: Click-through conversion window
+        - cell "90 days":
+          - generic: 90 days
+      - row "Engaged-view conversion window 3 days":
+        - cell "Engaged-view conversion window":
+          - generic: Engaged-view conversion window
+        - cell "3 days":
+          - generic: 3 days
+      - row "Attribution Data-driven Recommended Google paid channels":
+        - cell "Attribution":
+          - generic: Attribution
+        - cell "Data-driven Recommended Google paid channels":
+          - text: Data-driven
+          - generic: Recommended
+          - generic: Google paid channels
+  - button "Edit settings":
+    - generic: Edit settings
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: warning_amber

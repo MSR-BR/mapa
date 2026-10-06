@@ -1,0 +1,394 @@
+{
+  "status": "LIVE_CONTROLLED_PILOT",
+  "prepared_at": "2026-10-06",
+  "campaign_name": "Mapa | Search | BR | Ativacao | Piloto",
+  "account": {
+    "google_login": "mario.reis.junior@gmail.com",
+    "customer_id": "383-835-9068",
+    "required_scope": "separate_mapa_campaign_in_existing_msr_br",
+    "currency": "EUR",
+    "timezone_readback": "GMT-03:00 Brasilia Standard Time",
+    "funding": "existing_manual_payment_balance",
+    "preserve_campaign_id": "24027143907",
+    "incomplete_account_do_not_fund": "896-116-6158"
+  },
+  "measurement": {
+    "ga4_property_id": "550650234",
+    "measurement_id": "G-MKFYYRZG87",
+    "primary_conversion_candidate": "project_start",
+    "conversion_action_id": "7825220596",
+    "ga4_receipt_and_attribution_verified": false,
+    "personalized_advertising": false,
+    "auto_tagging_required": true,
+    "public_campaign_page_location_received": true,
+    "public_campaign_page_location_evidence": "../108-discovery-measurement-readiness/campaign-attribution-fix-2026-10-06.md",
+    "processed_session_source_medium_verified": false,
+    "google_ads_link_status": "CREATED_AND_RECOGNIZED_BY_ADS",
+    "google_ads_link_access_from_ads": false,
+    "auto_tagging_existing_readback": true,
+    "link_auto_tagging_choice": "LEAVE_EXISTING_SETTINGS",
+    "processed_report_2026_10_06_sessions": 0,
+    "conversion_action_name": "Mapa da Pesquisa (web) project_start",
+    "conversion_category": "ENGAGEMENT",
+    "conversion_account_optimization": "SECONDARY",
+    "included_in_account_goals": false,
+    "conversion_count": "ONE",
+    "conversion_value": "DO_NOT_USE_VALUE",
+    "google_ads_link_id": "qmrV-ja_RN-cID1UpznqUA",
+    "google_ads_link_created_at": "2026-10-06T12:23:42-03:00",
+    "google_ads_link_personalized_advertising_readback": false,
+    "google_ads_link_ads_users_roles": "VIEWER",
+    "conversion_scope_rationale": "Account-secondary and excluded from account-default goals to preserve TERMO. Included as the only action of the custom goal used exclusively by Mapa; Google uses custom-goal actions regardless of their account primary/secondary label.",
+    "paid_conversion_observed": false,
+    "realtime_first_user_source_verified": "codex_validation",
+    "qa_project_revisit_duplicate_key_event_observed": false
+  },
+  "campaign": {
+    "status_after_import": "PAUSED",
+    "type": "SEARCH",
+    "country": "BR",
+    "location_match": "PRESENCE",
+    "language": "pt",
+    "search_partners": false,
+    "display_network": false,
+    "broad_match": false,
+    "remarketing": false,
+    "customer_match": false,
+    "automatic_recommendation_application": false,
+    "automatic_text_or_url_expansion": false,
+    "final_url": "https://mapadapesquisa.com.br/",
+    "final_url_suffix": "utm_source=google&utm_medium=cpc&utm_campaign=mapa_search_br_ativacao_piloto&utm_content=planejamento_rsa",
+    "display_paths": [
+      "pesquisa",
+      "projeto"
+    ],
+    "budget": {
+      "authorized_average_daily_eur": 2,
+      "account_currency_daily_amount": 2,
+      "assumed_exchange_rate": null,
+      "recommended_review_days": 7,
+      "proposed_cost_pause_threshold_eur": 14,
+      "strict_total_cap_guaranteed": false,
+      "pause_mechanism_verified": true,
+      "persisted_budget_readback_verified": true,
+      "pause_rule_id": "61994210",
+      "pause_rule_name": "Mapa | Pausa por custo EUR14 | C110",
+      "pause_rule_status": "ENABLED",
+      "pause_rule_frequency": "HOURLY",
+      "pause_rule_data_window": "ALL_TIME",
+      "pause_rule_action": "PAUSE_ONLY_MAPA_CAMPAIGN",
+      "pause_rule_condition": "COST_GTE_14_EUR",
+      "pause_rule_preview_affected_campaigns": 0,
+      "pause_rule_execution_verified": false
+    },
+    "bidding": {
+      "strategy_proposal": "MAXIMIZE_CLICKS_WITH_CPC_LIMIT",
+      "cpc_limit_proposal_eur": 0.3,
+      "keyword_planner_verified": true,
+      "forecast": null,
+      "cpc_limit_persisted_readback_verified": true,
+      "keyword_planner_consulted": true,
+      "keyword_planner_plan_id": "1441351032",
+      "keyword_planner_result": "HISTORICAL_DEMAND_CONFIRMED_REFINED_FORECAST_INCONCLUSIVE",
+      "keyword_planner_scenario": {
+        "country": "BR",
+        "language": "pt",
+        "network": "Google",
+        "strategy": "MAXIMIZE_CLICKS",
+        "average_daily_budget_eur": 2,
+        "period": "2026-11-01/2026-11-30",
+        "displayed_clicks": 0,
+        "displayed_impressions": 0,
+        "displayed_cost_eur": 0,
+        "average_cpc": null,
+        "limitation": "Refined eight-keyword forecast still displays zero with CPC absent. Historical demand is independently confirmed for two terms; forecast does not validate delivery or the CPC cap."
+      },
+      "keyword_planner_historical": {
+        "period": "2025-09/2026-08",
+        "country": "BR",
+        "language": "pt",
+        "network": "Google",
+        "currency": "EUR",
+        "keywords": [
+          {
+            "text": "projeto de pesquisa",
+            "average_monthly_searches": 4400,
+            "competition": "LOW",
+            "top_of_page_bid_low_eur": 0.26,
+            "top_of_page_bid_high_eur": 0.61
+          },
+          {
+            "text": "como fazer um projeto de pesquisa",
+            "average_monthly_searches": 590,
+            "competition": "LOW",
+            "top_of_page_bid_low_eur": 0.13,
+            "top_of_page_bid_high_eur": 0.46
+          }
+        ],
+        "original_six_keywords": "NO_HISTORICAL_METRICS"
+      },
+      "pilot_bidding_decision": "Retain EUR0.30 CPC cap as a conservative test hypothesis: within historical low/high top-of-page ranges for two added exact keywords. No guarantee of delivery, actual CPC or conversions. Do not increase automatically."
+    },
+    "ad_groups": [
+      {
+        "name": "Planejamento Academico",
+        "audience_basis": "search_intent",
+        "demographic_restrictions": [],
+        "keywords": [
+          {
+            "text": "criar projeto de pesquisa",
+            "match": "EXACT"
+          },
+          {
+            "text": "organizar projeto de pesquisa",
+            "match": "EXACT"
+          },
+          {
+            "text": "projeto de pesquisa com ia",
+            "match": "PHRASE"
+          },
+          {
+            "text": "ferramenta projeto de pesquisa",
+            "match": "PHRASE"
+          },
+          {
+            "text": "ferramenta para tcc",
+            "match": "EXACT"
+          },
+          {
+            "text": "planejar projeto de pesquisa",
+            "match": "EXACT"
+          },
+          {
+            "text": "projeto de pesquisa",
+            "match": "EXACT"
+          },
+          {
+            "text": "como fazer um projeto de pesquisa",
+            "match": "EXACT"
+          }
+        ],
+        "responsive_search_ad": {
+          "headlines": [
+            "Mapa da Pesquisa",
+            "Seu Projeto Ganha Estrutura",
+            "Organize Sua Pesquisa",
+            "Crie Seu Projeto Com IA",
+            "Comece Seu TCC Com Clareza",
+            "Da Ideia Ao Projeto",
+            "Objetivos E Metodologia",
+            "Planeje Sua Dissertação",
+            "Aluno Ou Orientador",
+            "Modo Rápido Ou Avançado",
+            "Acesso Gratuito",
+            "Referências Verificáveis",
+            "Sugestões Com Revisão Humana",
+            "Comece Pela Sua Ideia",
+            "Construa Seu Mapa De Pesquisa"
+          ],
+          "descriptions": [
+            "Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir.",
+            "Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.",
+            "Para TCC, dissertação, tese ou artigo. Escolha o modo Rápido ou Avançado e comece.",
+            "Estudantes e orientadores planejam pesquisas com sugestões de IA e revisão humana."
+          ]
+        },
+        "callouts": [
+          "Acesso gratuito",
+          "Rápido ou Avançado",
+          "Aluno e Orientador",
+          "Revisão humana"
+        ],
+        "remote_name": "Planejamento Academico"
+      }
+    ],
+    "negative_keywords": [
+      {
+        "text": "tcc pronto",
+        "match": "PHRASE"
+      },
+      {
+        "text": "tcc prontos",
+        "match": "PHRASE"
+      },
+      {
+        "text": "comprar tcc",
+        "match": "PHRASE"
+      },
+      {
+        "text": "comprar monografia",
+        "match": "PHRASE"
+      },
+      {
+        "text": "trabalho pronto",
+        "match": "PHRASE"
+      },
+      {
+        "text": "trabalhos prontos",
+        "match": "PHRASE"
+      },
+      {
+        "text": "tcc para copiar",
+        "match": "PHRASE"
+      },
+      {
+        "text": "monografia pronta",
+        "match": "PHRASE"
+      },
+      {
+        "text": "mapa astral",
+        "match": "PHRASE"
+      },
+      {
+        "text": "mapa rodoviário",
+        "match": "PHRASE"
+      },
+      {
+        "text": "mapa geografico",
+        "match": "PHRASE"
+      },
+      {
+        "text": "mapa geográfico",
+        "match": "PHRASE"
+      },
+      {
+        "text": "mapa do brasil",
+        "match": "PHRASE"
+      },
+      {
+        "text": "projeto de pesquisa pronto",
+        "match": "PHRASE"
+      },
+      {
+        "text": "projetos de pesquisa prontos",
+        "match": "PHRASE"
+      },
+      {
+        "text": "comprar projeto",
+        "match": "PHRASE"
+      },
+      {
+        "text": "pré projeto pronto",
+        "match": "PHRASE"
+      }
+    ],
+    "negative_keywords_saved_remotely": true,
+    "account_level_asset_inheritance_resolved": true,
+    "campaign_specific_conversion_goal_verified": true,
+    "automatic_recommendation_application_readback_verified": true,
+    "inherited_account_sitelinks": [
+      {
+        "text": "Página web",
+        "url": "https://ibnhakim.wordpress.com/"
+      },
+      {
+        "text": "Youtube",
+        "url": "https://www.youtube.com/@ibnHakim_ma"
+      }
+    ],
+    "scheduled_start_date": "2026-10-06",
+    "scheduled_end_date": "2026-10-12",
+    "schedule_note": "Seven calendar dates, first day partial; authorized operational launch 06 Oct, end 12 Oct. No automatic extension.",
+    "asset_isolation": {
+      "account_sitelink_associations": "PAUSED_AFTER_COPY_TO_PREEXISTING_CAMPAIGNS",
+      "preserved_campaigns": [
+        "TERMO - Search - BR - PT",
+        "ibn Hakim",
+        "ibn_site",
+        "QM - home - EN"
+      ],
+      "note": "Same two assets remain enabled at campaign level for preexisting campaigns. Mapa does not receive them. No assets deleted.",
+      "mapa_old_logo_association": "PAUSED_DISAPPROVED",
+      "mapa_own_logo": "ENABLED_PENDING_REVIEW",
+      "mapa_own_logo_source": "public/brand/mapa-da-pesquisa-app-icon.png",
+      "own_logo_saved_at": "2026-10-06T11:49:00-03:00",
+      "review_readback_at": "2026-10-06T12:38:00-03:00"
+    },
+    "campaign_specific_conversion_goal": {
+      "name": "Mapa | Projeto iniciado",
+      "type": "CUSTOM",
+      "conversion_action_ids": [
+        "7825220596"
+      ],
+      "readback": "Campaign-specific: Mapa | Projeto iniciado",
+      "account_default_engagements_used": false
+    },
+    "current_status": "ENABLED",
+    "ad_policy_status": "APPROVED",
+    "ad_id": "827109934468"
+  },
+  "remote_changes_performed": [
+    "created_draft_in_msr_br",
+    "set_brazil_presence_and_portuguese",
+    "disabled_search_partners_display_and_ai_max",
+    "saved_campaign_utm_suffix",
+    "entered_cpc_limit_proposal_0_30_eur",
+    "saved_six_keywords_and_one_rsa",
+    "created_and_selected_four_campaign_callouts",
+    "saved_and_reloaded_2_eur_daily_budget",
+    "saved_final_campaign_name",
+    "published_existing_draft_with_future_start_then_paused_before_serving",
+    "saved_13_campaign_phrase_negatives",
+    "preserved_two_account_sitelinks_at_existing_campaign_level_then_paused_account_associations",
+    "paused_wrong_logo_only_in_mapa",
+    "uploaded_and_saved_mapa_brand_logo_under_review",
+    "saved_native_hourly_pause_rule_for_mapa_cost_gte_14_eur",
+    "renamed_ad_group_to_planejamento_academico",
+    "created_ga4_msr_br_link_with_personalized_advertising_off",
+    "imported_project_start_once_as_account_secondary_excluded_from_account_defaults",
+    "created_and_assigned_mapa_only_custom_conversion_goal",
+    "added_two_exact_keywords_after_keyword_planner_historical_review",
+    "added_four_campaign_phrase_negatives_for_ready_made_projects",
+    "rescheduled_pilot_06_to_12_october",
+    "enabled_only_mapa_after_operational_checks",
+    "updated_existing_daily_monitor_for_active_pilot"
+  ],
+  "launch_blockers": [],
+  "remote_draft_id": "10217353351",
+  "remote_provisional_campaign_id": "281499296243440",
+  "remote_name": "Mapa | Search | BR | Ativacao | Piloto",
+  "remote_campaign_id": "24325133699",
+  "final_campaign_readback": {
+    "status": "ENABLED",
+    "clicks": 0,
+    "impressions": 0,
+    "cost_eur": 0,
+    "termo_status": "ENABLED",
+    "termo_daily_budget_eur": 2,
+    "mapa_cpc_limit_eur": 0.3,
+    "date": "2026-10-06",
+    "eligibility": "ELIGIBLE_LEARNING",
+    "ad_eligibility": "ELIGIBLE",
+    "ad_policy": "APPROVED",
+    "time_approx_brt": "13:46",
+    "date_range": "TODAY"
+  },
+  "followup": {
+    "automation_id": "mapa-concluir-ads-e-acompanhar-piloto",
+    "status": "ACTIVE",
+    "daily_time_local": "09:00",
+    "timezone": "America/Sao_Paulo",
+    "scheduled_runs": 23,
+    "earliest_clean_window_review": "2026-10-20",
+    "activation_authorized_only_after_all_gates": false,
+    "do_not_duplicate_existing_c097_automation": true,
+    "launch_gate_basis": "LATEST_USER_OPERATIONAL_AUTHORIZATION",
+    "pilot_end_date": "2026-10-12"
+  },
+  "activated_at_approx": "2026-10-06T13:46:00-03:00",
+  "monitoring_open_items": [
+    "processed_session_attribution",
+    "internal_and_qa_segmentation_in_analysis",
+    "long_baseline_not_complete",
+    "real_paid_conversion_not_observed",
+    "delivery_and_cost_rule_threshold_execution_not_yet_observed",
+    "optional_logo_review"
+  ],
+  "launch_authorization": {
+    "latest_user_instruction": "faça 1, 2 e 3. Se tudo estiver funcionando, pode lancar.",
+    "fixed_14_day_wait_superseded": true,
+    "operational_checks_passed": true,
+    "long_baseline_marked_complete": false,
+    "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
+  }
+}

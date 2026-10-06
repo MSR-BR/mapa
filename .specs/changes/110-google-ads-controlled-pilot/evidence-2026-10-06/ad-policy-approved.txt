@@ -1,0 +1,359 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Paused
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- button "The budget simulator isn't available because this campaign is paused." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns" [expanded]:
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+    - menuitem "Ad groups":
+      - generic: Ad groups
+    - menuitem "Ads":
+      - generic: Ads
+    - menuitem "Experiments":
+      - generic: Experiments
+    - menuitem "Assets" [expanded]:
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+    - menuitem "Audiences, keywords, and content" [expanded]:
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Keywords":
+      - generic: Keywords
+    - menuitem "Audiences":
+      - generic: Audiences
+    - menuitem "Locations":
+      - generic: Locations
+    - menuitem "Ad schedule":
+      - generic: Ad schedule
+    - menuitem "Advanced bid adjustments":
+      - generic: Advanced bid adjustments
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Ads" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- main:
+  - generic: Clicks
+  - generic: "0"
+  - 'button "Clicks: 0 for this time period. Hide this metric from the chart. When someone clicks your ad, it''s counted here.. . ."'
+  - generic: Impr.
+  - generic: "0"
+  - 'button "Impr.: 0. Show this metric in the chart. An impression is counted each time your ad is served. Impressions help you understand how often your ad is being seen.. . ."'
+  - generic: Avg. CPC
+  - generic: —
+  - 'button "Avg. CPC: —. Show this metric in the chart. Average cost-per-click (Avg. CPC) is the amount you''ve paid for your ad divided by its total clicks. If your ad receives 2 clicks, one costing $0.20 and one costing $0.40, your average CPC for those clicks is $0.30.. . ."'
+  - generic: Cost
+  - generic: €0.00
+  - 'button "Cost: €0.00. Show this metric in the chart. Cost is the sum of your spend during this period.. . ."'
+  - button:
+    - img: chevron_right
+  - button "Metrics":
+    - img: add_chart
+    - generic: Metrics
+  - button "Adjust":
+    - img: tune
+    - generic: Adjust
+  - button "Download":
+    - img: file_download
+    - generic: Download
+  - button "Expand chart":
+    - img: fullscreen
+    - generic: Expand
+  - application:
+    - generic: Time series chart showing Clicks from February 2025 to October 2026. Use arrow keys to navigate.
+  - generic: Add sitelinks to your ads
+  - button "+0.1%"
+  - button "More options":
+    - img: more_vert
+  - paragraph: Sitelinks are missing from this campaign
+  - paragraph:
+    - text: Recommended because sitelinks can improve your CTR
+    - button "More information":
+      - img: help_outline
+  - button "View":
+    - generic: View
+  - generic: keyboard_arrow_right
+  - generic: 1 / 3
+  - generic: keyboard_arrow_left
+  - region "Primary toolbelt for Ads":
+    - button "Create ad":
+      - img: add
+    - button "Show 1 active filters":
+      - img: filter_alt
+      - generic: "1"
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:"
+    - generic: + 1 more
+    - button "Add filter":
+      - generic: Add filter
+    - search:
+      - button "Search":
+        - img: search
+        - generic: Search
+    - button "Segment. Segmentation off":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Reports":
+      - img: assessment
+      - generic: Reports
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+    - button "Hide chart":
+      - img: keyboard_arrow_up
+  - grid "Ads":
+    - row "Select all rows Ad status Ad Ad group Status Ad strength Ad type Clicks Impr. CTR Avg. CPC Cost Policy details Ad ID Conv. rate Conversions Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Ad status":
+        - img "Ad status"
+      - columnheader "Ad"
+      - columnheader "Ad group"
+      - columnheader "Status":
+        - text: Status
+        - img: help_outline
+      - columnheader "Ad strength":
+        - text: Ad strength
+        - img: help_outline
+      - columnheader "Ad type"
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "CTR":
+        - text: CTR
+        - img: help_outline
+      - columnheader "Avg. CPC":
+        - text: Avg. CPC
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Policy details":
+        - text: Policy details
+        - img: help_outline
+      - columnheader "Ad ID"
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - row "Select row Enabled Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa +12 more ‪mapadapesquisa.com.br/pesquisa/projeto‬ Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more View assets details · Preview ads Planejamento Academico Not eligible Campaign is pending, Campaign is paused Pending Responsive search ad 0 0 — — €0.00 Approved 827109934468 0.00% 0.00 €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa +12 more ‪mapadapesquisa.com.br/pesquisa/projeto‬ Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more View assets details · Preview ads":
+        - link "Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa":
+          - /url: https://mapadapesquisa.com.br/
+        - text: +12 more
+        - generic: ‪mapadapesquisa.com.br/pesquisa/projeto‬
+        - generic: Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more
+        - button "View assets details"
+        - generic: ·
+        - button "Preview ads"
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Campaign is pending, Campaign is paused":
+        - generic: Not eligible
+        - generic: Campaign is pending, Campaign is paused
+      - gridcell "Pending":
+        - generic: Pending
+      - gridcell "Responsive search ad":
+        - generic: Responsive search ad
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "Approved":
+        - generic: Approved
+      - gridcell "827109934468":
+        - generic: "827109934468"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Ads in your current view More information 0 0 — — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: Ads in your current view More information"':
+        - generic: "Total: Ads in your current view"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell
+      - gridcell
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Expand row Total: Campaign More information 0 0 — — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - gridcell "Expand row":
+        - button "Expand row":
+          - img "Expand row": expand_more
+      - 'gridcell "Total: Campaign More information"':
+        - generic: "Total: Campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell
+      - gridcell
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+  - generic: 1 - 1 of 1
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

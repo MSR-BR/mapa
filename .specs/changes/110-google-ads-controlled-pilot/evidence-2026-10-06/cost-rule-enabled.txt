@@ -1,0 +1,183 @@
+- banner:
+  - heading [level=1]:
+  - img: search
+  - generic: "\"What are my biggest opportunities for growth right now?\""
+  - combobox "\"What are my biggest opportunities for growth right now?\""
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools" [active]:
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning":
+      - generic: Planning
+      - img: expand_more
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions" [expanded]:
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "All bulk actions":
+      - generic: All bulk actions
+    - menuitem "Rules":
+      - generic: Rules
+    - menuitem "Scripts":
+      - generic: Scripts
+    - menuitem "Solutions":
+      - generic: Solutions
+    - menuitem "Uploads":
+      - generic: Uploads
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- heading "Rules" [level=2]
+- button "Not applicable" [disabled]:
+  - generic: Not applicable
+  - img: arrow_drop_down
+- tablist:
+  - tab "Automated rules" [selected]:
+    - generic: Automated rules
+  - tab "Results":
+    - generic: Results
+  - tab "Version history":
+    - generic: Version history
+- main:
+  - text: The history of bulk actions (edits, rules, and uploads) are now only visible based on the account you're signed into. Scripts and Solutions are still visible based on the account you're drilled into.
+  - link "Learn more about bulk actions with a manager account":
+    - /url: https://support.google.com/google-ads/answer/9254269?hl=en_US
+  - img: search_spark
+  - generic: You can now use Ask Advisor to create rules.
+  - button "Try it out":
+    - generic: Try it out
+  - region "Primary toolbelt for Automated Rules":
+    - button "New Rule":
+      - img: add
+    - img: filter_alt
+    - grid
+    - button "Add filter":
+      - generic: Add filter
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+  - grid "Automated Rules":
+    - row "Select all rows Rule status Rule Description Created by Frequency Last run date Email notification Rule ID Actions":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Rule status":
+        - img "Rule status"
+      - columnheader "Rule"
+      - columnheader "Description"
+      - columnheader "Created by"
+      - columnheader "Frequency"
+      - columnheader "Last run date"
+      - columnheader "Email notification"
+      - columnheader "Rule ID"
+      - columnheader "Actions"
+    - 'row "Select row Enabled Mapa | Pausa por custo EUR14 | C110 Pause campaigns Campaign status: Enabled, Paused Cost >= €14.00 Selected 1 campaign mario.reis.junior@gmail.com Oct 6, 2026 11:53 AM Hourly Using data from all time Scheduled Oct 6, 2026 12:53 PM Only if there are changes or errors 61994210 Edit Run"':
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Mapa | Pausa por custo EUR14 | C110":
+        - generic: Mapa | Pausa por custo EUR14 | C110
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €14.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €14.00
+        - generic: Selected 1 campaign
+      - gridcell "mario.reis.junior@gmail.com Oct 6, 2026 11:53 AM":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 6, 2026 11:53 AM
+      - gridcell "Hourly Using data from all time":
+        - generic: Hourly
+        - generic: Using data from all time
+      - gridcell "Scheduled Oct 6, 2026 12:53 PM":
+        - generic: Scheduled
+        - generic: Oct 6, 2026 12:53 PM
+      - gridcell "Only if there are changes or errors":
+        - generic: Only if there are changes or errors
+      - gridcell "61994210":
+        - generic: "61994210"
+      - gridcell "Edit Run":
+        - button "Edit":
+          - generic: Edit
+        - button "Run":
+          - generic: Run
+  - generic: 1 - 1 of 1
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

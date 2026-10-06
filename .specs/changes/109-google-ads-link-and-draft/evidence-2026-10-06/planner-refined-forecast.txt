@@ -1,0 +1,285 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning" [expanded]:
+      - generic: Planning
+      - img: expand_more
+    - menuitem "Keyword Planner":
+      - generic: Keyword Planner
+    - menuitem "Performance Planner":
+      - generic: Performance Planner
+    - menuitem "Reach Planner":
+      - generic: Reach Planner
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions":
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- link "Keyword Planner":
+  - /url: /aw/keywordplanner/home?ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Mapa | BR | C109 | 2026-10-06" [level=2]
+- tablist:
+  - tab "Keyword ideas":
+    - generic: Keyword ideas
+  - tab "Forecast" [active] [selected]:
+    - generic: Forecast
+  - tab "Saved keywords":
+    - generic: Saved keywords
+  - tab "Negative keywords":
+    - generic: Negative keywords
+- main:
+  - region "Plan Details":
+    - button "Edit plan name":
+      - img: edit
+      - generic: Edit plan name
+    - button "Select Bid Strategy":
+      - generic: Bid strategy
+      - button "Bid strategy Maximize clicks":
+        - generic: Maximize clicks
+        - img: arrow_drop_down
+  - region "Plan Actions":
+    - generic: Just saved
+    - button "Share Plan":
+      - img: ios_share
+    - button "Plan downloads":
+      - img: file_download
+      - region "Plan forecasts"
+      - region "Plan historical metrics"
+    - button "More options":
+      - img: more_vert
+      - region "More options"
+    - button "Create campaign":
+      - generic: Create campaign
+  - region "Targeting Settings":
+    - button "Brazil":
+      - img: location_on
+      - generic: Brazil
+    - button "Portuguese":
+      - img: translate
+      - generic: Portuguese
+    - button "Google":
+      - img: manage_search
+      - generic: Google
+    - button "Nov 1 – 30, 2026 Select a date range":
+      - img: calendar_today
+      - button "Nov 1 – 30, 2026 Select a date range":
+        - generic: Nov 1 – 30, 2026
+        - img: arrow_drop_down
+  - img: outlined_flag
+  - heading "Forecasts reflect market changes" [level=2]
+  - generic: Forecasts are updated daily with data from the last 7-10 days. Your forecasts take into account any impact of market changes during this time period. Seasonality forecasting has also been adjusted for market fluctuations.
+  - button "Learn more":
+    - generic: Learn more
+  - button "Dismiss":
+    - generic: Dismiss
+  - region "Plan Summary":
+    - heading "Plan Summary" [level=2]:
+      - text: Your plan can get
+      - generic: __
+      - button "Conversions":
+        - generic: conversions
+      - text: for
+      - generic: €0
+      - text: with a
+      - button "€2 average daily budget.":
+        - generic: €2
+      - text: average daily budget
+    - button "Information about the bid strategy and how it relates to your plan's performance forecasts":
+      - img "Information about the bid strategy and how it relates to your plan's performance forecasts": help_outline
+    - 'button "Estimated conversion rate : —"':
+      - generic: "Estimated conversion rate : —"
+    - button:
+      - img: expand_less
+    - generic: Maximize clicks improves the probability of reaching these estimates by getting you the most clicks, even when budget constrained
+    - button "Select Bid Strategy":
+      - generic "Edit bid strategy": Edit
+    - link "Learn more about determining a bidding strategy":
+      - /url: https://support.google.com/google-ads/answer/2472725?hl=en_US
+      - text: Learn more
+    - grid:
+      - row "Conversions — Avg. CPA — Clicks 0 Impressions 0 Cost €0 CTR — Avg. CPC — Add conversion metrics":
+        - gridcell "Conversions —":
+          - generic: Conversions
+          - generic: —
+        - gridcell "Avg. CPA —":
+          - generic: Avg. CPA
+          - generic: —
+        - gridcell "Clicks 0":
+          - generic: Clicks
+          - generic: "0"
+        - gridcell "Impressions 0":
+          - generic: Impressions
+          - generic: "0"
+        - gridcell "Cost €0":
+          - generic: Cost
+          - generic: €0
+        - gridcell "CTR —":
+          - generic: CTR
+          - generic: —
+        - gridcell "Avg. CPC —":
+          - generic: Avg. CPC
+          - generic: —
+        - button "Add conversion metrics":
+          - img: add
+          - generic: Add conversion metrics
+    - button "Rate this forecast":
+      - img: feedback
+      - text: Rate this forecast
+  - region "Forecasts Table":
+    - region "Primary toolbelt for Location forecast table":
+      - button "Add geo targets":
+        - img: add
+      - button "Change forecast view":
+        - text: Top countries
+        - img: arrow_drop_down
+      - button "Columns":
+        - img: view_column
+        - generic: Columns
+    - grid "Location forecast table":
+      - row "Location Clicks Impressions Cost CTR Avg. CPC":
+        - columnheader "Location"
+        - columnheader "Clicks"
+        - columnheader "Impressions"
+        - columnheader "Cost"
+        - columnheader "CTR"
+        - columnheader "Avg. CPC"
+      - row "Brazil 0.00 0.00 €0.00 — —":
+        - gridcell "Brazil":
+          - generic: Brazil
+        - gridcell "0.00":
+          - generic: "0.00"
+        - gridcell "0.00":
+          - generic: "0.00"
+        - gridcell "€0.00":
+          - generic: €0.00
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+    - generic: 1 - 1 of 1
+  - region "Forecasts Overview Cards":
+    - heading "Forecasts over the next year" [level=2]
+    - button "Conversions":
+      - generic: Conversions
+      - img: arrow_drop_down
+    - heading "Devices" [level=2]
+    - img: smartphone
+    - generic "Mobile phones"
+    - img: tablet
+    - generic "Tablets"
+    - img: laptop
+    - generic "Computers"
+    - 'button "Choose metric 1 of 3 for the Devices card. Current metric: Conversions"':
+      - 'generic "Choose metric 1 of 3 for the Devices card. Current metric: Conversions"':
+        - generic: Conversions
+        - text: arrow_drop_down
+    - 'button "Choose metric 2 of 3 for the Devices card. Current metric: Cost"':
+      - 'generic "Choose metric 2 of 3 for the Devices card. Current metric: Cost"':
+        - generic: Cost
+        - text: arrow_drop_down
+    - 'button "Choose metric 3 of 3 for the Devices card. Current metric: Clicks"':
+      - 'generic "Choose metric 3 of 3 for the Devices card. Current metric: Clicks"':
+        - generic: Clicks
+        - text: arrow_drop_down
+    - heading "Locations" [level=2]
+    - button "Top states":
+      - generic: Top states
+      - img: arrow_drop_down
+    - button "Conversions":
+      - generic: Conversions
+      - img: arrow_drop_down
+  - generic: Keyword Planner can be used to generate keyword ideas, but it doesn't guarantee improved performance. You're responsible for your keyword choices and for complying with our advertising policies and any applicable laws.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "2 keywords added to your plan":
+  - status:
+    - generic: 2 keywords added to your plan Press F6 to access notification buttons.
+    - generic: 2 keywords added to your plan
+    - button "View saved keywords"
+    - button "Undo"
+    - button "Close":
+      - img: close
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: info

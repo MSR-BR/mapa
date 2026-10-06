@@ -1,0 +1,369 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Summary":
+      - generic: Summary
+    - menuitem "Leads Beta":
+      - generic: Leads
+      - generic: Beta
+    - menuitem "Conversions" [expanded]:
+      - generic: Conversions
+      - img: expand_more
+    - menuitem "All conversions":
+      - generic: All conversions
+    - menuitem "Conversion settings":
+      - generic: Conversion settings
+    - menuitem "Value rules":
+      - generic: Value rules
+    - menuitem "Custom variables":
+      - generic: Custom variables
+    - menuitem "Uploads":
+      - generic: Uploads
+    - menuitem "Measurement":
+      - generic: Measurement
+      - img: expand_more
+- heading "All conversions" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- main:
+  - text: Measure the valuable actions customers take after interacting with your ads, such as making a purchase, signing up, or calling your business. Primary conversions will also appear on the Goals summary page.
+  - link "Learn more about conversion measurement":
+    - /url: https://support.google.com/google-ads/answer/1722022?hl=en_US
+  - button "New conversion":
+    - img: add
+    - text: New conversion
+  - region "Primary toolbelt":
+    - button "Show 1 active filters":
+      - img: filter_alt
+      - generic: "1"
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:":
+      - 'row "Status: All"':
+        - 'gridcell "Status: All"':
+          - 'button "Status: All"': "Status: All"
+    - button "Add filter":
+      - generic: Add filter
+    - button "Segment. Grouped by Goal category":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+  - grid:
+    - row "Select all rows Status Conversion action Conversion source Tracking status Action optimization Count Click-through conversion window Included in account-level goals All conv. All conv. value":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Status":
+        - img "Status"
+      - columnheader "Conversion action":
+        - text: Conversion action
+        - img: help_outline
+      - columnheader "Conversion source"
+      - columnheader "Tracking status":
+        - text: Tracking status
+        - img: help_outline
+      - columnheader "Action optimization":
+        - text: Action optimization
+        - img: help_outline
+      - columnheader "Count":
+        - text: Count
+        - img: help_outline
+      - columnheader "Click-through conversion window":
+        - text: Click-through conversion window
+        - img: help_outline
+      - columnheader "Included in account-level goals":
+        - text: Included in account-level goals
+        - img: help_outline
+      - columnheader "All conv.":
+        - text: All conv.
+        - img: help_outline
+      - columnheader "All conv. value":
+        - text: All conv. value
+        - img: help_outline
+    - generic: Engagements (Account-default goal)
+    - row "Select row enabled YouTube channel subscriptions YouTube hosted No recent conversions Secondary One 30 days No 7.00 7.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "YouTube channel subscriptions":
+        - generic: YouTube channel subscriptions
+      - gridcell "YouTube hosted":
+        - generic: YouTube hosted
+      - gridcell "No recent conversions":
+        - button "No recent conversions"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "One":
+        - generic: One
+      - gridcell "30 days":
+        - generic: 30 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "7.00":
+        - generic: "7.00"
+      - gridcell "7.00":
+        - generic: "7.00"
+    - row "Select row enabled TERMO (web) study_activation Website (Google Analytics (GA4)) Active Primary One 90 days Yes 245.00 0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "TERMO (web) study_activation":
+        - generic: TERMO (web) study_activation
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Active":
+        - button "Active"
+      - gridcell "Primary":
+        - generic: Primary
+      - gridcell "One":
+        - generic: One
+      - gridcell "90 days":
+        - generic: 90 days
+      - gridcell "Yes":
+        - generic: "Yes"
+      - gridcell "245.00":
+        - generic: "245.00"
+      - gridcell "0.00":
+        - generic: "0.00"
+    - row "Select row enabled Edit this Status, currently ENABLED TERMO (web) chapter_start Edit this Conversion action, currently TERMO (web) chapter_start Website (Google Analytics (GA4)) Active Secondary One 90 days No 241.00 0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled Edit this Status, currently ENABLED":
+        - img "enabled"
+        - button "Edit this Status, currently ENABLED"
+      - gridcell "TERMO (web) chapter_start Edit this Conversion action, currently TERMO (web) chapter_start":
+        - generic: TERMO (web) chapter_start
+        - button "Edit this Conversion action, currently TERMO (web) chapter_start"
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Active":
+        - button "Active"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "One":
+        - generic: One
+      - gridcell "90 days":
+        - generic: 90 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "241.00":
+        - generic: "241.00"
+      - gridcell "0.00":
+        - generic: "0.00"
+    - row "Select row enabled TERMO (web) exercise_start Website (Google Analytics (GA4)) Active Secondary One 90 days No 38.00 0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "TERMO (web) exercise_start":
+        - generic: TERMO (web) exercise_start
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Active":
+        - button "Active"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "One":
+        - generic: One
+      - gridcell "90 days":
+        - generic: 90 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "38.00":
+        - generic: "38.00"
+      - gridcell "0.00":
+        - generic: "0.00"
+    - row "Select row enabled TERMO (web) login_success Website (Google Analytics (GA4)) Active Secondary Every 90 days No 19.00 16.52":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "TERMO (web) login_success":
+        - generic: TERMO (web) login_success
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Active":
+        - button "Active"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "Every":
+        - generic: Every
+      - gridcell "90 days":
+        - generic: 90 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "19.00":
+        - generic: "19.00"
+      - gridcell "16.52":
+        - generic: "16.52"
+    - generic: Page views
+    - row "Select row enabled TERMO (web) termo_open_app Website (Google Analytics (GA4)) Inactive Secondary One 90 days No 358.00 0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "TERMO (web) termo_open_app":
+        - generic: TERMO (web) termo_open_app
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Inactive":
+        - button "Inactive"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "One":
+        - generic: One
+      - gridcell "90 days":
+        - generic: 90 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "358.00":
+        - generic: "358.00"
+      - gridcell "0.00":
+        - generic: "0.00"
+    - row "Select row enabled TERMO (web) home_page_view Website (Google Analytics (GA4)) Inactive Secondary Every 30 days No 245.00 245.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "TERMO (web) home_page_view":
+        - generic: TERMO (web) home_page_view
+      - gridcell "Website (Google Analytics (GA4))":
+        - generic: Website (Google Analytics (GA4))
+      - gridcell "Inactive":
+        - button "Inactive"
+      - gridcell "Secondary":
+        - generic: Secondary
+      - gridcell "Every":
+        - generic: Every
+      - gridcell "30 days":
+        - generic: 30 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "245.00":
+        - generic: "245.00"
+      - gridcell "245.00":
+        - generic: "245.00"
+    - generic: YouTube follow-on views
+    - row "Select row enabled YouTube follow-on views YouTube hosted No recent conversions Primary Every 30 days No 6.00 6.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "enabled":
+        - img "enabled"
+      - gridcell "YouTube follow-on views":
+        - generic: YouTube follow-on views
+      - gridcell "YouTube hosted":
+        - generic: YouTube hosted
+      - gridcell "No recent conversions":
+        - button "No recent conversions"
+      - gridcell "Primary":
+        - generic: Primary
+      - gridcell "Every":
+        - generic: Every
+      - gridcell "30 days":
+        - generic: 30 days
+      - gridcell "No":
+        - generic: "No"
+      - gridcell "6.00":
+        - generic: "6.00"
+      - gridcell "6.00":
+        - generic: "6.00"
+    - 'row "Total: All conversion actions 1,159.00 274.52"':
+      - generic: "Total: All conversion actions"
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "1,159.00":
+        - generic: 1,159.00
+      - gridcell "274.52":
+        - generic: "274.52"
+  - generic: 1 - 8 of 8
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

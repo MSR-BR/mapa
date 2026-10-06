@@ -1,0 +1,732 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Paused
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- button "The budget simulator isn't available because this campaign is paused." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets" [expanded]:
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+    - menuitem "Audiences, keywords, and content" [expanded]:
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Keywords":
+      - generic: Keywords
+    - menuitem "Audiences":
+      - generic: Audiences
+    - menuitem "Locations":
+      - generic: Locations
+    - menuitem "Ad schedule":
+      - generic: Ad schedule
+    - menuitem "Advanced bid adjustments":
+      - generic: Advanced bid adjustments
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Keywords" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Keywords" [selected]:
+    - generic: Keywords
+  - tab "Negative keywords":
+    - generic: Negative keywords
+  - tab "URL inclusions":
+    - generic: URL inclusions
+  - tab "URL exclusions":
+    - generic: URL exclusions
+- main:
+  - button "Chart, line one Clicks dropdown":
+    - generic: Clicks
+    - img: arrow_drop_down
+  - status
+  - button "Chart, line two None dropdown":
+    - generic: None
+    - img: arrow_drop_down
+  - status
+  - button "Chart type":
+    - img: show_chart
+    - text: Chart type
+  - button "Expand chart":
+    - img: fullscreen
+    - text: Expand
+  - button "Adjust":
+    - img: tune
+    - text: Adjust
+  - application:
+    - generic: Line chart with Clicks for February 2025 to October 2026. Use arrow keys to navigate.
+  - region "Primary toolbelt for Search keywords":
+    - button "Create keywords":
+      - img: add
+    - button "Show 1 active filters":
+      - img: filter_alt
+      - generic: "1"
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:"
+    - generic: + 1 more
+    - button "Add filter":
+      - generic: Add filter
+    - search:
+      - button "Search":
+        - img: search
+        - generic: Search
+    - button "Segment. Segmentation off":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Reports":
+      - img: assessment
+      - generic: Reports
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+    - button "Hide chart":
+      - img: keyboard_arrow_up
+  - grid "Search keywords" [active]:
+    - row "Select all rows Keyword status Keyword Match type Ad group Status Final URL Impr. CTR Cost Clicks Conv. rate Conversions Avg. CPC Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Keyword status":
+        - img "Keyword status"
+        - img: help_outline
+      - columnheader "Keyword"
+      - columnheader "Match type":
+        - text: Match type
+        - img: help_outline
+      - columnheader "Ad group"
+      - columnheader "Status":
+        - text: Status
+        - img: help_outline
+      - columnheader "Final URL":
+        - text: Final URL
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "CTR":
+        - text: CTR
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Avg. CPC":
+        - text: Avg. CPC
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - row "Select row Enabled [projeto de pesquisa] Exact match Planejamento Academico Not eligible Under review, Campaign is pending, +1 — — — — — — — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "[projeto de pesquisa]":
+        - generic: "[projeto de pesquisa]"
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Under review, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Under review, Campaign is pending, +1
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled [como fazer um projeto de pesquisa] Exact match Planejamento Academico Not eligible Under review, Campaign is pending, +1 — — — — — — — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "[como fazer um projeto de pesquisa]":
+        - generic: "[como fazer um projeto de pesquisa]"
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Under review, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Under review, Campaign is pending, +1
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled [ferramenta para tcc] Exact match Planejamento Academico Not eligible Campaign is pending, Campaign is paused — 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "[ferramenta para tcc]":
+        - generic: "[ferramenta para tcc]"
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Campaign is pending, Campaign is paused":
+        - generic: Not eligible
+        - generic: Campaign is pending, Campaign is paused
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row Enabled Edit this Keyword status, currently 1 [planejar projeto de pesquisa] Edit this Keyword, currently planejar projeto de pesquisa Exact match Edit this Match type, currently Exact match Planejamento Academico Not eligible Low search volume, Campaign is pending, +1 — Edit this Final URL 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled Edit this Keyword status, currently 1":
+        - img "Enabled"
+        - button "Edit this Keyword status, currently 1"
+      - gridcell "[planejar projeto de pesquisa] Edit this Keyword, currently planejar projeto de pesquisa":
+        - generic: "[planejar projeto de pesquisa]"
+        - button "Edit this Keyword, currently planejar projeto de pesquisa"
+      - gridcell "Exact match Edit this Match type, currently Exact match":
+        - generic: Exact match
+        - button "Edit this Match type, currently Exact match"
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Low search volume, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Low search volume, Campaign is pending, +1
+      - gridcell "— Edit this Final URL":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+        - button "Edit this Final URL"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row Enabled [criar projeto de pesquisa] Exact match Planejamento Academico Not eligible Low search volume, Campaign is pending, +1 — 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "[criar projeto de pesquisa]":
+        - generic: "[criar projeto de pesquisa]"
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Low search volume, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Low search volume, Campaign is pending, +1
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row Enabled [organizar projeto de pesquisa] Exact match Planejamento Academico Not eligible Low search volume, Campaign is pending, +1 — 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "[organizar projeto de pesquisa]":
+        - generic: "[organizar projeto de pesquisa]"
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Low search volume, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Low search volume, Campaign is pending, +1
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row Enabled \"projeto de pesquisa com ia\" Phrase match Planejamento Academico Not eligible Campaign is pending, Campaign is paused — 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "\"projeto de pesquisa com ia\"":
+        - generic: "\"projeto de pesquisa com ia\""
+      - gridcell "Phrase match":
+        - generic: Phrase match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Campaign is pending, Campaign is paused":
+        - generic: Not eligible
+        - generic: Campaign is pending, Campaign is paused
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row Enabled \"ferramenta projeto de pesquisa\" Phrase match Planejamento Academico Not eligible Low search volume, Campaign is pending, +1 — 0 — €0.00 0 0.00% 0.00 — €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "\"ferramenta projeto de pesquisa\"":
+        - generic: "\"ferramenta projeto de pesquisa\""
+      - gridcell "Phrase match":
+        - generic: Phrase match
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Not eligible Low search volume, Campaign is pending, +1":
+        - generic: Not eligible
+        - generic: Low search volume, Campaign is pending, +1
+      - gridcell "—":
+        - link:
+          - /url: ""
+        - link:
+          - /url: ""
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Keywords in your current view More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: Keywords in your current view More information"':
+        - generic: "Total: Keywords in your current view"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Collapse row Total: Keywords in your campaign More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell "Collapse row":
+        - button "Collapse row" [expanded]:
+          - img "Collapse row": expand_more
+      - 'gridcell "Total: Keywords in your campaign More information"':
+        - generic: "Total: Keywords in your campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Your keywords More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: Your keywords More information"':
+        - generic: "Total: Your keywords"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: AI Max expanded matches More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: AI Max expanded matches More information"':
+        - generic: "Total: AI Max expanded matches"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: AI Max landing page matches More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: AI Max landing page matches More information"':
+        - generic: "Total: AI Max landing page matches"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: URL inclusions in your campaign More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: URL inclusions in your campaign More information"':
+        - generic: "Total: URL inclusions in your campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Expand row Total: Campaign More information 0 — €0.00 0 0.00% 0.00 — €0.00"':
+      - gridcell
+      - gridcell "Expand row":
+        - button "Expand row":
+          - img "Expand row": expand_more
+      - 'gridcell "Total: Campaign More information"':
+        - generic: "Total: Campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+  - generic: 1 - 8 of 8
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

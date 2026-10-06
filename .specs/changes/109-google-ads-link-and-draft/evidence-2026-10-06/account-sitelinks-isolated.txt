@@ -1,0 +1,391 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "All campaigns 2 filters · 6 campaigns":
+    - img: home
+    - generic: All campaigns
+    - generic: 2 filters · 6 campaigns
+    - img: arrow_drop_down
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets" [expanded]:
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+    - menuitem "Videos":
+      - generic: Videos
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Assets" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Associations" [selected]:
+    - generic: Associations
+  - tab "Performance":
+    - generic: Performance
+  - tab "Expanded final URL assets":
+    - generic: Expanded final URL assets
+- main:
+  - listbox "Select item to filter by asset type":
+    - 'option "Asset type: All"':
+      - generic: All
+    - 'option "Asset type: Image"':
+      - img: image
+      - generic: Image
+    - 'option "Asset type: Business name"':
+      - img: text_fields
+      - generic: Business name
+    - 'option "Asset type: Business logo"':
+      - img: image
+      - generic: Business logo
+    - 'option "Asset type: Sitelink" [checked] [selected]':
+      - img: check
+      - generic: Sitelink
+    - 'option "Asset type: Headline"':
+      - img: text_fields
+      - generic: Headline
+    - 'option "Asset type: Description"':
+      - img: text_fields
+      - generic: Description
+    - 'option "Asset type: Text disclaimer, New"':
+      - img: text_fields
+      - text: Text disclaimer
+      - generic: New
+    - 'option "Asset type: Callout"':
+      - img: feed
+      - generic: Callout
+    - 'option "Asset type: Structured snippet"':
+      - img: text_snippet
+      - generic: Structured snippet
+    - 'option "Asset type: Call"':
+      - img: call
+      - generic: Call
+    - 'option "Asset type: Lead form"':
+      - img: article
+      - generic: Lead form
+    - 'option "Asset type: Message, Beta"':
+      - img: chat
+      - text: Message
+      - generic: Beta
+    - 'option "Asset type: Location"':
+      - img: location_on
+      - generic: Location
+    - 'option "Asset type: Price"':
+      - img: paid
+      - generic: Price
+    - 'option "Asset type: App"':
+      - img: phone_android
+      - generic: App
+    - 'option "Asset type: Promotion"':
+      - img: campaign
+      - generic: Promotion
+  - region "Secondary toolbelt for Associations":
+    - generic: 2 selected
+    - button "Remove":
+      - generic: Remove
+    - button "Pause" [active]:
+      - generic: Pause
+    - button "Enable":
+      - generic: Enable
+    - button "Add to":
+      - text: Add to
+      - img: arrow_drop_down
+    - button "Close":
+      - img: close
+      - generic: Close
+  - grid "Associations":
+    - row "Select all rows Asset status Asset Level Status Added by Last updated TrueView avg. CPV Interactions Interaction rate Avg. cost Impr. Cost Clicks Conv. rate Conversions Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows" [checked=mixed]:
+      - columnheader "Asset status":
+        - img "Asset status"
+      - columnheader "Asset"
+      - columnheader "Level"
+      - columnheader "Status"
+      - columnheader "Added by"
+      - columnheader "Last updated":
+        - text: Last updated
+        - img: help_outline
+      - columnheader "TrueView avg. CPV":
+        - text: TrueView avg. CPV
+        - img: help_outline
+      - columnheader "Interactions":
+        - text: Interactions
+        - img: help_outline
+      - columnheader "Interaction rate":
+        - text: Interaction rate
+        - img: help_outline
+      - columnheader "Avg. cost":
+        - text: Avg. cost
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - generic: Account
+    - row "Select row Paused Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Account Paused Advertiser Oct 6, 2026, 10:30 AM €0.001 21,663 engagements 63.63% €0.00 34,047 €14.06 290 0.00% 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row" [checked]:
+      - gridcell "Paused":
+        - img "Paused"
+      - gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio":
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+      - gridcell "Account":
+        - generic: Account
+      - gridcell "Paused":
+        - generic: Paused
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:30 AM":
+        - generic: Oct 6, 2026, 10:30 AM
+      - gridcell "€0.001":
+        - generic: €0.001
+      - gridcell "21,663 engagements":
+        - generic: 21,663
+        - generic: engagements
+      - gridcell "63.63%":
+        - generic: 63.63%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "34,047":
+        - generic: 34,047
+      - gridcell "€14.06":
+        - generic: €14.06
+      - gridcell "290":
+        - generic: "290"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Paused Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Account Paused Advertiser Oct 6, 2026, 10:30 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row" [checked]:
+      - gridcell "Paused":
+        - img "Paused"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Account":
+        - generic: Account
+      - gridcell "Paused":
+        - generic: Paused
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:30 AM":
+        - generic: Oct 6, 2026, 10:30 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - link "QM - home - EN":
+      - /url: "#"
+    - row "Select row Enabled Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM €0.001 21,663 engagements 63.63% €0.00 34,047 €14.06 290 0.00% 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio":
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "€0.001":
+        - generic: €0.001
+      - gridcell "21,663 engagements":
+        - generic: 21,663
+        - generic: engagements
+      - gridcell "63.63%":
+        - generic: 63.63%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "34,047":
+        - generic: 34,047
+      - gridcell "€14.06":
+        - generic: €14.06
+      - gridcell "290":
+        - generic: "290"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+  - generic: "Show rows:"
+  - 'button "Show rows: 30 selected."':
+    - generic: "30"
+    - img: arrow_drop_down
+  - generic: 1 - 15 of 15
+  - button "Go to the first page" [disabled]:
+    - img: first_page
+  - button "Go to the previous page" [disabled]:
+    - img: chevron_left
+  - button "Go to the next page" [disabled]:
+    - img: chevron_right
+  - button "Go to the last page" [disabled]:
+    - img: last_page
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status:
+  - generic: 2 assets paused
+  - generic: 2 assets paused
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

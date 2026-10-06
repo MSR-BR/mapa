@@ -1,0 +1,356 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning" [expanded]:
+      - generic: Planning
+      - img: expand_more
+    - menuitem "Keyword Planner":
+      - generic: Keyword Planner
+    - menuitem "Performance Planner":
+      - generic: Performance Planner
+    - menuitem "Reach Planner":
+      - generic: Reach Planner
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions":
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- link "Keyword Planner":
+  - /url: /aw/keywordplanner/home?ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Mapa | BR | C109 | 2026-10-06" [level=2]
+- tablist:
+  - tab "Keyword ideas" [selected]:
+    - generic: Keyword ideas
+  - tab "Forecast":
+    - generic: Forecast
+  - tab "Saved keywords":
+    - generic: Saved keywords
+  - tab "Negative keywords":
+    - generic: Negative keywords
+- main:
+  - region "Keyword Ideas Search Bar":
+    - 'button "Change existing keywords or website: projeto de pesquisa, planejamento de pesquisa, metodologia de pesquisa, projeto de pesquisa com ia, ferramenta para tcc"':
+      - img: search
+      - generic: projeto de pesquisa com ia, ferramenta para tcc, criar projeto de pesquisa, organizar projeto de pesquisa, ferramenta projeto de pesquisa, planejar projeto de pesquisa, projeto de pesquisa, fazer projeto de pesquisa, montar projeto de pesquisa
+    - region "Targeting Settings":
+      - button "Brazil":
+        - img: location_on
+        - generic: Brazil
+      - button "Portuguese":
+        - img: translate
+        - generic: Portuguese
+      - button "Google":
+        - img: manage_search
+        - generic: Google
+      - button "Edit date range, Last 12 months":
+        - img: calendar_today
+        - generic: Sep 2025 – Aug 2026
+        - img: arrow_drop_down
+    - group "Broaden your search:":
+      - text: "Broaden your search:"
+      - grid:
+        - row "Add ferramenta tcc Add projeto pesquisa Add projeto Add metodologia Add pesquisa Add pesquisa ia Add metodologia da pesquisa":
+          - gridcell "Add planejar projeto":
+            - img: add
+            - generic: planejar projeto
+          - gridcell "Add ferramenta tcc":
+            - img: add
+            - generic: ferramenta tcc
+          - gridcell "Add projeto":
+            - img: add
+            - generic: projeto
+          - gridcell "Add projeto de educacao":
+            - img: add
+            - generic: projeto de educacao
+          - gridcell "Add projeto da pesquisa":
+            - img: add
+            - generic: projeto da pesquisa
+          - gridcell "Add projeto de inovacao":
+            - img: add
+            - generic: projeto de inovacao
+          - gridcell "Add projeto de marketing":
+            - img: add
+            - generic: projeto de marketing
+    - button "Keyword ideas":
+      - img: file_download
+      - region "Keyword ideas"
+    - text: close close close close close close close
+  - region "Search Volume Charts":
+    - button "Search volume trends":
+      - generic "Search volume trends":
+        - img: show_charts
+        - text: Charts
+    - table:
+      - rowgroup:
+        - row "Total Mobile":
+          - cell "Total":
+            - button "Total" [pressed]
+          - cell "Mobile":
+            - button "Mobile" [pressed]
+    - generic: Monthly search trends line chart
+  - region "Search Results Table":
+    - region "Primary toolbelt for Keyword ideas":
+      - button "Show 1 active filters":
+        - img: filter_alt
+        - generic: "1"
+      - generic: "Filters Applied:"
+      - grid "Filters Applied:"
+      - generic: + 1 more
+      - button "Add filter":
+        - generic: Add filter
+      - generic: 1,208 keyword ideas available
+      - button "Columns":
+        - img: view_column
+        - generic: Columns
+      - button "Keyword view":
+        - text: Keyword view
+        - img: arrow_drop_down
+      - button "Hide chart":
+        - img: keyboard_arrow_up
+    - grid "Keyword ideas":
+      - row "Select all rows Keyword (by relevance) Avg. monthly searches Three month change YoY change Competition Ad impression share Top of page bid (low range) Top of page bid (high range) Account status":
+        - gridcell "Select all rows":
+          - checkbox "Select all rows":
+        - columnheader "Keyword (by relevance)"
+        - columnheader "Avg. monthly searches":
+          - text: Avg. monthly searches
+          - img: help_outline
+        - columnheader "Three month change":
+          - text: Three month change
+          - img: help_outline
+        - columnheader "YoY change":
+          - text: YoY change
+          - img: help_outline
+        - columnheader "Competition":
+          - text: Competition
+          - img: help_outline
+        - columnheader "Ad impression share":
+          - text: Ad impression share
+          - img: help_outline
+        - columnheader "Top of page bid (low range)":
+          - text: Top of page bid (low range)
+          - img: help_outline
+        - columnheader "Top of page bid (high range)":
+          - text: Top of page bid (high range)
+          - img: help_outline
+        - columnheader "Account status":
+          - text: Account status
+          - img: help_outline
+      - generic: Keywords you provided
+      - row "Select row \"projeto de pesquisa\" projeto de pesquisa. This is a keyword you provided. 4,400 Graph image -33% -33% Low — €0.26 €0.61":
+        - gridcell "Select row \"projeto de pesquisa\"":
+          - checkbox "Select row \"projeto de pesquisa\"":
+        - gridcell "projeto de pesquisa. This is a keyword you provided.":
+          - generic "projeto de pesquisa. This is a keyword you provided.":
+            - generic: projeto de pesquisa
+        - gridcell "4,400 Graph image":
+          - generic: 4,400
+          - button "Graph image"
+        - gridcell "-33%":
+          - generic: "-33%"
+        - gridcell "-33%":
+          - generic: "-33%"
+        - gridcell "Low":
+          - generic: Low
+        - gridcell "—":
+          - generic: —
+        - gridcell "€0.26":
+          - generic: €0.26
+        - gridcell "€0.61":
+          - generic: €0.61
+        - gridcell
+      - row "Select row \"fazer projeto de pesquisa\" fazer projeto de pesquisa. This is a keyword you provided. 10 Graph image 0% 0% Medium — €0.26 €1.06":
+        - gridcell "Select row \"fazer projeto de pesquisa\"":
+          - checkbox "Select row \"fazer projeto de pesquisa\"":
+        - gridcell "fazer projeto de pesquisa. This is a keyword you provided.":
+          - generic "fazer projeto de pesquisa. This is a keyword you provided.":
+            - generic: fazer projeto de pesquisa
+        - gridcell "10 Graph image":
+          - generic: "10"
+          - button "Graph image"
+        - gridcell "0%":
+          - generic: 0%
+        - gridcell "0%":
+          - generic: 0%
+        - gridcell "Medium":
+          - generic: Medium
+        - gridcell "—":
+          - generic: —
+        - gridcell "€0.26":
+          - generic: €0.26
+        - gridcell "€1.06":
+          - generic: €1.06
+        - gridcell
+      - row "Select row \"montar projeto de pesquisa\" montar projeto de pesquisa. This is a keyword you provided. 10 Graph image -100% -100% — — — —":
+        - gridcell "Select row \"montar projeto de pesquisa\"":
+          - checkbox "Select row \"montar projeto de pesquisa\"":
+        - gridcell "montar projeto de pesquisa. This is a keyword you provided.":
+          - generic "montar projeto de pesquisa. This is a keyword you provided.":
+            - generic: montar projeto de pesquisa
+        - gridcell "10 Graph image":
+          - generic: "10"
+          - button "Graph image"
+        - gridcell "-100%":
+          - generic: "-100%"
+        - gridcell "-100%":
+          - generic: "-100%"
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell
+      - generic: Keyword ideas
+      - row "Select row \"como fazer um artigo cientifico\" como fazer um artigo cientifico 1,900 Graph image 0% -33% Low — €0.01 €0.33":
+        - gridcell "Select row \"como fazer um artigo cientifico\"":
+          - checkbox "Select row \"como fazer um artigo cientifico\"":
+        - gridcell "como fazer um artigo cientifico":
+          - generic: como fazer um artigo cientifico
+        - gridcell "1,900 Graph image":
+          - generic: 1,900
+          - button "Graph image"
+        - gridcell "0%":
+          - generic: 0%
+        - gridcell "-33%":
+          - generic: "-33%"
+        - gridcell "Low":
+          - generic: Low
+        - gridcell "—":
+          - generic: —
+        - gridcell "€0.01":
+          - generic: €0.01
+        - gridcell "€0.33":
+          - generic: €0.33
+        - gridcell
+    - generic: "Show rows:"
+    - 'button "Show rows: 10 selected."':
+      - generic: "10"
+      - img: arrow_drop_down
+    - generic: 1 - 10 of 1,208
+    - button "Go to the first page" [disabled]:
+      - img: first_page
+    - button "Go to the previous page" [disabled]:
+      - img: chevron_left
+    - button "Go to the next page":
+      - img: chevron_right
+    - button "Go to the last page":
+      - img: last_page
+  - generic: Keyword Planner can be used to generate keyword ideas, but it doesn't guarantee improved performance. You're responsible for your keyword choices and for complying with our advertising policies and any applicable laws.
+  - region "Refine keywords":
+    - heading "Refine keywords" [level=2]
+    - button "Close":
+      - img: close
+    - button "Expand all":
+      - generic: Expand all
+    - button "Brand or Non-Brand":
+      - paragraph: Brand or Non-Brand
+      - paragraph: Non-Brands, uff, fgv, puc minas, uel
+      - img: expand_less
+    - button "Diploma Escolar":
+      - paragraph: Diploma Escolar
+      - paragraph: mestrado, doutorado
+      - img: expand_less
+    - button "Página":
+      - paragraph: Página
+      - paragraph: metodologia, resumo, objetivo, justificativa, hipoteses
+      - img: expand_less
+    - button "Disciplina":
+      - paragraph: Disciplina
+      - paragraph: pedagogia, direito, historia, letras, ciencias
+      - img: expand_less
+    - button "Outros":
+      - paragraph: Outros
+      - paragraph: pdf, qualitativo, escola, cnpq, docente
+      - img: expand_less
+    - button "Give feedback":
+      - img: feedback
+      - text: Give feedback
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: info *

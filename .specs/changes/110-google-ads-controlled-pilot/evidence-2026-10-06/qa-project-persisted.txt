@@ -1,0 +1,90 @@
+- banner:
+  - link "Mapa da Pesquisa":
+    - /url: /dashboard
+    - img "Mapa da Pesquisa"
+  - navigation "Navegação principal":
+    - link "Dashboard":
+      - /url: /dashboard
+    - generic "Abrir menu da conta"
+- main:
+  - link "← Voltar aos projetos":
+    - /url: /dashboard
+  - paragraph: Mapa da pesquisa
+  - heading "Nova proposta de pesquisa" [level=1]
+  - region "Escolha um caminho para a pesquisa":
+    - 'navigation "Progresso do mapa: etapa 1 de 4"':
+      - generic: Etapas principais do mapa
+      - strong: Etapa 1/4
+      - list:
+        - generic: "1"
+        - generic: Problemática
+        - generic: "2"
+        - generic: Objetivos
+        - generic: "3"
+        - generic: Capítulos
+        - generic: "4"
+        - generic: Metodologia e encerramento
+    - generic: Seu pedido original
+    - paragraph: Teste de medição C108 20261005 — planejamento de pesquisa acadêmica e organização de objetivos. Projeto de validação técnica.
+    - paragraph: Etapa 1 · problemática
+    - heading "Escolha um caminho para a pesquisa" [level=2]
+    - paragraph: A primeira opção preserva seu pedido. As demais exploram recortes sustentados pela literatura encontrada.
+    - generic: 3 referências verificáveis
+    - generic "Seis propostas de pesquisa":
+      - 'button "Escolher proposta: Validação Técnica do Teste C108"':
+        - generic: Mais próxima do seu pedido
+        - heading "Validação Técnica do Teste C108" [level=3]
+        - strong: Como estruturar o planejamento de pesquisa para a validação técnica do teste de medição C108 garantindo a confiabilidade metrológica?
+        - paragraph: O planejamento de pesquisa acadêmica para o teste de medição C108 exige a estruturação sistemática de protocolos de validação técnica. A definição precisa de etapas metrológicas garante a confiabilidade dos dados obtidos.
+        - generic: "Área proposta: Metrologia e Engenharia de Instrumentação"
+        - generic: 3 fontes relacionadas
+        - generic: Escolher esta proposta →
+      - 'button "Escolher proposta: Incerteza em Medições de Sensores"':
+        - generic: Alternativa 1
+        - heading "Incerteza em Medições de Sensores" [level=3]
+        - strong: De que forma a quantificação computacional de incertezas contribui para a validação metrológica em rotinas de medição de sensores?
+        - paragraph: A quantificação de incertezas em redes de sensores físicos exige calibração rigorosa frente a variações ambientais. A aplicação de simulações computacionais auxilia na validação metrológica de medições complexas.
+        - generic: "Área proposta: Metrologia e Engenharia de Instrumentação"
+        - generic: 1 fontes relacionadas
+        - generic: Escolher esta proposta →
+      - 'button "Escolher proposta: Inteligência Artificial em Testes"':
+        - generic: Alternativa 2
+        - heading "Inteligência Artificial em Testes" [level=3]
+        - strong: Como a automação alimentada por inteligência artificial pode otimizar a verificação de conformidade em relatórios de testes técnicos?
+        - paragraph: O processamento de relatórios de testes em sistemas de engenharia complexos frequentemente enfrenta gargalos operacionais. Plataformas baseadas em inteligência artificial podem automatizar a verificação de conformidade de especificações.
+        - generic: "Área proposta: Engenharia de Sistemas e Automação"
+        - generic: 1 fontes relacionadas
+        - generic: Escolher esta proposta →
+      - 'button "Escolher proposta: Rastreabilidade em Ensaios Biológicos"':
+        - generic: Alternativa 3
+        - heading "Rastreabilidade em Ensaios Biológicos" [level=3]
+        - strong: De que forma o uso de impedância elétrica em tempo real estabelece a rastreabilidade metrológica em ensaios celulares?
+        - paragraph: A validação metrológica em ensaios biológicos é dificultada pela ausência de materiais de referência padrão. Sistemas baseados em impedância elétrica permitem o monitoramento contínuo e sem rotulagem de respostas celulares.
+        - generic: "Área proposta: Metrologia Aplicada às Ciências da Vida"
+        - generic: 1 fontes relacionadas
+        - generic: Escolher esta proposta →
+      - 'button "Escolher proposta: Simulação e Calibração Espacial"':
+        - generic: Alternativa 4
+        - heading "Simulação e Calibração Espacial" [level=3]
+        - strong: Como a simulação por método Monte Carlo minimiza os erros de resolução espacial na validação de medições físicas?
+        - paragraph: A integração de métodos computacionais de Monte Carlo permite modelar distribuições espaciais em medições físicas de grande escala. Esse processo reduz erros decorrentes do limite de resolução espacial.
+        - generic: "Área proposta: Metrologia e Engenharia de Instrumentação"
+        - generic: 1 fontes relacionadas
+        - generic: Escolher esta proposta →
+      - 'button "Escolher proposta: Automação de Inteligência de Teste"':
+        - generic: Alternativa 5
+        - heading "Automação de Inteligência de Teste" [level=3]
+        - strong: De que forma a detecção automática de anomalias reduz os ciclos de feedback na análise de conformidade de engenharia?
+        - paragraph: A transição de verificações manuais para plataformas automatizadas de inteligência de teste acelera o ciclo de feedback na engenharia. A detecção automática de anomalias reduz o tempo de análise de conformidade.
+        - generic: "Área proposta: Engenharia de Software e Qualidade"
+        - generic: 1 fontes relacionadas
+        - generic: Escolher esta proposta →
+- navigation "Informações legais":
+  - button "Termos de uso"
+  - button "Privacidade"
+  - button "Preferências de cookies"
+  - button "Suporte"
+  - button "Relatar problema"
+  - button "Créditos"
+  - generic: v06102026.1
+- alert

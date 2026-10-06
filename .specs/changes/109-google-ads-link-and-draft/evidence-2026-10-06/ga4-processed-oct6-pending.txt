@@ -1,0 +1,296 @@
+- banner:
+  - generic: Analytics
+  - button "Open the universal picker.":
+    - generic: All accounts
+    - img: chevron_right
+    - generic: Google Ads Account
+    - generic: Mapa da Pesquisa
+    - img: arrow_drop_down
+  - search:
+    - img: search
+    - textbox "Search":
+      - /placeholder: Try searching "where did my users come from"
+  - button "Switch products":
+  - button "Ask Advisor":
+    - img: search_spark
+  - button "Help entry menu":
+    - img: help
+  - button "Open the user account switcher panel."
+- navigation "Main pages":
+  - link "Home":
+    - generic: Home
+  - link "Reports":
+    - img: insert_chart_filled
+    - generic: Reports
+  - link "Explore":
+    - img: data_exploration
+    - generic: Explore
+  - link "Advertising":
+    - img: ads_click
+    - generic: Advertising
+- navigation "Settings pages":
+  - link "Tasks":
+    - img: task_alt
+    - generic: Tasks
+  - link "Admin":
+    - img: settings_filled
+    - generic: Admin
+- navigation "Secondary navigation":
+  - navigation "Secondary pages":
+    - button "Create":
+      - text: Create
+      - img: arrow_drop_down
+  - tree:
+    - treeitem "Reports snapshot" [level=1]:
+      - button "Reports snapshot":
+        - generic: Reports snapshot
+    - treeitem "Realtime overview" [level=1]:
+      - button "Realtime overview":
+        - generic: Realtime overview
+    - treeitem "Realtime pages" [level=1]:
+      - button "Realtime pages":
+        - generic: Realtime pages
+    - treeitem "Business objectives" [expanded] [level=1]:
+      - separator
+      - button "Business objectives":
+        - generic: Business objectives
+        - img: keyboard_arrow_up
+    - treeitem "Generate leads" [expanded] [level=2]:
+      - button "Generate leads":
+        - img: arrow_drop_down
+        - generic: Generate leads
+    - treeitem "Overview" [level=3]:
+      - button "Overview":
+        - generic: Overview
+    - treeitem "Audiences" [level=3]:
+      - button "Audiences":
+        - generic: Audiences
+    - treeitem "User acquisition" [level=3]:
+      - button "User acquisition":
+        - generic: User acquisition
+    - treeitem "Traffic acquisition" [level=3]:
+      - button "Traffic acquisition":
+        - generic: Traffic acquisition
+    - treeitem "Lead acquisition" [level=3]:
+      - button "Lead acquisition":
+        - generic: Lead acquisition
+    - treeitem "Landing page" [level=3]:
+      - button "Landing page":
+        - generic: Landing page
+    - treeitem "User acquisition cohorts" [level=3]:
+      - button "User acquisition cohorts":
+        - generic: User acquisition cohorts
+    - treeitem "Lead disqualification and loss" [level=3]:
+      - button "Lead disqualification and loss":
+        - generic: Lead disqualification and loss
+    - treeitem "Drive sales" [level=2]:
+      - button "Drive sales":
+        - img: arrow_right
+        - generic: Drive sales
+    - treeitem "Understand web and/or app traffic" [level=2]:
+      - button "Understand web and/or app traffic":
+        - img: arrow_right
+        - generic: Understand web and/or app traffic
+    - treeitem "View user engagement & retention" [level=2]:
+      - button "View user engagement & retention":
+        - img: arrow_right
+        - generic: View user engagement & retention
+    - treeitem "Data import" [expanded] [level=1]:
+      - separator
+      - button "Data import":
+        - generic: Data import
+        - img: keyboard_arrow_up
+    - treeitem "Campaign data import validation" [level=2]:
+      - button "Campaign data import validation":
+        - generic: Campaign data import validation
+    - treeitem "Search Console" [expanded] [level=1]:
+      - separator
+      - button "Search Console":
+        - generic: Search Console
+        - img: keyboard_arrow_up
+    - treeitem "Search Console" [expanded] [level=2]:
+      - button "Search Console":
+        - img: arrow_drop_down
+        - generic: Search Console
+    - treeitem "Queries" [level=3]:
+      - button "Queries":
+        - generic: Queries
+    - treeitem "Google organic search traffic" [level=3]:
+      - button "Google organic search traffic":
+        - generic: Google organic search traffic
+    - treeitem "User" [expanded] [level=1]:
+      - separator
+      - button "User":
+        - generic: User
+        - img: keyboard_arrow_up
+    - treeitem "User attributes" [level=2]:
+      - button "User attributes":
+        - img: arrow_right
+        - generic: User attributes
+    - treeitem "Tech" [level=2]:
+      - button "Tech":
+        - img: arrow_right
+        - generic: Tech
+  - navigation "Other pages":
+    - button "Library":
+      - img: folder
+      - generic: Library
+  - separator
+- button "Nav toggle" [expanded]:
+  - img: keyboard_arrow_left
+- main:
+  - button "All Users":
+    - generic: A
+    - generic: All Users
+  - button "Add comparison":
+    - generic: Add comparison
+    - img: add
+  - combobox "Open date range picker":
+    - generic: Custom
+    - generic: Oct 6 - Oct 6, 2026
+    - img: arrow_drop_down
+  - separator
+  - 'heading "Traffic acquisition: Session source / medium" [active] [level=1]':
+    - 'button "Traffic acquisition: Session source / medium"'
+  - button "This report uses 100% of available data. Click to view more information.":
+    - img: check_circle
+    - generic: This report uses 100% of available data. Click to view more information.
+    - img: arrow_drop_down
+  - button "Add filter":
+    - generic: Add filter
+    - img: add
+  - generic "View annotations":
+    - button "View annotations":
+  - generic "Edit comparisons":
+    - button "Edit comparisons":
+  - generic "Open this report as an exploration":
+    - button "Open this report as an exploration":
+      - img: data_exploration
+  - generic "Share this report":
+    - button "Share this report":
+      - img: share
+  - generic "Insights":
+    - button "Insights":
+  - generic "Customize report":
+    - button "Customize report":
+      - img: edit
+  - text: add check_circle arrow_drop_down add arrow_drop_down data_exploration share edit
+  - button "Ask Advisor":
+    - img: search_spark
+  - heading "Sessions by Session source / medium over time" [level=2]
+  - generic "Date granularity selector":
+    - combobox "Date granularity selector":
+      - generic: Day
+  - button "Plot rows" [disabled]:
+    - generic: Plot rows
+  - img: search
+  - textbox "Search":
+    - /placeholder: Search…
+  - grid "Report data.":
+    - rowgroup:
+      - row "selection column Checkbox for deselecting all rows Index Session source / medium Sessions Engaged sessions Engagement rate Average engagement time per session Events per session Event count All events Key events All events Session key event rate All events Total revenue":
+        - columnheader "selection column Checkbox for deselecting all rows":
+          - generic: selection column
+          - checkbox "Checkbox for deselecting all rows" [disabled]
+        - columnheader "Index":
+          - generic: Index
+        - columnheader "Session source / medium":
+          - button "Session source / medium open dimensions picker":
+            - button "Session source / medium":
+              - generic: Session source / medium
+              - text: Session source / medium
+              - img: arrow_drop_down
+            - button "open dimensions picker":
+              - img: add
+        - columnheader "Sessions":
+          - button "Sessions":
+            - button "Sessions"
+        - columnheader "Engaged sessions":
+          - button "Engaged sessions":
+            - button "Engaged sessions"
+        - columnheader "Engagement rate":
+          - button "Engagement rate":
+            - button "Engagement rate"
+        - columnheader "Average engagement time per session":
+          - button "Average engagement time per session":
+            - button "Average engagement time per session"
+        - columnheader "Events per session":
+          - button "Events per session":
+            - button "Events per session"
+        - columnheader "Event count All events":
+          - button "Event count All events":
+            - button "Event count"
+            - button "All events":
+              - generic: All events
+              - text: All events
+              - img: arrow_drop_down
+        - columnheader "Key events All events":
+          - button "Key events All events":
+            - button "Key events"
+            - button "All events":
+              - generic: All events
+              - text: All events
+              - img: arrow_drop_down
+        - columnheader "Session key event rate All events":
+          - button "Session key event rate All events":
+            - button "Session key event rate"
+            - button "All events":
+              - generic: All events
+              - text: All events
+              - img: arrow_drop_down
+        - columnheader "Total revenue":
+          - button "Total revenue":
+            - button "Total revenue"
+      - row "Checkbox for total row Empty Summary Totals cell for Empty Summary Totals cell for Index column Total Empty Summary Totals cell for Sessions column 0 Empty Summary Totals cell for Engaged sessions column 0 Empty Summary Totals cell for Engagement rate column 0% Empty Summary Totals cell for Average engagement time per session column 0s Empty Summary Totals cell for Events per session column 0.00 Empty Summary Totals cell for Event count column 0 Empty Summary Totals cell for Key events column 0.00 Empty Summary Totals cell for Session key event rate column 0% Empty Summary Totals cell for Total revenue column R$0.00":
+        - columnheader "Checkbox for total row Empty Summary Totals cell for":
+          - checkbox "Checkbox for total row"
+          - generic: Empty Summary Totals cell for
+        - columnheader "Empty Summary Totals cell for Index column":
+          - generic: Empty Summary Totals cell for Index column
+        - columnheader "Total":
+          - generic: Total
+        - columnheader "Empty Summary Totals cell for Sessions column 0":
+          - generic: Empty Summary Totals cell for Sessions column
+          - generic: "0"
+        - columnheader "Empty Summary Totals cell for Engaged sessions column 0":
+          - generic: Empty Summary Totals cell for Engaged sessions column
+          - generic: "0"
+        - columnheader "Empty Summary Totals cell for Engagement rate column 0%":
+          - generic: Empty Summary Totals cell for Engagement rate column
+          - generic: 0%
+        - columnheader "Empty Summary Totals cell for Average engagement time per session column 0s":
+          - generic: Empty Summary Totals cell for Average engagement time per session column
+          - generic: 0s
+        - columnheader "Empty Summary Totals cell for Events per session column 0.00":
+          - generic: Empty Summary Totals cell for Events per session column
+          - generic: "0.00"
+        - columnheader "Empty Summary Totals cell for Event count column 0":
+          - generic: Empty Summary Totals cell for Event count column
+          - generic: "0"
+        - columnheader "Empty Summary Totals cell for Key events column 0.00":
+          - generic: Empty Summary Totals cell for Key events column
+          - generic: "0.00"
+        - columnheader "Empty Summary Totals cell for Session key event rate column 0%":
+          - generic: Empty Summary Totals cell for Session key event rate column
+          - generic: 0%
+        - columnheader "Empty Summary Totals cell for Total revenue column R$0.00":
+          - generic: Empty Summary Totals cell for Total revenue column
+          - generic: R$0.00
+    - rowgroup
+  - generic: No data available
+  - text: © 2026 Google |
+  - link "Analytics home":
+    - /url: https://www.google.com/analytics/?hl=en-US
+  - text: "|"
+  - link "Terms of Service":
+    - /url: https://www.google.com/analytics/tos.html?hl=en-US
+  - text: "|"
+  - link "Privacy Policy":
+    - /url: https://www.google.com/policies/privacy/?hl=en-US
+  - text: "|"
+  - button "Send feedback":
+    - img: feedback
+    - generic: Send feedback
+- complementary
+- button "Open context menu"
+- generic: Tue 06 Oct

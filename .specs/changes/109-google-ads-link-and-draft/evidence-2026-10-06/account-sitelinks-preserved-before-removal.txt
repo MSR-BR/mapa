@@ -1,0 +1,849 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "All campaigns 2 filters · 6 campaigns":
+    - img: home
+    - generic: All campaigns
+    - generic: 2 filters · 6 campaigns
+    - img: arrow_drop_down
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets" [expanded]:
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+    - menuitem "Videos":
+      - generic: Videos
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Assets" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Associations" [selected]:
+    - generic: Associations
+  - tab "Performance":
+    - generic: Performance
+  - tab "Expanded final URL assets":
+    - generic: Expanded final URL assets
+- main:
+  - listbox "Select item to filter by asset type":
+    - 'option "Asset type: All"':
+      - generic: All
+    - 'option "Asset type: Image"':
+      - img: image
+      - generic: Image
+    - 'option "Asset type: Business name"':
+      - img: text_fields
+      - generic: Business name
+    - 'option "Asset type: Business logo"':
+      - img: image
+      - generic: Business logo
+    - 'option "Asset type: Sitelink" [checked] [selected]':
+      - img: check
+      - generic: Sitelink
+    - 'option "Asset type: Headline"':
+      - img: text_fields
+      - generic: Headline
+    - 'option "Asset type: Description"':
+      - img: text_fields
+      - generic: Description
+    - 'option "Asset type: Text disclaimer, New"':
+      - img: text_fields
+      - text: Text disclaimer
+      - generic: New
+    - 'option "Asset type: Callout"':
+      - img: feed
+      - generic: Callout
+    - 'option "Asset type: Structured snippet"':
+      - img: text_snippet
+      - generic: Structured snippet
+    - 'option "Asset type: Call"':
+      - img: call
+      - generic: Call
+    - 'option "Asset type: Lead form"':
+      - img: article
+      - generic: Lead form
+    - 'option "Asset type: Message, Beta"':
+      - img: chat
+      - text: Message
+      - generic: Beta
+    - 'option "Asset type: Location"':
+      - img: location_on
+      - generic: Location
+    - 'option "Asset type: Price"':
+      - img: paid
+      - generic: Price
+    - 'option "Asset type: App"':
+      - img: phone_android
+      - generic: App
+    - 'option "Asset type: Promotion"':
+      - img: campaign
+      - generic: Promotion
+  - region "Primary toolbelt for Associations":
+    - button "Create asset":
+      - img: add
+    - button "Show 3 active filters":
+      - img: filter_alt
+      - generic: "3"
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:"
+    - generic: + 3 more
+    - button "Add filter":
+      - generic: Add filter
+    - button "Segment. Grouped by Added to":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Reports":
+      - img: assessment
+      - generic: Reports
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+  - grid "Associations":
+    - row "Select all rows Asset status Asset Level Status Added by Last updated TrueView avg. CPV Interactions Interaction rate Avg. cost Impr. Cost Clicks Conv. rate Conversions Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Asset status":
+        - img "Asset status"
+      - columnheader "Asset"
+      - columnheader "Level"
+      - columnheader "Status"
+      - columnheader "Added by"
+      - columnheader "Last updated":
+        - text: Last updated
+        - img: help_outline
+      - columnheader "TrueView avg. CPV":
+        - text: TrueView avg. CPV
+        - img: help_outline
+      - columnheader "Interactions":
+        - text: Interactions
+        - img: help_outline
+      - columnheader "Interaction rate":
+        - text: Interaction rate
+        - img: help_outline
+      - columnheader "Avg. cost":
+        - text: Avg. cost
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - generic: Account
+    - 'row "Select row Enabled Edit this Asset status, currently ENABLED Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio } Account Eligible Advertiser Mar 11, 2025, 5:08 AM €0.001 21,663 engagements 63.63% €0.00 34,047 €14.06 290 0.00% 0.00 —"':
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled Edit this Asset status, currently ENABLED":
+        - img "Enabled"
+        - button "Edit this Asset status, currently ENABLED"
+      - 'gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio }"':
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+        - 'button "Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio }"'
+      - gridcell "Account":
+        - generic: Account
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Mar 11, 2025, 5:08 AM":
+        - generic: Mar 11, 2025, 5:08 AM
+      - gridcell "€0.001":
+        - generic: €0.001
+      - gridcell "21,663 engagements":
+        - generic: 21,663
+        - generic: engagements
+      - gridcell "63.63%":
+        - generic: 63.63%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "34,047":
+        - generic: 34,047
+      - gridcell "€14.06":
+        - generic: €14.06
+      - gridcell "290":
+        - generic: "290"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Account Eligible Advertiser Mar 11, 2025, 5:08 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Account":
+        - generic: Account
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Mar 11, 2025, 5:08 AM":
+        - generic: Mar 11, 2025, 5:08 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - link "QM - home - EN":
+      - /url: "#"
+    - 'row "Select row Enabled Edit this Asset status, currently ENABLED Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio } Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM €0.001 21,663 engagements 63.63% €0.00 34,047 €14.06 290 0.00% 0.00 —"':
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled Edit this Asset status, currently ENABLED":
+        - img "Enabled"
+        - button "Edit this Asset status, currently ENABLED"
+      - 'gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio }"':
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+        - 'button "Edit this Asset, currently finalUrls: https://ibnhakim.wordpress.com policyInfo: { approvalStatus: APPROVED reviewState: REVIEWED denormalizedStatus: APPROVED } sitelinkAsset: { linkText: Página web description1: Resumo, YouTube e e-book grátis description2: Livro físico, digital e áudio }"'
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "€0.001":
+        - generic: €0.001
+      - gridcell "21,663 engagements":
+        - generic: 21,663
+        - generic: engagements
+      - gridcell "63.63%":
+        - generic: 63.63%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "34,047":
+        - generic: 34,047
+      - gridcell "€14.06":
+        - generic: €14.06
+      - gridcell "290":
+        - generic: "290"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - link "ibn Hakim":
+      - /url: "#"
+    - row "Select row Enabled Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio":
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - link "ibn_site":
+      - /url: "#"
+    - row "Select row Enabled Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Campaign Eligible Advertiser Mar 10, 2025, 7:51 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio":
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Mar 10, 2025, 7:51 AM":
+        - generic: Mar 10, 2025, 7:51 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Mar 11, 2025, 5:20 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Mar 11, 2025, 5:20 AM":
+        - generic: Mar 11, 2025, 5:20 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - link "TERMO - Search - BR - PT":
+      - /url: "#"
+    - row "Select row Enabled Abrir o App Campaign Eligible Advertiser Jul 14, 2026, 8:11 PM — 1,025 clicks 1.54% €0.07 66,429 €76.52 1,025 21.32% 218.53 €0.35":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Abrir o App":
+        - generic: Abrir o App
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Jul 14, 2026, 8:11 PM":
+        - generic: Jul 14, 2026, 8:11 PM
+      - gridcell "—":
+        - generic: —
+      - gridcell "1,025 clicks":
+        - generic: 1,025
+        - generic: clicks
+      - gridcell "1.54%":
+        - generic: 1.54%
+      - gridcell "€0.07":
+        - generic: €0.07
+      - gridcell "66,429":
+        - generic: 66,429
+      - gridcell "€76.52":
+        - generic: €76.52
+      - gridcell "1,025":
+        - generic: 1,025
+      - gridcell "21.32%":
+        - generic: 21.32%
+      - gridcell "218.53":
+        - generic: "218.53"
+      - gridcell "€0.35":
+        - generic: €0.35
+    - row "Select row Enabled Mapa de Conteúdo Campaign Eligible Advertiser Jul 14, 2026, 8:11 PM — 1,011 clicks 1.52% €0.07 66,415 €74.41 1,011 21.71% 219.53 €0.34":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Mapa de Conteúdo":
+        - generic: Mapa de Conteúdo
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Jul 14, 2026, 8:11 PM":
+        - generic: Jul 14, 2026, 8:11 PM
+      - gridcell "—":
+        - generic: —
+      - gridcell "1,011 clicks":
+        - generic: 1,011
+        - generic: clicks
+      - gridcell "1.52%":
+        - generic: 1.52%
+      - gridcell "€0.07":
+        - generic: €0.07
+      - gridcell "66,415":
+        - generic: 66,415
+      - gridcell "€74.41":
+        - generic: €74.41
+      - gridcell "1,011":
+        - generic: 1,011
+      - gridcell "21.71%":
+        - generic: 21.71%
+      - gridcell "219.53":
+        - generic: "219.53"
+      - gridcell "€0.34":
+        - generic: €0.34
+    - row "Select row Enabled Página Inicial Campaign Eligible Advertiser Jul 14, 2026, 8:11 PM — 855 clicks 1.40% €0.04 61,205 €37.53 855 14.85% 127.00 €0.30":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Página Inicial":
+        - generic: Página Inicial
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Jul 14, 2026, 8:11 PM":
+        - generic: Jul 14, 2026, 8:11 PM
+      - gridcell "—":
+        - generic: —
+      - gridcell "855 clicks":
+        - generic: "855"
+        - generic: clicks
+      - gridcell "1.40%":
+        - generic: 1.40%
+      - gridcell "€0.04":
+        - generic: €0.04
+      - gridcell "61,205":
+        - generic: 61,205
+      - gridcell "€37.53":
+        - generic: €37.53
+      - gridcell "855":
+        - generic: "855"
+      - gridcell "14.85%":
+        - generic: 14.85%
+      - gridcell "127.00":
+        - generic: "127.00"
+      - gridcell "€0.30":
+        - generic: €0.30
+    - row "Select row Enabled Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Página web Resumo, YouTube e e-book grátis Livro físico, digital e áudio":
+        - generic: Página web
+        - generic: Resumo, YouTube e e-book grátis
+        - generic: Livro físico, digital e áudio
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim Campaign Eligible Advertiser Oct 6, 2026, 10:29 AM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Youtube Assista aos vídeos sobre o livro Explore a jornada de ibn Hakim":
+        - generic: Youtube
+        - generic: Assista aos vídeos sobre o livro
+        - generic: Explore a jornada de ibn Hakim
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Oct 6, 2026, 10:29 AM":
+        - generic: Oct 6, 2026, 10:29 AM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Código do Projeto Campaign Eligible Advertiser Jul 14, 2026, 8:11 PM — 0 — — 0 €0.00 0 — 0.00 —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Código do Projeto":
+        - generic: Código do Projeto
+      - gridcell "Campaign":
+        - generic: Campaign
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Advertiser":
+        - generic: Advertiser
+      - gridcell "Jul 14, 2026, 8:11 PM":
+        - generic: Jul 14, 2026, 8:11 PM
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "—":
+        - generic: —
+    - 'row "Total: Sitelinks €0.001 22,702 clicks, engagements 22.57% €0.00 100,602 €93.07 1,329 0.99% 224.53 €0.41"':
+      - gridcell
+      - 'gridcell "Total: Sitelinks"':
+        - generic: "Total: Sitelinks"
+      - gridcell:
+        - button:
+          - img: expand_more
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "€0.001":
+        - generic: €0.001
+      - gridcell "22,702 clicks, engagements":
+        - generic: 22,702
+        - generic: clicks, engagements
+      - gridcell "22.57%":
+        - generic: 22.57%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "100,602":
+        - generic: 100,602
+      - gridcell "€93.07":
+        - generic: €93.07
+      - gridcell "1,329":
+        - generic: 1,329
+      - gridcell "0.99%":
+        - generic: 0.99%
+      - gridcell "224.53":
+        - generic: "224.53"
+      - gridcell "€0.41":
+        - generic: €0.41
+  - generic: "Show rows:"
+  - 'button "Show rows: 30 selected."':
+    - generic: "30"
+    - img: arrow_drop_down
+  - generic: 1 - 15 of 15
+  - button "Go to the first page" [disabled]:
+    - img: first_page
+  - button "Go to the previous page" [disabled]:
+    - img: chevron_left
+  - button "Go to the next page" [disabled]:
+    - img: chevron_right
+  - button "Go to the last page" [disabled]:
+    - img: last_page
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

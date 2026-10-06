@@ -1,0 +1,319 @@
+- banner:
+  - generic: Analytics
+  - button "Open the universal picker.":
+    - generic: All accounts
+    - img: chevron_right
+    - generic: Google Ads Account
+    - generic: Mapa da Pesquisa
+    - img: arrow_drop_down
+  - search:
+    - img: search
+    - textbox "Search":
+      - /placeholder: Try searching "where did my users come from"
+  - button "Switch products":
+  - button "Ask Advisor":
+    - img: search_spark
+  - button "Help entry menu":
+    - img: help
+  - button "Open the user account switcher panel."
+- navigation "Main pages":
+  - link "Home":
+    - generic: Home
+  - link "Reports":
+    - img: insert_chart_filled
+    - generic: Reports
+  - link "Explore":
+    - img: data_exploration
+    - generic: Explore
+  - link "Advertising":
+    - img: ads_click
+    - generic: Advertising
+- navigation "Settings pages":
+  - link "Tasks":
+    - img: task_alt
+    - generic: Tasks
+  - link "Admin":
+    - img: settings_filled
+    - generic: Admin
+- navigation "Secondary navigation":
+  - navigation "Secondary pages":
+    - button "Create":
+      - img: add
+      - text: Create
+      - img: arrow_drop_down
+  - tree:
+    - treeitem "Admin" [level=1]:
+      - button "Admin":
+        - generic: Admin
+    - treeitem "My preferences" [level=1]:
+      - button "My preferences":
+        - generic: My preferences
+    - treeitem "Account settings" [expanded] [level=1]:
+      - separator
+      - button "Account settings":
+        - generic: Account settings
+        - img: keyboard_arrow_up
+    - treeitem "Account" [level=2]:
+      - button "Account":
+        - img: arrow_right
+        - generic: Account
+    - treeitem "Property settings" [expanded] [level=1]:
+      - separator
+      - button "Property settings":
+        - generic: Property settings
+        - img: keyboard_arrow_up
+    - treeitem "Property" [level=2]:
+      - button "Property":
+        - img: arrow_right
+        - generic: Property
+    - treeitem "Data collection and modification" [level=2]:
+      - button "Data collection and modification":
+        - img: arrow_right
+        - generic: Data collection and modification
+    - treeitem "Data display" [level=2]:
+      - button "Data display":
+        - img: arrow_right
+        - generic: Data display
+    - treeitem "Product links" [expanded] [level=2]:
+      - button "Product links":
+        - img: arrow_drop_down
+        - generic: Product links
+    - treeitem "Google AdMob links" [level=3]:
+      - button "Google AdMob links":
+        - generic: Google AdMob links
+    - treeitem "Google AdSense links" [level=3]:
+      - button "Google AdSense links":
+        - generic: Google AdSense links
+    - treeitem "Google Ads links" [level=3]:
+      - button "Google Ads links":
+        - generic: Google Ads links
+    - treeitem "Ad Manager links" [level=3]:
+      - button "Ad Manager links":
+        - generic: Ad Manager links
+    - treeitem "BigQuery links" [level=3]:
+      - button "BigQuery links":
+        - generic: BigQuery links
+    - treeitem "Display & Video 360 links" [level=3]:
+      - button "Display & Video 360 links":
+        - generic: Display & Video 360 links
+    - treeitem "Floodlight links" [level=3]:
+      - button "Floodlight links":
+        - generic: Floodlight links
+    - treeitem "Google Business Profile links" [level=3]:
+      - button "Google Business Profile links":
+        - generic: Google Business Profile links
+    - treeitem "Merchant Center links" [level=3]:
+      - button "Merchant Center links":
+        - generic: Merchant Center links
+    - treeitem "Google Play links" [level=3]:
+      - button "Google Play links":
+        - generic: Google Play links
+    - treeitem "Search Ads 360 links" [level=3]:
+      - button "Search Ads 360 links":
+        - generic: Search Ads 360 links
+    - treeitem "Search Console links" [level=3]:
+      - button "Search Console links":
+        - generic: Search Console links
+    - treeitem "Meta links" [level=3]:
+      - button "Meta links":
+        - generic: Meta links
+    - treeitem "Pinterest links" [level=3]:
+      - button "Pinterest links":
+        - generic: Pinterest links
+    - treeitem "Reddit links" [level=3]:
+      - button "Reddit links":
+        - generic: Reddit links
+    - treeitem "Snap links" [level=3]:
+      - button "Snap links":
+        - generic: Snap links
+    - treeitem "TikTok links" [level=3]:
+      - button "TikTok links":
+        - generic: TikTok links
+  - separator
+- button "Nav toggle" [expanded]:
+  - img: keyboard_arrow_left
+- main:
+  - heading "Google Ads links" [level=1]
+  - img: search
+  - searchbox "Type to filter"
+  - button "Create a new GA integration link.":
+    - generic: Link
+  - tablist:
+    - tab "Completed (1)" [selected]:
+      - generic: Completed (1)
+    - tab "Approval needed (0)":
+      - generic: Approval needed (0)
+    - tab "Request sent (0)":
+      - generic: Request sent (0)
+    - tab "Cancelled (0)":
+      - generic: Cancelled (0)
+  - tabpanel "Completed (1)"
+  - table "Google Ads links":
+    - row "Account Name Account ID Account type Personalized Advertising Date linked Linked by Row details":
+      - columnheader "Account Name":
+        - button "Account Name":
+          - generic: Account Name
+      - columnheader "Account ID":
+        - button "Account ID":
+          - generic: Account ID
+      - columnheader "Account type":
+        - button "Account type":
+          - generic: Account type
+      - columnheader "Personalized Advertising":
+        - button "Personalized Advertising":
+          - generic: Personalized Advertising
+      - columnheader "Date linked":
+        - button "Date linked":
+          - generic: Date linked
+      - columnheader "Linked by":
+        - button "Linked by":
+          - generic: Linked by
+      - columnheader "Row details":
+        - generic: Row details
+    - row "MSR-BR 383-835-9068 Account Disabled Oct 6, 2026 mario.reis.junior@gmail.com Show link detail":
+      - cell "MSR-BR":
+        - generic: MSR-BR
+      - cell "383-835-9068":
+        - link "383-835-9068":
+          - /url: https://ads.google.com/aw/overview?ocid=6924780908
+          - text: 383-835-9068
+          - img: open_in_new
+      - cell "Account":
+        - generic: Account
+      - cell "Disabled":
+        - generic: Disabled
+      - cell "Oct 6, 2026"
+      - cell "mario.reis.junior@gmail.com":
+        - generic: mario.reis.junior@gmail.com
+      - cell "Show link detail":
+        - button "Show link detail":
+          - img: keyboard_arrow_right
+  - generic: "Items per page:"
+  - combobox "Items per page:":
+    - generic: "5"
+  - status: 1 – 1 of 1
+  - button "First page" [disabled]:
+  - button "Previous page" [disabled]:
+  - button "Next page" [disabled]:
+  - button "Last page" [disabled]:
+- contentinfo:
+  - text: © 2026 Google |
+  - link "Analytics home":
+    - /url: https://www.google.com/analytics/?hl=en-US
+  - text: "|"
+  - link "Terms of Service":
+    - /url: https://www.google.com/analytics/tos.html?hl=en-US
+  - text: "|"
+  - link "Privacy Policy":
+    - /url: https://www.google.com/policies/privacy/?hl=en-US
+  - text: "|"
+  - button "Send feedback":
+    - img: feedback
+    - generic: Send feedback
+- button "Open context menu"
+- dialog "Google Ads link":
+  - button "Close this slider window" [active]:
+    - img: close
+  - heading "Google Ads link" [level=2]:
+    - generic: Google Ads link
+  - button "Save":
+    - generic: Save
+  - button "Show more options":
+    - img: more_vert
+  - heading "Completed link details" [level=3]
+  - term: Account name
+  - definition: MSR-BR
+  - term: Account ID
+  - definition:
+    - link "383-835-9068":
+      - /url: https://ads.google.com/aw/overview?ocid=6924780908
+      - text: 383-835-9068
+      - img: open_in_new
+  - term: Account type
+  - definition: Account
+  - term: Linked by
+  - definition: mario.reis.junior@gmail.com
+  - term: Date linked
+  - definition: Oct 6, 2026, 12:23:42 PM
+  - term: Last modified by
+  - definition: mario.reis.junior@gmail.com
+  - term: Last modified date
+  - definition: Oct 6, 2026, 12:23:42 PM
+  - generic: Data configurations
+  - img: people
+  - generic: Enable Personalized Advertising
+  - switch "Enable Personalized Advertising":
+  - generic: Google Analytics audience lists and events/parameters will be published to the linked Google Ads accounts for use in personalization. You can change this setting anytime while maintaining your link for other purposes.
+  - generic: User access
+  - button "Help text for user access permission level":
+    - img: help_outline
+  - button "See default roles":
+    - generic: See default roles
+  - table "User access":
+    - row "Name Roles and data restrictions Details":
+      - columnheader "Name":
+        - generic: Name
+      - columnheader "Roles and data restrictions":
+        - generic: Roles and data restrictions
+      - columnheader "Details":
+        - generic: Details
+    - row "Google Ads account 383-835-9068 administrator Viewer":
+      - cell "Google Ads account 383-835-9068 administrator":
+        - generic: Google Ads account 383-835-9068 administrator
+      - cell "Viewer"
+      - cell "Google Ads account 383-835-9068 administrator":
+        - link "Google Ads account 383-835-9068 administrator":
+          - /url: "#/a346683903p550650234/admin/integrations/google-ads/link/qmrV-ja_RN-cID1UpznqUA/link/otherProductUsers~2FADWORDS_LINK:3838359068:adwords:admin"
+          - img: keyboard_arrow_right
+    - row "Google Ads account 383-835-9068 billing Viewer":
+      - cell "Google Ads account 383-835-9068 billing":
+        - generic: Google Ads account 383-835-9068 billing
+      - cell "Viewer"
+      - cell "Google Ads account 383-835-9068 billing":
+        - link "Google Ads account 383-835-9068 billing":
+          - /url: "#/a346683903p550650234/admin/integrations/google-ads/link/qmrV-ja_RN-cID1UpznqUA/link/otherProductUsers~2FADWORDS_LINK:3838359068:adwords:billing"
+          - img: keyboard_arrow_right
+    - row "Google Ads account 383-835-9068 email-only Viewer":
+      - cell "Google Ads account 383-835-9068 email-only":
+        - generic: Google Ads account 383-835-9068 email-only
+      - cell "Viewer"
+      - cell "Google Ads account 383-835-9068 email-only":
+        - link "Google Ads account 383-835-9068 email-only":
+          - /url: "#/a346683903p550650234/admin/integrations/google-ads/link/qmrV-ja_RN-cID1UpznqUA/link/otherProductUsers~2FADWORDS_LINK:3838359068:adwords:email-only"
+          - img: keyboard_arrow_right
+    - row "Google Ads account 383-835-9068 read-only Viewer":
+      - cell "Google Ads account 383-835-9068 read-only":
+        - generic: Google Ads account 383-835-9068 read-only
+      - cell "Viewer"
+      - cell "Google Ads account 383-835-9068 read-only":
+        - link "Google Ads account 383-835-9068 read-only":
+          - /url: "#/a346683903p550650234/admin/integrations/google-ads/link/qmrV-ja_RN-cID1UpznqUA/link/otherProductUsers~2FADWORDS_LINK:3838359068:adwords:read-only"
+          - img: keyboard_arrow_right
+    - row "Google Ads account 383-835-9068 standard Viewer":
+      - cell "Google Ads account 383-835-9068 standard":
+        - generic: Google Ads account 383-835-9068 standard
+      - cell "Viewer"
+      - cell "Google Ads account 383-835-9068 standard":
+        - link "Google Ads account 383-835-9068 standard":
+          - /url: "#/a346683903p550650234/admin/integrations/google-ads/link/qmrV-ja_RN-cID1UpznqUA/link/otherProductUsers~2FADWORDS_LINK:3838359068:adwords:standard"
+          - img: keyboard_arrow_right
+  - heading "What's next?" [level=3]
+  - generic: It may take up to 24 hours for your Google Ads link to begin displaying data.
+  - list:
+    - img: flag
+    - generic: Create conversions with Google Ads
+    - generic: You can create conversions based on your Google Analytics key events. Conversions will appear in both this property and any linked Google Ads accounts.
+    - link "Learn more about conversions":
+      - /url: https://support.google.com/analytics/answer/10632359?hl=en_US&utm_id=ad
+    - generic: "|"
+    - link "Get started":
+      - /url: "#/p550650234/conversions"
+    - separator
+    - img: people_outline
+    - generic: Create a remarketing audience in Analytics
+    - generic: Remarketing with Google Analytics lets you segment your audience of past users and deliver relevant ads for your Google campaigns based on the actions that people have taken on your site and in your app. Take advantage of Analytics data to identify those users' interests (e.g. which product pages they visited) and build audiences focused on those users.
+    - link "Learn more about creating audiences":
+      - /url: https://support.google.com/analytics/answer/9267572?hl=en_US&utm_id=ad
+    - generic: "|"
+    - link "Get started":
+      - /url: "#/p550650234/admin/audiences/hub"

@@ -1,0 +1,708 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "All campaigns 2 filters · 6 campaigns":
+    - img: home
+    - generic: All campaigns
+    - generic: 2 filters · 6 campaigns
+    - img: arrow_drop_down
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Warning notification icon": error_outline
+    - button "1 campaign ending soon Fix it":
+      - text: 1 campaign ending soon
+      - generic: Fix it
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns" [expanded]:
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+    - menuitem "Ad groups":
+      - generic: Ad groups
+    - menuitem "Ads":
+      - generic: Ads
+    - menuitem "Experiments":
+      - generic: Experiments
+    - menuitem "Campaign groups":
+      - generic: Campaign groups
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Campaigns" [level=2]
+- generic: Today
+- button "Oct 6, 2026 Not applicable":
+  - generic: Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous":
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Campaigns" [selected]:
+    - generic: Campaigns
+  - tab "Drafts":
+    - generic: Drafts
+  - tab "Settings":
+    - generic: Settings
+- main:
+  - generic: Impr.
+  - generic: "576"
+  - img: arrow_downward
+  - text: "-935"
+  - 'button "Impr.: 576 for this time period. Hide this metric from the chart. An impression is counted each time your ad is served. Impressions help you understand how often your ad is being seen.. The Impr. metric has changed by -935 (-61.88%) compared to the previous period.. ."'
+  - generic: Cost
+  - generic: €1.09
+  - img: arrow_downward
+  - text: "-€1.18"
+  - 'button "Cost: €1.09. Show this metric in the chart. Cost is the sum of your spend during this period.. The Cost metric has changed by -€1.18 (-51.98%) compared to the previous period.. ."'
+  - generic: Avg. CPC
+  - generic: €0.11
+  - img: arrow_downward
+  - text: "-€0.00"
+  - 'button "Avg. CPC: €0.11. Show this metric in the chart. Average cost-per-click (Avg. CPC) is the amount you''ve paid for your ad divided by its total clicks. If your ad receives 2 clicks, one costing $0.20 and one costing $0.40, your average CPC for those clicks is $0.30.. The Avg. CPC metric has changed by -€0.00 (-3.96%) compared to the previous period.. ."'
+  - generic: TrueView views
+  - generic: "0"
+  - img: arrow_upward
+  - text: "0"
+  - 'button "TrueView views: 0. Show this metric in the chart. A TrueView view (previously called a view) is counted when someone chooses to watch or engage with your video ad instead of skipping or scrolling past it.. The TrueView views metric has changed by 0 (+0.00%) compared to the previous period.. ."'
+  - button:
+    - img: chevron_right
+  - button "Metrics":
+    - img: add_chart
+    - generic: Metrics
+  - button "3 Adjust":
+    - img: tune
+    - generic: "3"
+    - generic: Adjust
+  - button "Download":
+    - img: file_download
+    - generic: Download
+  - button "Expand chart":
+    - img: fullscreen
+    - generic: Expand
+  - application:
+    - generic: Time series chart showing Impr. from Tue, Oct 6, 2026 to Tue, Oct 6, 2026. Use arrow keys to navigate.
+  - generic: Adjust your budgets
+  - button "+2.8%"
+  - button "More options":
+    - img: more_vert
+  - paragraph: Get more clicks by adjusting your budgets in your Maximize clicks campaigns
+  - paragraph:
+    - text: Recommended because our simulations show your campaigns could receive more clicks with a smaller relative increase in overall cost per click (CPC)
+    - button "More information":
+      - img: help_outline
+  - button "View":
+    - generic: View
+  - button "Create investment strategy":
+    - generic: Create investment strategy
+  - generic: keyboard_arrow_right
+  - generic: 1 / 3
+  - generic: keyboard_arrow_left
+  - region "Primary toolbelt for Campaigns":
+    - button "Create campaign":
+      - img: add
+    - img: filter_alt
+    - grid
+    - button "Add filter":
+      - generic: Add filter
+    - search:
+      - button "Search":
+        - img: search
+        - generic: Search
+    - button "Segment. Segmentation off":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Reports":
+      - img: assessment
+      - generic: Reports
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+    - button "Hide chart":
+      - img: keyboard_arrow_up
+  - grid "Campaigns":
+    - generic: "Shorts ads actions:"
+    - row "Select all rows Campaign status Campaign Budget Status Optimization score Campaign subtype Campaign type Bid strategy type TrueView views Impr. TrueView avg. CPV Conversions Conv. rate Cost / conv. Clicks CTR Unique users Avg. CPM Cost Likes Comments Shares":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Campaign status":
+        - img "Campaign status"
+      - columnheader "Campaign"
+      - columnheader "Budget":
+        - text: Budget
+        - img: help_outline
+      - columnheader "Status":
+        - text: Status
+        - img: help_outline
+      - columnheader "Optimization score":
+        - text: Optimization score
+        - img: help_outline
+      - columnheader "Campaign subtype"
+      - columnheader "Campaign type":
+        - text: Campaign type
+        - img: help_outline
+      - columnheader "Bid strategy type":
+        - text: Bid strategy type
+        - img: help_outline
+      - columnheader "TrueView views":
+        - text: TrueView views
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "TrueView avg. CPV":
+        - text: TrueView avg. CPV
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "CTR":
+        - text: CTR
+        - img: help_outline
+      - columnheader "Unique users":
+        - text: Unique users
+        - img: help_outline
+      - columnheader "Avg. CPM":
+        - text: Avg. CPM
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Likes":
+        - text: Likes
+        - img: help_outline
+      - columnheader "Comments":
+        - text: Comments
+        - img: help_outline
+      - columnheader "Shares":
+        - text: Shares
+        - img: help_outline
+    - 'row "Expand row Unknown Drafts in progress: 2"':
+      - gridcell
+      - gridcell "Expand row Unknown":
+        - button "Expand row":
+          - img "Expand row": expand_more
+        - generic "Unknown"
+      - 'gridcell "Drafts in progress: 2"':
+        - generic: "Drafts in progress:"
+        - generic: "2"
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+    - row "Select row Enabled TERMO - Search - BR - PT Edit name Edit settings €2.00/day Campaign budget simulator Eligible (Limited) Limited by budget 61.9% Standard Search Maximize clicks 0 576 — 0.00 0.00% €0.00 10 1.74% 348 €1.89 €1.09 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "TERMO - Search - BR - PT Edit name Edit settings":
+        - generic: TERMO - Search - BR - PT
+        - button "Edit name"
+        - button "Edit settings":
+          - img: settings
+      - gridcell "€2.00/day Campaign budget simulator":
+        - generic: €2.00/day
+        - button "Campaign budget simulator"
+      - gridcell "Eligible (Limited) Limited by budget":
+        - generic: Eligible (Limited)
+        - button "Limited by budget":
+          - generic: Limited by budget
+      - gridcell "61.9%":
+        - link "61.9%":
+          - /url: /aw/recommendations?campaignId=24027143907&ocid=6924780908&src=OptimizationScoreColumn&authuser=2&__u=7626112293&__c=5611930892
+      - gridcell "Standard":
+        - generic: Standard
+      - gridcell "Search":
+        - generic: Search
+      - gridcell "Maximize clicks":
+        - button "Maximize clicks"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "576":
+        - generic: "576"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "10":
+        - generic: "10"
+      - gridcell "1.74%":
+        - generic: 1.74%
+      - gridcell "348":
+        - generic: "348"
+      - gridcell "€1.89":
+        - generic: €1.89
+      - gridcell "€1.09":
+        - generic: €1.09
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Removed New Quantum Mechanics ... Edit name €0.50/day Removed — Smart video Video Maximum CPV 0 0 — 0.00 0.00% €0.00 0 — — — €0.00 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Removed":
+        - img "Removed"
+      - gridcell "New Quantum Mechanics ... Edit name":
+        - generic: New Quantum Mechanics ...
+        - button "Edit name"
+      - gridcell "€0.50/day":
+        - generic: €0.50/day
+      - gridcell "Removed":
+        - generic: Removed
+      - gridcell "—":
+        - generic: —
+      - gridcell "Smart video":
+        - generic: Smart video
+      - gridcell "Video":
+        - generic: Video
+      - gridcell "Maximum CPV":
+        - generic: Maximum CPV
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Paused QM - home - EN Edit name Edit settings €0.50/day Paused All ads are paused — Video views Video TrueView target CPV 0 0 — 0.00 0.00% €0.00 0 — — — €0.00 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Paused":
+        - img "Paused"
+      - gridcell "QM - home - EN Edit name Edit settings":
+        - generic: QM - home - EN
+        - button "Edit name"
+        - button "Edit settings":
+          - img: settings
+      - gridcell "€0.50/day":
+        - generic: €0.50/day
+      - gridcell "Paused All ads are paused":
+        - generic: Paused
+        - generic: All ads are paused
+      - gridcell "—":
+        - generic: —
+      - gridcell "Video views":
+        - generic: Video views
+      - gridcell "Video":
+        - generic: Video
+      - gridcell "TrueView target CPV":
+        - generic: TrueView target CPV
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Paused ibn Hakim Edit name Edit settings €0.50/day Paused — Video views Video TrueView target CPV 0 0 — 0.00 0.00% €0.00 0 — — — €0.00 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Paused":
+        - img "Paused"
+      - gridcell "ibn Hakim Edit name Edit settings":
+        - generic: ibn Hakim
+        - button "Edit name"
+        - button "Edit settings":
+          - img: settings
+      - gridcell "€0.50/day":
+        - generic: €0.50/day
+      - gridcell "Paused":
+        - generic: Paused
+      - gridcell "—":
+        - generic: —
+      - gridcell "Video views":
+        - generic: Video views
+      - gridcell "Video":
+        - generic: Video
+      - gridcell "TrueView target CPV":
+        - generic: TrueView target CPV
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Paused ibn_site Edit name Edit settings €0.15/day Paused — Standard Search Maximize clicks 0 0 — 0.00 0.00% €0.00 0 — — — €0.00 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Paused":
+        - img "Paused"
+      - gridcell "ibn_site Edit name Edit settings":
+        - generic: ibn_site
+        - button "Edit name"
+        - button "Edit settings":
+          - img: settings
+      - gridcell "€0.15/day":
+        - generic: €0.15/day
+      - gridcell "Paused":
+        - generic: Paused
+      - gridcell "—":
+        - generic: —
+      - gridcell "Standard":
+        - generic: Standard
+      - gridcell "Search":
+        - generic: Search
+      - gridcell "Maximize clicks":
+        - button "Maximize clicks"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - row "Select row Enabled Mapa | Search | BR | Ativacao | Piloto Edit name Edit settings €2.00/day Eligible (Learning) Bid strategy learning View recommendations detail 90% Standard Search Maximize clicks 0 0 — 0.00 0.00% €0.00 0 — — — €0.00 — — —":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Mapa | Search | BR | Ativacao | Piloto Edit name Edit settings":
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+        - button "Edit name"
+        - button "Edit settings":
+          - img: settings
+      - gridcell "€2.00/day":
+        - generic: €2.00/day
+      - gridcell "Eligible (Learning) Bid strategy learning":
+        - generic: Eligible (Learning)
+        - generic: Bid strategy learning
+      - gridcell "View recommendations detail 90%":
+        - button "View recommendations detail":
+          - img: add_add
+        - link "90%":
+          - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreColumn&authuser=2&__u=7626112293&__c=5611930892
+      - gridcell "Standard":
+        - generic: Standard
+      - gridcell "Search":
+        - generic: Search
+      - gridcell "Maximize clicks":
+        - button "Maximize clicks"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - 'row "Total: Campaigns in your current view More information — 0 576 — 0.00 0.00% €0.00 10 1.74% 348 €1.89 €1.09 — — —"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: Campaigns in your current view More information"':
+        - generic: "Total: Campaigns in your current view"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "—":
+        - generic: —
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "576":
+        - generic: "576"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "10":
+        - generic: "10"
+      - gridcell "1.74%":
+        - generic: 1.74%
+      - gridcell "348":
+        - generic: "348"
+      - gridcell "€1.89":
+        - generic: €1.89
+      - gridcell "€1.09":
+        - generic: €1.09
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+    - 'row "Expand row Total: Account More information €4.00/day — 0 576 — 0.00 0.00% €0.00 10 1.74% 348 €1.89 €1.09 — — —"':
+      - gridcell
+      - gridcell "Expand row":
+        - button "Expand row":
+          - img "Expand row": expand_more
+      - 'gridcell "Total: Account More information"':
+        - generic: "Total: Account"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell "€4.00/day":
+        - generic: €4.00/day
+      - gridcell
+      - gridcell "—":
+        - generic: —
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "576":
+        - generic: "576"
+      - gridcell "—":
+        - generic: —
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "10":
+        - generic: "10"
+      - gridcell "1.74%":
+        - generic: 1.74%
+      - gridcell "348":
+        - generic: "348"
+      - gridcell "€1.89":
+        - generic: €1.89
+      - gridcell "€1.09":
+        - generic: €1.09
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+  - generic: 1 - 6 of 6
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- text: "* *"
+- dialog "dialog"
+- dialog "dialog"

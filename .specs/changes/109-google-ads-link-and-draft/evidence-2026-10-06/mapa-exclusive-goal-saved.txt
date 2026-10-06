@@ -1,0 +1,515 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Go to All campaigns":
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Paused
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- button "The budget simulator isn't available because this campaign is paused." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Overview" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 6, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 6, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- main:
+  - application:
+    - application:
+      - tablist:
+        - tab "Home" [selected]:
+          - generic: Home
+      - button "Add custom view":
+        - img: add
+        - text: Add custom view
+      - button "Help for adding custom view":
+        - img: help_outline
+      - button "Campaign options menu":
+        - img: edit
+      - button "Button to download the overview cards content in a selected format.":
+        - img: file_download
+        - text: Download
+      - button "Button to submit feedback about the overview page.":
+        - img: feedback
+        - text: Feedback
+      - list:
+        - heading "Performance diagnostics" [level=2]
+        - listitem "Card 1 of 0.":
+          - img: troubleshoot
+          - heading "Campaign diagnostics" [level=1]
+          - button "Card options":
+            - img: more_vert
+          - button "Your campaign can't run because it is paused" [expanded]:
+            - generic: Your campaign can't run because it is paused
+            - paragraph
+            - img: expand_less
+          - region "Your campaign can't run because it is paused":
+            - listbox "Diagnostic timeline. Use left and right arrow keys to navigate. Tab to exit.":
+              - img: check_circle_filled
+              - option "Campaign published Starts Oct 21, 2026":
+                - generic: Campaign published
+                - generic: Starts Oct 21, 2026
+              - img: radio_button_unchecked
+              - option "Impressions Upcoming":
+                - generic: Impressions
+                - generic: Upcoming
+              - img: radio_button_unchecked
+              - option "Clicks Upcoming":
+                - generic: Clicks
+                - generic: Upcoming
+            - img "paused": pause_circle_outline
+            - generic: Campaign is paused
+            - button "View details":
+              - generic: View details
+            - img "informational": info
+            - generic: Campaign is pending
+            - button "View details":
+              - generic: View details
+            - img "warning": warning_amber
+            - generic: Campaign is limited by bid strategy
+            - button "View details":
+              - generic: View details
+            - img "informational": info
+            - generic: New bid strategy is learning
+            - button "View details":
+              - generic: View details
+            - button:
+              - img: chevron_right
+            - button "View campaign diagnostics":
+              - generic: View campaign diagnostics
+        - heading "Performance summary" [level=2]
+        - listitem "Card 1 of 0.":
+          - heading "Time series" [level=1]
+          - 'button "Choose metric 1 of 4 for the Time series card. Current metric: Clicks"':
+            - 'generic "Choose metric 1 of 4 for the Time series card. Current metric: Clicks"':
+              - generic: Clicks
+              - text: arrow_drop_down
+          - button "Clicks. 0. Hide this metric in the time series chart.":
+            - generic "0"
+          - 'button "Choose metric 2 of 4 for the Time series card. Current metric: Cost"':
+            - 'generic "Choose metric 2 of 4 for the Time series card. Current metric: Cost"':
+              - generic: Cost
+              - text: arrow_drop_down
+          - button "Cost. €0.00. Hide this metric in the time series chart.":
+            - generic "€0.00"
+          - 'button "Choose metric 3 of 4 for the Time series card. Current metric: Impressions"':
+            - 'generic "Choose metric 3 of 4 for the Time series card. Current metric: Impressions"':
+              - generic: Impressions
+              - text: arrow_drop_down
+          - button "Impressions. 0. Hide this metric in the time series chart.":
+            - generic "0"
+          - 'button "Choose metric 4 of 4 for the Time series card. Current metric: Cost"':
+            - 'generic "Choose metric 4 of 4 for the Time series card. Current metric: Cost"':
+              - generic: Cost
+          - button "Cost. €0.00. Show this metric in the time series chart and allow metric to be changed.":
+            - generic "€0.00"
+          - button "Card options":
+            - img: more_vert
+          - generic: Time series chart showing the performance of your account over time for up to 4 selected metrics. Use left and right keys to move between date points.
+        - heading "Optimize performance" [level=2]
+        - button "View all recommendations":
+          - generic: View all recommendations
+        - listitem "Card 1 of 0.":
+          - img: lightbulb
+          - heading "Recommendation" [level=1]
+          - button "Card options":
+            - img: more_vert
+          - generic: Create a Performance Max campaign
+          - generic: Get more conversions at a similar cost with a Performance Max campaign. It uses Google AI to show ads across Search, YouTube, Display, Discover, Gmail, and Maps to driver better results.
+          - generic: Recommended because advertisers who adopt Performance Max (PMax) see +27% more conversion/value uplift at a similar cost per action/return on ad spend (CPA/ROAS) regardless of their level of Broad Match adoption
+          - button "More information":
+            - img: help_outline
+          - button "View":
+            - generic: View
+        - listitem "Card 1 of 0.":
+          - img: lightbulb
+          - heading "Recommendation" [level=1]
+          - button "Card options":
+            - img: more_vert
+          - generic: Use Display Expansion
+          - generic: Get more conversions at a similar CPA using unspent budget with the revamped Google Display Network Expansion feature
+          - text: Recommended because some of your Search campaigns have unspent budget that can benefit from Display Expansion
+          - button "More information":
+            - img: help_outline
+          - button "Apply":
+            - generic: Apply
+          - button "View":
+            - generic: View
+        - heading "Explore more" [level=2]
+        - listitem "Card 1 of 0.":
+          - img: lightbulb
+          - heading "Recommendation" [level=1]
+          - button "Card options":
+            - img: more_vert
+          - generic: Create a Performance Max campaign
+          - generic: Get more conversions at a similar cost with a Performance Max campaign. It uses Google AI to show ads across Search, YouTube, Display, Discover, Gmail, and Maps to driver better results.
+          - generic: Recommended because advertisers who adopt Performance Max (PMax) see +27% more conversion/value uplift at a similar cost per action/return on ad spend (CPA/ROAS) regardless of their level of Broad Match adoption
+          - button "More information":
+            - img: help_outline
+          - button "View":
+            - generic: View
+        - listitem "Card 1 of 0.":
+          - img: travel_explore
+          - heading "Locations" [level=1]
+          - 'button "Choose a metric for the Locations card. Current metric: Impressions"':
+            - 'generic "Choose a metric for the Locations card. Current metric: Impressions"':
+              - generic: Impressions
+              - text: arrow_drop_down
+          - button "Card options":
+            - img: more_vert
+          - generic: Geographic location of people who interacted with your ads
+          - 'region "Targeting 1 locations and excluding 0locations. Targeted locations were: Targeting Brazil. Excluded locationswere: ."':
+            - generic: Targeting
+            - generic: Brazil
+          - list "Performance by location, sorted alphabetically. Use up/down arrow keys to view each location and left/right to move by 10 at a time.":
+            - listitem "Brazil had 0 Impressions"
+            - listitem "Federal District had 0 Impressions"
+            - listitem "State of Acre had 0 Impressions"
+            - listitem "State of Alagoas had 0 Impressions"
+            - listitem "State of Amapa had 0 Impressions"
+            - listitem "State of Amazonas had 0 Impressions"
+            - listitem "State of Bahia had 0 Impressions"
+            - listitem "State of Ceara had 0 Impressions"
+            - listitem "State of Espirito Santo had 0 Impressions"
+            - listitem "State of Goias had 0 Impressions"
+            - listitem "State of Maranhao had 0 Impressions"
+            - listitem "State of Mato Grosso had 0 Impressions"
+            - listitem "State of Mato Grosso do Sul had 0 Impressions"
+            - listitem "State of Minas Gerais had 0 Impressions"
+            - listitem "State of Para had 0 Impressions"
+            - listitem "State of Paraiba had 0 Impressions"
+            - listitem "State of Parana had 0 Impressions"
+            - listitem "State of Pernambuco had 0 Impressions"
+            - listitem "State of Piaui had 0 Impressions"
+            - listitem "State of Rio Grande do Norte had 0 Impressions"
+            - listitem "State of Rio Grande do Sul had 0 Impressions"
+            - listitem "State of Rio de Janeiro had 0 Impressions"
+            - listitem "State of Rondonia had 0 Impressions"
+            - listitem "State of Roraima had 0 Impressions"
+            - listitem "State of Santa Catarina had 0 Impressions"
+            - listitem "State of Sao Paulo had 0 Impressions"
+            - listitem "State of Sergipe had 0 Impressions"
+            - listitem "State of Tocantins had 0 Impressions"
+          - img "Targeting Brazil"
+          - generic: fullscreen
+          - button "Navigate to the targeted locations table":
+            - generic: Targeted locations
+          - button "Navigate to the excluded locations table":
+            - generic: Excluded locations
+        - listitem "Card 1 of 0.":
+          - img: query_stats
+          - heading "Keywords" [level=1]
+          - link "Add a keyword":
+            - img: add
+            - text: Add keyword
+          - button "Card options":
+            - img: more_vert
+          - generic "Keywords sorted by Cost, in high to low order. Use arrow keys to select, E to edit budget, enter to navigate to an overview page for that keyword":
+            - generic: Summary of how your keywords are performing
+            - generic: Keywords sorted by Cost, in high to low order. Use arrow keys to select, E to edit budget, enter to navigate to an overview page for that keyword
+            - img: circle
+            - generic: "[ferramenta para tcc]"
+            - img: circle
+            - generic: "[planejar projeto de pesquisa]"
+            - img: circle
+            - generic: "[criar projeto de pesquisa]"
+            - img: circle
+            - generic: "[organizar projeto de pesquisa]"
+            - img: circle
+            - generic: "\"projeto de pesquisa com ia\""
+            - 'button "Choose metric 1 of 3 for the Keywords card. Current metric: Cost"':
+              - 'generic "Choose metric 1 of 3 for the Keywords card. Current metric: Cost"':
+                - generic: Cost
+                - text: arrow_drop_down
+            - generic: €0.00
+            - generic: €0.00
+            - generic: €0.00
+            - generic: €0.00
+            - generic: €0.00
+            - 'button "Choose metric 2 of 3 for the Keywords card. Current metric: Clicks"':
+              - 'generic "Choose metric 2 of 3 for the Keywords card. Current metric: Clicks"':
+                - generic: Clicks
+                - text: arrow_drop_down
+            - generic: "0"
+            - generic: "0"
+            - generic: "0"
+            - generic: "0"
+            - generic: "0"
+            - 'button "Choose metric 3 of 3 for the Keywords card. Current metric: CTR"':
+              - 'generic "Choose metric 3 of 3 for the Keywords card. Current metric: CTR"':
+                - generic: CTR
+                - text: arrow_drop_down
+            - generic: 0.00%
+            - generic: 0.00%
+            - generic: 0.00%
+            - generic: 0.00%
+            - generic: 0.00%
+          - button "Go to the keywords table":
+            - generic: Keywords
+          - button "Go to the negative keywords table":
+            - generic: Negative keywords
+          - img: keyboard_arrow_left
+          - generic: 1 / 2
+          - img: keyboard_arrow_right
+        - listitem "Card 1 of 0.":
+          - img: add_ad
+          - heading "Ads" [level=1]
+          - button "Card options":
+            - img: more_vert
+          - list "Use left/right keys to move between ads, E to edit an ad, C to copy and enter to navigate to the ad url.":
+            - link "Found in ad group Planejamento Academico with status active":
+              - generic: Planejamento Academico
+            - generic: Mapa da Pesquisa
+            - generic: "|"
+            - generic: Seu Projeto Ganha Estrutura
+            - generic: "|"
+            - generic: Organize Sua Pesquisa
+            - generic: Ad
+            - text: mapadapesquisa.com.br
+            - generic: /
+            - generic: pesquisa
+            - generic: /
+            - generic: projeto
+            - generic: Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.
+            - generic: Revisão humana · Aluno e Orientador · Rápido ou Avançado · Acesso gratuito
+            - generic: Ad
+            - img: circle
+            - generic: Enabled
+            - 'listitem "Status: Not eligible. Press F to focus onto the hovercard."':
+              - generic: Status
+              - generic: Not eligible
+            - generic: Impressions
+            - generic: "0"
+            - 'listitem "Choose metric 1 of 2 for the Ads card. Current metric: Clicks"':
+              - 'generic "Choose metric 1 of 2 for the Ads card. Current metric: Clicks"':
+                - generic: Clicks
+                - text: arrow_drop_down
+            - generic: "0"
+            - 'listitem "Choose metric 2 of 2 for the Ads card. Current metric: CTR"':
+              - 'generic "Choose metric 2 of 2 for the Ads card. Current metric: CTR"':
+                - generic: CTR
+                - text: arrow_drop_down
+            - generic: 0.00%
+            - generic: Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa
+          - button "Go to the ads table":
+            - generic: All ads
+          - button "Go to the assets table":
+            - generic: All assets
+          - img: keyboard_arrow_left
+          - generic: 1 / 1
+          - img: keyboard_arrow_right
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "Campaign settings":
+  - button "Close":
+    - img: close
+  - text: Campaign settings
+  - generic: "Status:"
+  - generic: Paused
+  - generic: "Type:"
+  - generic: Search
+  - progressbar "loading"
+  - navigation
+  - main:
+    - heading "Campaign name" [level=2]:
+      - button "Campaign name":
+        - paragraph: Campaign name
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+        - img: expand_less
+    - heading "Campaign status" [level=2]:
+      - button "Campaign status":
+        - paragraph: Campaign status
+        - generic: Paused
+        - img: expand_less
+    - heading "Networks" [level=2]:
+      - button "Networks":
+        - paragraph: Networks
+        - generic: Google Search Network
+        - img: expand_less
+    - generic: Budget and bidding optimization
+    - text: Your Search campaign is optimized to drive
+    - button "Mapa | Projeto iniciado":
+      - generic: Mapa | Projeto iniciado
+    - text: .
+    - text: Your bidding strategy is
+    - button "Maximize clicks":
+      - generic: Maximize clicks
+    - text: .
+    - text: Your budget is
+    - button "€2.00 a day":
+      - generic: €2.00 a day
+    - text: .
+    - heading "Budget" [level=2]:
+      - button "Budget":
+        - paragraph: Budget
+        - generic: €2.00/day
+        - img: expand_less
+    - heading "Conversion goals" [level=2]:
+      - button "Conversion goals" [active]:
+        - paragraph: Conversion goals
+        - generic: "Campaign-specific: Mapa | Projeto iniciado"
+        - img: expand_less
+    - heading "Bidding" [level=2]:
+      - button "Bidding":
+        - paragraph: Bidding
+        - generic: Maximize clicks
+        - img: expand_less
+    - heading "Customer acquisition" [level=2]:
+      - button "Customer acquisition":
+        - paragraph: Customer acquisition
+        - generic: Bid equally for new and existing customers
+        - img: expand_less
+    - heading "Value rules" [level=2]:
+      - button "Value rules":
+        - paragraph: Value rules
+        - generic: No rule set
+        - img: expand_less
+    - heading "Promotion mode" [level=2]:
+      - button "Promotion mode":
+        - text: Promotion mode
+        - generic: Beta
+        - generic: "Off"
+        - img: expand_less
+    - generic: AI Max for Search campaigns
+    - generic: Get the best AI-powered performance on Google Search
+    - generic: Advertisers that activate AI Max in Search Campaigns will typically see 14% more conversions or conversion value at a similar CPA / ROAS
+    - img: trending_up
+    - text: Engage more customers and boost performance. Easily expand your keywords with broad match technology and let Google AI match content from your landing pages and assets to help you show up on more relevant searches. New ad group settings help you guide which customers you reach.
+    - img: tune
+    - text: Tailor your ads and keep them fresh. Use Google AI to serve the most relevant ad copy and landing pages to each customer based on their unique interest and intent.
+    - img: add_chart
+    - text: Take charge and understand how the newest and best Google AI is working for you. You'll get new actionable insights in search term reports that show how AI Max improves performance.
+    - button "Learn more about AI Max":
+      - generic: Learn more
+    - button "Optimize your campaign with AI Max":
+      - switch "Optimize your campaign with AI Max"
+    - generic: Optimize your campaign with AI Max
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - generic: Other settings
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+- dialog "dialog"
+- dialog "dialog"
+- text: search
+- dialog "dialog"
+- dialog "dialog"
+- text: search

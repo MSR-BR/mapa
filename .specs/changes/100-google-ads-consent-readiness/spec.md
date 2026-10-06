@@ -1,12 +1,14 @@
 # Change 100 — Prontidão para Google Ads e Consent Mode v2
 
-Status: futura e bloqueada por C097–C099; não executada
+Status em 06/10/2026: **código implantado; aceite completo de medição em acompanhamento na C108**. Consentimento, preferência revisável, sanitização e criação persistida/deduplicada foram validados. Vínculo e campanha pertencem às C109/C110. A nova autorização de 06/10 permitiu o piloto após checks operacionais, sem declarar concluída a baseline longa; ver [lançamento C110](../110-google-ads-controlled-pilot/launch-2026-10-06.md).
 
 ## Objetivo
 
 Preparar mensuração e governança para uma futura campanha sem criar, vincular ou gastar antes da aprovação explícita.
 
 ## Gates de entrada
+
+Os gates abaixo registram o plano original. A espera de 14 dias foi substituída como condição de lançamento pela autorização posterior registrada na C110; continua necessária para o aceite da baseline.
 
 - 14 dias de atribuição limpa após C097;
 - Search Console e sitemap verificados em C098;

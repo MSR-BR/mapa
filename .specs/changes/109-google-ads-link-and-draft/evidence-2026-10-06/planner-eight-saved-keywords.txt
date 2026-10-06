@@ -1,0 +1,359 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning" [expanded]:
+      - generic: Planning
+      - img: expand_more
+    - menuitem "Keyword Planner":
+      - generic: Keyword Planner
+    - menuitem "Performance Planner":
+      - generic: Performance Planner
+    - menuitem "Reach Planner":
+      - generic: Reach Planner
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions":
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- link "Keyword Planner":
+  - /url: /aw/keywordplanner/home?ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Mapa | BR | C109 | 2026-10-06" [level=2]
+- tablist:
+  - tab "Keyword ideas":
+    - generic: Keyword ideas
+  - tab "Forecast":
+    - generic: Forecast
+  - tab "Saved keywords" [active] [selected]:
+    - generic: Saved keywords
+  - tab "Negative keywords":
+    - generic: Negative keywords
+- main:
+  - region "Plan Details":
+    - button "Edit plan name":
+      - img: edit
+      - generic: Edit plan name
+  - region "Plan Actions":
+    - generic: Saved 4 minutes ago
+    - button "Share Plan":
+      - img: ios_share
+    - button "Plan downloads":
+      - img: file_download
+      - region "Plan forecasts"
+      - region "Plan historical metrics"
+    - button "More options":
+      - img: more_vert
+      - region "More options"
+    - button "Create campaign":
+      - generic: Create campaign
+  - region "Targeting Settings":
+    - button "Brazil":
+      - img: location_on
+      - generic: Brazil
+    - button "Portuguese" [disabled]:
+      - img: translate
+      - generic: All languages
+    - button "Google":
+      - img: manage_search
+      - generic: Google
+    - button "Edit date range, Last 12 months":
+      - img: calendar_today
+      - generic: Sep 2025 – Aug 2026
+      - img: arrow_drop_down
+  - tabpanel:
+    - button "Search volume trends":
+      - generic "Search volume trends":
+        - img: show_charts
+        - text: Charts
+    - table:
+      - rowgroup:
+        - row "Total Mobile":
+          - cell "Total":
+            - button "Total" [pressed]
+          - cell "Mobile":
+            - button "Mobile" [pressed]
+    - generic: Monthly search trends line chart
+    - region "Primary toolbelt for Plan keywords historical metrics":
+      - button "Create keywords":
+        - img: add
+      - button "Columns":
+        - img: view_column
+        - generic: Columns
+      - button "Hide chart":
+        - img: keyboard_arrow_up
+    - grid "Plan keywords historical metrics":
+      - row "Keyword Avg. monthly searches Three month change YoY change Competition Ad impression share Top of page bid (low range) Top of page bid (high range) Account status":
+        - columnheader "Keyword"
+        - columnheader "Avg. monthly searches":
+          - text: Avg. monthly searches
+          - img: help_outline
+        - columnheader "Three month change":
+          - text: Three month change
+          - img: help_outline
+        - columnheader "YoY change":
+          - text: YoY change
+          - img: help_outline
+        - columnheader "Competition":
+          - text: Competition
+          - img: help_outline
+        - columnheader "Ad impression share":
+          - text: Ad impression share
+          - img: help_outline
+        - columnheader "Top of page bid (low range)":
+          - text: Top of page bid (low range)
+          - img: help_outline
+        - columnheader "Top of page bid (high range)":
+          - text: Top of page bid (high range)
+          - img: help_outline
+        - columnheader "Account status":
+          - text: Account status
+          - img: help_outline
+      - row "projeto de pesquisa 4,400 Graph image -33% -33% Low — €0.26 €0.61 In Account":
+        - gridcell "projeto de pesquisa":
+          - generic: projeto de pesquisa
+        - gridcell "4,400 Graph image":
+          - generic: 4,400
+          - button "Graph image"
+        - gridcell "-33%":
+          - generic: "-33%"
+        - gridcell "-33%":
+          - generic: "-33%"
+        - gridcell "Low":
+          - generic: Low
+        - gridcell "—":
+          - generic: —
+        - gridcell "€0.26":
+          - generic: €0.26
+        - gridcell "€0.61":
+          - generic: €0.61
+        - gridcell "In Account":
+          - generic: In Account
+      - row "como fazer um projeto de pesquisa 590 Graph image -18% -18% Low — €0.13 €0.46 In Account":
+        - gridcell "como fazer um projeto de pesquisa":
+          - generic: como fazer um projeto de pesquisa
+        - gridcell "590 Graph image":
+          - generic: "590"
+          - button "Graph image"
+        - gridcell "-18%":
+          - generic: "-18%"
+        - gridcell "-18%":
+          - generic: "-18%"
+        - gridcell "Low":
+          - generic: Low
+        - gridcell "—":
+          - generic: —
+        - gridcell "€0.13":
+          - generic: €0.13
+        - gridcell "€0.46":
+          - generic: €0.46
+        - gridcell "In Account":
+          - generic: In Account
+      - row "criar projeto de pesquisa — — — — — — — In Account":
+        - gridcell "criar projeto de pesquisa":
+          - generic: criar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+      - row "organizar projeto de pesquisa — — — — — — — In Account":
+        - gridcell "organizar projeto de pesquisa":
+          - generic: organizar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+      - row "projeto de pesquisa com ia — — — — — — — In Account":
+        - gridcell "projeto de pesquisa com ia":
+          - generic: projeto de pesquisa com ia
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+      - row "ferramenta projeto de pesquisa — — — — — — — In Account":
+        - gridcell "ferramenta projeto de pesquisa":
+          - generic: ferramenta projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+      - row "ferramenta para tcc — — — — — — — In Account":
+        - gridcell "ferramenta para tcc":
+          - generic: ferramenta para tcc
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+      - row "planejar projeto de pesquisa — — — — — — — In Account":
+        - gridcell "planejar projeto de pesquisa":
+          - generic: planejar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "In Account":
+          - generic: In Account
+    - generic: 1 - 8 of 8
+    - generic: Keyword Planner can be used to generate keyword ideas, but it doesn't guarantee improved performance. You're responsible for your keyword choices and for complying with our advertising policies and any applicable laws.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "2 keywords added to your plan":
+  - status:
+    - generic: 2 keywords added to your plan Press F6 to access notification buttons.
+    - generic: 2 keywords added to your plan
+    - button "View saved keywords"
+    - button "Undo"
+    - button "Close":
+      - img: close
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: info

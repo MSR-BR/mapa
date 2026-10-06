@@ -1,0 +1,367 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning" [expanded]:
+      - generic: Planning
+      - img: expand_more
+    - menuitem "Keyword Planner":
+      - generic: Keyword Planner
+    - menuitem "Performance Planner":
+      - generic: Performance Planner
+    - menuitem "Reach Planner":
+      - generic: Reach Planner
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions":
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- link "Keyword Planner":
+  - /url: /aw/keywordplanner/home?ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Mapa | BR | C109 | 2026-10-06" [level=2]
+- tablist:
+  - tab "Keyword ideas" [selected]:
+    - generic: Keyword ideas
+  - tab "Forecast":
+    - generic: Forecast
+  - tab "Saved keywords":
+    - generic: Saved keywords
+  - tab "Negative keywords":
+    - generic: Negative keywords
+- main:
+  - region "Keyword Ideas Search Bar":
+    - 'button "Change existing keywords or website: projeto de pesquisa, planejamento de pesquisa, metodologia de pesquisa, projeto de pesquisa com ia, ferramenta para tcc"':
+      - img: search
+      - generic: projeto de pesquisa com ia, ferramenta para tcc, criar projeto de pesquisa, organizar projeto de pesquisa, ferramenta projeto de pesquisa, planejar projeto de pesquisa
+    - region "Targeting Settings":
+      - button "Brazil":
+        - img: location_on
+        - generic: Brazil
+      - button "Portuguese":
+        - img: translate
+        - generic: Portuguese
+      - button "Google":
+        - img: manage_search
+        - generic: Google
+      - button "Edit date range, Last 12 months":
+        - img: calendar_today
+        - generic: Sep 2025 – Aug 2026
+        - img: arrow_drop_down
+    - text: Use different keywords for more results
+    - button "Edit"
+    - group "Broaden your search:":
+      - text: "Broaden your search:"
+      - grid:
+        - row "Add ferramenta tcc Add projeto pesquisa Add projeto Add metodologia Add pesquisa Add pesquisa ia Add metodologia da pesquisa":
+          - gridcell "Add planejar projeto":
+            - img: add
+            - generic: planejar projeto
+          - gridcell "Add ferramenta tcc":
+            - img: add
+            - generic: ferramenta tcc
+          - gridcell "Add projeto de pesquisa":
+            - img: add
+            - generic: projeto de pesquisa
+          - gridcell "Add projeto":
+            - img: add
+            - generic: projeto
+          - gridcell "Add projeto pesquisa":
+            - img: add
+            - generic: projeto pesquisa
+          - gridcell "Add fazer projeto de pesquisa":
+            - img: add
+            - generic: fazer projeto de pesquisa
+          - gridcell "Add montar projeto de pesquisa":
+            - img: add
+            - generic: montar projeto de pesquisa
+    - button "Keyword ideas":
+      - img: file_download
+      - region "Keyword ideas"
+    - text: close close close close
+    - status
+  - region "Search Volume Charts":
+    - button "Search volume trends":
+      - generic "Search volume trends":
+        - img: show_charts
+        - text: Charts
+    - generic: No data
+  - region "Search Results Table":
+    - region "Primary toolbelt for Keyword ideas":
+      - button "Show 1 active filters":
+        - img: filter_alt
+        - generic: "1"
+      - generic: "Filters Applied:"
+      - grid "Filters Applied:"
+      - generic: + 1 more
+      - button "Add filter":
+        - generic: Add filter
+      - generic: 6 keyword ideas available
+      - button "Columns":
+        - img: view_column
+        - generic: Columns
+      - button "Keyword view":
+        - text: Keyword view
+        - img: arrow_drop_down
+      - button "Hide chart":
+        - img: keyboard_arrow_up
+    - grid "Keyword ideas":
+      - row "Select all rows Keyword (by relevance) Avg. monthly searches Three month change YoY change Competition Ad impression share Top of page bid (low range) Top of page bid (high range) Account status":
+        - gridcell "Select all rows":
+          - checkbox "Select all rows":
+        - columnheader "Keyword (by relevance)"
+        - columnheader "Avg. monthly searches":
+          - text: Avg. monthly searches
+          - img: help_outline
+        - columnheader "Three month change":
+          - text: Three month change
+          - img: help_outline
+        - columnheader "YoY change":
+          - text: YoY change
+          - img: help_outline
+        - columnheader "Competition":
+          - text: Competition
+          - img: help_outline
+        - columnheader "Ad impression share":
+          - text: Ad impression share
+          - img: help_outline
+        - columnheader "Top of page bid (low range)":
+          - text: Top of page bid (low range)
+          - img: help_outline
+        - columnheader "Top of page bid (high range)":
+          - text: Top of page bid (high range)
+          - img: help_outline
+        - columnheader "Account status":
+          - text: Account status
+          - img: help_outline
+      - generic: Keywords you provided
+      - 'row "Select row \"projeto de pesquisa com ia\" projeto de pesquisa com ia. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"projeto de pesquisa com ia\"":
+          - checkbox "Select row \"projeto de pesquisa com ia\"":
+        - gridcell "projeto de pesquisa com ia. This is a keyword you provided.":
+          - generic "projeto de pesquisa com ia. This is a keyword you provided.":
+            - generic: projeto de pesquisa com ia
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+      - 'row "Select row \"ferramenta para tcc\" ferramenta para tcc. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"ferramenta para tcc\"":
+          - checkbox "Select row \"ferramenta para tcc\"":
+        - gridcell "ferramenta para tcc. This is a keyword you provided.":
+          - generic "ferramenta para tcc. This is a keyword you provided.":
+            - generic: ferramenta para tcc
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+      - 'row "Select row \"criar projeto de pesquisa\" criar projeto de pesquisa. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"criar projeto de pesquisa\"":
+          - checkbox "Select row \"criar projeto de pesquisa\"":
+        - gridcell "criar projeto de pesquisa. This is a keyword you provided.":
+          - generic "criar projeto de pesquisa. This is a keyword you provided.":
+            - generic: criar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+      - 'row "Select row \"organizar projeto de pesquisa\" organizar projeto de pesquisa. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"organizar projeto de pesquisa\"":
+          - checkbox "Select row \"organizar projeto de pesquisa\"":
+        - gridcell "organizar projeto de pesquisa. This is a keyword you provided.":
+          - generic "organizar projeto de pesquisa. This is a keyword you provided.":
+            - generic: organizar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+      - 'row "Select row \"ferramenta projeto de pesquisa\" ferramenta projeto de pesquisa. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"ferramenta projeto de pesquisa\"":
+          - checkbox "Select row \"ferramenta projeto de pesquisa\"":
+        - gridcell "ferramenta projeto de pesquisa. This is a keyword you provided.":
+          - generic "ferramenta projeto de pesquisa. This is a keyword you provided.":
+            - generic: ferramenta projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+      - 'row "Select row \"planejar projeto de pesquisa\" planejar projeto de pesquisa. This is a keyword you provided. — — — — — — — In Plan: Saved In Account"':
+        - gridcell "Select row \"planejar projeto de pesquisa\"":
+          - checkbox "Select row \"planejar projeto de pesquisa\"":
+        - gridcell "planejar projeto de pesquisa. This is a keyword you provided.":
+          - generic "planejar projeto de pesquisa. This is a keyword you provided.":
+            - generic: planejar projeto de pesquisa
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - gridcell "—":
+          - generic: —
+        - 'gridcell "In Plan: Saved In Account"':
+          - generic: "In Plan: Saved"
+          - generic: In Account
+    - generic: 1 - 6 of 6
+  - generic: Keyword Planner can be used to generate keyword ideas, but it doesn't guarantee improved performance. You're responsible for your keyword choices and for complying with our advertising policies and any applicable laws.
+  - region "Refine keywords":
+    - heading "Refine keywords" [level=2]
+    - button "Close":
+      - img: close
+    - generic: No results
+    - generic: Concepts are only available for keyword searches
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: info *

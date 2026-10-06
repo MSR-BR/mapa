@@ -1,0 +1,9 @@
+# Change 109 — Vínculo GA4/Ads e campanha em rascunho
+
+Status: preparação e integração concluídas. Campanha 24325133699 foi mantida pausada durante C109 e ativada na C110 em 06/10 após a nova autorização e verificações operacionais. Última consulta: Enabled / Eligible (Limited), RSA Approved, 1 impressão e nenhum clique. Ver [lançamento C110](../110-google-ads-controlled-pilot/launch-2026-10-06.md) e [atualização documental](../110-google-ads-controlled-pilot/cpd-documental-2026-10-06.md).
+
+Direcionamento revisto em **06/10/2026**: após questionar a criação de outra conta e pedir o uso do saldo já existente, o responsável esclareceu que o Mapa pode ser outra campanha dentro da **MSR-BR `383-835-9068`**, sob `mario.reis.junior@gmail.com`. Esta decisão substitui a exigência anterior de conta dedicada. Preservar a campanha TERMO, seus anúncios, orçamento, lances e conversões; compartilhar somente conta e faturamento. O gasto futuro do Mapa consumirá o saldo comum e deve ser identificado pelo relatório da campanha.
+
+Preparar uma campanha Search própria do Mapa, sem veiculação, com orçamento individual de **€2/dia em média**, moeda EUR já usada pela MSR-BR, URL canônica e conversões específicas da campanha. Não adicionar conversões do Mapa aos objetivos padrão usados pelo TERMO. Vincular somente a propriedade Mapa `550650234`, com publicidade personalizada desligada; verificar os dois painéis e registrar reversão. Ativação continua condicionada à C110 e aos gates de medição.
+
+O cadastro separado `896-116-6158`, iniciado sob a orientação anterior, ficou incompleto na etapa de pagamento; **não concluir seu pagamento nem criar campanha nele**. A proposta em BRL e a autorização temporária de R$50 dessa conta nova deixam de ser o caminho de execução. Não cancelar nem excluir contas por suposição.

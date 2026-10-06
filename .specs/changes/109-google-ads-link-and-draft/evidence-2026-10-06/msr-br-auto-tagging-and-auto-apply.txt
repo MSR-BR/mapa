@@ -1,0 +1,155 @@
+- banner "Top navigation":
+  - status
+  - heading "Google Ads – Go to starting page" [level=1]:
+    - button "Google Ads – Go to starting page":
+  - button "Page search":
+    - img: search
+    - text: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - text: Appearance
+  - button "Refresh":
+    - img: refresh
+    - text: Refresh
+  - button "Open the quick help panel":
+    - text: Help
+    - img: help_outline
+    - text: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Capture more holiday leads Get started":
+      - text: Capture more holiday leads
+      - generic: Get started
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin" [active]:
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Policy" [expanded]:
+      - generic: Policy
+      - img: expand_more
+    - menuitem "Summary":
+      - generic: Summary
+    - menuitem "Account":
+      - generic: Account
+    - menuitem "Account settings":
+      - generic: Account settings
+    - menuitem "Preferences":
+      - generic: Preferences
+    - menuitem "Notifications":
+      - generic: Notifications
+    - menuitem "Access and security":
+      - generic: Access and security
+- heading "Account settings" [level=2]
+- main:
+  - heading "Account name" [level=2]:
+    - button "Account name":
+      - paragraph: Account name
+      - generic: MSR-BR
+      - img: expand_less
+  - heading "Account status" [level=2]:
+    - button "Account status":
+      - paragraph: Account status
+      - generic: "Account: Active"
+      - img: expand_less
+  - heading "Data protection contacts" [level=2]:
+    - button "Data protection contacts":
+      - paragraph: Data protection contacts
+      - img: warning
+      - text: None
+      - img: expand_less
+  - heading "Third-party measurement" [level=2]:
+    - button "Third-party measurement":
+      - paragraph: Third-party measurement
+      - generic: None
+      - img: expand_less
+  - heading "Time zone" [level=2]:
+    - button "Time zone":
+      - paragraph: Time zone
+      - generic: (GMT-03:00) Brasilia Standard Time
+      - img: expand_less
+  - button "Auto-tagging":
+    - paragraph: Auto-tagging
+    - generic: "Yes"
+    - img: expand_less
+  - button "Tracking":
+    - paragraph: Tracking
+    - generic: No options set
+    - img: expand_less
+  - button "Call ads":
+    - paragraph: Call ads
+    - generic: Call reporting on
+    - img: expand_less
+  - heading "Negative keywords" [level=2]:
+    - button "Negative keywords":
+      - paragraph: Negative keywords
+      - generic: None
+      - img: expand_less
+  - heading "IP exclusions" [level=2]:
+    - button "IP exclusions":
+      - paragraph: IP exclusions
+      - generic: No exclusions set
+      - img: expand_less
+  - button "Auto-apply":
+    - paragraph: Auto-apply
+    - generic: Turned off. Use auto-apply to optimize performance and save time.
+    - img: expand_less
+  - button "Lead form ads terms":
+    - paragraph: Lead form ads terms
+    - generic: Not accepted yet
+    - img: expand_less
+  - heading "Customer Match" [level=2]:
+    - button "Customer Match":
+      - paragraph: Customer Match
+      - generic: Smart bidding and optimized targeting on, Conversion based lists off
+      - img: expand_less
+  - heading "High-engagement ads" [level=2]:
+    - button "High-engagement ads":
+      - paragraph: High-engagement ads
+      - generic: Turned off
+      - img: expand_less
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- status
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
