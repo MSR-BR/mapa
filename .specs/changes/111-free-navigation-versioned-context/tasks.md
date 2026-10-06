@@ -9,3 +9,7 @@
 7. Implementar histórico sob demanda, comparação e restauração completa; ajustar mapa final, exportações, duplicação e revisão pelo Orientador.
 8. Executar a matriz de validação e medir uso do Supabase; documentar resultados, limites e plano de reversão.
 9. Quando a implementação estiver autorizada e validada, cumprir CPD e registrar release/readback. Nenhuma publicação faz parte da criação desta spec.
+
+## Execução
+
+Tarefas 1–9 executadas em 06/10/2026. Medições, exceção técnica de segurança dev-only, limites de ensaio e recibos remotos constam em validation.md, notes.md e cpd-2026-10-06.md.

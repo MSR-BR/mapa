@@ -1,6 +1,6 @@
 # Change 111 — Navegação livre, contexto versionado e histórico eficiente
 
-Status: **implementação validada localmente em 06/10/2026; publicação em preparação**.
+Status: **concluída e publicada em 06/10/2026 — v06102026.3**.
 
 ## Objetivo e autorização
 
@@ -48,3 +48,7 @@ Colaboração em tempo real, aprendizado entre usuários, treinamento de modelos
 ## Documentos de execução
 
 [Requisitos](requirements.md), [aceite](acceptance-criteria.md), [tarefas](tasks.md), [superfícies](files-to-create-or-modify.md), [validação](validation.md), [checklist](checklist.md), [consumo e decisões](notes.md), [rota de execução](model-route.md).
+
+## Entrega
+
+Implementação, migração, testes e publicação registrados em [CPD](cpd-2026-10-06.md). Histórico preservado em 117 projetos, 4.105 versões legadas e 451 unidades iniciais. Sem alteração do piloto Ads, TERMO ou C112.

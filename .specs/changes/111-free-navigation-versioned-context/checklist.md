@@ -9,4 +9,4 @@
 - [x] Contexto, aprovação e resposta concorrente protegidos.
 - [x] Histórico, migração e restauração verificados.
 - [x] RLS, exportações, acessibilidade e regressões aprovadas.
-- [ ] CPD, release e evidências finais registrados.
+- [x] CPD, release e evidências finais registrados.

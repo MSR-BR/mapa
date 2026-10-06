@@ -8,6 +8,8 @@
 
 ## Estado atual
 
+- C111 concluída e publicada em `v06102026.3`: navegação independente do progresso, rascunhos/contexto, propostas com aceite, histórico paginado e recuperação. Migração dos 117 projetos preservou 4.105 versões antigas e criou 451 unidades iniciais. 182 testes, grants/RLS, Chromium/WebKit, exportações e build aprovados; runtime sem vulnerabilidades, alerta dev-only do ESLint registrado. CPD em `changes/111-free-navigation-versioned-context/`. C112 continua especificada.
+
 - C107 concluída e publicada em `v01102026.4`: objetivo geral revisável e
   cada OE em card independente, ações no rodapé e colunas adaptadas à largura
   disponível. Corrige a compressão/sobreposição reportada após C106. Workspace

@@ -38,3 +38,7 @@ Painel do projeto aeaweherkrqmlqnxsmib: 117 workflows, 4.105 versões legadas, z
 4. Falha antes do COMMIT reverte integralmente. Depois do COMMIT, nunca publicar cliente antigo com escrita: trigger workflow_client_upgrade_required impede sobrescrever rascunhos novos. Corrigir para frente ou preparar build compatível que mantenha o contrato C111. Uma simples promoção do deployment anterior não é rollback funcional seguro; poderá manter leitura, mas bloqueará escritas.
 
 Não apagar workflow_versions nem reconstruir os dados atuais a partir de um histórico parcial para reverter. Em incidente, preservar ambos e investigar antes de qualquer restauração do banco.
+
+## Readback após migração
+
+117 projetos migrados, 4.105 versões legadas e 451 unidades iniciais, 4.556 registros. Tabela com índices: 6.152 KiB; banco: 24 MiB. O aumento inclui novas linhas, índices e páginas do UPDATE; não é custo mensal. Plano Free preservado.
