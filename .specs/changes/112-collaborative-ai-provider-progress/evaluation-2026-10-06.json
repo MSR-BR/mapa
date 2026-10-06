@@ -1,0 +1,744 @@
+{
+  "monthlyLimitUsd": 5,
+  "evaluationLimitMicros": 500000,
+  "reservedMicros": 57987,
+  "reservations": [
+    6693,
+    1941,
+    1028,
+    6681,
+    1939,
+    1026,
+    6680,
+    1939,
+    1026,
+    6762,
+    1952,
+    1040,
+    6678,
+    1938,
+    1026,
+    6675,
+    1938,
+    1025
+  ],
+  "results": [
+    {
+      "caseId": 1,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 3249,
+      "result": {
+        "content": "Esta proposta acadêmica tem como objetivo compreender as barreiras ao uso de recursos digitais relatadas por docentes de duas escolas públicas do município Alfa em 2025. Trata-se de um projeto qualitativo de caráter exploratório, focado na aplicação de entrevistas para mapear as percepções e os desafios enfrentados pela comunidade docente no recorte temporal e territorial estabelecido. Por se tratar de uma proposta em fase de planejamento, sem coleta de dados realizada até o momento, a validação do protocolo de pesquisa dependerá de análise técnica humana prévia, sem pressupor resultados ou conclusões antecipadas.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 1,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2466,
+      "result": {
+        "findings": []
+      }
+    },
+    {
+      "caseId": 1,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2607,
+      "result": {
+        "content": "Propõe-se compreender as barreiras ao uso de recursos digitais relatadas por docentes de duas escolas públicas do município Alfa, em 2025, por meio de entrevistas qualitativas. Como não há dados coletados, a proposta não antecipa resultados; o protocolo de entrevistas deverá ser validado antes de sua aplicação.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 2,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 12903,
+      "errorCode": "unavailable"
+    },
+    {
+      "caseId": 2,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 3497,
+      "result": {
+        "findings": [
+          {
+            "elementIds": [
+              "00000000-0000-4000-8000-000000000112"
+            ],
+            "referenceIds": [
+              "c112-synthetic-reference"
+            ],
+            "reason": "A proposta extrapola o contexto do projeto: transforma um estudo qualitativo com docentes de duas escolas públicas do município Alfa em afirmações sobre notas de todos os estudantes brasileiros e em recomendação nacional. A evidência indicada relata entrevistas locais e não mede notas nem representa a população nacional.",
+            "suggestion": "Delimite a proposta ao objetivo e ao contexto informados: investigar como docentes das duas escolas descrevem barreiras ao uso de recursos digitais em 2025. Não afirme efeitos sobre notas nem recomende adoção nacional com base nesta evidência."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": 2,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2548,
+      "result": {
+        "content": "Propõe-se um estudo qualitativo local para compreender como docentes de duas escolas públicas do município Alfa descrevem as barreiras ao uso de recursos digitais em 2025. A investigação poderá recorrer a entrevistas com esses docentes, em consonância com o protocolo local disponível. O objetivo é caracterizar as barreiras relatadas nesse contexto, sem avaliar efeitos sobre notas, estabelecer causalidade ou generalizar os achados para a população brasileira. A adequação dos procedimentos deverá ser validada pela equipe responsável.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 3,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 1832,
+      "result": {
+        "content": "Esta proposta tem como objetivo analisar as percepções dos docentes da educação básica sobre sua prática profissional, alinhando-se estritamente ao recorte e ao contexto da revisão vigente. O estudo investiga a população de professores que atuam na educação básica, corrigindo as inconsistências da versão anterior e garantindo a coerência conceitual do projeto. Trata-se de uma proposta acadêmica sintética sujeita à validação humana posterior.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 3,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2641,
+      "result": {
+        "findings": [
+          {
+            "elementIds": [
+              "00000000-0000-4000-8000-000000000112"
+            ],
+            "referenceIds": [
+              "c112-synthetic-reference"
+            ],
+            "reason": "A proposta mantém universitários como população, mas o contexto vigente delimita a pesquisa a docentes da educação básica. A referência disponível também não inclui universitários.",
+            "suggestion": "Reformule o objetivo para tratar das percepções de docentes da educação básica e revise os capítulos mencionados para verificar se são compatíveis com essa delimitação."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": 3,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 1554,
+      "result": {
+        "content": "Proposta: Analisar as percepções de docentes da educação básica sobre sua atuação profissional, organizando o trabalho em capítulos pertinentes a esse recorte. A proposta deverá ser validada por avaliação humana; não se apresentam resultados nem fontes adicionais.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 4,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 1744,
+      "result": {
+        "content": "Esta proposta acadêmica ajustada visa estimar a associação entre o volume de horas de estudo e as notas obtidas por uma amostra de 200 estudantes adultos. Para garantir a coerência metodológica e a validade estatística do objetivo delineado, a coleta de dados será estritamente quantitativa, mensurando diretamente as duas variáveis de interesse junto à população-alvo mediante consentimento livre e esclarecido, eliminando a abordagem qualitativa inadequada com terceiros.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 4,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 1429,
+      "result": {
+        "findings": [
+          {
+            "elementIds": [
+              "00000000-0000-4000-8000-000000000112"
+            ],
+            "referenceIds": [
+              "c112-synthetic-reference"
+            ],
+            "reason": "A proposta substitui a coleta quantitativa prevista por três entrevistas com professores. Esses relatos não medem horas de estudo e notas dos 200 estudantes nem permitem estimar estatisticamente a associação entre as variáveis.",
+            "suggestion": "Coletar, com consentimento, medidas de horas de estudo e notas dos 200 estudantes e estimar a associação entre elas. Não apresentar as entrevistas como prova estatística."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": 4,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 1621,
+      "result": {
+        "content": "Propõe-se estimar a associação entre horas de estudo e notas de 200 estudantes adultos, coletando medidas quantitativas de ambas as variáveis com consentimento dos participantes. Os dados ainda não foram coletados; após a coleta, a associação será analisada quantitativamente. Entrevistas com professores não serão usadas como substituto dessas medidas. A proposta não antecipa resultados e permanece sujeita à validação humana.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 5,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 2172,
+      "result": {
+        "content": "Esta proposta de pesquisa estabelece um protocolo de análise documental direcionado a investigar os processos de aprendizagem na população e local definidos, mantendo estritamente o recorte temporal e metodológico original. Por se tratar de um protocolo sintético preliminar, a investigação foca no mapeamento sistemático e no levantamento analítico das fontes documentais disponíveis, sem prever coleta de dados empíricos em campo, aplicação de intervenções diretas ou mensuração de impactos causais neste momento. O objetivo principal reside na estruturação rigorosa do arcabouço teórico-metodológico para validação humana posterior, sendo que eventuais conclusões, inferências ou avaliações de eficácia só poderão ser consolidadas e relatadas após a efetiva execução das etapas programadas e a subsequente análise dos dados.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 5,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2989,
+      "result": {
+        "findings": [
+          {
+            "elementIds": [
+              "00000000-0000-4000-8000-000000000112"
+            ],
+            "referenceIds": [
+              "c112-synthetic-reference"
+            ],
+            "reason": "A proposta afirma resultados empíricos e eficácia causal, mas o contexto informa que se trata de um protocolo sem coleta ou resultados. A única evidência descreve apenas a intenção de pesquisa, sem amostra, intervenção, medidas ou resultados.",
+            "suggestion": "Retire as afirmações de que a intervenção melhorou a aprendizagem de 80% dos alunos e de que sua eficácia causal foi confirmada. Apresente-as, se pertinentes, como questões ou hipóteses a serem avaliadas após a execução e a análise da pesquisa."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": 5,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 3509,
+      "result": {
+        "content": "Propõe-se uma pesquisa documental para examinar documentos pertinentes à intervenção e à aprendizagem dos alunos. O protocolo não prevê coleta empírica nem permite afirmar eficácia causal ou proporções de resultados; essas conclusões dependerão da execução e da análise da pesquisa.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 6,
+      "task": "gemini_generation",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "durationMs": 1533,
+      "result": {
+        "content": "Esta proposta acadêmica tem como objetivo apresentar a revisão de protocolo para a intervenção na população e local definidos, considerando o recorte temporal vigente. Cabe ressaltar que a única fonte sintética disponível consiste em um protocolo sem resultados conclusivos, estando a presente proposta sujeita à posterior validação humana.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    },
+    {
+      "caseId": 6,
+      "task": "gpt_review",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 1557,
+      "result": {
+        "findings": [
+          {
+            "elementIds": [
+              "00000000-0000-4000-8000-000000000112"
+            ],
+            "referenceIds": [
+              "c112-synthetic-reference"
+            ],
+            "reason": "A proposta atribui suporte a uma referência inexistente e a resultados de um elemento não fornecido. A única fonte disponível é um protocolo sem resultados, portanto não sustenta a alegação de eficácia.",
+            "suggestion": "Remova a referência inventada, a menção ao elemento não fornecido e a afirmação de eficácia. Limite a redação ao que o protocolo disponível permite afirmar, sem apresentar resultados."
+          }
+        ]
+      }
+    },
+    {
+      "caseId": 6,
+      "task": "gpt_generation",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "durationMs": 2645,
+      "result": {
+        "content": "Propõe-se revisar o protocolo com base na única referência fornecida. Como a fonte não apresenta resultados, não se afirmará eficácia da intervenção; essa avaliação dependerá de dados a serem obtidos e validados.",
+        "referenceIds": [
+          "c112-synthetic-reference"
+        ]
+      }
+    }
+  ],
+  "startedAt": "2026-10-06T22:34:19.678Z",
+  "updatedAt": "2026-10-06T22:35:49.520Z",
+  "metrics": [
+    {
+      "timestamp": "2026-10-06T22:34:22.931Z",
+      "event": "gemini_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "7362e8dc-b215-4d9f-9e5d-cd07ea96f324",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 3248,
+      "maxOutputTokens": 700,
+      "inputTokens": 247,
+      "outputTokens": 141,
+      "totalTokens": 388,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": 0.000714,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:34:25.398Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "54b98e06-2acf-438a-9911-b8424f81d4b3",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2465,
+      "maxOutputTokens": 2400,
+      "inputTokens": 302,
+      "outputTokens": 59,
+      "totalTokens": 361,
+      "reasoningTokens": 45,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 6.725e-05,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:34:28.006Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "fae3aa0a-504d-4056-b4f6-47615cd0f780",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2607,
+      "maxOutputTokens": 700,
+      "inputTokens": 264,
+      "outputTokens": 171,
+      "totalTokens": 435,
+      "reasoningTokens": 85,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.0001185,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:34:40.909Z",
+      "event": "gemini_generation_failed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "11eb7c2d-0d6b-4c51-b184-15915101434f",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 12902,
+      "maxOutputTokens": 700,
+      "inputTokens": null,
+      "outputTokens": null,
+      "totalTokens": null,
+      "reasoningTokens": null,
+      "cachedInputTokens": null,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": null,
+      "finishReason": null,
+      "warningCount": null,
+      "priceDate": "2026-10-06",
+      "status": "failed",
+      "errorCode": "unavailable"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:21.734Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "6fa0e240-2737-4989-9236-aa67e35b79e3",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 3495,
+      "maxOutputTokens": 2400,
+      "inputTokens": 295,
+      "outputTokens": 214,
+      "totalTokens": 509,
+      "reasoningTokens": 54,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000143875,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:24.283Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "488bf31c-6fb3-48b9-9306-3e516619a363",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2548,
+      "maxOutputTokens": 700,
+      "inputTokens": 257,
+      "outputTokens": 194,
+      "totalTokens": 451,
+      "reasoningTokens": 73,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000129125,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:26.116Z",
+      "event": "gemini_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "e13a0612-5289-467b-bbe5-886b0c164844",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 1831,
+      "maxOutputTokens": 700,
+      "inputTokens": 243,
+      "outputTokens": 106,
+      "totalTokens": 349,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": 0.00057975,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:28.758Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "562fda27-3831-4c9b-8dfb-854b1cf5c4b1",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2641,
+      "maxOutputTokens": 2400,
+      "inputTokens": 300,
+      "outputTokens": 159,
+      "totalTokens": 459,
+      "reasoningTokens": 42,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000117,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:30.311Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "ea3273ce-f8b0-4078-b965-148189810144",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 1552,
+      "maxOutputTokens": 700,
+      "inputTokens": 262,
+      "outputTokens": 69,
+      "totalTokens": 331,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 6.725e-05,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:32.057Z",
+      "event": "gemini_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "27119d6b-7055-456e-aab7-dbad02c696aa",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 1744,
+      "maxOutputTokens": 700,
+      "inputTokens": 263,
+      "outputTokens": 115,
+      "totalTokens": 378,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": 0.0006285,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:33.487Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "cc2bdbfb-3a77-4821-b7e7-283469ab036b",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 1429,
+      "maxOutputTokens": 2400,
+      "inputTokens": 313,
+      "outputTokens": 130,
+      "totalTokens": 443,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000104125,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:35.109Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "a05f0fe1-4578-4d65-ab48-c928b66a25a8",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 1621,
+      "maxOutputTokens": 700,
+      "inputTokens": 275,
+      "outputTokens": 105,
+      "totalTokens": 380,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 8.6875e-05,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:37.281Z",
+      "event": "gemini_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "d094c701-3b7f-47f7-aec1-ab4a46f6c48a",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 2171,
+      "maxOutputTokens": 700,
+      "inputTokens": 241,
+      "outputTokens": 183,
+      "totalTokens": 424,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": 0.000867,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:40.271Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "009aabb9-02cc-4332-81b4-17bb1be19a37",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2988,
+      "maxOutputTokens": 2400,
+      "inputTokens": 291,
+      "outputTokens": 191,
+      "totalTokens": 482,
+      "reasoningTokens": 35,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000131875,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:43.782Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "1489caa1-bd1c-4561-ab2b-c4b54a261519",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 3508,
+      "maxOutputTokens": 700,
+      "inputTokens": 253,
+      "outputTokens": 282,
+      "totalTokens": 535,
+      "reasoningTokens": 209,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000172625,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:45.317Z",
+      "event": "gemini_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "d0c016c8-779c-4a5a-85fd-d2e19628af4f",
+      "operation": "generate_general_objective",
+      "provider": "gemini",
+      "role": "generator",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 1533,
+      "maxOutputTokens": 700,
+      "inputTokens": 279,
+      "outputTokens": 77,
+      "totalTokens": 356,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": null,
+      "estimatedCostUsd": 0.000498,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:46.874Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "e9858059-8207-43ea-b41b-9bf0ae7c032b",
+      "operation": "review_workflow_impact",
+      "provider": "openai",
+      "role": "reviewer",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 1556,
+      "maxOutputTokens": 2400,
+      "inputTokens": 311,
+      "outputTokens": 130,
+      "totalTokens": 441,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000103875,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    },
+    {
+      "timestamp": "2026-10-06T22:35:49.520Z",
+      "event": "openai_generation_completed",
+      "contractVersion": "ai-usage-v2",
+      "operationId": "5ccbe9e9-9331-49ce-a9d5-a7d0dc3146a2",
+      "operation": "generate_general_objective",
+      "provider": "openai",
+      "role": "generator",
+      "model": "gpt-6-luna",
+      "attempt": 1,
+      "durationMs": 2644,
+      "maxOutputTokens": 700,
+      "inputTokens": 273,
+      "outputTokens": 178,
+      "totalTokens": 451,
+      "reasoningTokens": 113,
+      "cachedInputTokens": 0,
+      "cacheWriteTokens": 0,
+      "estimatedCostUsd": 0.000123125,
+      "finishReason": "stop",
+      "warningCount": 0,
+      "priceDate": "2026-10-06",
+      "status": "succeeded"
+    }
+  ],
+  "authorization": {
+    "monthlyUsd": 5,
+    "userMessage": "usd 5",
+    "organizationConfirmed": "org-bkt0tQAopCGojGDtDokowP76",
+    "organizationCheck": "GET /v1/models with explicit organization header returned HTTP 200"
+  },
+  "assessment": {
+    "schemaAndAllowedIds": "17/17 successful responses valid",
+    "gptReviewPlannedInconsistencies": "4/4 detected",
+    "coherentCaseFalsePositives": 0,
+    "unprovidedEvidenceCase": "correctly rejected",
+    "evaluator": "Codex qualitative review; no claim of human or general scientific validation",
+    "releaseDecision": "eligible for controlled complementary use with human content acceptance"
+  }
+}

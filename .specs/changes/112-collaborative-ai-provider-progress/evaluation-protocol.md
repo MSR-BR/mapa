@@ -1,6 +1,6 @@
 # Protocolo de avaliação — definido antes de chamadas pagas
 
-Status em 06/10/2026: nenhuma inferência paga executada. Chave fornecida pelo responsável, salva por ele em `.env.local`, arquivo ignorado. `GET /v1/models`: HTTP 200, `gpt-6-luna` disponível. A lista não comprova capacidade de inferência/faturamento, vínculo organizacional ou qualidade.
+Protocolo fixado antes da inferência; executado após autorização de US$5/mês. Resultados em evaluation-2026-10-06.md. Estado inicial: nenhuma inferência paga executada. Chave fornecida pelo responsável, salva por ele em `.env.local`, arquivo ignorado. `GET /v1/models`: HTTP 200, `gpt-6-luna` disponível. A lista não comprova capacidade de inferência/faturamento, vínculo organizacional ou qualidade.
 
 ## Candidatos e limites
 

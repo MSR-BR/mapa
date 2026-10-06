@@ -7,7 +7,7 @@
 - [x] Revisão complementar orientativa e preservação de propostas/contexto.
 - [x] Testes locais de concorrência, permissões, cancelamento e rollback.
 - [x] Protocolo de avaliação definido antes de consumo.
-- [ ] Teto mensal autorizado e vínculo organizacional/projeto revalidado.
-- [ ] Ensaio pago com qualidade, tokens, custo e latência registrados.
+- [x] Teto mensal de US$5 autorizado; organização validada por header da API e projeto identificado na captura do responsável.
+- [x] Ensaio pago com qualidade, tokens, custo e latência registrados; 18 chamadas, 17 concluídas.
 - [ ] Configuração e migration remotas; rollout gradual.
 - [ ] CPD e smoke final de produção.
