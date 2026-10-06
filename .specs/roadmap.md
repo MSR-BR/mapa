@@ -104,6 +104,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 106 | Contexto acadêmico e pedidos pontuais à IA | Concluída | Contexto persistente separado de pedido usado uma vez na regeneração, com ⓘ, placeholders sem exemplos, 156 testes, UI Chromium/WebKit desktop/mobile e produção final `v01102026.3` homologada; E2E autenticado real não executado. |
 | 107 | Cards responsivos de objetivos | Concluída | Objetivo geral e OEs separados, ações no rodapé, 28 cenários de layout Chromium/WebKit e 156 testes aprovados; produção `v01102026.4`, health/CSS/login e bloqueios 401/403 confirmados. |
 | 111 | Navegação livre, contexto versionado e histórico eficiente | Concluída / v06102026.3 | Abrir etapas existentes sem invalidar conteúdo; rascunho separado da versão vigente, dependências sinalizadas, histórico/restauração sob demanda e consumo Supabase medido. Preservar aprovação do Orientador. [Spec](changes/111-free-navigation-versioned-context/spec.md). |
+| 112 | Gemini e GPT colaborativos e progresso real | Implementada localmente / avaliação e rollout pendentes | Adaptadores, fallback limitado, revisão complementar com aceite humano e caixa azul identificando Gemini/GPT conforme execução real. 197 testes locais; chave válida. Aguarda teto mensal, avaliação real e publicação. [Spec](changes/112-collaborative-ai-provider-progress/spec.md). |
 
 ## Marcos
 
@@ -125,12 +126,17 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - Domínio raiz funcional na Vercel com DNS externo revalidado em 17/09/2026; a C88 adotou formalmente a estratégia de manter o provedor atual.
 - Banco e Auth: Supabase/PostgreSQL confirmado no projeto `aeaweherkrqmlqnxsmib`.
 - Provedor de IA: Gemini 3.6 Flash confirmado na conta já paga pelo responsável, com GEMINI_MODEL como override opcional.
+- OpenAI/GPT: integração complementar C112 implementada localmente, com chave própria do Mapa aceita pela API; avaliação paga e ativação aguardam teto mensal.
 - Contrato do Research Starter: v1 integrado exclusivamente pelo backend.
 - Custos, privacidade, retenção, termos e responsável pelo tratamento devem continuar monitorados durante o rollout do v2.
 
 ## Evolução pós-MVP aprovada para especificação
 
 O Mapa da Pesquisa v2 substitui a geração monolítica por descoberta assistida, validação em etapas, biblioteca metodológica, rastreabilidade e coerência. A implementação deve seguir estritamente as Changes 009 a 015, uma por vez.
+
+## Sequência das Changes especificadas
+
+C111 foi autorizada para execução completa e publicada em 06/10/2026. C112 foi autorizada e implementada localmente; avaliação paga e publicação aguardam teto mensal. O piloto Google Ads segue separado.
 
 ## Fora do roadmap atual
 

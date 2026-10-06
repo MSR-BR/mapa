@@ -13,7 +13,7 @@ export function GET(request: Request) {
   const context = startRequest(request);
   const checks = getProviderHealth();
   const status = checks.supabase === "configured"
-    ? Object.values(checks).every((value) => value === "configured") ? "ok" : "degraded"
+    ? Object.values(checks).every((value) => value === "configured" || value === "disabled") ? "ok" : "degraded"
     : "down";
   const response = Response.json(
     {

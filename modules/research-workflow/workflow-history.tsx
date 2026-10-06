@@ -1,5 +1,6 @@
 "use client";
 
+import { providerLabel, type CollaborativeReview } from "@/modules/ai/contract";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
@@ -20,6 +21,17 @@ function UnitPreview({ unit }: { unit: WorkflowUnit }) {
       <p>{new Set(unit.elements.flatMap((item) => item.referenceIds)).size} referência(s) e {unit.traceLinks.length} relação(ões) preservadas.</p>
     </details>
   </div>;
+}
+
+function ReviewFindings({ review }: { review: CollaborativeReview | undefined }) {
+  if (!review) return null;
+  const name = providerLabel(review.provider);
+  return <section aria-label="Revisão complementar da proposta">
+    <p><strong>{review.status === "completed" ? `Revisão complementar por ${name}` : review.status === "disabled" ? "Revisão complementar desativada" : `Revisão complementar por ${name} indisponível`}</strong> · contexto {review.baseRevision}</p>
+    {review.status === "completed" && !review.findings.length ? <p>Não foram identificados novos ajustes nesta revisão. Confira a proposta e as fontes antes de confirmar.</p> : null}
+    {review.findings.map((finding, index) => <div key={index}><p>{finding.reason}</p><p><strong>Sugestão:</strong> {finding.suggestion}</p></div>)}
+    <p>Esta análise orienta a edição e não substitui a validação do autor ou do orientador.</p>
+  </section>;
 }
 
 export function WorkflowHistory({ workflow, step, onWorkflow, hasUnsavedChanges = false, readOnly = false }: {
@@ -85,11 +97,14 @@ export function WorkflowHistory({ workflow, step, onWorkflow, hasUnsavedChanges 
     </div>
     {draft && draft.baseRevision !== workflow.sourceRevision ? <div role="status"><p>O contexto mudou depois deste rascunho. Consulte as etapas alteradas e confira se o texto ainda está coerente.</p><button type="button" disabled={busy || frozen || readOnly} onClick={() => void mutate("rebase_draft")}>Revisei o contexto atual; manter este rascunho</button></div> : null}
     {stale ? <p role="status">Uma etapa anterior mudou. O conteúdo foi preservado; revise sua coerência antes de confirmar. Você pode manter o texto ou solicitar uma nova sugestão.</p> : null}
+    {draft?.aiReview ? <ReviewFindings review={draft.aiReview} /> : null}
     {draft && !readOnly ? <button disabled={busy || frozen} onClick={() => void mutate("discard_draft")} type="button">Descartar rascunho e voltar à versão vigente</button> : null}
     {proposal ? <details open className="workflow-proposal"><summary>Nova proposta da IA — aguardando sua decisão</summary>
       <div className="workflow-version-columns"><section><h3>Conteúdo atual</h3><UnitPreview unit={workflowUnit(workflow.content, step)} /></section><section><h3>Proposta</h3><UnitPreview unit={proposal.unit} /></section></div>
+      {proposal.baseRevision !== workflow.sourceRevision ? <p role="status">O contexto mudou durante a geração. Esta proposta usa a revisão {proposal.baseRevision}; compare os textos e solicite uma atualização antes de usá-la.</p> : null}
+      <ReviewFindings review={proposal.aiReview} />
       <p>Aceitar coloca a proposta no rascunho para você editar e confirmar. O conteúdo vigente só muda após a validação exigida.</p>
-      <button disabled={busy || frozen || readOnly} type="button" onClick={() => void mutate("accept_proposal")}>Usar proposta no rascunho</button>
+      <button disabled={busy || frozen || readOnly || proposal.baseRevision !== workflow.sourceRevision} type="button" onClick={() => void mutate("accept_proposal")}>Usar proposta no rascunho</button>
       <button disabled={busy || frozen || readOnly} type="button" onClick={() => void mutate("discard_proposal")}>Descartar proposta</button>
     </details> : null}
     {open ? <div>

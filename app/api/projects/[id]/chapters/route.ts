@@ -1,3 +1,4 @@
+import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
@@ -215,7 +216,7 @@ async function generatedLiteratureTopics(
   return generated.map((topic) => ({ ...topic, id: crypto.randomUUID() }));
 }
 
-export async function POST(request: Request, routeContext: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, routeContext: { params: Promise<{ id: string }> }) {
   const { id } = await routeContext.params;
   const requestBody = await request.json().catch(() => null);
   const normalizedRequestBody = requestBody
@@ -560,3 +561,5 @@ async function saveWorkflow(
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 4 validado pelo estudante. Aguardando revisão." : "Capítulo 4 validado.", workflow: saved })
     : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }
+
+export const POST = withAiProgress(handlePost);

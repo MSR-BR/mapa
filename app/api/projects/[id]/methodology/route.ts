@@ -1,3 +1,4 @@
+import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
@@ -375,7 +376,7 @@ function approveMethodology(
   });
 }
 
-export async function POST(request: Request, routeContext: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, routeContext: { params: Promise<{ id: string }> }) {
   const { id } = await routeContext.params;
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
@@ -605,3 +606,5 @@ async function saveWorkflow(
 
   return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando revisão." : "Metodologia validada.", workflow: saved });
 }
+
+export const POST = withAiProgress(handlePost);

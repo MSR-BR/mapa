@@ -317,7 +317,7 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(route, /report\.references\.length === 0/);
   assert.match(route, /title: structure\.title/);
   assert.match(route, /A geração falhou sem alterar a estrutura salva/);
-  assert.match(gemini, /Output\.object/);
+  assert.match(await readProjectFile("modules/ai/generate.ts"), /Output\.object/);
   assert.match(gemini, /generatedStructureSchema/);
   assert.match(gemini, /interpretedResearchRequestSchema/);
   assert.match(gemini, /consulta temática para busca bibliográfica em inglês/);
@@ -328,7 +328,7 @@ test("implements an idempotent and owner-scoped generation pipeline", async () =
   assert.match(gemini, /Remova instruções operacionais/);
   assert.match(gemini, /title: REQUIRED_CHAPTERS\[chapterIndex\]/);
   assert.match(gemini, /process\.env\.GEMINI_MODEL\?\.trim\(\) \|\| "gemini-3\.6-flash"/);
-  assert.match(gemini, /thinkingLevel: "minimal"/);
+  assert.match(await readProjectFile("modules/ai/generate.ts"), /thinkingLevel: "minimal"/);
   assert.doesNotMatch(gemini, /thinkingBudget: 0|gemini-2\.5-flash/);
   assert.match(gemini, /validateReferenceIds/);
   assert.match(migration, /unique \(owner_id, idempotency_key\)/);
@@ -346,7 +346,7 @@ test("recovers the Gemini 3 pipeline and preserves AI-generated final titles", a
   ]);
 
   assert.match(gemini, /process\.env\.GEMINI_MODEL\?\.trim\(\) \|\| "gemini-3\.6-flash"/);
-  assert.match(gemini, /thinkingLevel: "minimal"/);
+  assert.match(await readProjectFile("modules/ai/generate.ts"), /thinkingLevel: "minimal"/);
   assert.doesNotMatch(gemini, /thinkingBudget: 0|gemini-2\.5-flash/);
   assert.match(gemini, /Sugira um título final curto derivado do objetivo geral/);
   assert.match(gemini, /title: generated\.title/);
@@ -364,9 +364,10 @@ test("observes all Gemini operations without deprecated sampling controls", asyn
     readProjectFile(".specs/changes/101-gemini-efficiency-observability/spec.md"),
   ]);
 
-  assert.equal((gemini.match(/observeGeminiGeneration\(\{/g) ?? []).length, 13);
-  assert.equal((gemini.match(/=> generateText\(\{/g) ?? []).length, 13);
-  assert.equal((gemini.match(/thinkingLevel: "minimal"/g) ?? []).length, 13);
+  assert.equal((gemini.match(/generateStructured\(\{/g) ?? []).length, 13);
+  const providerContract = await readProjectFile("modules/ai/generate.ts");
+  assert.match(providerContract, /maxRetries: 0/);
+  assert.match(providerContract, /thinkingLevel: "minimal"/);
   assert.doesNotMatch(gemini, /temperature:|topP:|topK:/);
   assert.match(gemini, /GEMINI_OUTPUT_TOKEN_BUDGETS/);
   assert.match(observer, /gemini_generation_completed/);
@@ -485,7 +486,7 @@ test("uses the standard Next.js runtime expected by Vercel", async () => {
   assert.equal(manifest.devDependencies["@tailwindcss/postcss"], "4.3.3");
   assert.equal(manifest.devDependencies.tailwindcss, "4.3.3");
   assert.equal(manifest.overrides.postcss, "8.5.28");
-  assert.equal(manifest.overrides.sharp, "0.35.4");
+  assert.equal(manifest.overrides.sharp, "0.35.5");
   assert.deepEqual(manifest.allowScripts, {
     esbuild: false,
     "unrs-resolver": false,
@@ -645,7 +646,7 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
   assert.match(quickStart, /Mapa Rápido/);
   assert.match(discovery, /Escolha um caminho para a pesquisa/);
   assert.match(discovery, /Mais próxima do seu pedido/);
-  assert.match(discovery, /Research Starter/);
+  assert.match(await readProjectFile("modules/ai/contract.ts"), /Research Starter/);
   assert.match(visualDecision, /\[x\] Híbrida/);
   assert.match(loading, /aria-busy="true"/);
   assert.match(error, /Tentar novamente/);
@@ -990,9 +991,9 @@ test("supports anchored project actions and owner-scoped AI integration", async 
   assert.match(grid, /allowIntegration = false/);
   assert.match(grid, /project-library-section-\$\{variant\}/);
   assert.match(grid, /\/api\/projects\/integrate/);
-  assert.match(grid, /integration-progress-bar/);
-  assert.match(grid, /Lendo mapas salvos e referências/);
-  assert.match(grid, /Integração concluída/);
+  assert.match(grid, /aiProgress.label/);
+  assert.doesNotMatch(grid, /setInterval|progress.percent/);
+  assert.match(grid, /aiProgress.request/);
   assert.match(card, /project-card-references/);
   assert.match(card, /selectable = true/);
   assert.match(card, /Integração de projetos/);

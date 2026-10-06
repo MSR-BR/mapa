@@ -1,3 +1,4 @@
+import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
 import {
@@ -9,7 +10,7 @@ import { checkRateLimit, getRequestClientKey } from "@/lib/security/rate-limit";
 
 export const maxDuration = 30;
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   const requestContext = startRequest(request);
   const rate = checkRateLimit(getRequestClientKey(request, "prompt-suggestions"), 15, 60_000);
   if (!rate.allowed) {
@@ -46,3 +47,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = withAiProgress(handlePost, 25_000);

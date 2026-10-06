@@ -1,3 +1,4 @@
+import { collaborativeReviewSchema } from "@/modules/ai/contract";
 import { z } from "zod";
 
 import { doiLookupProvenanceSchema } from "./doi-reference";
@@ -283,6 +284,7 @@ export const workflowDraftSchema = z.object({
   baseRevision: z.number().int().positive(),
   savedAt: z.string().datetime({ offset: true }),
   unit: workflowUnitSchema,
+  aiReview: collaborativeReviewSchema.optional(),
 });
 export type WorkflowDraft = z.infer<typeof workflowDraftSchema>;
 

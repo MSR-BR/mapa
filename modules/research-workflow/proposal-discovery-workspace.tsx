@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +20,7 @@ type Props = {
 type Operation = "discovering" | "selecting" | null;
 
 export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkflow, originalPrompt, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const { activeRole, roleVersion } = useActiveProfile();
   const router = useRouter();
   const [workflow, setWorkflow] = useState(initialWorkflow);
@@ -48,7 +50,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     setErrorCode(null);
     trackAnalyticsEvent("generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: "started" });
     try {
-      const response = await fetch(`/api/projects/${projectId}/discover`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/discover`, {
         headers: profileMutationHeaders(roleVersion),
         method: "POST",
         signal: AbortSignal.timeout(110_000),
@@ -81,7 +83,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     setMessage(null);
     trackAnalyticsEvent("proposal_selected", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "started" });
     try {
-      const response = await fetch(`/api/projects/${projectId}/proposal-selection`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/proposal-selection`, {
         body: JSON.stringify({ candidateId }),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
@@ -122,17 +124,12 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
             {operation === "discovering" ? (
               <>
                 <p className="section-kicker">Explorando possibilidades</p>
-                <h2>Buscando literatura e formando propostas…</h2>
-                <ol className="generation-progress">
-                  <li className="done">Interpretando objeto, relação e recorte do pedido</li>
-                  <li className="current">Consultando literatura verificável no Research Starter</li>
-                  <li>Construindo uma proposta fiel e cinco alternativas</li>
-                </ol>
+                <h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button>
               </>
             ) : (
               <>
                 <p className="section-kicker">Proposta escolhida</p>
-                <h2>Registrando a problemática da pesquisa…</h2>
+                <h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button>
                 <p>Esta escolha será preservada para construir as próximas etapas.</p>
               </>
             )}

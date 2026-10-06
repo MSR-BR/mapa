@@ -1,3 +1,4 @@
+import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
@@ -126,7 +127,7 @@ async function aiFindingsWithFallback(workflow: ResearchWorkflow) {
   }
 }
 
-export async function POST(request: Request, routeContext: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, routeContext: { params: Promise<{ id: string }> }) {
   const { id } = await routeContext.params;
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
@@ -243,3 +244,5 @@ async function saveWorkflow(
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Mapa validado pelo estudante. Aguardando revisão." : "Mapa concluído.", workflow: saved })
     : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 }
+
+export const POST = withAiProgress(handlePost);

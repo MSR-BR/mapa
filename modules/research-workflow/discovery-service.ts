@@ -1,4 +1,5 @@
 import "server-only";
+import { AiError } from "@/modules/ai/failure";
 
 import {
   broadenResearchQuery,
@@ -18,6 +19,7 @@ import type { ResearchIntake } from "@/modules/projects/research-intake";
 const DISCOVERY_DEADLINE_MS = 105_000;
 
 function classifyGeminiError(error: unknown, stage: "interpreting" | "literature" | "proposals") {
+  if (error instanceof AiError) throw error;
   const message = error instanceof Error ? error.message : String(error);
   if (/prepayment credits are depleted|resource_exhausted|quota/i.test(message)) {
     return new DiscoveryError("Os créditos da IA estão esgotados. Recarregue a conta Gemini e tente novamente.", {

@@ -397,6 +397,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      reserve_ai_budget: { Args: { p_secret: string; p_micros: number }; Returns: boolean };
       is_bug_report_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean

@@ -1,3 +1,5 @@
+import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
+import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
 import {
@@ -255,7 +257,7 @@ function workflowToResearchStructure(workflow: ResearchWorkflow, project: Projec
   };
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   const requestContext = startRequest(request);
   const body: unknown = await request.json().catch(() => null);
   const projectIds = body && typeof body === "object" && "projectIds" in body && Array.isArray(body.projectIds)
@@ -331,6 +333,8 @@ export async function POST(request: Request) {
     const keywords = [...new Set(orderedProjects.flatMap((project) => project.keywords))].slice(0, 12);
     const knowledgeArea = [...new Set(orderedProjects.map((project) => project.knowledge_area).filter(Boolean))].join(" / ").slice(0, 120) || null;
     const academicLevel = orderedProjects.map((project) => project.academic_level).find(Boolean) ?? null;
+    assertOperationActive();
+    emitProgress("saving");
     const { data: integrated, error: projectError } = await supabase
       .from("projects")
       .insert({
@@ -349,7 +353,7 @@ export async function POST(request: Request) {
 
     const { error: structureError } = await supabase.from("research_structures").insert({
       content: toJson(structure),
-      model: GENERATION_MODEL,
+      model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
       owner_id: userId,
       project_id: integrated.id,
       prompt_version: `${STRUCTURE_PROMPT_VERSION}-merge`,
@@ -370,3 +374,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Não foi possível integrar os projetos agora." }, { status: 502 });
   }
 }
+
+export const POST = withAiProgress(handlePost);

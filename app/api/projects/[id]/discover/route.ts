@@ -1,3 +1,6 @@
+import { AiError } from "@/modules/ai/failure";
+import { assertOperationActive, emitProgress } from "@/modules/ai/operation";
+import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
 import {
@@ -19,7 +22,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 export const maxDuration = 120;
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, context: { params: Promise<{ id: string }> }) {
   const requestContext = startRequest(request);
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
@@ -69,6 +72,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   try {
     const discovery = await discoverResearchProposals(project, workflow.content.initialBriefing);
+    assertOperationActive();
+    emitProgress("saving");
     const completedAt = new Date().toISOString();
     const content = { ...workflow.content, discovery };
     const { data: saved, error: saveError } = await supabase
@@ -122,7 +127,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       .eq("owner_id", userId)
       .eq("revision", claimRevision);
     return NextResponse.json({
-      error: errorCode === "briefing-too-short"
+      error: error instanceof AiError ? error.message : errorCode === "briefing-too-short"
         ? "Descreva um pouco mais o tema da pesquisa antes de formar as propostas."
         : errorCode === "research-starter-empty"
         ? "O Research Starter não encontrou literatura verificável. Ajuste o tema e tente novamente."
@@ -148,3 +153,5 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }, { status: errorCode === "briefing-too-short" ? 422 : ["research-starter-config", "research-starter-unauthorized"].includes(errorCode) ? 503 : 502, headers: { "Cache-Control": "private, no-store" } });
   }
 }
+
+export const POST = withAiProgress(handlePost);

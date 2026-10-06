@@ -1,3 +1,4 @@
+import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
@@ -243,7 +244,7 @@ function studentJustificationErrors(elements: ValidatedElement[], message: strin
     : [];
 }
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) {
@@ -608,3 +609,5 @@ async function saveWorkflow(
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando revisão." : "Etapa validada.", workflow: saved })
     : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
 }
+
+export const POST = withAiProgress(handlePost);

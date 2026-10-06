@@ -1,4 +1,6 @@
 "use client";
+import { readProgressResponse } from "@/modules/ai/progress-client";
+import { progressLabel, type AiProgressEvent } from "@/modules/ai/contract";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
@@ -62,6 +64,7 @@ export function ResearchPromptInput({
   onSuggestionSelect,
   value,
 }: ResearchPromptInputProps) {
+  const [progress, setProgress] = useState<AiProgressEvent | null>(null);
   const [suggestions, setSuggestions] = useState<PromptSuggestion[]>([]);
   const [suggestionsForPrompt, setSuggestionsForPrompt] = useState("");
   const [loadingPrompt, setLoadingPrompt] = useState("");
@@ -84,14 +87,16 @@ export function ResearchPromptInput({
       if (prompt === lastRequestedPrompt.current) return;
       lastRequestedPrompt.current = prompt;
       setLoadingPrompt(prompt);
+      setProgress(null);
 
       try {
-        const response = await fetch("/api/prompt-suggestions", {
+        const rawResponse = await fetch("/api/prompt-suggestions", {
           body: JSON.stringify({ prompt }),
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
           method: "POST",
           signal: controller.signal,
         });
+        const response = await readProgressResponse(rawResponse, (event) => { if (!controller.signal.aborted) setProgress(event); });
         if (!response.ok) throw new Error("suggestion-request-failed");
         const payload = await response.json() as { suggestions?: PromptSuggestion[] };
         setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions.slice(0, 3) : []);
@@ -131,7 +136,7 @@ export function ResearchPromptInput({
         <div className="prompt-suggestions" aria-live="polite">
           <p>
             Sugestões para consolidar o mapa
-            {loading ? <small>Refinando com IA…</small> : null}
+            {loading ? <small>{progressLabel(progress)}</small> : null}
           </p>
           <div className="prompt-suggestion-list">
             {visibleSuggestions.map((suggestion, index) => (

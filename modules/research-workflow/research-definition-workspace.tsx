@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -37,6 +38,7 @@ function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
 }
 
 export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const router = useRouter();
   const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
@@ -125,7 +127,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
     if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
       const allowedRequests = step === "problem_statement" ? ["problem"] : step === "general_objective" ? ["general"] : ["general", ...specifics.map((item) => item.id)];
-      const response = await fetch(`/api/projects/${projectId}/definition`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/definition`, {
         body: JSON.stringify({
           action,
           regenerationGuidance: action === "regenerate" ? allowedRequests.flatMap((id) => regenerationRequests[id]?.trim() ? [{ id, instruction: regenerationRequests[id].trim() }] : []) : undefined,
@@ -232,7 +234,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
             <p className="section-kicker">{visibleStepLabel}</p>
-            <h2>{operation === "regenerate" || operation === "validate" ? "Analisando coerência e evidências…" : "Salvando sua pesquisa…"}</h2>
+            <h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button>
           </div>
         </div>
       ) : null}

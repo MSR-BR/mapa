@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,7 @@ function referenceText(reference: FinalMap["references"][number], code?: string)
 }
 
 export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const router = useRouter();
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
@@ -94,7 +96,7 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
     const analyticsPosition = getAnalyticsWorkflowPosition("final_map");
     if (action === "complete") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
-      const response = await fetch(`/api/projects/${projectId}/final-map`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/final-map`, {
         body: JSON.stringify({ action, revision: workflow.revision, targetStep }),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
@@ -162,6 +164,7 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
         <span className={`definition-origin ${hasCurrentFinalApproval(workflow) ? "" : "user"}`}>{hasCurrentFinalApproval(workflow) ? "Versão concluída" : "Em revisão final"}</span>
       </div>
 
+      {busy ? <div className="generation-overlay-card" role="status" aria-live="polite"><p>{aiProgress.label}</p></div> : null}
       <WorkflowProgress current={4} currentStep="final_map" disabled={busy} onWorkflow={setWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} />
       <WorkflowHistory workflow={workflow} step={"final_map"} hasUnsavedChanges={false} onWorkflow={setWorkflow} />
 

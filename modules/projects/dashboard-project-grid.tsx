@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
@@ -6,18 +7,6 @@ import { useId, useState } from "react";
 import { ProjectCardModal, type DashboardProject } from "./project-card-modal";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
-
-const INTEGRATION_STEPS = [
-  "Preparando os projetos selecionados",
-  "Lendo mapas salvos e referências",
-  "Combinando conteúdos com IA",
-  "Salvando o projeto integrado",
-] as const;
-
-type IntegrationProgress = {
-  percent: number;
-  step: string;
-};
 
 type DashboardProjectGridProps = {
   allowIntegration?: boolean;
@@ -36,13 +25,13 @@ export function DashboardProjectGrid({
   title,
   variant,
 }: DashboardProjectGridProps) {
+  const aiProgress = useAiProgress();
   const router = useRouter();
   const { activeRole, roleVersion } = useActiveProfile();
   const sectionTitleId = useId();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [integrating, setIntegrating] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [progress, setProgress] = useState<IntegrationProgress>({ percent: 0, step: INTEGRATION_STEPS[0] });
   const canSelectForIntegration = allowIntegration && projects.length > 0;
   const selectedProjects = selectedIds
     .map((id) => projects.find((project) => project.projectId === id))
@@ -65,42 +54,20 @@ export function DashboardProjectGrid({
     trackAnalyticsEvent("project_integration_started", { app_role: activeRole, app_surface: "dashboard", app_result: "started" });
     setIntegrating(true);
     setMessage(null);
-    setProgress({ percent: 12, step: INTEGRATION_STEPS[0] });
-    let tick = 0;
-    const timer = window.setInterval(() => {
-      tick += 1;
-      setProgress((current) => {
-        const stepIndex = Math.min(INTEGRATION_STEPS.length - 1, Math.floor(tick / 4));
-        return {
-          percent: Math.min(88, Math.max(current.percent + 6, 16 + tick * 5)),
-          step: INTEGRATION_STEPS[stepIndex],
-        };
-      });
-    }, 900);
     try {
-      const response = await fetch("/api/projects/integrate", {
+      const response = await aiProgress.request("/api/projects/integrate", {
         body: JSON.stringify({ projectIds: selectedIds }),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
       const payload = await response.json() as { error?: string; projectId?: string; sourceTitles?: string[] };
       if (!response.ok || !payload.projectId) throw new Error(payload.error ?? "Não foi possível integrar.");
-      const sourceTitles = payload.sourceTitles?.length ? payload.sourceTitles : selectedProjects.map((project) => project.title);
-      setProgress({
-        percent: 100,
-        step: `Integração concluída: ${sourceTitles.join(", ")}`,
-      });
       trackAnalyticsEvent("project_integration_completed", { app_role: activeRole, app_surface: "dashboard", app_result: "success", app_reference_count_bucket: "unknown" });
-      window.setTimeout(() => {
-        router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
-      }, 700);
+      router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
     } catch (error) {
       trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
       setIntegrating(false);
-      setProgress({ percent: 0, step: INTEGRATION_STEPS[0] });
-    } finally {
-      window.clearInterval(timer);
     }
   }
 
@@ -128,23 +95,7 @@ export function DashboardProjectGrid({
       ) : null}
       {integrating ? (
         <div className="integration-progress-panel" role="status" aria-live="polite">
-          <div>
-            <strong>{progress.step}</strong>
-            <span>{progress.percent}%</span>
-          </div>
-          <div className="integration-progress-bar" aria-hidden="true">
-            <span style={{ width: `${progress.percent}%` }} />
-          </div>
-          <ol>
-            {INTEGRATION_STEPS.map((step, index) => (
-              <li
-                className={progress.percent >= 100 || INTEGRATION_STEPS.indexOf(progress.step as typeof INTEGRATION_STEPS[number]) > index ? "done" : progress.step === step ? "current" : ""}
-                key={step}
-              >
-                {step}
-              </li>
-            ))}
-          </ol>
+          <strong>{aiProgress.label}</strong>
         </div>
       ) : null}
       {message ? <p className="integration-message" role="alert">{message}</p> : null}

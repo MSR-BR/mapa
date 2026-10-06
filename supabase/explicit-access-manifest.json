@@ -195,6 +195,32 @@
         "service_role": []
       },
       "migration": "20261006191733_c111_versioned_workflow_history.sql"
+    },
+    {
+      "name": "private.ai_budget_config",
+      "consumer": "contador privado de consumo adicional de IA; sem acesso direto pela API",
+      "rls": true,
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": []
+      },
+      "migration": "20261006214054_c112_ai_budget.sql",
+      "policies": []
+    },
+    {
+      "name": "private.ai_budget_months",
+      "consumer": "contador privado de consumo adicional de IA; sem acesso direto pela API",
+      "rls": true,
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": []
+      },
+      "migration": "20261006214054_c112_ai_budget.sql",
+      "policies": []
     }
   ],
   "views": [],
@@ -394,6 +420,32 @@
         "service_role": false
       },
       "migration": "20261006191733_c111_versioned_workflow_history.sql"
+    },
+    {
+      "signature": "private.reserve_ai_budget(text,integer)",
+      "consumer": "servidor autenticado + segredo exclusivo do limite C112",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261006214054_c112_ai_budget.sql"
+    },
+    {
+      "signature": "public.reserve_ai_budget(text,integer)",
+      "consumer": "servidor autenticado + segredo exclusivo do limite C112",
+      "security": "invoker",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261006214054_c112_ai_budget.sql"
     }
   ],
   "managedDependencies": [

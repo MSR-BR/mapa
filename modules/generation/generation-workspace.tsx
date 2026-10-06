@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -25,6 +26,7 @@ const STATUS_LABELS = {
 } as const;
 
 export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const { activeRole, roleVersion } = useActiveProfile();
   const router = useRouter();
   const [snapshot, setSnapshot] = useState(initialSnapshot);
@@ -76,9 +78,8 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       app_result: isRetry ? "retry" : "started",
     });
     const idempotencyKey = crypto.randomUUID();
-    const poll = window.setInterval(() => { void refresh(); }, 1_500);
     try {
-      const response = await fetch(`/api/projects/${projectId}/generate`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/generate`, {
         body: JSON.stringify({ idempotencyKey, keywords: keywordOverrides }),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
@@ -98,7 +99,6 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       setMessage(error instanceof Error ? error.message : "Não foi possível gerar a estrutura.");
       await refresh();
     } finally {
-      window.clearInterval(poll);
       setBusy(false);
       router.refresh();
     }
@@ -167,7 +167,6 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
   }
 
   const status = snapshot.job?.status;
-  const activeStatus = status && status !== "completed" && status !== "failed" ? status : "queued";
 
   return (
     <section className="generation-workspace" aria-labelledby="generation-title">
@@ -176,14 +175,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
             <p className="section-kicker">Mapa em construção</p>
-            <h2>{STATUS_LABELS[activeStatus]}</h2>
-            <ol className="generation-progress">
-              <li className={activeStatus === "queued" ? "current" : "done"}>Interpretando tema, recorte e nível acadêmico do prompt</li>
-              <li className={activeStatus === "researching" ? "current" : activeStatus === "generating" ? "done" : ""}>
-                Buscando literatura no <a href="https://researchstarter.vercel.app" rel="noreferrer" target="_blank">Research Starter ↗</a>
-              </li>
-              <li className={activeStatus === "generating" ? "current" : ""}>Organizando capítulos e evidências</li>
-            </ol>
+            <h2>{aiProgress.label}</h2>
           </div>
         </div>
       ) : null}

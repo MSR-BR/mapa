@@ -180,6 +180,7 @@ if (
 
 const centralizedLoggers = new Set([
   "lib/observability/gemini-usage.ts",
+  "lib/observability/ai-usage.ts",
   "lib/observability/request-context.ts",
 ]);
 const directRuntimeLogs = repositoryFiles.filter((file) => (

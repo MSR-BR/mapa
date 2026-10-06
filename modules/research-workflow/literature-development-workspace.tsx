@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -53,6 +54,7 @@ function validatedGeneralObjective(workflow: ResearchWorkflow) {
 }
 
 export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const router = useRouter();
   const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
@@ -122,7 +124,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         requestBody.currentGuidanceNotes = topics.filter((topic) => savedTopics.some((saved) => saved.id === topic.id)).map((topic) => ({ id: topic.id, note: topic.studentJustification }));
         requestBody.regenerationGuidance = topics.flatMap((topic) => regenerationRequests[topic.id]?.trim() ? [{ id: topic.id, instruction: regenerationRequests[topic.id].trim() }] : []);
       }
-      const response = await fetch(`/api/projects/${projectId}/chapters`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/chapters`, {
         body: JSON.stringify(requestBody),
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
@@ -230,7 +232,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       {topics.length === 0 ? <button className="button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("initialize")} type="button">Gerar sugestão inicial desta etapa</button> : null}
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
-          <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">{visibleStepLabel}</p><h2>{operation === "optimize" ? "Buscando nova literatura verificável…" : "Organizando tópicos e cobertura…"}</h2></div>
+          <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">{visibleStepLabel}</p><h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button></div>
         </div>
       ) : null}
 

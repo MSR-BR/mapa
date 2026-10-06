@@ -24,7 +24,7 @@ const server=createServer(async(req,res)=>{try{
   const name=req.url.split('/')[4].split('?')[0];const route=name==='history'?(req.method==='GET'?'historyGet':'history'):name==='final-map'?'finalMap':name;
   const handler=api[route];if(!handler){res.writeHead(404).end();return;}
   const response=await handler(new Request('http://localhost'+req.url,{method:req.method,headers:req.headers,...(body?{body}: {})}),{params:Promise.resolve({id:state.workflow.projectId})});
-  res.writeHead(response.status,Object.fromEntries(response.headers));res.end(await response.text());return;
+  res.writeHead(response.status,Object.fromEntries(response.headers));for await(const chunk of response.body)res.write(chunk);res.end();return;
  }
  res.setHeader('Content-Type','text/html; charset=utf-8');res.end('<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style><main class="workspace-shell proposal-workspace-shell"><h1>Projeto sintético C111</h1><div id="root"></div></main><script src="/bundle.js"></script></html>');
 }catch(error){res.writeHead(500,{'Content-Type':'application/json'}).end(JSON.stringify({error:error.message}));}});

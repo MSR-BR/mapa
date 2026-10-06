@@ -1,4 +1,5 @@
 "use client";
+import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
@@ -160,6 +161,7 @@ function methodologyMessageText(message: string) {
 }
 
 export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
+  const aiProgress = useAiProgress();
   const router = useRouter();
   const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
@@ -286,7 +288,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
     if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     try {
       const includePlan = action === "save" || action === "validate";
-      const response = await fetch(`/api/projects/${projectId}/methodology`, {
+      const response = await aiProgress.request(`/api/projects/${projectId}/methodology`, {
         body: JSON.stringify({
           action,
           currentGuidanceNotes: action === "regenerate" ? rows.filter((row) => workflow.content.methodologyRows.some((saved) => saved.id === row.id)).map((row) => ({ id: row.id, note: row.studentJustification })) : undefined,
@@ -432,7 +434,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
           <div className="generation-overlay-card">
             <ResearchActivityIcon />
             <p className="section-kicker">Passo 1/2 · Etapa 4/4</p>
-            <h2>{operation === "initialize" || operation === "regenerate" ? "Construindo a matriz metodológica…" : "Salvando sua metodologia…"}</h2>
+            <h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button>
           </div>
         </div>
       ) : null}

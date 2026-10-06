@@ -1,3 +1,5 @@
+import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
+import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
 import {
@@ -22,7 +24,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 export const maxDuration = 120;
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, context: { params: Promise<{ id: string }> }) {
   const requestContext = startRequest(request);
   const { id } = await context.params;
   const body: unknown = await request.json().catch(() => null);
@@ -178,9 +180,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const references = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors, doi, referenceId, title, url, year }));
     const now = new Date().toISOString();
 
+    assertOperationActive();
+    emitProgress("saving");
     const { error: saveError } = await supabase.from("research_structures").upsert({
       content: toJson(structure),
-      model: GENERATION_MODEL,
+      model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
       owner_id: userId,
       project_id: id,
       prompt_version: STRUCTURE_PROMPT_VERSION,
@@ -220,3 +224,5 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }, { status: 502 });
   }
 }
+
+export const POST = withAiProgress(handlePost);

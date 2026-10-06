@@ -1,4 +1,5 @@
 import "server-only";
+import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
 
 import { logOperationalEvent } from "@/lib/observability/request-context";
 import type { ResearchStarterRequest, ResearchStarterResponse, ResearchStarterSuccess } from "./types";
@@ -65,6 +66,8 @@ export async function fetchResearchStarterReport(
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
+      assertOperationActive();
+      emitProgress("researching");
       const response = await fetch(RESEARCH_STARTER_ENDPOINT, {
         body: JSON.stringify(input),
         cache: "no-store",
@@ -73,7 +76,7 @@ export async function fetchResearchStarterReport(
           "Content-Type": "application/json",
         },
         method: "POST",
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), ...(aiOperation.getStore() ? [aiOperation.getStore()!.signal] : [])]),
       });
 
       let payload: unknown;
@@ -113,6 +116,7 @@ export async function fetchResearchStarterReport(
       }
       return payload;
     } catch (error) {
+      assertOperationActive();
       lastError = error;
       const retryable = error instanceof ResearchStarterClientError
         ? error.retryable

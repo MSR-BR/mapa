@@ -51,4 +51,4 @@ if [ "$result" != "explicit_grants_ok" ]; then
   exit 1
 fi
 
-echo "C111 validada em PostgreSQL 17 isolado: 20 migrations, grants mínimos, RLS, funções, policies e ausência de sequences aprovados."
+echo "C112 validada em PostgreSQL 17 isolado: 21 migrations, grants mínimos, RLS, funções, policies e ausência de sequences aprovados."

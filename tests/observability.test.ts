@@ -50,6 +50,7 @@ test("provider health exposes only configuration state", () => {
   try {
     assert.deepEqual(getProviderHealth(), {
       gemini: "configured",
+      openai: "disabled",
       resend: "configured",
       researchStarter: "configured",
       supabase: "configured",

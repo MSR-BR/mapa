@@ -38,7 +38,7 @@ export function prepareWorkflowEdit(edit: WorkflowEdit) {
     if (action !== "accept_proposal" && action !== "restore" && academicFingerprint(previous) === academicFingerprint(unit)) return { content: base.content, sourceRevision, stableState, state, unchanged: true };
     content = researchWorkflowContentSchema.parse({
       ...base.content,
-      [key]: { ...base.content[key], [step]: { baseRevision: base.sourceRevision, savedAt: now, unit } },
+      [key]: { ...base.content[key], [step]: { baseRevision: base.sourceRevision, savedAt: now, unit, ...(action === "accept_proposal" && base.content.stepProposals[step]?.aiReview ? { aiReview: base.content.stepProposals[step]!.aiReview } : {}) } },
       ...(action === "accept_proposal" ? { stepProposals: withoutStep(base.content.stepProposals, step) } : {}),
       // Keep newly fetched, validated references available without copying them into every version.
       referenceArchive: mergeReferenceArchive(edit.content.referenceArchive, [...(base.content.discovery?.references ?? []), ...(edit.content.discovery?.references ?? [])]),

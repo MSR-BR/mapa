@@ -1,10 +1,12 @@
 import "server-only";
 
-import { createGoogleGenerativeAI, type GoogleLanguageModelOptions } from "@ai-sdk/google";
-import { generateText, Output } from "ai";
 import { z } from "zod";
 
-import { observeGeminiGeneration } from "@/lib/observability/gemini-usage";
+import { generateStructured } from "@/modules/ai/generate";
+import { AiError, classifyAiFailure } from "@/modules/ai/failure";
+import { providerLabel, type AiProvider } from "@/modules/ai/contract";
+import { providerEnabled } from "@/modules/ai/policy";
+import { assertOperationActive } from "@/modules/ai/operation";
 import type { Project } from "@/modules/projects/types";
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
 import type { StoredReference } from "./types";
@@ -37,21 +39,7 @@ import {
 
 export const GENERATION_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
 
-export const GEMINI_OUTPUT_TOKEN_BUDGETS = {
-  broaden_research_query: 160,
-  generate_development_topics: 3_200,
-  generate_general_objective: 700,
-  generate_literature_topics: 3_200,
-  generate_methodology_plan: 5_000,
-  generate_problem_candidates: 4_500,
-  generate_research_structure: 8_000,
-  generate_specific_objectives: 2_400,
-  interpret_research_request: 500,
-  merge_research_structures: 8_000,
-  regenerate_problem_statement: 700,
-  review_final_map_coherence: 2_400,
-  suggest_research_prompts: 500,
-} as const;
+export { OUTPUT_TOKEN_BUDGETS as GEMINI_OUTPUT_TOKEN_BUDGETS } from "@/modules/ai/policy";
 
 type ResearchRequestInput = Pick<
   Project,
@@ -171,11 +159,6 @@ function normalizeGeneratedStructure(output: GeneratedStructure) {
   });
 }
 
-function getGoogleProvider() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Gemini não está configurado.");
-  return createGoogleGenerativeAI({ apiKey });
-}
 
 function compactEvidence(report: ResearchStarterSuccess) {
   return {
@@ -227,14 +210,8 @@ function assertDiscoveryReferenceIds(referenceIds: string[], discovery: Proposal
 }
 
 export async function suggestResearchPrompts(prompt: string) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.suggest_research_prompts,
-    operation: "suggest_research_prompts",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.suggest_research_prompts,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: promptSuggestionsSchema }),
+  const { output } = await generateStructured({
+    operation: "suggest_research_prompts", allowFallback: false, schema: promptSuggestionsSchema,
     prompt: [
       "Ajude o usuário a consolidar um pedido para criar um mapa de pesquisa acadêmica.",
       "Retorne exatamente 3 sugestões curtas em português.",
@@ -248,12 +225,7 @@ export async function suggestResearchPrompts(prompt: string) {
       "Não responda ao tema e não crie a estrutura da pesquisa; apenas aprimore o pedido.",
       `Texto em elaboração: ${JSON.stringify(prompt.slice(0, 5_000))}`,
     ].join("\n"),
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingLevel: "minimal" },
-      } satisfies GoogleLanguageModelOptions,
-    },
-  }));
+  });
 
   return promptSuggestionsSchema.parse(output).suggestions.map((suggestion) => ({
     kind: suggestion.kind,
@@ -265,14 +237,8 @@ export async function broadenResearchQuery(
   project: ResearchRequestInput,
   currentQuery: string,
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.broaden_research_query,
-    operation: "broaden_research_query",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.broaden_research_query,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: broaderResearchQuerySchema }),
+  const { output } = await generateStructured({
+    operation: "broaden_research_query", schema: broaderResearchQuerySchema,
     prompt: [
       "Crie uma consulta bibliográfica mais ampla em inglês para bases acadêmicas.",
       "Retorne entre 3 e 5 termos de busca, cada um com no máximo 3 palavras.",
@@ -288,12 +254,7 @@ export async function broadenResearchQuery(
         title: project.title,
       })}`,
     ].join("\n"),
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingLevel: "minimal" },
-      } satisfies GoogleLanguageModelOptions,
-    },
-  }));
+  });
 
   return broaderResearchQuerySchema.parse(output).searchTerms.join(" ").trim();
 }
@@ -337,21 +298,10 @@ export async function interpretResearchRequest(
     })}`,
   ].join("\n");
 
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.interpret_research_request,
-    operation: "interpret_research_request",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.interpret_research_request,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: interpretedResearchRequestSchema }),
-    prompt,
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingLevel: "minimal" },
-      } satisfies GoogleLanguageModelOptions,
-    },
-  }));
+  const { output } = await generateStructured({
+    operation: "interpret_research_request", schema: interpretedResearchRequestSchema,
+    prompt: prompt,
+  });
 
   return interpretedResearchRequestSchema.parse({
     knowledgeArea: output.knowledgeArea.trim(),
@@ -393,28 +343,16 @@ export async function generateProblemCandidates(
   // reparo evita transformar um desvio pontual da IA em falha definitiva do mapa.
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
-      const { output } = await observeGeminiGeneration({
-        attempt,
-        configuredModel: GENERATION_MODEL,
-        maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_problem_candidates,
-        operation: "generate_problem_candidates",
-      }, () => generateText({
-        maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_problem_candidates,
-        model: getGoogleProvider()(GENERATION_MODEL),
-        output: Output.object({ schema: generatedProblemCandidatesSchema }),
-        prompt: [
+      const { output } = await generateStructured({
+    operation: "generate_problem_candidates", schema: generatedProblemCandidatesSchema,
+    prompt: [
           ...prompt,
           ...(attempt === 2 ? [
             "A tentativa anterior foi rejeitada por validação formal.",
             "Releia cada regra antes de responder: devolva seis itens na ordem 1,2,3,4,5,6; o primeiro kind=exact e os outros kind=alternative; todas as perguntas começam literalmente por Como ou De que forma; use somente IDs de referência presentes nas evidências.",
           ] : []),
         ].join("\n"),
-        providerOptions: {
-          google: {
-            thinkingConfig: { thinkingLevel: "minimal" },
-          } satisfies GoogleLanguageModelOptions,
-        },
-      }));
+  });
 
       const candidates = output.candidates.map((candidate) => ({
         ...candidate,
@@ -432,6 +370,7 @@ export async function generateProblemCandidates(
       return parsed;
     } catch (error) {
       lastError = error;
+      if (classifyAiFailure(error) !== "invalid_output" && !(error instanceof Error && error.message.startsWith("Referências não verificadas"))) throw error;
     }
   }
 
@@ -446,14 +385,8 @@ export async function regenerateProblemStatement(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.regenerate_problem_statement,
-    operation: "regenerate_problem_statement",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.regenerate_problem_statement,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedDefinitionSchema }),
+  const { output } = await generateStructured({
+    operation: "regenerate_problem_statement", schema: generatedDefinitionSchema,
     prompt: [
       "Reescreva uma única problemática de pesquisa em português do Brasil.",
       "Comece exatamente por 'Como' ou 'De que forma' e termine com um único ponto de interrogação.",
@@ -465,8 +398,7 @@ export async function regenerateProblemStatement(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
   const result = generatedDefinitionSchema.parse(output);
   assertDiscoveryReferenceIds(result.referenceIds, discovery);
   return result;
@@ -478,14 +410,8 @@ export async function generateGeneralObjective(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_general_objective,
-    operation: "generate_general_objective",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_general_objective,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedDefinitionSchema }),
+  const { output } = await generateStructured({
+    operation: "generate_general_objective", schema: generatedDefinitionSchema,
     prompt: [
       "Crie exatamente um objetivo geral em português do Brasil.",
       "Inicie com verbo no infinitivo e responda diretamente à problemática.",
@@ -499,8 +425,7 @@ export async function generateGeneralObjective(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
   const result = generatedDefinitionSchema.parse(output);
   assertDiscoveryReferenceIds(result.referenceIds, discovery);
   return result;
@@ -512,14 +437,8 @@ export async function generateSpecificObjectives(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_specific_objectives,
-    operation: "generate_specific_objectives",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_specific_objectives,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedSpecificObjectivesSchema }),
+  const { output } = await generateStructured({
+    operation: "generate_specific_objectives", schema: generatedSpecificObjectivesSchema,
     prompt: [
       "Crie exatamente quatro objetivos específicos em português do Brasil.",
       "Cada objetivo começa com verbo no infinitivo e representa uma etapa necessária para atender o objetivo geral.",
@@ -533,8 +452,7 @@ export async function generateSpecificObjectives(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
   const objectives = generatedSpecificObjectivesSchema.parse(output).objectives;
   assertDiscoveryReferenceIds(objectives.flatMap((objective) => objective.referenceIds), discovery);
   return objectives;
@@ -559,14 +477,8 @@ export async function generateLiteratureTopics(
   acceptedConcepts: string[] = [],
   studentContext: string[] = [],
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_literature_topics,
-    operation: "generate_literature_topics",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_literature_topics,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedChapterTopicsSchema }),
+  const { output } = await generateStructured({
+    operation: "generate_literature_topics", schema: generatedChapterTopicsSchema,
     prompt: [
       "Crie exatamente quatro tópicos para o Capítulo 2 — Revisão da Literatura, em português do Brasil.",
       "Cubra conceitos, teorias, modelos, contexto normativo ou evidências necessários à problemática e aos objetivos.",
@@ -583,8 +495,7 @@ export async function generateLiteratureTopics(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
   const topics = generatedChapterTopicsSchema.parse(output).topics.map((topic) => ({
     ...topic,
     exceptionJustification: null,
@@ -604,14 +515,8 @@ export async function generateDevelopmentTopics(
   discovery: ProposalDiscovery,
   studentContext: string[] = [],
 ) {
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_development_topics,
-    operation: "generate_development_topics",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_development_topics,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedChapterTopicsSchema }),
+  const { output } = await generateStructured({
+    operation: "generate_development_topics", schema: generatedChapterTopicsSchema,
     prompt: [
       "Crie exatamente quatro tópicos para o Capítulo 4 — Desenvolvimento, Estudo de Caso, Análise e Discussão, em português do Brasil.",
       "Operacionalize os objetivos específicos que não foram atendidos exclusivamente pela revisão da literatura.",
@@ -632,8 +537,7 @@ export async function generateDevelopmentTopics(
       studentContextPrompt(studentContext),
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
   const topics = generatedChapterTopicsSchema.parse(output).topics;
   assertGeneratedTopicLinks(topics, new Set([...specificObjectives.map((objective) => objective.id), generalObjectiveId]), discovery);
   return topics;
@@ -659,14 +563,8 @@ export async function generateMethodologyPlan(
   }));
   const existingByObjective = new Map(existingRows.map((row) => [row.objectiveId, row.id]));
 
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_methodology_plan,
-    operation: "generate_methodology_plan",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_methodology_plan,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedMethodologyPlanSchema }),
+  const { output } = await generateStructured({
+    operation: "generate_methodology_plan", schema: generatedMethodologyPlanSchema,
     prompt: [
       "Crie a matriz metodológica de uma proposta de pesquisa em português do Brasil.",
       "A matriz deve ter exatamente uma linha para cada objetivo específico validado e uma linha final para o objetivo geral, usando o ID informado como OEG.",
@@ -691,8 +589,7 @@ export async function generateMethodologyPlan(
       studentContextPrompt(studentContext),
       `Evidências verificadas: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
+  });
 
   const generated = generatedMethodologyPlanSchema.parse(output);
   const reconciledRows = reconcileGeneratedMethodologyRows(
@@ -717,15 +614,7 @@ export async function generateMethodologyPlan(
 
 export async function reviewFinalMapCoherence(finalMap: FinalMap) {
   const allowedElementIds = new Set(finalMap.nodes.filter((node) => /^[0-9a-f-]{36}$/i.test(node.id)).map((node) => node.id));
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.review_final_map_coherence,
-    operation: "review_final_map_coherence",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.review_final_map_coherence,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedCoherenceReviewSchema }),
-    prompt: [
+  const prompt = [
       "Revise a coerência de uma proposta de pesquisa já validada por regras determinísticas.",
       "Escreva em português do Brasil.",
       "Retorne apenas avisos ou sugestões; não use severity=blocking.",
@@ -740,24 +629,40 @@ export async function reviewFinalMapCoherence(finalMap: FinalMap) {
         label: node.label,
         title: node.title,
       })))}`,
+      `Versão-base do contexto: ${finalMap.workflow.sourceRevision}.`,
+      `Evidências permitidas: ${JSON.stringify(finalMap.references.slice(0, 20).map(({ referenceId, title, abstract }) => ({ referenceId, title, abstract: abstract?.slice(0, 1500) ?? null })))}`,
       `Relações: ${JSON.stringify(finalMap.edges)}`,
       `Achados determinísticos já existentes: ${JSON.stringify(finalMap.findings.map((finding) => ({
         message: finding.message,
         rule: finding.rule,
         severity: finding.severity,
       })))}`,
-    ].join("\n"),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } satisfies GoogleLanguageModelOptions },
-  }));
-
-  return generatedCoherenceReviewSchema.parse(output).findings
-    .map((finding) => ({
-      ...finding,
-      elementIds: finding.elementIds.filter((id) => allowedElementIds.has(id)).slice(0, 12),
-      id: crypto.randomUUID(),
-      rule: `IA: ${finding.rule}`.slice(0, 120),
-    }))
-    .filter((finding) => finding.elementIds.length > 0);
+    ].join("\n");
+  const generate = (provider: AiProvider, allowFallback: boolean) => generateStructured({
+    operation: "review_final_map_coherence", schema: generatedCoherenceReviewSchema, prompt,
+    provider, role: "reviewer", allowFallback, additional: !allowFallback,
+    validate(output) { if (output.findings.some((finding) => finding.elementIds.some((id) => !allowedElementIds.has(id)))) throw new AiError("invalid_output"); },
+  });
+  const primary = await generate("gemini", true);
+  const results = [primary];
+  let unavailable: AiProvider | null = null;
+  if (process.env.MAPA_AI_CROSS_REVIEW_ENABLED === "true") {
+    const alternate = primary.provider === "gemini" ? "openai" : "gemini";
+    try {
+      if (!providerEnabled(alternate)) throw new AiError("configuration");
+      results.push(await generate(alternate, false));
+    } catch { assertOperationActive(); unavailable = alternate; }
+  }
+  const findings = results.flatMap((result) => result.output.findings.map((finding) => ({
+    ...finding, id: crypto.randomUUID(), rule: `IA: ${providerLabel(result.provider)} · ${finding.rule}`.slice(0, 120),
+  })));
+  const elementId = [...allowedElementIds][0];
+  if (elementId) findings.push({
+    elementIds: [elementId], id: crypto.randomUUID(), severity: "suggestion", rule: "IA: registro de revisão",
+    message: `Revisão realizada por ${results.map((result) => providerLabel(result.provider)).join(" e ")}${unavailable ? `; revisão por ${providerLabel(unavailable)} indisponível` : ""}.`,
+    resolution: "Os achados são orientativos. Confira fontes e sugestões antes da validação acadêmica.",
+  });
+  return findings;
 }
 
 export async function generateResearchStructure(
@@ -786,21 +691,10 @@ export async function generateResearchStructure(
     `Evidências verificadas: ${JSON.stringify(evidence)}`,
   ].join("\n");
 
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_research_structure,
-    operation: "generate_research_structure",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.generate_research_structure,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedStructureSchema }),
-    prompt,
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingLevel: "minimal" },
-      } satisfies GoogleLanguageModelOptions,
-    },
-  }));
+  const { output } = await generateStructured({
+    operation: "generate_research_structure", schema: generatedStructureSchema,
+    prompt: prompt,
+  });
 
   const structure = normalizeGeneratedStructure(output);
   const allowedReferenceIds = new Set(report.references.map((reference) => reference.referenceId));
@@ -829,21 +723,10 @@ export async function mergeResearchStructures(
     `Referências verificadas: ${JSON.stringify(references)}`,
   ].join("\n");
 
-  const { output } = await observeGeminiGeneration({
-    configuredModel: GENERATION_MODEL,
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.merge_research_structures,
-    operation: "merge_research_structures",
-  }, () => generateText({
-    maxOutputTokens: GEMINI_OUTPUT_TOKEN_BUDGETS.merge_research_structures,
-    model: getGoogleProvider()(GENERATION_MODEL),
-    output: Output.object({ schema: generatedStructureSchema }),
-    prompt,
-    providerOptions: {
-      google: {
-        thinkingConfig: { thinkingLevel: "minimal" },
-      } satisfies GoogleLanguageModelOptions,
-    },
-  }));
+  const { output } = await generateStructured({
+    operation: "merge_research_structures", schema: generatedStructureSchema,
+    prompt: prompt,
+  });
   const structure = normalizeGeneratedStructure(output);
   const invalidReferenceIds = validateReferenceIds(
     structure,
