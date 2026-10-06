@@ -690,7 +690,7 @@ test("implements Change 011 with editable and versioned problem and objectives",
     readProjectFile("modules/research-workflow/workflow-references.ts"),
   ]);
 
-  assert.match(route, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(route, /saveVersionedWorkflow/);
   assert.match(route, /markDescendantsStale/);
   assert.match(route, /elementVersions/);
   assert.match(route, /validating_specific_objectives/);
@@ -749,7 +749,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /discoveryWithWorkflowReferences/);
   assert.match(route, /studentContextNotes/);
   assert.match(route, /generalObjectiveId: context\.general\.id/);
-  assert.match(route, /\.eq\("revision", workflow\.revision\)/);
+  assert.match(route, /saveVersionedWorkflow/);
   assert.match(route, /validateCompleteObjectiveCoverage/);
   assert.match(workspace, /ManualReferencePanel/);
   assert.match(workspace, /Otimizar literatura/);
@@ -836,7 +836,7 @@ test("preserves downstream work when returning without editing an upstream step"
   assert.match(definitionRoute, /reuseExistingSpecifics/);
   assert.match(definitionRoute, /if \(!reuseExistingGeneral\) content = markDescendantsStale/);
   assert.match(definitionRoute, /if \(!reuseExistingSpecifics\) content = markDescendantsStale/);
-  assert.match(chaptersRoute, /sameTopics/);
+  assert.match(chaptersRoute, /existingDevelopmentTopics.length > 0/);
   assert.match(chaptersRoute, /reuseExistingDevelopment/);
   assert.match(chaptersRoute, /versão já existente do Capítulo 4 foi preservada/);
 });
@@ -874,7 +874,7 @@ test("distinguishes macro stages from substeps across the research workflow", as
   assert.match(progress, /Passo \{currentDetail\}\/\{detailSteps\.length\}/);
   assert.match(progress, /Problemática/, "A etapa inicial é nomeada de acordo com o conteúdo.");
   assert.match(progress, /Metodologia e encerramento/, "O encerramento integra a última macroetapa.");
-  assert.match(progress, /Voltar para/);
+  assert.match(progress, /Abrir/);
   assert.match(discovery, /currentStep=\{selectedCandidate \? "problem_statement" : null\}/);
   assert.match(definition, /currentStep=\{step\}/);
   assert.match(chapters, /currentStep=\{workflow\.content\.activeStep/);
@@ -896,16 +896,15 @@ test("implements Change 073 with revision-safe back navigation and methodology r
     readProjectFile(".specs/roadmap.md"),
   ]);
 
-  assert.match(progress, /api\/projects/);
-  assert.match(progress, /\/navigation/);
-  assert.match(progress, /hasUnsavedChanges && !window\.confirm/);
-  assert.match(progress, /router\.replace\(workflowNavigationUrl/);
+  assert.match(progress, /workflowTargetUrl/);
+  assert.match(progress, /Salvar e abrir etapa/);
+  assert.match(progress, /Permanecer nesta etapa/);
+  assert.match(progress, /router\.push/);
   assert.match(navigation, /POSITION_ORDER/);
-  assert.match(navigation, /POSITION_ORDER\[target\] < POSITION_ORDER\[current\]/);
+  assert.match(navigation, /POSITION_ORDER\[target\] <= POSITION_ORDER\[current\]/);
   assert.match(route, /authorizeProjectRoute/);
-  assert.match(route, /workflow\.revision !== parsed\.data\.revision/);
-  assert.match(route, /pendingAdvisorReview\(workflow\.content\)/);
-  assert.match(route, /Etapa anterior aberta sem alterar o conteúdo salvo/);
+  assert.match(route, /related_read/);
+  assert.doesNotMatch(route, /\.update\(|generate|invalidateFinalMap/);
   assert.match(gemini, /reconcileGeneratedMethodologyRows/);
   assert.match(methodology, /A matriz metodológica ainda não foi criada/);
   assert.match(methodology, /Gerar matriz novamente/);

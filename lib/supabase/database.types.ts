@@ -223,6 +223,12 @@ export type Database = {
         }
         Relationships: []
       }
+      workflow_versions: {
+        Row: { id: string; project_id: string; revision: number; source_revision: number; step: string; kind: string; entry_key: string; actor_id: string | null; created_at: string; reason: string; unit: Json }
+        Insert: { id?: string; project_id: string; revision: number; source_revision: number; step: string; kind: string; entry_key?: string; actor_id?: string | null; created_at?: string; reason: string; unit: Json }
+        Update: { reason?: string }
+        Relationships: [{ foreignKeyName: "workflow_versions_project_id_fkey"; columns: ["project_id"]; isOneToOne: false; referencedRelation: "research_workflows"; referencedColumns: ["project_id"] }]
+      }
       research_workflows: {
         Row: {
           content: Json

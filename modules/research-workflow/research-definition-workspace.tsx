@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
@@ -11,8 +11,9 @@ import { AiGuidanceField } from "./ai-guidance-field";
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { ManualReferencePanel } from "./manual-reference-panel";
-import { WorkflowProgress } from "./workflow-progress";
-import { workflowNavigationUrl } from "./workflow-navigation";
+import { WorkflowHistory } from "./workflow-history";
+import { WorkflowProgress, type WorkflowProgressHandle } from "./workflow-progress";
+import { workflowForView, workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow, ValidatedElement } from "./schema";
 
 type Props = {
@@ -37,6 +38,7 @@ function specificDrafts(workflow: ResearchWorkflow): ObjectiveDraft[] {
 
 export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [problem, setProblem] = useState(() => findElement(initialWorkflow, "problem_statement")?.proposedContent ?? "");
@@ -94,8 +96,10 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
     if (step) trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_has_advisor: "unknown" });
   }, [activeRole, step]);
 
-  function applyWorkflow(nextWorkflow: ResearchWorkflow) {
+  function applyWorkflow(received: ResearchWorkflow) {
+    const nextWorkflow = received.navigation ? received : workflowForView(received, step ?? "problem_statement");
     setWorkflow(nextWorkflow);
+    if (!received.navigation && currentValueChanged) return;
     setProblem(findElement(nextWorkflow, "problem_statement")?.proposedContent ?? "");
     setGeneral(findElement(nextWorkflow, "general_objective")?.proposedContent ?? "");
     setProblemJustification(findElement(nextWorkflow, "problem_statement")?.studentJustification ?? "");
@@ -110,7 +114,10 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
 
   async function submit(action: Exclude<Operation, null>) {
     if (!step || busy) return;
-    if (action === "regenerate" && currentValueChanged && !window.confirm("A nova sugestão substituirá sua edição atual. Deseja continuar?")) return;
+    if ((action === "regenerate") && currentValueChanged) {
+      setMessage("Salve o rascunho antes de solicitar uma proposta à IA. Suas edições permanecem nesta tela.");
+      return false;
+    }
     setOperation(action);
     setMessage(null);
     setErrors([]);
@@ -157,11 +164,11 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
-      } else {
-        router.refresh();
       }
+      return true;
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar esta etapa.");
+      return false;
     } finally {
       setOperation(null);
     }
@@ -187,7 +194,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
   if (!step) {
     return (
       <section className="definition-complete" aria-labelledby="definition-complete-title">
-        <WorkflowProgress current={2} currentStep="specific_objectives" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <WorkflowProgress ref={progressRef} current={2} currentStep="specific_objectives" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
         <p className="section-kicker">Problemática e objetivos validados</p>
         <h2 id="definition-complete-title">Problemática e objetivos consolidados</h2>
         <div className="definition-summary">
@@ -218,7 +225,8 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
 
   return (
     <section className="research-definition" aria-labelledby="definition-title">
-      <WorkflowProgress current={workflowStage} currentStep={step} disabled={busy || waitingForAdvisor} hasUnsavedChanges={currentValueChanged} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+      <WorkflowProgress ref={progressRef} current={workflowStage} currentStep={step} disabled={busy} hasUnsavedChanges={currentValueChanged} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
+      <WorkflowHistory workflow={workflow} step={step} hasUnsavedChanges={currentValueChanged} onWorkflow={applyWorkflow} />
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
@@ -347,7 +355,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
       ) : null}
 
       <div className="definition-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
+        <button className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.navigate(step === "specific_objectives" ? "general_objective" : "problem_statement")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
         <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
         <button aria-describedby={advisorRequired ? "student-advisor-required" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || advisorRequired} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>

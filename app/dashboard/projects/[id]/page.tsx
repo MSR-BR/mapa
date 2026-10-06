@@ -14,6 +14,7 @@ import { LiteratureDevelopmentWorkspace } from "@/modules/research-workflow/lite
 import { MethodologyWorkspace } from "@/modules/research-workflow/methodology-workspace";
 import { ProposalDiscoveryWorkspace } from "@/modules/research-workflow/proposal-discovery-workspace";
 import { ResearchDefinitionWorkspace } from "@/modules/research-workflow/research-definition-workspace";
+import { resolveWorkflowView } from "@/modules/research-workflow/workflow-navigation";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 
 function integrationSource(problemStatement: string | null) {
@@ -29,9 +30,9 @@ function IntegrationBanner({ source }: { source: string | null }) {
   ) : null;
 }
 
-export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string }> }) {
+export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string; workflowStep?: string }> }) {
   const { id } = await params;
-  const { discover, generate, created, entry } = await searchParams;
+  const { discover, generate, created, entry, workflowStep } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   let access;
@@ -67,8 +68,9 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     : null;
 
   if (project.workflow_version === 2) {
-    const workflow = await loadResearchWorkflow(supabase, project.owner_id, id);
-    if (!workflow) notFound();
+    const storedWorkflow = await loadResearchWorkflow(supabase, project.owner_id, id);
+    if (!storedWorkflow) notFound();
+    const workflow = isAdvisor ? storedWorkflow : resolveWorkflowView(storedWorkflow, workflowStep);
     if (isAdvisor) {
       return (
         <main className="workspace-shell proposal-workspace-shell">
@@ -103,13 +105,13 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
           />
         ) : null}
         {isFinalMapStage ? (
-          <FinalMapWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
+          <FinalMapWorkspace key={`${workflow.revision}-${workflow.content.activeStep ?? workflow.state}`} initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : isMethodologyStage ? (
-          <MethodologyWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
+          <MethodologyWorkspace key={`${workflow.revision}-${workflow.content.activeStep ?? workflow.state}`} initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : isChapterPlanningStage ? (
-          <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
+          <LiteratureDevelopmentWorkspace key={`${workflow.revision}-${workflow.content.activeStep ?? workflow.state}`} initialWorkflow={workflow} isSelfDirectedProject={isSelfDirectedProject} projectId={project.id} />
         ) : workflow.content.discovery?.selectedCandidateId ? (
-          <ResearchDefinitionWorkspace
+          <ResearchDefinitionWorkspace key={`${workflow.revision}-${workflow.content.activeStep ?? workflow.state}`}
             advisorEmail={project.advisor_email}
             initialWorkflow={workflow}
             isSelfDirectedProject={isSelfDirectedProject}

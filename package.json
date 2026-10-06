@@ -33,11 +33,12 @@
     "exports:verify": "node --import tsx scripts/verify-exports.ts",
     "security:audit": "node scripts/audit-security.mjs",
     "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
-    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts && npm run test:doi",
+    "test": "node --import tsx --test tests/foundation.test.mjs tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts && npm run test:doi",
     "test:doi": "node --conditions=react-server --import tsx --test tests/doi-reference.test.ts",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck && npm run supabase:verify-explicit-grants && npm run test && npm run exports:verify && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run supabase:verify-explicit-grants && npm run test && npm run exports:verify && npm run build",
+    "supabase:verify-versioned-workflow": "sh scripts/verify-versioned-workflow.sh"
   },
   "dependencies": {
     "@ai-sdk/google": "3.0.99",
@@ -68,7 +69,8 @@
   },
   "overrides": {
     "postcss": "8.5.28",
-    "sharp": "0.35.4"
+    "sharp": "0.35.5",
+    "source-map-js": "1.2.2"
   },
   "type": "module"
 }

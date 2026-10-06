@@ -56,7 +56,7 @@ await mkdir("tmp", { recursive: true });
 let scenarios = 0;
 try {
   for (const [name, engine] of [["chromium", chromium], ["webkit", webkit]]) {
-    const browser = await engine.launch({ headless: true });
+    const browser = await engine.launch({ headless: true, ...(process.env[`PLAYWRIGHT_${name.toUpperCase()}_EXECUTABLE`] ? { executablePath: process.env[`PLAYWRIGHT_${name.toUpperCase()}_EXECUTABLE`] } : {}) });
     try {
       for (const width of [320, 390, 768, 900, 1024, 1280, 1440]) {
         for (const role of ["advisor", "student"]) {

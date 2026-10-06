@@ -14,6 +14,17 @@ function remapNullable(id: string | null, idMap: Map<string, string>) {
 export function cloneResearchWorkflowContent(content: ResearchWorkflowContent) {
   const idMap = new Map<string, string>();
 
+  for (const saved of [...Object.values(content.stepDrafts), ...Object.values(content.stepProposals)]) {
+    if (!saved) continue;
+    for (const item of saved.unit.elements) if (!idMap.has(item.id)) idMap.set(item.id, crypto.randomUUID());
+    for (const row of saved.unit.methodologyRows) if (!idMap.has(row.id)) idMap.set(row.id, crypto.randomUUID());
+  }
+  function remapValue(value: unknown): unknown {
+    if (typeof value === "string") return remap(value, idMap);
+    if (Array.isArray(value)) return value.map(remapValue);
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, remapValue(item)]));
+    return value;
+  }
   for (const candidate of content.discovery?.candidates ?? []) idMap.set(candidate.id, crypto.randomUUID());
   for (const element of content.elements) idMap.set(element.id, crypto.randomUUID());
   for (const row of content.methodologyRows) idMap.set(row.id, crypto.randomUUID());
@@ -21,6 +32,8 @@ export function cloneResearchWorkflowContent(content: ResearchWorkflowContent) {
   const cloned = researchWorkflowContentSchema.parse({
     ...content,
     advisorReviews: [],
+    stepDrafts: remapValue(content.stepDrafts),
+    stepProposals: {},
     coherenceFindings: [],
     discovery: content.discovery ? {
       ...content.discovery,

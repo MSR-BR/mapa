@@ -270,25 +270,45 @@ export const proposalDiscoverySchema = z.object({
 
 export type ProposalDiscovery = z.infer<typeof proposalDiscoverySchema>;
 
+// C111: bounded current drafts/proposals; historical bodies live in a separate table.
+export const workflowUnitSchema = z.object({
+  elements: z.array(validatedElementSchema).max(120),
+  chapterTopicDetails: z.array(chapterTopicDetailSchema).max(12),
+  methodologyClassification: methodologyClassificationSchema.nullable(),
+  methodologyRows: z.array(methodologyRowSchema).max(7),
+  traceLinks: z.array(traceLinkSchema).max(240),
+});
+export type WorkflowUnit = z.infer<typeof workflowUnitSchema>;
+export const workflowDraftSchema = z.object({
+  baseRevision: z.number().int().positive(),
+  savedAt: z.string().datetime({ offset: true }),
+  unit: workflowUnitSchema,
+});
+export type WorkflowDraft = z.infer<typeof workflowDraftSchema>;
+
 export const researchWorkflowContentSchema = z.object({
   activeStep: definitionStepSchema.nullable().default(null),
   advisorReviews: z.array(advisorReviewSchema).max(120).default([]),
   chapterTopicDetails: z.array(chapterTopicDetailSchema).max(12).default([]),
   coherenceFindings: z.array(coherenceFindingSchema).max(40).default([]),
   discovery: proposalDiscoverySchema.nullable().default(null),
-  elementVersions: z.array(elementVersionSchema).max(300).default([]),
+  elementVersions: z.array(elementVersionSchema).default([]),
+  historyVersion: z.literal(1).optional(),
+  stepDrafts: z.partialRecord(advisorReviewStepSchema, workflowDraftSchema).default({}),
+  stepProposals: z.partialRecord(advisorReviewStepSchema, workflowDraftSchema).default({}),
   elements: z.array(validatedElementSchema).max(120).default([]),
   knowledgeSuggestions: z.array(knowledgeSuggestionSchema).max(20).default([]),
   initialBriefing: researchIntakeSchema.nullable().default(null),
   methodologyClassification: methodologyClassificationSchema.nullable().default(null),
   methodologyRows: z.array(methodologyRowSchema).max(7).default([]),
-  referenceArchive: z.array(discoveryReferenceSchema).max(100).default([]),
+  referenceArchive: z.array(discoveryReferenceSchema).default([]),
   traceLinks: z.array(traceLinkSchema).max(240).default([]),
 });
 
 export type ResearchWorkflowContent = z.infer<typeof researchWorkflowContentSchema>;
 
 export const researchWorkflowSchema = z.object({
+  navigation: z.object({ availableSteps: z.array(advisorReviewStepSchema), progressState: workflowStateSchema }).optional(),
   content: researchWorkflowContentSchema,
   ownerId: z.string().uuid(),
   projectId: z.string().uuid(),
@@ -309,6 +329,8 @@ export const EMPTY_WORKFLOW_CONTENT: ResearchWorkflowContent = {
   coherenceFindings: [],
   discovery: null,
   elementVersions: [],
+  stepDrafts: {},
+  stepProposals: {},
   elements: [],
   knowledgeSuggestions: [],
   initialBriefing: null,

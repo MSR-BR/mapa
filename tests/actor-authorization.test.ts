@@ -70,7 +70,7 @@ test("every academic endpoint uses centralized authorization", () => {
     "app/api/projects/[id]/generate/route.ts",
     "app/api/projects/[id]/generation/route.ts",
     "app/api/projects/[id]/methodology/route.ts",
-    "app/api/projects/[id]/navigation/route.ts",
+    "app/api/projects/[id]/history/route.ts",
     "app/api/projects/[id]/proposal-selection/route.ts",
     "app/api/projects/[id]/references/route.ts",
     "app/api/projects/integrate/route.ts",

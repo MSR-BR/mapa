@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { WorkflowHistory } from "./workflow-history";
 import { ADVISOR_REVIEW_LABELS, currentAdvisorReview } from "./advisor-review";
 import { buildFinalMap, type FinalMap, type FinalMapTopic } from "./final-map";
 import { buildReferenceCodeMap, withCitationMarkers } from "./reference-citations";
@@ -398,6 +399,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
 
   return (
     <section className="advisor-review-workspace" aria-labelledby="advisor-review-title">
+      <WorkflowHistory workflow={workflow} step={review?.step ?? "final_map"} onWorkflow={setWorkflow} readOnly />
       <div className="advisor-review-hero">
         <p className="eyebrow">Área de revisão</p>
         <h2 id="advisor-review-title">{projectTitle}</h2>

@@ -1,3 +1,5 @@
+import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
+import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -7,7 +9,6 @@ import {
   generateSpecificObjectives,
   regenerateProblemStatement,
 } from "@/modules/generation/gemini";
-import { toJson } from "@/modules/generation/types";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import {
   authorizeProjectCapabilityResponse,
@@ -119,52 +120,12 @@ function markDescendantsStale(content: ResearchWorkflowContent, sourceType: Work
       [...history, { ...element, archivedAt: new Date().toISOString(), elementId: element.id }]
     ), content.elementVersions),
     elements: content.elements.map((element) => changedIds.has(element.id)
-      ? { ...element, approvedContent: null, revision: element.revision + 1, status: "stale", updatedBy: "system" }
+      ? { ...element, revision: element.revision + 1, status: "stale", updatedBy: "system" }
       : element),
   });
 }
 
-function workflowResponse(
-  workflow: ResearchWorkflow,
-  content: ResearchWorkflowContent,
-  revision: number,
-  sourceRevision: number,
-  state: ResearchWorkflow["state"],
-  stableState: ResearchWorkflow["stableState"],
-  updatedAt: string,
-): ResearchWorkflow {
-  return { ...workflow, content, revision, sourceRevision, stableState, state, updatedAt };
-}
 
-async function saveWorkflow(
-  workflow: ResearchWorkflow,
-  content: ResearchWorkflowContent,
-  sourceRevision: number,
-  state: ResearchWorkflow["state"],
-  stableState: ResearchWorkflow["stableState"],
-  supabase: AuthorizedProjectContext["supabase"],
-  ownerId: string,
-) {
-  const revision = workflow.revision + 1;
-  const updatedAt = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("research_workflows")
-    .update({
-      content: toJson(content),
-      revision,
-      source_revision: sourceRevision,
-      stable_state: stableState,
-      state,
-      updated_at: updatedAt,
-    })
-    .eq("project_id", workflow.projectId)
-    .eq("owner_id", ownerId)
-    .eq("revision", workflow.revision)
-    .select("updated_at")
-    .maybeSingle();
-  if (error || !data) return null;
-  return workflowResponse(workflow, content, revision, sourceRevision, state, stableState, data.updated_at);
-}
 
 function draftContent(
   workflow: ResearchWorkflow,
@@ -294,7 +255,20 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const { actor, supabase, userId } = access.value;
   const claims = actor.claims;
   const isSelfDirectedProject = access.value.project.authoring_role === "advisor";
-  const workflow = await loadResearchWorkflow(supabase, userId, id);
+  const editAction = parsed.data.action;
+  const editStep = parsed.data.step;
+  const baseWorkflow = await loadResearchWorkflow(supabase, userId, id);
+  const workflow = baseWorkflow ? { ...baseWorkflow, content: contentWithDraft(baseWorkflow, parsed.data.step) } : null;
+async function saveWorkflow(
+  _workflow: ResearchWorkflow,
+  content: ResearchWorkflowContent,
+  sourceRevision: number,
+  state: ResearchWorkflow["state"],
+  stableState: ResearchWorkflow["stableState"],
+  supabase: AuthorizedProjectContext["supabase"],
+) {
+  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction });
+}
   const discovery = workflow?.content.discovery;
   const candidate = discovery?.candidates.find((item) => item.id === discovery.selectedCandidateId);
   if (!workflow || !discovery || !candidate) {
@@ -303,10 +277,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (!isSelfDirectedProject && parsed.data.action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && parsed.data.action !== "back" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
-  if (workflow.content.activeStep !== parsed.data.step) {
+  if (!canNavigateToWorkflowTarget(workflow, parsed.data.step)) {
     return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
   }
 
@@ -324,37 +298,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     );
   }
   if (action === "back") {
-    let content = workflow.content;
-    let state: ResearchWorkflow["state"] = workflow.state;
-    let stableState: ResearchWorkflow["stableState"] = workflow.stableState;
-    if (step === "specific_objectives") {
-      content = researchWorkflowContentSchema.parse({ ...content, activeStep: "general_objective" });
-      state = "validating_general_objective";
-      stableState = "validating_general_objective";
-    } else if (step === "general_objective") {
-      content = researchWorkflowContentSchema.parse({ ...content, activeStep: "problem_statement" });
-      state = "choosing_problem";
-      stableState = "choosing_problem";
-    } else {
-      content = markDescendantsStale(content, "problem_statement");
-      const removed = content.elements.filter((element) => element.type === "problem_candidate" || element.type === "problem_statement");
-      content = researchWorkflowContentSchema.parse({
-        ...content,
-        activeStep: null,
-        discovery: { ...discovery, selectedCandidateId: null },
-        elementVersions: removed.reduce((history, element) => (
-          [...history, { ...element, archivedAt: new Date().toISOString(), elementId: element.id }]
-        ), content.elementVersions),
-        elements: content.elements.filter((element) => !removed.some((item) => item.id === element.id)),
-        traceLinks: content.traceLinks.filter((link) => !removed.some((element) => element.id === link.toElementId || element.id === link.fromElementId)),
-      });
-      state = "choosing_problem";
-      stableState = "choosing_problem";
-    }
-    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, state, stableState, supabase, userId);
-    return saved
-      ? NextResponse.json({ workflow: saved })
-      : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
+    const target = step === "specific_objectives" ? "general_objective" : "problem_statement";
+    return NextResponse.json({ workflow: workflowForView(baseWorkflow!, target) });
   }
 
   let content: ResearchWorkflowContent;
@@ -365,7 +310,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   if (action === "save") {
-    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
     return saved
       ? NextResponse.json({ message: "Rascunho salvo.", workflow: saved })
       : NextResponse.json({ error: "O rascunho foi alterado em outra aba." }, { status: 409 });
@@ -382,7 +327,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         : new Map([["general", "o objetivo geral"], ...content.elements.filter((item) => item.type === "specific_objective").map((item, index): [string, string] => [item.id, `o objetivo específico ${index + 1}`])]);
     let studentContext: string[];
     try {
-      studentContext = [...scopedRegenerationGuidance(parsed.data.regenerationGuidance, allowedLabels), ...studentContextNotes(content)];
+      studentContext = [...scopedRegenerationGuidance(parsed.data.regenerationGuidance, allowedLabels), ...studentContextNotes(baseWorkflow!.content),
+        `Contexto vigente: revisão ${baseWorkflow!.sourceRevision}. As orientações abaixo pertencem ao rascunho em revisão; não são decisões já confirmadas.`,
+        ...content.elements.filter((item) => (step === "specific_objectives" ? ["general_objective", "specific_objective"].includes(item.type) : item.type === step) && item.studentJustification?.trim()).map((item) => `Nota do rascunho (${item.type}): ${item.studentJustification}`),
+      ];
     } catch (error) {
       return NextResponse.json({ error: error instanceof Error ? error.message : "Pedido inválido." }, { status: 400 });
     }
@@ -402,7 +350,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         updatedBy: "ai",
       });
     } else if (step === "general_objective") {
-      const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
+      const generated = await generateGeneralObjective(problem.approvedContent ?? problem.proposedContent, candidate, generationDiscovery, studentContext);
       const existing = general;
       content = upsertElement(content, {
         approvedContent: null,
@@ -417,7 +365,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       });
     } else {
       if (!general) return NextResponse.json({ error: "Objetivo geral não encontrado." }, { status: 409 });
-      const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
+      const generated = await generateSpecificObjectives(problem.approvedContent ?? problem.proposedContent, general.approvedContent ?? general.proposedContent, generationDiscovery, studentContext);
       const existing = content.elements.filter((element) => element.type === "specific_objective");
       for (const [index, objective] of generated.entries()) {
         content = upsertElement(content, {
@@ -443,7 +391,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         traceLinks: content.traceLinks.filter((link) => !removed.some((element) => element.id === link.toElementId || element.id === link.fromElementId)),
       });
     }
-    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
     return saved
       ? NextResponse.json({ message: "Nova sugestão criada.", workflow: saved })
       : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
@@ -486,10 +434,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       updatedBy: problem.updatedBy === "ai" ? "ai" : "user",
     });
     const generalId = existingGeneral?.id ?? crypto.randomUUID();
-    if (!reuseExistingGeneral) {
+    if (!existingGeneral) {
       const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
       const studentContext = studentContextNotes(content);
-      const generated = await generateGeneralObjective(problem.proposedContent, candidate, generationDiscovery, studentContext);
+      const generated = await generateGeneralObjective(problem.approvedContent ?? problem.proposedContent, candidate, generationDiscovery, studentContext);
       content = upsertElement(content, {
         approvedContent: null,
         id: generalId,
@@ -497,7 +445,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         referenceIds: generated.referenceIds,
         sourceRevision,
         status: "suggested",
-        studentJustification: existingGeneral?.studentJustification ?? null,
+        studentJustification: null,
         type: "general_objective",
         updatedBy: "ai",
       });
@@ -532,11 +480,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       type: "general_objective",
       updatedBy: general.updatedBy === "ai" ? "ai" : "user",
     });
-    const specificIds: string[] = reuseExistingSpecifics ? existingSpecifics.map((element) => element.id) : [];
-    if (!reuseExistingSpecifics) {
+    const specificIds: string[] = existingSpecifics.map((element) => element.id);
+    if (existingSpecifics.length === 0) {
       const generationDiscovery = discoveryWithWorkflowReferences(discovery, content);
       const studentContext = studentContextNotes(content);
-      const generated = await generateSpecificObjectives(problem.proposedContent, general.proposedContent, generationDiscovery, studentContext);
+      const generated = await generateSpecificObjectives(problem.approvedContent ?? problem.proposedContent, general.approvedContent ?? general.proposedContent, generationDiscovery, studentContext);
       for (const [index, objective] of generated.entries()) {
         const specificId = existingSpecifics[index]?.id ?? crypto.randomUUID();
         specificIds.push(specificId);
@@ -632,7 +580,6 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     shouldWaitForAdvisor ? workflow.state : state,
     shouldWaitForAdvisor ? workflow.stableState : stableState,
     supabase,
-    userId,
   );
   if (saved && step === "problem_statement") {
     const approvedProblem = currentElement(content, "problem_statement")?.approvedContent;

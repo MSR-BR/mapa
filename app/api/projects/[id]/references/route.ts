@@ -84,7 +84,7 @@ function upsertManualReference(
     : [...content.referenceArchive, reference];
   return researchWorkflowContentSchema.parse({
     ...content,
-    referenceArchive: archive.slice(-100),
+    referenceArchive: archive,
   });
 }
 

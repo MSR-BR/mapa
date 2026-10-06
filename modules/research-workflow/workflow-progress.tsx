@@ -1,18 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 
-import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 
 import {
-  workflowNavigationUrl,
+  workflowTargetUrl,
   type WorkflowNavigationPosition,
   type WorkflowNavigationTarget,
 } from "./workflow-navigation";
 import type { ResearchWorkflow } from "./schema";
 
+export type WorkflowProgressHandle = { navigate: (target: WorkflowNavigationTarget) => void };
+
 type WorkflowProgressProps = {
+  ref?: Ref<WorkflowProgressHandle>;
   current: 1 | 2 | 3 | 4;
   currentStep: WorkflowNavigationPosition | null;
   disabled?: boolean;
@@ -20,6 +22,8 @@ type WorkflowProgressProps = {
   onWorkflow?: (workflow: ResearchWorkflow) => void;
   projectId: string;
   revision: number;
+  availableSteps?: WorkflowNavigationTarget[];
+  onSave?: () => Promise<boolean | undefined>;
 };
 
 type ProgressItem = {
@@ -49,50 +53,59 @@ const DETAIL_STEPS: Record<WorkflowProgressProps["current"], readonly (ProgressI
   ],
   4: [
     { label: "Matriz metodológica", target: "methodology_matrix" },
-    { label: "Encerramento e mapa final", target: null },
+    { label: "Encerramento e mapa final", target: "final_map" },
   ],
 };
 
 export const WORKFLOW_PROGRESS_TOTAL = MACRO_STEPS.length;
 
 export function WorkflowProgress({
+  ref,
   current,
   currentStep,
   disabled = false,
   hasUnsavedChanges = false,
-  onWorkflow,
+  onSave,
+  availableSteps,
   projectId,
-  revision,
 }: WorkflowProgressProps) {
   const router = useRouter();
-  const { roleVersion } = useActiveProfile();
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    function preventLoss(event: BeforeUnloadEvent) { event.preventDefault(); }
+    window.addEventListener("beforeunload", preventLoss);
+    return () => window.removeEventListener("beforeunload", preventLoss);
+  }, [hasUnsavedChanges]);
   const [pendingTarget, setPendingTarget] = useState<WorkflowNavigationTarget | null>(null);
+  const [leaving, setLeaving] = useState<WorkflowNavigationTarget | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (leaving) dialogRef.current?.focus(); }, [leaving]);
   const detailSteps = DETAIL_STEPS[current];
   const detailIndex = detailSteps.findIndex((item) => item.target === currentStep || (!item.target && currentStep === "final_map"));
   const currentDetail = detailIndex >= 0 ? detailIndex + 1 : 1;
   const busy = disabled || pendingTarget !== null;
 
-  async function navigate(target: WorkflowNavigationTarget) {
+  function navigate(target: WorkflowNavigationTarget, discard = false) {
     if (busy) return;
-    if (hasUnsavedChanges && !window.confirm("Você tem alterações ainda não salvas nesta tela. Deseja sair sem salvá-las?")) return;
+    if (hasUnsavedChanges && !discard) { setLeaving(target); return; }
+    setLeaving(null);
+    router.push(workflowTargetUrl(projectId, target), { scroll: false });
+  }
+
+  useImperativeHandle(ref, () => ({ navigate }));
+
+  async function saveAndNavigate() {
+    if (!leaving || !onSave) return;
+    const target = leaving;
     setPendingTarget(target);
     setError(null);
     try {
-      const response = await fetch(`/api/projects/${projectId}/navigation`, {
-        body: JSON.stringify({ revision, target }),
-        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
-        method: "POST",
-      });
-      const payload = await response.json() as { error?: string; workflow?: ResearchWorkflow };
-      if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível abrir a etapa anterior.");
-      onWorkflow?.(payload.workflow);
-      router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
-      setPendingTarget(null);
-    } catch (navigationError) {
-      setError(navigationError instanceof Error ? navigationError.message : "Não foi possível abrir a etapa anterior.");
-      setPendingTarget(null);
-    }
+      const saved = await onSave();
+      if (!saved) { setError("Não foi possível salvar. Suas edições continuam nesta tela."); return; }
+      setLeaving(null);
+      router.push(workflowTargetUrl(projectId, target), { scroll: false });
+    } finally { setPendingTarget(null); }
   }
 
   return (
@@ -108,10 +121,10 @@ export function WorkflowProgress({
           const content = <><b>{step}</b><span>{item.label}</span></>;
           return (
             <li aria-current={step === current ? "step" : undefined} className={state} key={item.label}>
-              {step < current ? (
+              {step !== current ? (
                 <button
-                  aria-label={`Voltar para ${item.label}`}
-                  disabled={busy}
+                  aria-label={`Abrir ${item.label}`}
+                  disabled={busy || (availableSteps !== undefined && !availableSteps.includes(item.target!))}
                   onClick={() => void navigate(item.target)}
                   type="button"
                 >{content}</button>
@@ -134,10 +147,10 @@ export function WorkflowProgress({
               const content = <><b>{step}</b><span>{item.label}</span></>;
               return (
                 <li aria-current={isCurrent ? "step" : undefined} className={isCurrent ? "current" : isDone ? "done" : ""} key={item.label}>
-                  {isDone && item.target ? (
+                  {!isCurrent && item.target ? (
                     <button
-                      aria-label={`Voltar para ${item.label}`}
-                      disabled={busy}
+                      aria-label={`Abrir ${item.label}`}
+                      disabled={busy || (availableSteps !== undefined && !availableSteps.includes(item.target!))}
                       onClick={() => void navigate(item.target)}
                       type="button"
                     >{content}</button>
@@ -148,6 +161,13 @@ export function WorkflowProgress({
           </ol>
         </div>
       ) : null}
+      {leaving ? <div className="workflow-leave-dialog" ref={dialogRef} tabIndex={-1} role="dialog" aria-labelledby="leave-title">
+        <h3 id="leave-title">Salvar alterações antes de sair?</h3>
+        <p>Escolha o que fazer com as edições desta etapa.</p>
+        <button type="button" disabled={busy || !onSave} onClick={() => void saveAndNavigate()}>Salvar e abrir etapa</button>
+        <button type="button" disabled={busy} onClick={() => navigate(leaving, true)}>Descartar edições e abrir</button>
+        <button type="button" disabled={busy} onClick={() => setLeaving(null)}>Permanecer nesta etapa</button>
+      </div> : null}
       {error ? <p className="workflow-progress-error" role="alert">{error}</p> : null}
     </nav>
   );

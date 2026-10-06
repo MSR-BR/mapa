@@ -14,13 +14,14 @@ import {
   literatureExpansionText,
   withCitationMarkers,
 } from "./reference-citations";
-import { pendingAdvisorReview } from "./advisor-review";
+import { hasCurrentFinalApproval, pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
 import { getAnalyticsWorkflowPosition, getReferenceCountBucket, isWorkflowCompletionTransition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
+import { WorkflowHistory } from "./workflow-history";
 import { WorkflowProgress } from "./workflow-progress";
 import { workflowNavigationUrl } from "./workflow-navigation";
 
@@ -57,21 +58,21 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
   const warningFindings = finalMap.findings;
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const completeButtonLabel = workflow.state === "completed"
+  const completeButtonLabel = hasCurrentFinalApproval(workflow)
     ? "Projeto concluído"
     : waitingForAdvisor
       ? "Aguardando revisão"
       : isSelfDirectedProject
         ? "Validar etapa"
         : "Encerrar projeto";
-  const completionHelpText = workflow.state === "completed"
+  const completionHelpText = hasCurrentFinalApproval(workflow)
     ? "Este mapa já foi encerrado e pode ser exportado a qualquer momento."
     : waitingForAdvisor
       ? "A etapa foi enviada para revisão. O encerramento ficará disponível depois da validação."
       : isSelfDirectedProject
         ? "Revise a versão final e encerre o projeto quando estiver tudo certo."
         : "Revise a versão final e encerre o projeto para concluir o mapa.";
-  const exportSuffix = workflow.state === "completed" ? "" : "?draft=1";
+  const exportSuffix = hasCurrentFinalApproval(workflow) ? "" : "?draft=1";
 
   useEffect(() => {
     const analyticsPosition = getAnalyticsWorkflowPosition("final_map");
@@ -158,27 +159,28 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
           <h2 id="final-map-title">{finalMap.title?.approvedContent ?? finalMap.title?.proposedContent ?? "Mapa da proposta de pesquisa"}</h2>
           <p>A proposta abaixo reúne as etapas validadas e mostra a cadeia lógica entre problema, objetivos, capítulos, metodologia, resultados esperados e evidências.</p>
         </div>
-        <span className={`definition-origin ${workflow.state === "completed" ? "" : "user"}`}>{workflow.state === "completed" ? "Versão concluída" : "Em revisão final"}</span>
+        <span className={`definition-origin ${hasCurrentFinalApproval(workflow) ? "" : "user"}`}>{hasCurrentFinalApproval(workflow) ? "Versão concluída" : "Em revisão final"}</span>
       </div>
 
-      <WorkflowProgress current={4} currentStep="final_map" disabled={busy || waitingForAdvisor} onWorkflow={setWorkflow} projectId={projectId} revision={workflow.revision} />
+      <WorkflowProgress current={4} currentStep="final_map" disabled={busy} onWorkflow={setWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} />
+      <WorkflowHistory workflow={workflow} step={"final_map"} hasUnsavedChanges={false} onWorkflow={setWorkflow} />
 
       <div className="final-completion-panel" aria-labelledby="final-completion-title">
         <div className="final-completion-copy">
           <p className="section-kicker">Encerramento do projeto</p>
-          <strong id="final-completion-title">{workflow.state === "completed" ? "Mapa concluído" : "Quando terminar a revisão, encerre o projeto aqui"}</strong>
+          <strong id="final-completion-title">{hasCurrentFinalApproval(workflow) ? "Mapa concluído" : "Quando terminar a revisão, encerre o projeto aqui"}</strong>
           <span>{completionHelpText}</span>
         </div>
         <div className="final-map-actions">
           <button className="definition-button secondary" disabled={busy} onClick={() => void submit("review")} type="button">Revisar coerência</button>
-          <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap, { advisory: true }) || workflow.state === "completed"} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
+          <button aria-describedby="final-completion-title" className="definition-button primary" disabled={busy || waitingForAdvisor || !canCompleteFinalMap(finalMap, { advisory: true }) || hasCurrentFinalApproval(workflow)} onClick={() => void submit("complete")} type="button">{completeButtonLabel}</button>
         </div>
       </div>
       {isSelfDirectedProject ? null : <AdvisorReviewNotice projectId={projectId} workflow={workflow} />}
       <div className="final-export-panel" aria-label="Exportar mapa final">
         <div>
-          <strong>{workflow.state === "completed" ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>
-          <span>{workflow.state === "completed" ? "PDF e Word com referências cruzadas e avisos preservados." : "Os arquivos indicarão que o mapa ainda é rascunho e manterão bloqueios/avisos visíveis."}</span>
+          <strong>{hasCurrentFinalApproval(workflow) ? "Exportar versão concluída" : "Exportar rascunho identificado"}</strong>
+          <span>{hasCurrentFinalApproval(workflow) ? "PDF e Word com referências cruzadas e avisos preservados." : "Os arquivos indicarão que o mapa ainda é rascunho e manterão bloqueios/avisos visíveis."}</span>
         </div>
         <div>
         <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`} referenceCount={finalMap.references.length}>Exportar PDF</ExportPdfLink>

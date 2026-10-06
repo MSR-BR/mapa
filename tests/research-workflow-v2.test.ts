@@ -85,6 +85,8 @@ test("accepts the empty versioned workflow foundation", () => {
     coherenceFindings: [],
     discovery: null,
     elementVersions: [],
+    stepDrafts: {},
+    stepProposals: {},
     elements: [],
     knowledgeSuggestions: [],
     initialBriefing: null,
@@ -536,7 +538,7 @@ test("reconciles invalid AI methodology links with every real objective", () => 
   assert.equal(reconciled.some((row) => row.associatedTopicIds.includes(invalidTopicId)), false);
 });
 
-test("allows direct navigation only to an earlier workflow position", () => {
+test("allows existing positions without granting an uncreated future step", () => {
   const workflow = researchWorkflowSchema.parse({
     content: { ...EMPTY_WORKFLOW_CONTENT, activeStep: "development_topics" },
     ownerId: "16ba4d4e-bf5b-49d6-8f65-8a678103194b",
@@ -551,7 +553,7 @@ test("allows direct navigation only to an earlier workflow position", () => {
 
   assert.equal(workflowNavigationPosition(workflow), "development_topics");
   assert.equal(canNavigateToWorkflowTarget(workflow, "literature_topics"), true);
-  assert.equal(canNavigateToWorkflowTarget(workflow, "development_topics"), false);
+  assert.equal(canNavigateToWorkflowTarget(workflow, "development_topics"), true);
   assert.equal(canNavigateToWorkflowTarget(workflow, "methodology_matrix"), false);
   assert.deepEqual(workflowNavigationState("specific_objectives"), {
     activeStep: "specific_objectives",

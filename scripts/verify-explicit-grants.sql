@@ -14,16 +14,16 @@ begin
       and c.relname in (
         'projects', 'generation_jobs', 'research_structures',
         'research_workflows', 'user_profiles', 'legal_consents',
-        'bug_reports', 'user_profile_role_events'
+        'bug_reports', 'user_profile_role_events', 'workflow_versions'
       )
-  ) <> 8 then
+  ) <> 9 then
     raise exception 'owned_public_table_inventory_mismatch';
   end if;
 
   foreach table_name in array array[
     'projects', 'generation_jobs', 'research_structures',
     'research_workflows', 'user_profiles', 'legal_consents',
-    'bug_reports', 'user_profile_role_events'
+    'bug_reports', 'user_profile_role_events', 'workflow_versions'
   ] loop
     if not exists (
       select 1
@@ -201,9 +201,9 @@ begin
       and tablename in (
         'projects', 'generation_jobs', 'research_structures',
         'research_workflows', 'user_profiles', 'legal_consents',
-        'bug_reports', 'user_profile_role_events'
+        'bug_reports', 'user_profile_role_events', 'workflow_versions'
       )
-  ) <> 28 then
+  ) <> 29 then
     raise exception 'public_policy_inventory_mismatch';
   end if;
 

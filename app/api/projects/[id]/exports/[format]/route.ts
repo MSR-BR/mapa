@@ -1,3 +1,4 @@
+import { hasCurrentFinalApproval } from "@/modules/research-workflow/advisor-review";
 import { NextResponse } from "next/server";
 
 import { createDocxExport, createFinalMapDocxExport } from "@/modules/export/docx";
@@ -39,7 +40,7 @@ export async function GET(request: Request, context: { params: Promise<{ format:
     }
     const finalMap = buildFinalMap(workflow);
     const finalTitle = finalMap.title?.approvedContent?.trim() || finalMap.title?.proposedContent.trim() || project.title;
-    const completed = workflow.state === "completed";
+    const completed = hasCurrentFinalApproval(workflow);
     if (!completed && !draft) {
       return NextResponse.json({ error: "Conclua o mapa ou exporte como rascunho identificado." }, { status: 409 });
     }

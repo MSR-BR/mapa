@@ -26,7 +26,7 @@ export function mergeReferenceArchive(
     ...existing.filter((reference) => reference.source !== "manual"),
     ...previousDiscovery,
   ]);
-  return [...manual, ...other].slice(0, 100);
+  return [...manual, ...other];
 }
 
 function elementLabel(element: ValidatedElement) {
@@ -59,6 +59,7 @@ export function studentContextNotes(content: ResearchWorkflowContent) {
   const elementById = new Map(content.elements.map((element) => [element.id, element]));
   return [
     ...content.elements.flatMap((element) => {
+      if (element.status !== "validated") return [];
       const note = element.studentJustification?.trim();
       return note ? [`${elementLabel(element)}: ${note}`] : [];
     }),
@@ -66,10 +67,12 @@ export function studentContextNotes(content: ResearchWorkflowContent) {
       const note = detail.studentJustification?.trim();
       if (!note) return [];
       const topic = elementById.get(detail.topicId);
+      if (topic?.status !== "validated") return [];
       const chapter = detail.chapter === "literature" ? "Capítulo 2" : "Capítulo 4";
       return [`Justificativa do ${chapter} ${detail.order}${topic ? ` — ${topic.proposedContent}` : ""}: ${note}`];
     }),
     ...content.methodologyRows.flatMap((row) => {
+      if (row.status !== "validated") return [];
       const note = row.studentJustification?.trim();
       return note ? [`Justificativa da linha metodológica: ${note}`] : [];
     }),

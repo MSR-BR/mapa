@@ -118,7 +118,7 @@ test("sends the profile version on every role-sensitive mutation surface", () =>
     "modules/research-workflow/literature-development-workspace.tsx",
     "modules/research-workflow/methodology-workspace.tsx",
     "modules/research-workflow/final-map-workspace.tsx",
-    "modules/research-workflow/workflow-progress.tsx",
+    "modules/research-workflow/workflow-history.tsx",
     "modules/research-workflow/manual-reference-panel.tsx",
     "modules/research-workflow/advisor-review-notice.tsx",
     "modules/research-workflow/advisor-review-workspace.tsx",

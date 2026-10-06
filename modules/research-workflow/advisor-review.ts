@@ -129,3 +129,8 @@ export function workflowAdvisorStatus(workflow: ResearchWorkflow) {
     status: review.status,
   };
 }
+
+export function hasCurrentFinalApproval(workflow: ResearchWorkflow) {
+  return workflow.state === "completed" && !pendingAdvisorReview(workflow.content)
+    && workflow.content.elements.some((item) => item.type === "final_map" && item.status === "validated");
+}

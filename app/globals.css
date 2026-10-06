@@ -1133,3 +1133,17 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* C111: comparison and recovery remain usable at 320px. */
+.workflow-history { margin: 1rem 0; padding: 1rem; border: 1px solid #c4d8cf; border-radius: 12px; background: #f6faf8; color: #203d32; }
+.workflow-history-heading { display: flex; gap: 1rem; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.workflow-history button, .workflow-leave-dialog button { border: 1px solid #a8c4b7; border-radius: 8px; padding: .6rem .8rem; margin: .2rem; background: white; text-align: left; }
+.workflow-history button:disabled { opacity: .55; }
+.workflow-version-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+.workflow-version-columns > section { padding: .8rem; border: 1px solid #cfddd6; border-radius: 8px; min-width: 0; }
+.workflow-version-preview p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.workflow-version-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8rem; max-height: 20rem; overflow: auto; }
+.workflow-version-list { padding-left: 1.2rem; }
+.workflow-version-list button { width: 100%; overflow-wrap: anywhere; }
+.workflow-leave-dialog { background: white; padding: 1rem; border: 2px solid #267555; border-radius: 12px; margin-top: 1rem; }
+@media (max-width: 640px) { .workflow-version-columns { grid-template-columns: 1fr; } }

@@ -1,9 +1,10 @@
+import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
+import { workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import { reviewFinalMapCoherence } from "@/modules/generation/gemini";
-import { toJson } from "@/modules/generation/types";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import {
   authorizeProjectCapabilityResponse,
@@ -66,18 +67,6 @@ function replaceFinalMapFindings(content: ResearchWorkflowContent, findings: Coh
   });
 }
 
-function invalidateFinalMap(content: ResearchWorkflowContent) {
-  const finalMap = content.elements.find((item) => item.type === "final_map");
-  if (!finalMap || finalMap.status === "stale") return content;
-  return researchWorkflowContentSchema.parse({
-    ...content,
-    elementVersions: archive([finalMap], content.elementVersions),
-    elements: content.elements.map((item) => item.id === finalMap.id
-      ? { ...item, approvedContent: null, revision: item.revision + 1, status: "stale", updatedBy: "system" }
-      : item),
-  });
-}
-
 function upsertFinalMap(content: ResearchWorkflowContent, summary: string, sourceRevision: number) {
   const existing = content.elements.find((item) => item.type === "final_map");
   const next: ValidatedElement = {
@@ -126,27 +115,7 @@ function targetState(targetStep: TargetStep) {
   return states[targetStep];
 }
 
-async function saveWorkflow(
-  workflow: ResearchWorkflow,
-  content: ResearchWorkflowContent,
-  state: ResearchWorkflow["state"],
-  stableState: ResearchWorkflow["stableState"],
-  sourceRevision: number,
-  supabase: AuthorizedProjectContext["supabase"],
-  ownerId: string,
-) {
-  const revision = workflow.revision + 1;
-  const updatedAt = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("research_workflows")
-    .update({ content: toJson(content), revision, source_revision: sourceRevision, stable_state: stableState, state, updated_at: updatedAt })
-    .eq("project_id", workflow.projectId)
-    .eq("owner_id", ownerId)
-    .eq("revision", workflow.revision)
-    .select("updated_at")
-    .maybeSingle();
-  return error || !data ? null : { ...workflow, content, revision, sourceRevision, stableState, state, updatedAt: data.updated_at };
-}
+
 
 async function aiFindingsWithFallback(workflow: ResearchWorkflow) {
   const finalMap = buildFinalMap(workflow);
@@ -167,11 +136,24 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const { actor, supabase, userId } = access.value;
   const claims = actor.claims;
   const isSelfDirectedProject = access.value.project.authoring_role === "advisor";
-  const workflow = await loadResearchWorkflow(supabase, userId, id);
+  const editAction = parsed.data.action;
+  const editStep = "final_map" as const;
+  const baseWorkflow = await loadResearchWorkflow(supabase, userId, id);
+  const workflow = baseWorkflow ? { ...baseWorkflow, content: contentWithDraft(baseWorkflow, "final_map") } : null;
+async function saveWorkflow(
+  _workflow: ResearchWorkflow,
+  content: ResearchWorkflowContent,
+  state: ResearchWorkflow["state"],
+  stableState: ResearchWorkflow["stableState"],
+  sourceRevision: number,
+  supabase: AuthorizedProjectContext["supabase"],
+) {
+  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction });
+}
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (!isSelfDirectedProject && parsed.data.action === "complete" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && parsed.data.action !== "go_to" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
@@ -192,13 +174,8 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
 
   if (parsed.data.action === "go_to") {
     if (!parsed.data.targetStep) return NextResponse.json({ error: "Etapa de destino inválida." }, { status: 400 });
-    const target = targetState(parsed.data.targetStep);
-    const content = invalidateFinalMap(researchWorkflowContentSchema.parse({
-      ...workflow.content,
-      activeStep: target.activeStep,
-    }));
-    const saved = await saveWorkflow(workflow, content, target.state, target.stableState, workflow.sourceRevision, supabase, userId);
-    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    const target = targetState(parsed.data.targetStep).activeStep ?? "problem_statement";
+    return NextResponse.json({ workflow: workflowForView(baseWorkflow!, target) });
   }
 
   const deterministicMap = buildFinalMap(workflow);
@@ -208,12 +185,12 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const finalMap = buildFinalMap(nextWorkflow);
 
   if (parsed.data.action === "review") {
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
     return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
   if (!canCompleteFinalMap(finalMap, { advisory: true })) {
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
     return saved
       ? NextResponse.json({ errors: finalMap.findings.filter((finding) => finding.severity === "blocking").map((finding) => finding.message), workflow: saved }, { status: 422 })
       : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
@@ -250,7 +227,6 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     shouldWaitForAdvisor ? workflow.stableState : "completed",
     sourceRevision,
     supabase,
-    userId,
   );
   const submittedReview = shouldWaitForAdvisor ? pendingAdvisorReview(content) : null;
   if (saved && submittedReview) {

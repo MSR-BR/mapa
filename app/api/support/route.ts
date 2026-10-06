@@ -9,7 +9,7 @@ const supportSchema = z.object({
   subject: z.string().trim().min(3).max(180),
 });
 
-export const SUPPORT_RECIPIENTS = [
+const SUPPORT_RECIPIENTS = [
   "marioreis@id.uff.br",
   "sfranca@id.uff.br",
 ] as const;

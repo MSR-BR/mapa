@@ -1,9 +1,10 @@
+import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
+import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import { generateMethodologyPlan } from "@/modules/generation/gemini";
-import { toJson } from "@/modules/generation/types";
 import { claimEmail, loadProjectAdvisorEmail } from "@/modules/projects/advisor";
 import {
   authorizeProjectCapabilityResponse,
@@ -293,27 +294,7 @@ function validateContext(workflow: ResearchWorkflow) {
   return { development, discovery, general, literature, problem, specifics };
 }
 
-async function saveWorkflow(
-  workflow: ResearchWorkflow,
-  content: ResearchWorkflowContent,
-  state: ResearchWorkflow["state"],
-  stableState: ResearchWorkflow["stableState"],
-  sourceRevision: number,
-  supabase: AuthorizedProjectContext["supabase"],
-  ownerId: string,
-) {
-  const revision = workflow.revision + 1;
-  const updatedAt = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("research_workflows")
-    .update({ content: toJson(content), revision, source_revision: sourceRevision, stable_state: stableState, state, updated_at: updatedAt })
-    .eq("project_id", workflow.projectId)
-    .eq("owner_id", ownerId)
-    .eq("revision", workflow.revision)
-    .select("updated_at")
-    .maybeSingle();
-  return error || !data ? null : { ...workflow, content, revision, sourceRevision, stableState, state, updatedAt: data.updated_at };
-}
+
 
 function validationFindings(
   content: ResearchWorkflowContent,
@@ -404,19 +385,29 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const { actor, supabase, userId } = access.value;
   const claims = actor.claims;
   const isSelfDirectedProject = access.value.project.authoring_role === "advisor";
-  const workflow = await loadResearchWorkflow(supabase, userId, id);
+  const editAction = parsed.data.action;
+  const editStep = "methodology_matrix" as const;
+  const baseWorkflow = await loadResearchWorkflow(supabase, userId, id);
+  const workflow = baseWorkflow ? { ...baseWorkflow, content: contentWithDraft(baseWorkflow, "methodology_matrix") } : null;
+async function saveWorkflow(
+  _workflow: ResearchWorkflow,
+  content: ResearchWorkflowContent,
+  state: ResearchWorkflow["state"],
+  stableState: ResearchWorkflow["stableState"],
+  sourceRevision: number,
+  supabase: AuthorizedProjectContext["supabase"],
+) {
+  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction });
+}
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
   const { action } = parsed.data;
-  if (!isSelfDirectedProject && action === "validate" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && action !== "back" && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
   }
-  if (
-    workflow.state !== "validating_methodology"
-    || (workflow.content.activeStep !== "methodology_matrix" && !(action === "initialize" && workflow.content.activeStep === null))
-  ) {
-    return NextResponse.json({ error: "Esta não é a etapa metodológica ativa." }, { status: 409 });
+  if (!canNavigateToWorkflowTarget(workflow, "methodology_matrix")) {
+    return NextResponse.json({ error: "A metodologia ainda não está disponível." }, { status: 409 });
   }
   const advisorGate = action === "validate"
     ? projectAdvisorGate({
@@ -438,15 +429,13 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
   const allowedTopicIds = new Set([...context.literature, ...context.development].map((topic) => topic.id));
 
   if (action === "back") {
-    const content = researchWorkflowContentSchema.parse({ ...workflow.content, activeStep: "development_topics" });
-    const saved = await saveWorkflow(workflow, content, "validating_development", "validating_development", workflow.sourceRevision, supabase, userId);
-    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    return NextResponse.json({ workflow: workflowForView(baseWorkflow!, "development_topics") });
   }
 
   if (action === "initialize" && planFromContent(workflow.content)) {
     const content = reconcileTopicLinks(workflow.content);
     if (content === workflow.content) return NextResponse.json({ workflow });
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
     return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
@@ -541,7 +530,7 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
       ...content,
       coherenceFindings: validationFindings(content, [], warnings),
     });
-    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase, userId);
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
     const message = action === "save" ? "Rascunho metodológico salvo." : action === "regenerate" ? "Nova sugestão metodológica criada." : undefined;
     return saved ? NextResponse.json({ message, workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
@@ -588,7 +577,6 @@ export async function POST(request: Request, routeContext: { params: Promise<{ i
     shouldWaitForAdvisor ? workflow.stableState : "reviewing_map",
     sourceRevision,
     supabase,
-    userId,
   );
   if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
 

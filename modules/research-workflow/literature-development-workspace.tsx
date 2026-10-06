@@ -12,8 +12,9 @@ import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
 import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
-import { WorkflowProgress } from "./workflow-progress";
-import { workflowNavigationUrl } from "./workflow-navigation";
+import { WorkflowHistory } from "./workflow-history";
+import { WorkflowProgress, type WorkflowProgressHandle } from "./workflow-progress";
+import { workflowForView, workflowNavigationUrl } from "./workflow-navigation";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isSelfDirectedProject?: boolean; projectId: string };
@@ -53,6 +54,7 @@ function validatedGeneralObjective(workflow: ResearchWorkflow) {
 
 export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
@@ -64,7 +66,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const [errors, setErrors] = useState<string[]>([]);
   const [showOptimize, setShowOptimize] = useState(false);
   const [keywords, setKeywords] = useState(() => initialWorkflow.content.discovery?.interpreted.keywords.join(", ") ?? "");
-  const initialized = useRef(false);
   const discovery = workflow.content.discovery;
   const specifics = workflow.content.elements.filter((element) => element.type === "specific_objective" && element.status === "validated");
   const generalObjective = validatedGeneralObjective(workflow);
@@ -89,8 +90,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_has_advisor: "unknown" });
   }, [activeRole, chapter]);
 
-  function applyWorkflow(next: ResearchWorkflow) {
+  function applyWorkflow(received: ResearchWorkflow) {
+    const next = received.navigation ? received : workflowForView(received, chapter === "development" ? "development_topics" : "literature_topics");
     setWorkflow(next);
+    if (!received.navigation && changed) return;
     const nextChapter: Chapter = next.content.activeStep === "development_topics" ? "development" : "literature";
     setTopics(readTopics(next, nextChapter));
     setKeywords(next.content.discovery?.interpreted.keywords.join(", ") ?? "");
@@ -102,8 +105,10 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
 
   async function submit(action: Exclude<Operation, null>, extra: Record<string, unknown> = {}) {
     if (busy) return;
-    if (action === "regenerate" && changed && !window.confirm("A nova sugestão substituirá suas edições atuais. Deseja continuar?")) return;
-    if (action === "optimize" && changed && !window.confirm("A otimização buscará nova literatura e substituirá os tópicos atuais após sucesso. Deseja continuar?")) return;
+    if ((action === "regenerate" || action === "optimize") && changed) {
+      setMessage("Salve o rascunho antes de solicitar uma proposta à IA. Suas edições permanecem nesta tela.");
+      return false;
+    }
     setOperation(action);
     setMessage(null);
     setErrors([]);
@@ -142,24 +147,18 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
-      } else {
-        router.refresh();
       }
+      return true;
     } catch (error) {
       trackAnalyticsEvent(action === "optimize" ? "literature_optimization_failed" : "stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
+      return false;
     } finally {
       setOperation(null);
     }
   }
 
-  useEffect(() => {
-    if (initialized.current || initialWorkflow.state !== "validating_literature" || readTopics(initialWorkflow, "literature").length >= 3) return;
-    initialized.current = true;
-    void submit("initialize");
-    // Inicialização única ao entrar na Etapa 4.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   function updateTopic(id: string, update: Partial<ChapterTopicInput>) {
     setTopics((current) => current.map((topic) => topic.id === id ? { ...topic, ...update } : topic));
@@ -212,7 +211,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   if (workflow.state === "validating_methodology" && workflow.content.activeStep === null) {
     return (
       <section className="definition-complete">
-        <WorkflowProgress current={3} currentStep="development_topics" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <WorkflowProgress ref={progressRef} current={3} currentStep="development_topics" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
         <p className="section-kicker">Etapa 3/4 validada</p>
         <h2>Capítulos 2 e 4 consolidados</h2>
         <div className="chapter-complete-grid">
@@ -228,13 +227,15 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const visibleStepLabel = chapter === "literature" ? "Passo 1/2 · Etapa 3/4" : "Passo 2/2 · Etapa 3/4";
   return (
     <section className="chapter-planning" aria-labelledby="chapter-planning-title">
+      {topics.length === 0 ? <button className="button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("initialize")} type="button">Gerar sugestão inicial desta etapa</button> : null}
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">{visibleStepLabel}</p><h2>{operation === "optimize" ? "Buscando nova literatura verificável…" : "Organizando tópicos e cobertura…"}</h2></div>
         </div>
       ) : null}
 
-      <WorkflowProgress current={3} currentStep={workflow.content.activeStep ?? "development_topics"} disabled={busy || waitingForAdvisor} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+      <WorkflowProgress ref={progressRef} current={3} currentStep={workflow.content.activeStep ?? "development_topics"} disabled={busy} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
+      <WorkflowHistory workflow={workflow} step={chapter === "literature" ? "literature_topics" : "development_topics"} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} />
 
       <div className="definition-heading">
         <div><p className="section-kicker">{visibleStepLabel} · Capítulo {chapterNumber}</p><h2 id="chapter-planning-title">{chapter === "literature" ? "Revisão da Literatura" : "Desenvolvimento / Estudo de Caso"}</h2><p>{chapter === "literature" ? "Organize a fundamentação teórica e indique quais objetivos cada tópico sustenta." : "Organize os tópicos que operacionalizam os objetivos e completam a cobertura da pesquisa."}</p></div>
@@ -341,7 +342,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       ) : null}
 
       <div className="definition-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
+        <button className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.navigate(chapter === "development" ? "literature_topics" : "specific_objectives")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
         <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
             <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>

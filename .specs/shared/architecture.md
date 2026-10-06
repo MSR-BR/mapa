@@ -180,3 +180,8 @@ Esta árvore é planejada, não implementada. Pastas serão criadas apenas quand
 - Supabase do Mapa da Pesquisa: Project Ref `aeaweherkrqmlqnxsmib`.
 - Research Starter: Project Ref `ygmzwfatdbyxvpbuusmy` (fora do escopo e proibido para operações deste repositório).
 - A conexão MCP do Mapa deve permanecer limitada pelo parâmetro `project_ref`.
+
+
+## 14. Evolução C111 — contexto e histórico (06/10/2026)
+
+A exclusão de histórico do MVP foi superada pela autorização explícita da C111. A posição de leitura vive na URL e não altera progresso acadêmico. O JSON corrente mantém conteúdo vigente, rascunhos e propostas; workflow_versions armazena unidades imutáveis com RLS, paginação, revisão e origem de contexto. Trigger registra histórico na mesma transação do UPDATE com compare-and-swap. Rascunhos não entram implicitamente no contexto vigente; alterações confirmadas sinalizam dependências preservadas. Aluno mantém a validação obrigatória pelo Orientador e submissão congelada. Detalhes de capacidade e rollback constam nas notas C111.

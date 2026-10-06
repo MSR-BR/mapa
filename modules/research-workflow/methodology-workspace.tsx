@@ -11,8 +11,9 @@ import { AiGuidanceField } from "./ai-guidance-field";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import type { ChapterTopicInput } from "./chapter-validation";
 import { FINAL_TITLE_MAX_LENGTH, FINAL_TITLE_RECOMMENDED_LENGTH, methodologyCompatibilityWarnings, type MethodologyPlanInput } from "./methodology-validation";
-import { WorkflowProgress } from "./workflow-progress";
-import { workflowNavigationUrl } from "./workflow-navigation";
+import { WorkflowHistory } from "./workflow-history";
+import { WorkflowProgress, type WorkflowProgressHandle } from "./workflow-progress";
+import { workflowForView, workflowNavigationUrl } from "./workflow-navigation";
 import { reconcileTopicLinks } from "./topic-integrity";
 import type { ResearchWorkflow } from "./schema";
 
@@ -160,6 +161,7 @@ function methodologyMessageText(message: string) {
 
 export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const router = useRouter();
+  const progressRef = useRef<WorkflowProgressHandle>(null);
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [title, setTitle] = useState(() => findTitle(initialWorkflow));
@@ -175,7 +177,6 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
-  const initialized = useRef(false);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
   const validateButtonLabel = "Validar etapa";
@@ -232,8 +233,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
     trackAnalyticsEvent("stage_started", { ...analyticsPosition, app_role: activeRole, app_has_advisor: "unknown" });
   }, [activeRole]);
 
-  function applyWorkflow(next: ResearchWorkflow) {
+  function applyWorkflow(received: ResearchWorkflow) {
+    const next = received.navigation ? received : workflowForView(received, "methodology_matrix");
     setWorkflow(next);
+    if (!received.navigation && changed) return;
     const nextClassification = classificationDraft(next);
     setTitle(findTitle(next));
     setClassification(nextClassification);
@@ -272,7 +275,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
 
   async function submit(action: Exclude<Operation, null>) {
     if (busy) return;
-    if (action === "regenerate" && changed && !window.confirm("A nova sugestão substituirá suas edições atuais. Deseja continuar?")) return;
+    if ((action === "regenerate") && changed) {
+      setMessage("Salve o rascunho antes de solicitar uma proposta à IA. Suas edições permanecem nesta tela.");
+      return false;
+    }
     setOperation(action);
     setMessage(null);
     setErrors([]);
@@ -309,24 +315,18 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
-      } else {
-        router.refresh();
       }
+      return true;
     } catch (error) {
       trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a metodologia.");
+      return false;
     } finally {
       setOperation(null);
     }
   }
 
-  useEffect(() => {
-    if (initialized.current || initialWorkflow.state !== "validating_methodology" || initialWorkflow.content.methodologyRows.length > 0) return;
-    initialized.current = true;
-    void submit("initialize");
-    // Inicialização única ao entrar na etapa de metodologia (4 na navegação visível).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   useEffect(() => {
     if (!openHelp) return;
@@ -411,7 +411,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   if (workflow.state === "reviewing_map") {
     return (
       <section className="definition-complete methodology-complete">
-        <WorkflowProgress current={4} currentStep="final_map" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+        <WorkflowProgress ref={progressRef} current={4} currentStep="final_map" onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
         <p className="section-kicker">Passo 1/2 · Etapa 4/4 validado</p>
         <h2>Matriz metodológica consolidada</h2>
         <div className="definition-summary">
@@ -426,6 +426,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
 
   return (
     <section className="methodology-workspace" aria-labelledby="methodology-title" onChange={clearValidationErrors} onInput={clearValidationErrors}>
+      {rows.length === 0 ? <button className="button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("initialize")} type="button">Gerar sugestão inicial desta etapa</button> : null}
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card">
@@ -436,7 +437,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         </div>
       ) : null}
 
-      <WorkflowProgress current={4} currentStep="methodology_matrix" disabled={busy || waitingForAdvisor} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} />
+      <WorkflowProgress ref={progressRef} current={4} currentStep="methodology_matrix" disabled={busy} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
+      <WorkflowHistory workflow={workflow} step={"methodology_matrix"} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} />
 
       <div className="definition-heading">
         <div>
@@ -543,7 +545,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       <p className="proposal-next-step">Depois de validar esta etapa, a página final exibirá o painel <strong>Encerramento do projeto</strong>, onde você poderá revisar a coerência e encerrar o mapa.</p>
 
       <div className="definition-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("back")} type="button">Voltar</button>
+        <button className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.navigate("development_topics")} type="button">Voltar</button>
         <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
         <button className="definition-button secondary" disabled={busy || !changed || rows.length === 0} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
         <button aria-describedby={rows.length === 0 ? "methodology-empty-explanation" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || rows.length === 0} onClick={() => void submit("validate")} type="button">{rows.length === 0 ? "Matriz necessária para validar" : validateButtonLabel}</button>
