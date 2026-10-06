@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { hasPublicCampaignAttribution } from "../modules/analytics/campaign-attribution";
+
 import {
   ANALYTICS_CONSENT_KEY,
   ADS_CONSENT_KEY,
@@ -89,6 +91,20 @@ test("page URLs strip project IDs and private parameters but preserve safe publi
     safeAnalyticsPageLocation("https://mapadapesquisa.com.br/?utm_source=google&utm_medium=cpc&utm_campaign=mapa_launch&gclid=AbC123&email=a%40b.com"),
     "https://mapadapesquisa.com.br/?utm_source=google&utm_medium=cpc&utm_campaign=mapa_launch&gclid=AbC123",
   );
+});
+
+test("authenticated campaign entries stay public using the same values admitted to measurement", () => {
+  for (const key of ["utm_source", "gclid", "gbraid", "wbraid"]) {
+    const params = { [key]: "Google_Ads-123" };
+    assert.equal(hasPublicCampaignAttribution(params), true);
+    const href = `https://mapadapesquisa.com.br/?${new URLSearchParams(params)}`;
+    assert.equal(safeAnalyticsPageLocation(href), href);
+  }
+  for (const params of [{}, { next: "/dashboard" }, { utm_content: "rsa" }, { utm_source: "" }, { utm_source: "private@example.com" }, { utm_source: "a".repeat(251) }, { utm_source: ["google", "email"] }]) {
+    assert.equal(hasPublicCampaignAttribution(params), false);
+  }
+  assert.equal(safeAnalyticsPageLocation("https://mapadapesquisa.com.br/?utm_source=google&utm_source=email&gclid=private%40example.com"), "https://mapadapesquisa.com.br/");
+  assert.equal(safeAnalyticsPageLocation("https://mapadapesquisa.com.br/dashboard?utm_source=google&gclid=Google_Ads-123"), "https://mapadapesquisa.com.br/dashboard");
 });
 
 test("Consent Mode v2 grants only separately chosen advertising signals", () => {

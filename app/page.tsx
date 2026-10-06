@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { hasPublicCampaignAttribution, type PublicSearchParams } from "@/modules/analytics/campaign-attribution";
 import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
 import { PublicStartForm } from "@/modules/projects/public-start-form";
@@ -84,15 +85,17 @@ function safeOAuthDestination(value: string | undefined) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/dashboard?resume=1";
 }
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ code?: string; next?: string }> }) {
-  const { code, next } = await searchParams;
-  if (code) {
-    redirect(`/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(safeOAuthDestination(next))}`);
+export default async function Home({ searchParams }: { searchParams: Promise<PublicSearchParams> }) {
+  const params = await searchParams;
+  const { code, next } = params;
+  if (typeof code === "string" && code) {
+    redirect(`/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(safeOAuthDestination(typeof next === "string" ? next : undefined))}`);
   }
 
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
-  if (data?.claims?.sub) redirect("/dashboard?continue=1");
+  const authenticated = Boolean(data?.claims?.sub);
+  if (authenticated && !hasPublicCampaignAttribution(params)) redirect("/dashboard?continue=1");
 
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 
@@ -103,7 +106,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         <Link className="landing-brand" href="/" aria-label="Mapa da Pesquisa">
           <BrandLogo variant="wordmark" priority />
         </Link>
-        <Link className="landing-login" href="/login">Entrar</Link>
+        <Link className="landing-login" href={authenticated ? "/dashboard" : "/login"}>{authenticated ? "Meus projetos" : "Entrar"}</Link>
       </header>
 
       <section className="landing-hero" aria-labelledby="landing-title">
@@ -131,7 +134,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           <p>Escolha o modo que combina com o estágio da sua ideia. O rascunho fica preservado ao entrar com o Google.</p>
         </div>
         <div className="landing-start-form">
-          <PublicStartForm />
+          <PublicStartForm authenticated={authenticated} />
         </div>
       </section>
 

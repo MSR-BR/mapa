@@ -44,7 +44,7 @@ test("requests login only after the public central execution", async () => {
     readProjectFile("modules/profile/storage.ts"),
   ]);
 
-  assert.match(home, /href="\/login"/);
+  assert.match(home, /href=\{authenticated \? "\/dashboard" : "\/login"\}/);
   assert.match(publicStart, /localStorage\.setItem/);
   assert.match(publicStart, /savedAt: Date\.now\(\)/);
   assert.match(publicStart, /login\?next=/);

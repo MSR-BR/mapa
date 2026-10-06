@@ -1,5 +1,7 @@
 "use client";
 
+import { isSafeCampaignValue, PUBLIC_CAMPAIGN_KEYS } from "./campaign-attribution";
+
 /**
  * The analytics contract is deliberately small. Values are allow-listed
  * before they reach GA4 so prompts, project titles, e-mails and provider
@@ -80,9 +82,9 @@ export function safeAnalyticsPageLocation(href: string): string {
   const path = url.pathname.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "project");
   const safe = new URL(path, url.origin);
   if (path === "/") {
-    for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "gclid", "gbraid", "wbraid"]) {
-      const value = url.searchParams.get(key);
-      if (value && /^[a-zA-Z0-9_-]{1,250}$/.test(value)) safe.searchParams.set(key, value);
+    for (const key of PUBLIC_CAMPAIGN_KEYS) {
+      const values = url.searchParams.getAll(key);
+      if (values.length === 1 && isSafeCampaignValue(values[0])) safe.searchParams.set(key, values[0]);
     }
   }
   return safe.toString();

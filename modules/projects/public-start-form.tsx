@@ -11,7 +11,7 @@ import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
 
-export function PublicStartForm() {
+export function PublicStartForm({ authenticated = false }: { authenticated?: boolean }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const quickSuggestionContinuePending = useRef(false);
@@ -87,7 +87,7 @@ export function PublicStartForm() {
     }
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";
     const productType = (intake.researchType || "unknown") as AnalyticsProductType;
-    setAnalyticsContext({ app_auth_state: "anonymous", app_role: "unknown", app_surface: "home", app_entry_mode: entryMode, app_product_type: productType });
+    setAnalyticsContext({ app_auth_state: authenticated ? "authenticated" : "anonymous", app_role: "unknown", app_surface: "home", app_entry_mode: entryMode, app_product_type: productType });
     try {
       localStorage.setItem(PENDING_PROJECT_KEY, JSON.stringify(mode === "quick"
         ? { mode, prompt, savedAt: Date.now() }
@@ -96,9 +96,9 @@ export function PublicStartForm() {
       setError("Não foi possível guardar o rascunho neste navegador. Verifique as permissões de armazenamento e tente novamente.");
       return;
     }
-    trackAnalyticsEvent("login_started", { app_surface: "home" });
+    if (!authenticated) trackAnalyticsEvent("login_started", { app_surface: "home" });
     setContinuing(true);
-    router.push("/login?next=%2Fdashboard%3Fresume%3D1");
+    router.push(authenticated ? "/dashboard?resume=1" : "/login?next=%2Fdashboard%3Fresume%3D1");
   }
 
   return (
