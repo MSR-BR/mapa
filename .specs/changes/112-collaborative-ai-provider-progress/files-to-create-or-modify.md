@@ -11,4 +11,4 @@
 - Testes de adaptadores, falhas, cancelamento, concorrência, streaming, orçamento PostgreSQL e UI Chromium/WebKit.
 - Documentação C112 e linhas correspondentes do roadmap.
 
-A chave permanece somente em `.env.local`, ignorado pelo Git. Nenhuma configuração remota, migration remota ou publicação C112 foi realizada até este registro.
+A chave permanece somente em `.env.local`, ignorado pelo Git. Configuração remota, migration 21 e publicação v06102026.4 registradas no CPD. A chave também está como Secret de produção exclusivo do Mapa na Vercel.

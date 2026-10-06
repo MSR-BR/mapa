@@ -1,14 +1,14 @@
 # Change 112 — Gemini e GPT colaborativos, recuperação e progresso real
 
-Status: **implementação local em 06/10/2026; avaliação paga e rollout pendentes do teto mensal**.
+Status: **concluída e publicada em 06/10/2026 — v06102026.4, teto adicional de US$5/mês**.
 
 ## Objetivo e autorização
 
 Adicionar OpenAI/GPT ao Mapa como provedor complementar ao Gemini: recuperação de falhas elegíveis, revisão de conteúdos importantes e análise do impacto de alterações anteriores. A caixa azul deve mostrar qual IA está efetivamente trabalhando e em qual função.
 
-O responsável pediu a criação desta Change, incluindo identificação de GPT/Gemini na caixa azul. Depois da especificação, autorizou executar a próxima Change e forneceu a chave OpenAI. A implementação local está descrita em notes.md; nenhuma chamada paga ou publicação C112 foi feita nesta rodada.
+O responsável pediu a criação desta Change, incluindo identificação de GPT/Gemini na caixa azul. Depois da especificação, autorizou executar a próxima Change e forneceu a chave OpenAI. Autorizou depois o teto de US$5/mês. Avaliação real, migration, configuração e rollout foram concluídos; evidências em cpd-2026-10-06.md.
 
-## Base verificada
+## Base verificada antes da implementação
 
 - `modules/generation/gemini.ts` centraliza a geração atual com `ai`, `@ai-sdk/google`, schemas e validações de referências; as rotas chamam funções vinculadas ao Gemini.
 - C101 já mede operações Gemini com dados sanitizados; essa observabilidade deve ser preservada e ampliada aos dois provedores.

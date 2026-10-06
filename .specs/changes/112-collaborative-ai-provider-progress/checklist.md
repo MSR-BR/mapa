@@ -9,5 +9,5 @@
 - [x] Protocolo de avaliação definido antes de consumo.
 - [x] Teto mensal de US$5 autorizado; organização validada por header da API e projeto identificado na captura do responsável.
 - [x] Ensaio pago com qualidade, tokens, custo e latência registrados; 18 chamadas, 17 concluídas.
-- [ ] Configuração e migration remotas; rollout gradual.
-- [ ] CPD e smoke final de produção.
+- [x] Configuração e migration remotas; rollout gradual em dois deployments.
+- [x] CPD e smoke final de produção, incluindo Gemini → GPT, preservação do contexto e contador real.

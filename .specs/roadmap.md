@@ -104,7 +104,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 106 | Contexto acadêmico e pedidos pontuais à IA | Concluída | Contexto persistente separado de pedido usado uma vez na regeneração, com ⓘ, placeholders sem exemplos, 156 testes, UI Chromium/WebKit desktop/mobile e produção final `v01102026.3` homologada; E2E autenticado real não executado. |
 | 107 | Cards responsivos de objetivos | Concluída | Objetivo geral e OEs separados, ações no rodapé, 28 cenários de layout Chromium/WebKit e 156 testes aprovados; produção `v01102026.4`, health/CSS/login e bloqueios 401/403 confirmados. |
 | 111 | Navegação livre, contexto versionado e histórico eficiente | Concluída / v06102026.3 | Abrir etapas existentes sem invalidar conteúdo; rascunho separado da versão vigente, dependências sinalizadas, histórico/restauração sob demanda e consumo Supabase medido. Preservar aprovação do Orientador. [Spec](changes/111-free-navigation-versioned-context/spec.md). |
-| 112 | Gemini e GPT colaborativos e progresso real | Implementada localmente / avaliação e rollout pendentes | Adaptadores, fallback limitado, revisão complementar com aceite humano e caixa azul identificando Gemini/GPT conforme execução real. 197 testes locais; chave válida. Aguarda teto mensal, avaliação real e publicação. [Spec](changes/112-collaborative-ai-provider-progress/spec.md). |
+| 112 | Gemini e GPT colaborativos e progresso real | Concluída / v06102026.4 | GPT complementar ao Gemini, fallback limitado, revisão orientativa e progresso real. Teto adicional de US$5/mês com bloqueio; 197 testes e fluxo autenticado Gemini→GPT comprovados. [CPD](changes/112-collaborative-ai-provider-progress/cpd-2026-10-06.md). |
 
 ## Marcos
 
@@ -126,7 +126,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 - Domínio raiz funcional na Vercel com DNS externo revalidado em 17/09/2026; a C88 adotou formalmente a estratégia de manter o provedor atual.
 - Banco e Auth: Supabase/PostgreSQL confirmado no projeto `aeaweherkrqmlqnxsmib`.
 - Provedor de IA: Gemini 3.6 Flash confirmado na conta já paga pelo responsável, com GEMINI_MODEL como override opcional.
-- OpenAI/GPT: integração complementar C112 implementada localmente, com chave própria do Mapa aceita pela API; avaliação paga e ativação aguardam teto mensal.
+- OpenAI/GPT: ativo na C112 com projeto/chave próprios do Mapa, GPT-6 Luna complementar e teto adicional de US$5/mês; Gemini 3.6 Flash permanece inicial.
 - Contrato do Research Starter: v1 integrado exclusivamente pelo backend.
 - Custos, privacidade, retenção, termos e responsável pelo tratamento devem continuar monitorados durante o rollout do v2.
 
@@ -136,7 +136,7 @@ O Mapa da Pesquisa v2 substitui a geração monolítica por descoberta assistida
 
 ## Sequência das Changes especificadas
 
-C111 foi autorizada para execução completa e publicada em 06/10/2026. C112 foi autorizada e implementada localmente; avaliação paga e publicação aguardam teto mensal. O piloto Google Ads segue separado.
+C111 e C112 foram autorizadas, implementadas e publicadas em 06/10/2026, respectivamente v06102026.3 e v06102026.4. O piloto Google Ads segue separado.
 
 ## Fora do roadmap atual
 

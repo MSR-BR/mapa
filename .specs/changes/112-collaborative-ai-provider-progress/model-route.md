@@ -9,6 +9,6 @@ ACTUAL_REASONING: não registrado pela ferramenta
 TOKENS: não medidos
 LATENCY: não medida
 COST: não medido
-EVIDENCE_SOURCE: código, testes, PostgreSQL e navegadores locais; GET /v1/models autenticado. Nenhuma inferência paga.
+EVIDENCE_SOURCE: código, testes, PostgreSQL, UI e métricas reais dos provedores; avaliação e smoke de produção documentados no CPD.
 
-Os modelos do produto Gemini/GPT serão selecionados na execução e registrados separadamente desta rota de desenvolvimento.
+Modelos do produto: Gemini 3.6 Flash inicial, GPT-6 Luna complementar, registrados na avaliação real separadamente desta rota de desenvolvimento.

@@ -2,7 +2,7 @@
 
 ## Autorização e estado
 
-O responsável autorizou a próxima Change depois da C111 e criou/salvou uma chave OpenAI exclusiva para o Mapa. Reutilização local autorizada; não imprimir chave nem criar outra. Implementação local e verificações sem consumo concluídas nesta rodada. Teto mensal adicional solicitado por pergunta assíncrona; sem resposta até este registro. Nenhum consumo pago, configuração remota, migration remota ou deploy C112 foi executado.
+O responsável autorizou a próxima Change depois da C111 e criou/salvou uma chave OpenAI exclusiva para o Mapa. Reutilização local autorizada; não imprimir chave nem criar outra. Depois, autorizou “usd 5”: teto adicional de US$5/mês, testes incluídos. Avaliação real concluída, limite aplicado no Supabase, segredos exclusivos configurados na Vercel e v06102026.4 publicada. Evidências no CPD.
 
 ## Contrato e políticas
 
@@ -34,4 +34,4 @@ Fontes: [OpenAI GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-
 
 Flags server-side padrão false: MAPA_OPENAI_ENABLED e MAPA_AI_CROSS_REVIEW_ENABLED. Configuração de teto no banco é passo obrigatório antes de true, além da chave e MAPA_AI_BUDGET_SECRET. O segredo não deve estar em migration, Git, UI ou logs. Não usar service_role.
 
-Para rollback, desligar revisão e OpenAI; Gemini, versões, propostas, navegação e salvamento continuam. Não remover tabelas, histórico C111 nem voltar a um build anterior incompatível com C111. Publicar apenas após ensaio previsto, configuração segura e gates de CPD. Ainda pendente nesta rodada.
+Para rollback, desligar revisão e OpenAI; Gemini, versões, propostas, navegação e salvamento continuam. Não remover tabelas, histórico C111 nem voltar a um build anterior incompatível com C111. Publicar apenas após ensaio previsto, configuração segura e gates de CPD. Rollout executado em dois estágios em 06/10; ambas as flags true no deployment final. Teto de US$5/mês e revisão acadêmica humana preservados.
