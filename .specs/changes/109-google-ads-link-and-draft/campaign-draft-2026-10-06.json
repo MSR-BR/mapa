@@ -41,7 +41,10 @@
     "conversion_scope_rationale": "Account-secondary and excluded from account-default goals to preserve TERMO. Included as the only action of the custom goal used exclusively by Mapa; Google uses custom-goal actions regardless of their account primary/secondary label.",
     "paid_conversion_observed": false,
     "realtime_first_user_source_verified": "codex_validation",
-    "qa_project_revisit_duplicate_key_event_observed": false
+    "qa_project_revisit_duplicate_key_event_observed": false,
+    "qa_processed_session_source_medium_verified": true,
+    "qa_processed_session_source_medium_verified_on": "2026-10-07",
+    "processed_attribution_remaining_limit": "Session source/medium still contains not set in mostly complete intraday data. Paid attribution and internal traffic segmentation are not verified."
   },
   "campaign": {
     "status_after_import": "PAUSED",
@@ -79,7 +82,11 @@
       "pause_rule_action": "PAUSE_ONLY_MAPA_CAMPAIGN",
       "pause_rule_condition": "COST_GTE_14_EUR",
       "pause_rule_preview_affected_campaigns": 0,
-      "pause_rule_execution_verified": false
+      "pause_rule_execution_verified": false,
+      "pause_rule_scheduled_execution_verified": true,
+      "pause_rule_last_observed_success_at": "2026-10-07T06:53:37-03:00",
+      "pause_rule_threshold_pause_verified": false,
+      "pause_rule_execution_note": "Scheduled runs finished successfully with no changes; COST_GTE_14 pause branch has not been exercised."
     },
     "bidding": {
       "strategy_proposal": "MAXIMIZE_CLICKS_WITH_CPC_LIMIT",
@@ -381,8 +388,9 @@
     "internal_and_qa_segmentation_in_analysis",
     "long_baseline_not_complete",
     "real_paid_conversion_not_observed",
-    "delivery_and_cost_rule_threshold_execution_not_yet_observed",
-    "optional_logo_review"
+    "optional_logo_review",
+    "low_delivery",
+    "cost_pause_threshold_execution_not_yet_observed"
   ],
   "launch_authorization": {
     "latest_user_instruction": "faça 1, 2 e 3. Se tudo estiver funcionando, pode lancar.",
@@ -390,5 +398,17 @@
     "operational_checks_passed": true,
     "long_baseline_marked_complete": false,
     "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
+  },
+  "latest_monitoring": {
+    "observed_on": "2026-10-07",
+    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-07.md",
+    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-07.json",
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE_LEARNING",
+    "all_time_impressions": 1,
+    "all_time_clicks": 0,
+    "all_time_cost_eur": 0,
+    "paid_conversions": 0,
+    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS"
   }
 }

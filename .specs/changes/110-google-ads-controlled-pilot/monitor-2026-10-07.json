@@ -1,0 +1,44 @@
+{
+  "observed_date_local": "2026-10-07",
+  "timezone": "America/Sao_Paulo",
+  "source": "authenticated_browser_readback",
+  "campaign_id": "24325133699",
+  "customer_id": "383-835-9068",
+  "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+  "external_configuration_changes": [],
+  "ads": {
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE_LEARNING",
+    "average_daily_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "strategy": "MAXIMIZE_CLICKS",
+    "today": {"date": "2026-10-07", "impressions": 0, "clicks": 0, "cost_eur": 0},
+    "all_time": {"through": "2026-10-07", "impressions": 1, "clicks": 0, "cost_eur": 0, "conversions": 0},
+    "ad_id": "827109934468",
+    "ad_policy": "APPROVED",
+    "eligible_keywords": 4,
+    "low_volume_keywords": 4,
+    "negative_keywords_count": 17,
+    "search_terms": [{"term": "projeto de pesquisa", "match": "EXACT", "impressions": 1, "clicks": 0, "cost_eur": 0}],
+    "rule": {"id": "61994210", "status": "ENABLED", "frequency": "HOURLY", "last_observed_success_at": "2026-10-07T06:53:37-03:00", "result": "NO_CHANGES", "duration_seconds": 5, "threshold_pause_exercised": false}
+  },
+  "ga4": {
+    "property_id": "550650234",
+    "date_from": "2026-10-06",
+    "date_to": "2026-10-06",
+    "dimension": "SESSION_SOURCE_MEDIUM",
+    "data_quality": "MOSTLY_COMPLETE_INTRADAY_SOME_ATTRIBUTION_NOT_SET",
+    "total": {"sessions": 10, "events": 157, "key_events": 5, "project_start": 3},
+    "rows": [
+      {"source_medium": "(not set)", "sessions": 7, "events": 110, "key_events": 2, "project_start": 2, "external_acquisition_verified": false},
+      {"source_medium": "(direct) / (none)", "sessions": 4, "events": 31, "key_events": 3, "project_start": 1, "external_acquisition_verified": false},
+      {"source_medium": "codex_validation / qa", "sessions": 2, "events": 16, "key_events": 0, "project_start": 0, "excluded_from_acquisition_assessment": true}
+    ],
+    "qa_processed_attribution_observed": true,
+    "session_row_sum_matches_total": false,
+    "paid_attribution_verified": false,
+    "paid_conversion_observed": false
+  },
+  "site": {"home_http": 200, "health": "ok", "version": "v06102026.4", "consent_ui_reviewed": true, "new_network_payload_capture": false, "project_created": false, "qa_campaign": "c110_monitor_20261007"},
+  "open_items": ["low_delivery", "unassigned_session_attribution", "internal_traffic_segmentation", "complete_baseline", "paid_conversion", "cost_threshold_pause_branch", "optional_logo_review"]
+}

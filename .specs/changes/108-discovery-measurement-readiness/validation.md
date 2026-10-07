@@ -35,3 +35,7 @@ Após “faça 1, 2 e 3. Se tudo estiver funcionando, pode lançar”, foram con
 ## Reconsulta após C112 — 06/10/2026
 
 Traffic acquisition da propriedade 550650234, período 06/10–06/10: **2 sessões, 7 eventos e 0 eventos-chave**. Canais: Direct (1 sessão/2 eventos) e Unassigned (1 sessão/5 eventos). Realtime estava sem usuários nos últimos 30 minutos. A consulta comprova dados processados, mas não separa tráfego técnico nem valida origem/mídia da sessão QA ou de Ads. Não inferir aquisição paga desses números. Nenhuma configuração foi modificada nessa consulta. [Fechamento documental](../110-google-ads-controlled-pilot/cpd-documental-2026-10-06.md).
+
+## Acompanhamento de 07/10 — mesmo recorte de 06/10
+
+Origem/mídia processada agora mostra `codex_validation / qa`: 2 sessões, 16 eventos e zero eventos-chave. Atribuição dessa origem técnica comprovada e excluída da avaliação de aquisição. Total do relatório: 10 sessões, 157 eventos, 5 eventos-chave (3 project_start). `(not set)` continua com 7 sessões e as linhas somam 13 frente ao total 10; relatório informa mostly complete/intraday e ausência de dados de atribuição. Não declarar íntegra a atribuição geral nem contar eventos de direct/not set como conversões pagas ou externas comprovadas. Ads ainda tem zero cliques. Reconsultar janela completa e separar uso interno. [Evidência, limites e decisão de manter o piloto](../110-google-ads-controlled-pilot/monitor-2026-10-07.md).
