@@ -1,5 +1,7 @@
 # C114 — Entrada pública e edição por quadro
 
+**Estado atual:** concluída e publicada em `v08102026.1`; [CPD e limites de validação](cpd-2026-10-08.md).
+
 Autorização: solicitação de 08/10/2026, itens 1–6 e screenshots fornecidos pelo responsável. Implementar estes requisitos; preservar alterações pendentes C113 e registros Ads. Sem alteração de credenciais, modelos, orçamento ou banco remoto.
 
 Autorização posterior, em 08/10: **“cpd limpo”** aprova commit, push e publicação da C114 no projeto existente `mapadapesquisa` / `mapadapesquisa.com.br`, além do fechamento documental pendente. A restrição de publicação da rodada local abaixo é histórica. Sem smoke pago, migration, alteração de segredo ou de campanha neste CPD.

@@ -1,6 +1,6 @@
 # C113 — Auditoria de parâmetros Gemini — 07/10/2026
 
-**Status:** correção local validada; versionamento autorizado no CPD de 08/10.
+**Status:** auditoria e correção do smoke concluídas, versionadas em `ce97e4d` no CPD de 08/10. Runtime e modelos preservados; vínculo com o aviso não confirmado. [Fechamento](../114-landing-card-regeneration/cpd-2026-10-08.md).
 
 O pedido posterior **“cpd limpo”** autoriza incorporar esta auditoria/script e seus testes ao fechamento da C114. O runtime Gemini permanece inalterado; o vínculo com o aviso continua não confirmado. Não autoriza smoke pago nem troca de modelo/chave.
 

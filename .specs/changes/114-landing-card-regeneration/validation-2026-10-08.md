@@ -1,6 +1,6 @@
 # C114 — Verificação local de 08/10/2026
 
-Estado: implementada localmente, pronta para revisão; **não publicada**.
+Estado desta rodada local: implementada e pronta para revisão, ainda não publicada naquele momento. Publicação posterior autorizada e concluída: [CPD de 08/10](cpd-2026-10-08.md), `v08102026.1`.
 Base Git: `892584dc54020190dbb48ece73cbffe84a79b758`, branch `codex/change-003-004`.
 Árvore já continha C113 e registros C109/C110; esses arquivos foram preservados.
 

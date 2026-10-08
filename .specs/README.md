@@ -4,11 +4,11 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Fase: MVP v1 concluído; fluxo v2 implementado localmente até transição/exportação.
-- Código da aplicação: o fluxo v1 permanece disponível para projetos legados; novos prompts iniciam o fluxo v2.
-- Próximo gate: CPD, preview e smoke de produção da Change 015.
-- Direção do v2: prompt geral, seis propostas assistidas por IA e Research Starter, validação progressiva, matriz metodológica, mapa final rastreável e transição segura para produção.
-- Integrações confirmadas: Gemini no backend, Research Starter v1 e Supabase do Mapa limitado ao Project Ref documentado.
+- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v08102026.1`** (C114). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/114-landing-card-regeneration/cpd-2026-10-08.md).
+- Fluxo v2 em produção; fluxo v1 preservado para projetos legados. Entrada pública em `/mapa`, modos Rápido/Avançado, Google OAuth para gerar/guardar e regras Aluno/Orientador mantidas.
+- Contexto confirmado, rascunhos e histórico C111; Gemini principal e GPT complementar/fallback limitado C112; edição por quadro e literatura aditiva C114.
+- Integrações server-side: Gemini, OpenAI, Research Starter e Supabase no projeto documentado. Auditoria C113 concluída, mas vínculo com o aviso Google não confirmado.
+- Piloto Ads C110 e medição C108/C097 continuam em acompanhamento com suas limitações; este fechamento não os declara concluídos.
 
 ## Ordem de leitura
 

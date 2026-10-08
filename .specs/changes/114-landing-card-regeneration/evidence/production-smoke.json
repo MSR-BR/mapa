@@ -1,0 +1,99 @@
+{
+  "observedAt": "2026-10-08T18:08:28.226694+00:00",
+  "base": "https://mapadapesquisa.com.br",
+  "checks": [
+    {
+      "path": "/api/health",
+      "http": 200,
+      "health": {
+        "checks": {
+          "openai": "configured",
+          "gemini": "configured",
+          "resend": "configured",
+          "researchStarter": "configured",
+          "supabase": "configured"
+        },
+        "service": "mapa-da-pesquisa",
+        "status": "ok",
+        "version": "v08102026.1"
+      }
+    },
+    {
+      "path": "/",
+      "http": 200,
+      "canonical": [
+        "https://mapadapesquisa.com.br"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "mapaLinks": [
+        "/mapa",
+        "/mapa?modo=avancado",
+        "/mapa?modo=rapido",
+        "/mapa"
+      ],
+      "inputs": 0,
+      "jsonLdBlocks": 1
+    },
+    {
+      "path": "/mapa",
+      "http": 200,
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "mapaLinks": [],
+      "inputs": 12,
+      "jsonLdBlocks": 0
+    },
+    {
+      "path": "/mapa?modo=rapido",
+      "http": 200,
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "mapaLinks": [],
+      "inputs": 1,
+      "jsonLdBlocks": 0
+    },
+    {
+      "path": "/mapa?modo=avancado",
+      "http": 200,
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "mapaLinks": [],
+      "inputs": 12,
+      "jsonLdBlocks": 0
+    },
+    {
+      "path": "/sitemap.xml",
+      "http": 200,
+      "containsMapa": true
+    },
+    {
+      "check": "anonymous",
+      "http": 401,
+      "response": {
+        "code": "authentication_required",
+        "error": "Autenticação necessária."
+      }
+    },
+    {
+      "check": "cross-origin",
+      "http": 403,
+      "response": {
+        "error": "Origem não permitida."
+      }
+    }
+  ]
+}

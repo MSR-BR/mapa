@@ -1,0 +1,51 @@
+{
+  "version": "v08102026.1",
+  "sourceCommit": "702d3ee4a5a55df4dd127f3b1ee551c89f5abf28",
+  "sourceArchiveSha256": "2cd6084e98a6a990451b80dc609950e997b3814cdd91942cb0d8951c028c4b3f",
+  "sourceMethod": "git archive; clean extraction; upload via CLI 62.7.0; provider inspect does not expose source metadata",
+  "branch": "codex/change-003-004",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "teamId": "team_jQuUBnU7RDJh0O3XASyu1WeS",
+  "deploymentId": "dpl_FEYPqXiH4EAP1A9HpKYU2Mz3QB1b",
+  "deploymentUrl": "https://mapadapesquisa-bn9e3mo5q-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "createdAt": "2026-10-08T15:03:35-03:00",
+  "deploymentSequence": [
+    "production without domain assignment",
+    "staged health and access checks",
+    "promote same deployment",
+    "canonical HTTP and browser verification"
+  ],
+  "publicConfigChange": {
+    "name": "NEXT_PUBLIC_APP_VERSION",
+    "value": "v08102026.1",
+    "environment": "Production",
+    "explicitlyAuthorized": true
+  },
+  "paidApiCalls": false,
+  "databaseChanges": false,
+  "secretChanges": false,
+  "modelChanges": false,
+  "campaignChanges": false,
+  "checks": {
+    "npmRunCheck": "pass",
+    "unitTests": 211,
+    "cardRouteScenarios": 13,
+    "c111RouteRegression": "pass",
+    "runtimeAuditVulnerabilities": 0,
+    "fullAuditDevHighVulnerabilities": 5,
+    "staticSecurity": "PASS_WITH_ACCEPTED_RISK",
+    "canonicalHealth": "ok",
+    "anonymousRegenerateHttp": 401,
+    "crossOriginRegenerateHttp": 403,
+    "runtimeErrorEntriesInQueried15mWindow": 0
+  },
+  "limitations": [
+    "No new paid/authenticated AI production end-to-end test",
+    "No fresh OAuth draft-resume test in production",
+    "Gemini email account/project linkage remains unconfirmed",
+    "Existing dev-only ESLint dependency findings and accepted static risks retained"
+  ],
+  "rollbackDeploymentId": "dpl_BNzMQH7GPsuYLPERsHL6hDoA7iqh"
+}
