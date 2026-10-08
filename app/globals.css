@@ -911,6 +911,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .quick-start-toolbar > button { display: inline-flex; min-height: 2.75rem; align-items: center; gap: 0.55rem; border: 0; border-radius: 0.8rem; padding: 0.7rem 1rem; background: #e8f6ef; color: #174c38; font: inherit; font-weight: 750; cursor: pointer; }
 .quick-start-toolbar > button:hover { background: white; }
 .quick-start-toolbar > button:disabled { cursor: wait; opacity: 0.6; }
+.public-start-form .quick-start-toolbar > button:disabled[aria-busy="false"] { cursor: not-allowed; }
 .quick-start-toolbar-simple { align-items: center; }
 .quick-start-toolbar-simple > span { color: #9aa7a1; font-size: 0.76rem; }
 .quick-settings summary { display: inline-flex; min-height: 2.6rem; align-items: center; gap: 0.5rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 0.8rem; padding: 0.6rem 0.75rem; color: #c2cdc8; cursor: pointer; font-size: 0.84rem; font-weight: 650; list-style: none; }

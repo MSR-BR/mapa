@@ -16,7 +16,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
   const formRef = useRef<HTMLFormElement>(null);
   const quickSuggestionContinuePending = useRef(false);
   const [continuing, setContinuing] = useState(false);
-  const [mode, setMode] = useState<"quick" | "advanced">(initialMode);
+  const [mode, setMode] = useState<"quick" | "advanced" | null>(initialMode);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
   const [quickPrompt, setQuickPrompt] = useState("");
   const [error, setError] = useState("");
@@ -48,11 +48,11 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
   }, [explicitMode]);
 
   useEffect(() => {
-    if (!quickSuggestionContinuePending.current || continuing || !formRef.current) return;
+    if (!quickSuggestionContinuePending.current || mode !== "quick" || continuing || !formRef.current) return;
     if (quickPrompt.trim().length < 10) return;
     quickSuggestionContinuePending.current = false;
     formRef.current.requestSubmit();
-  }, [continuing, quickPrompt]);
+  }, [continuing, mode, quickPrompt]);
 
   function handleQuickEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey) return;
@@ -68,6 +68,10 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
 
   function continueToLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!mode) {
+      setError("Abra Mapa Rápido ou Mapa Avançado para continuar.");
+      return;
+    }
     const prompt = quickPrompt.trim();
     const parsed = researchIntakeSchema.safeParse(intake);
     if (mode === "quick") {
@@ -101,6 +105,12 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
     router.push(authenticated ? "/dashboard?resume=1" : "/login?next=%2Fdashboard%3Fresume%3D1");
   }
 
+  function toggleMode(nextMode: "quick" | "advanced") {
+    quickSuggestionContinuePending.current = false;
+    setMode((current) => current === nextMode ? null : nextMode);
+    setError("");
+  }
+
   return (
     <form className="quick-start-form public-start-form" onSubmit={continueToLogin} ref={formRef}>
       <div className="public-mode-stack">
@@ -109,7 +119,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
             aria-controls="advanced-research-mode"
             aria-expanded={mode === "advanced"}
             className="public-mode-toggle"
-            onClick={() => { setMode(mode === "advanced" ? "quick" : "advanced"); setError(""); }}
+            onClick={() => toggleMode("advanced")}
             type="button"
           >
             <span>
@@ -131,7 +141,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
             aria-controls="quick-research-mode"
             aria-expanded={mode === "quick"}
             className="public-mode-toggle"
-            onClick={() => { setMode(mode === "quick" ? "advanced" : "quick"); setError(""); }}
+            onClick={() => toggleMode("quick")}
             type="button"
           >
             <span>
@@ -151,8 +161,8 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
       </div>
       {error ? <p className="research-intake-error" role="alert">{error}</p> : null}
       <div className="quick-start-toolbar quick-start-toolbar-simple">
-        <span>{mode === "quick" ? "Enter para continuar · Shift + Enter para nova linha" : "Responda às cinco perguntas · Enter na pergunta final para continuar"}</span>
-        <button disabled={continuing} type="submit">{continuing ? "Continuando…" : authenticated ? "Gerar mapa" : "Continuar com Google"}<span aria-hidden="true">→</span></button>
+        <span>{mode === "quick" ? "Enter para continuar · Shift + Enter para nova linha" : mode === "advanced" ? "Responda às cinco perguntas · Enter na pergunta final para continuar" : "Abra uma opção para começar"}</span>
+        <button aria-busy={continuing} disabled={continuing || mode === null} type="submit">{continuing ? "Continuando…" : authenticated ? "Gerar mapa" : "Continuar com Google"}<span aria-hidden="true">→</span></button>
       </div>
     </form>
   );

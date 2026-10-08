@@ -1,0 +1,127 @@
+{
+  "states": [
+    {
+      "label": "initial quick open",
+      "advanced": false,
+      "fields": 1,
+      "quick": true,
+      "submitDisabled": false,
+      "symbols": [
+        "+",
+        "−"
+      ]
+    },
+    {
+      "label": "quick minus closes both",
+      "advanced": false,
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ]
+    },
+    {
+      "label": "quick plus reopens",
+      "advanced": false,
+      "fields": 1,
+      "quick": true,
+      "submitDisabled": false,
+      "symbols": [
+        "+",
+        "−"
+      ]
+    },
+    {
+      "label": "advanced plus opens",
+      "advanced": true,
+      "fields": 5,
+      "quick": false,
+      "submitDisabled": false,
+      "symbols": [
+        "−",
+        "+"
+      ]
+    },
+    {
+      "label": "advanced minus closes both",
+      "advanced": false,
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ]
+    },
+    {
+      "label": "advanced plus reopens",
+      "advanced": true,
+      "fields": 5,
+      "quick": false,
+      "submitDisabled": false,
+      "symbols": [
+        "−",
+        "+"
+      ]
+    },
+    {
+      "label": "keyboard Enter closes",
+      "advanced": false,
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ]
+    },
+    {
+      "label": "keyboard Space opens",
+      "advanced": true,
+      "fields": 5,
+      "quick": false,
+      "submitDisabled": false,
+      "symbols": [
+        "−",
+        "+"
+      ]
+    },
+    {
+      "label": "mobile advanced minus closes",
+      "advanced": false,
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ]
+    },
+    {
+      "label": "mobile quick plus opens",
+      "advanced": false,
+      "fields": 1,
+      "quick": true,
+      "submitDisabled": false,
+      "symbols": [
+        "+",
+        "−"
+      ]
+    },
+    {
+      "label": "mobile quick minus closes",
+      "advanced": false,
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ]
+    }
+  ],
+  "quickDraftPreserved": true,
+  "advancedDraftAndSelectionPreserved": true
+}
