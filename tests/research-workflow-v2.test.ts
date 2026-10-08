@@ -472,7 +472,7 @@ test("validates methodology matrix coverage and expected-result wording", () => 
   }), options).errors[0], /já tivesse sido executada/);
   assert.match(validateMethodologyPlan(makeMethodologyPlan({
     rows: makeMethodologyPlan().rows.map((row, index) => index === 0 ? { ...row, studentJustification: null } : row),
-  }), options).errors.join(" "), /Justificativa da linha \(\*\)/);
+  }), { ...options, requireStudentJustification: true }).errors.join(" "), /Justificativa da linha \(\*\)/);
 });
 
 test("requires and accepts an OEG synthesis row in methodology when requested", () => {

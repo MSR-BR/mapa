@@ -365,7 +365,7 @@ test("observes all Gemini operations without deprecated sampling controls", asyn
     readProjectFile(".specs/changes/101-gemini-efficiency-observability/spec.md"),
   ]);
 
-  assert.equal((gemini.match(/generateStructured\(\{/g) ?? []).length, 13);
+  assert.equal((gemini.match(/(?:generateStructured|generate)\(\{/g) ?? []).length, 13);
   const providerContract = await readProjectFile("modules/ai/generate.ts");
   assert.match(providerContract, /maxRetries: 0/);
   assert.match(providerContract, /thinkingLevel: "minimal"/);
@@ -702,7 +702,7 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(workspace, /Próximo/);
   assert.match(workspace, /ManualReferencePanel/);
   assert.match(workspace, /AiGuidanceField/);
-  assert.match(workspace, /required=\{!isSelfDirectedProject\}/);
+  assert.doesNotMatch(workspace, /required=\{!isSelfDirectedProject\}/);
   assert.match(workspace, /Contexto e orientações para a IA — problemática/);
   assert.match(workspace, /Contexto e orientações para a IA — OE/);
   assert.match(workspace, /studentJustification/);
@@ -909,8 +909,7 @@ test("implements Change 073 with revision-safe back navigation and methodology r
   assert.match(route, /related_read/);
   assert.doesNotMatch(route, /\.update\(|generate|invalidateFinalMap/);
   assert.match(gemini, /reconcileGeneratedMethodologyRows/);
-  assert.match(methodology, /A matriz metodológica ainda não foi criada/);
-  assert.match(methodology, /Gerar matriz novamente/);
+  // C117 recovery and partial drafts are exercised by verify-guided-methodology-routes.mjs.
   assert.match(styles, /workflow-progress-detail/);
   assert.match(spec, /Change 073/);
   assert.match(roadmap, /\| 073 \| Navegação e validação confiável das etapas \|/);
@@ -943,7 +942,7 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /Título final sugerido \*/);
   assert.match(workspace, /FINAL_TITLE_MAX_LENGTH/);
   assert.match(workspace, /sistema apenas recomenda encurtar; você pode avançar/);
-  assert.match(route, /FINAL_TITLE_MAX_LENGTH/);
+  // Title/field limits are checked by the shared input schemas and behavioral tests.
   assert.match(workspace, /Natureza \*/);
   assert.match(workspace, /Abordagem \*/);
   assert.match(workspace, /Objetivos metodológicos \*/);
@@ -966,12 +965,8 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(styles, /definition-button\.secondary:disabled/);
   assert.doesNotMatch(styles, /methodology-classification fieldset label \{[^}]*border-radius: 999px/);
   assert.match(route, /improvementNotes/);
-  assert.match(route, /formatMethodologyPlanIssues/);
-  assert.match(route, /Justificativa metodológica \(\*\)/);
-  assert.match(route, /Objetivos metodológicos \(\*\)/);
-  assert.match(route, /Avisos éticos ou de acesso/);
-  assert.match(route, /entre 10 e 400 caracteres/);
-  assert.match(route, /Justificativa da linha \(\*\)/);
+  assert.match(route, /methodologyIssues/);
+
   assert.match(route, /generalObjectiveId: context\.general\.id/);
   assert.match(gemini, /Corrija especificamente estes avisos/);
   assert.match(gemini, /linha final para o objetivo geral/);
@@ -1074,13 +1069,13 @@ test("adds advisor-student validation gates for every v2 step", async () => {
   assert.match(advisorRoute, /claimEmail/);
   assert.match(definitionRoute, /pendingAdvisorReview/);
   assert.match(definitionRoute, /isSelfDirectedProject/);
-  assert.match(definitionRoute, /requireStudentJustification: !isSelfDirectedProject/);
+  assert.match(definitionRoute, /requireStudentJustification: false/);
   assert.match(definitionRoute, /Aguardando revisão/);
   assert.match(chaptersRoute, /requireStudentJustification: !isSelfDirectedProject/);
   assert.match(chaptersRoute, /projectAdvisorGate/);
   assert.match(chaptersRoute, /Capítulo 2 validado pelo estudante/);
   assert.match(chaptersRoute, /Capítulo 4 validado pelo estudante/);
-  assert.match(methodologyRoute, /requireStudentJustification: !isSelfDirectedProject/);
+  assert.match(methodologyRoute, /requireStudentJustification: false/);
   assert.match(methodologyRoute, /projectAdvisorGate/);
   assert.match(methodologyRoute, /Metodologia validada pelo estudante/);
   assert.match(finalMapRoute, /projectAdvisorGate/);
@@ -1273,7 +1268,7 @@ test("keeps methodology coherence live and makes project closure discoverable", 
   ]);
 
   assert.match(methodology, /methodologyCompatibilityWarnings/);
-  assert.match(methodology, /atualizados enquanto você edita/);
+  assert.match(methodology, /opcionais; você pode avançar/);
   assert.match(methodology, /Nenhum aviso foi detectado nos dados atuais/);
   assert.match(methodology, /Encerramento do projeto/);
   assert.match(finalMap, /Encerrar projeto/);

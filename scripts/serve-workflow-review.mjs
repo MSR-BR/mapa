@@ -2,6 +2,22 @@ import {readFile,mkdir} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {build} from 'esbuild';
 import {state,api} from './c111-route-harness.mjs';
+// C117 review starts at the reported empty methodology, with synthetic AI only.
+if (process.env.MAPA_REVIEW_SCENARIO === 'c117') {
+ const base=structuredClone(state.workflow);
+ const general=base.content.elements.find(e=>e.type==='general_objective');
+ state.workflow.state=state.workflow.stableState='validating_methodology';
+ state.workflow.content.activeStep='methodology_matrix';
+ state.workflow.content.elements=state.workflow.content.elements.filter(e=>!['research_title','methodology_mapping','final_map'].includes(e.type));
+ state.workflow.content.methodologyClassification=null;
+ state.workflow.content.methodologyRows=[];
+ state.generate=name=>{
+  if(name==='review') return [];
+  if(name!=='methodology') throw Error('Unexpected synthetic operation');
+  return {title:'Estratégias de aprendizagem: proposta de análise educacional',classification:base.content.methodologyClassification,
+   rows:[...base.content.methodologyRows,{...base.content.methodologyRows[0],id:'00000000-0000-4000-8000-000000000090',objectiveId:general.id}].map(row=>({...row,studentJustification:null}))};
+ };
+}
 const browserCode=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`
  import {PublicStartForm} from './modules/projects/public-start-form';
  import {useEffect,useState} from 'react';import{createRoot}from'react-dom/client';

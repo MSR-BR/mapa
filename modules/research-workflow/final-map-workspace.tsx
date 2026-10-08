@@ -222,10 +222,13 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
             <h3>Metodologia e resultados esperados</h3>
             <div className="final-method-table">
               {finalMap.methodologyRows.map((row, index) => {
-                const objective = finalMap.specificObjectives.find((item) => item.id === row.objectiveId);
+                const specificIndex = finalMap.specificObjectives.findIndex((item) => item.id === row.objectiveId);
+                const isGeneral = row.objectiveId === finalMap.generalObjective?.id;
+                const objective = isGeneral ? finalMap.generalObjective : finalMap.specificObjectives[specificIndex];
+                const objectiveLabel = isGeneral ? "OEG" : `OE${specificIndex >= 0 ? specificIndex + 1 : index + 1}`;
                 return (
                   <div key={row.id}>
-                    <span>OE{index + 1}</span>
+                    <span>{objectiveLabel}</span>
                     <p><strong>Objetivo:</strong> {objective?.approvedContent}</p>
                     <p><strong>Levantamento:</strong> {row.dataCollection}</p>
                     <p><strong>Análise/tratamento:</strong> {row.analysisTreatment}</p>

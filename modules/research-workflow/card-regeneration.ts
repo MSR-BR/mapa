@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { AiOperation } from "@/modules/ai/policy";
-import { researchWorkflowContentSchema, methodologyClassificationSchema, type AdvisorReviewStep, type ResearchWorkflowContent } from "./schema";
+import { researchWorkflowContentSchema, type AdvisorReviewStep, type ResearchWorkflowContent } from "./schema";
+import { methodologyClassificationInputSchema } from "./methodology-validation";
 import { workflowUnit } from "./versioned-context";
 
 export function regenerationCard(content: ResearchWorkflowContent, step: AdvisorReviewStep, targetId: string) {
@@ -22,7 +23,7 @@ export function regenerationCard(content: ResearchWorkflowContent, step: Advisor
 }
 
 export type RegenerationCard = ReturnType<typeof regenerationCard>;
-export const cardClassificationSchema = methodologyClassificationSchema.omit({ revision: true, sourceRevision: true, status: true, updatedBy: true });
+export const cardClassificationSchema = methodologyClassificationInputSchema;
 export const cardRowSchema = z.object({
   dataCollection: z.string().trim().min(20).max(1200),
   analysisTreatment: z.string().trim().min(20).max(1200),

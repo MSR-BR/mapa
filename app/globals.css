@@ -1151,7 +1151,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 
 /* C114: entrada pública dedicada e ações explicadas por quadro. */
 .mapa-entry-heading { max-width: 850px; margin: 3rem auto 2rem; text-align: center; }
-.mapa-entry-heading h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
+.mapa-entry-heading h1 { margin-inline: auto; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
 .mapa-entry-heading p { margin-top: 1rem; }
 .mapa-entry-form { max-width: 960px; margin: 0 auto 3rem; border-radius: 24px; padding: clamp(.75rem, 2.5vw, 1.5rem); background: #dce9e2; }
 /* C115: três superfícies distintas, sem moldura intermediária ou caixas de seção. */
@@ -1199,3 +1199,11 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .chapter-empty-state { padding: 1.5rem; border: 1px solid #83b7a5; border-radius: 16px; background: #eff8f4; margin: 1rem 0; }
 .chapter-empty-state p { margin: .7rem 0; }
 .chapter-field-error { color: #9b3028; font-size: .9rem; }
+
+/* C117: actionable guidance and field-level recovery. */
+.workflow-assistance { margin: 1.5rem 0; padding: 1.25rem; border: 1px solid #a5c5b3; border-radius: 18px; background: #eef7f2; }
+.workflow-assistance strong { display: block; color: #20583f; font-size: 1.1rem; }
+.workflow-assistance p { margin: .5rem 0 1rem; }
+.workflow-assistance ul { padding-left: 1.25rem; margin: 1rem 0 0; }
+.field-issue-link { padding: .35rem 0; text-align: left; text-decoration: underline; background: none; border: 0; color: #20583f; cursor: pointer; }
+.workflow-assistance :focus-visible, .methodology-workspace :is(input,textarea,select):focus-visible { outline: 2px solid #176b4d; outline-offset: 3px; }

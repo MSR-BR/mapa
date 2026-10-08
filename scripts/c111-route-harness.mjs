@@ -4,9 +4,9 @@ import { build } from "esbuild";
 import { mkdir } from "node:fs/promises";
 await mkdir("tmp", { recursive: true });
 const stubs = {
-  "@/modules/projects/auth": `export async function authorizeProjectRoute(){ return globalThis.c111.denied ? {ok:false,response:Response.json({error:'Acesso negado'},{status:403})} : {ok:true,value:{actor:{claims:{}},userId:globalThis.c111.workflow.ownerId,supabase:globalThis.c111.supabase,project:{owner_id:globalThis.c111.workflow.ownerId,authoring_role:'advisor'}}}; } export const authorizeProjectCapabilityResponse=()=>null;`,
+  "@/modules/projects/auth": `export async function authorizeProjectRoute(){ return globalThis.c111.denied ? {ok:false,response:Response.json({error:'Acesso negado'},{status:403})} : {ok:true,value:{actor:{claims:{}},userId:globalThis.c111.workflow.ownerId,supabase:globalThis.c111.supabase,project:{owner_id:globalThis.c111.workflow.ownerId,authoring_role:globalThis.c111.authoringRole??'advisor'}}}; } export const authorizeProjectCapabilityResponse=()=>null;`,
   "@/modules/research-workflow/storage": `export const loadResearchWorkflow=async()=>structuredClone(globalThis.c111.workflow);`,
-  "@/modules/projects/advisor": `export const claimEmail=()=>null; export const loadProjectAdvisorEmail=async()=>null;`,
+  "@/modules/projects/advisor": `export const claimEmail=()=>null; export const loadProjectAdvisorEmail=async()=>globalThis.c111.advisorEmail??null;`,
   "@/lib/email/project-notifications": `export const notifyAdvisorOfReviewRequest=async()=>{};`,
   "@/modules/generation/gemini": `import {emitProgress} from "@/modules/ai/operation"; const call=async(name)=>{if(globalThis.c111.progressMode){emitProgress("generating","gemini");await new Promise(r=>setTimeout(r,450));emitProgress("fallback","openai");await new Promise(r=>setTimeout(r,900));}globalThis.c111.aiCalls++; if(globalThis.c111.failAI) throw Error('Synthetic provider unavailable'); return globalThis.c111.generate(name)}; export const generateGeneralObjective=()=>call('general'); export const generateSpecificObjectives=()=>call('specifics'); export const regenerateProblemStatement=()=>call('problem'); export const generateLiteratureTopics=()=>call('literature'); export const generateDevelopmentTopics=()=>call('development'); export const generateMethodologyPlan=()=>call('methodology'); export const reviewFinalMapCoherence=()=>call('review');`,
   "@/lib/supabase/server": `export const createClient=async()=>globalThis.c111.supabase;`,
@@ -18,7 +18,7 @@ await build({ stdin: {resolveDir:process.cwd(),contents:`export {POST as regener
 const api = await import(`../tmp/c111-route-harness.mjs?run=${Date.now()}`);
 const state = {workflow:api.versionedWorkflowFixture(),writes:0,aiCalls:0,versions:[],denied:false,failAI:false,beforeWrite:null};
 state.generate = name => name==='review' ? [] : ({content:`Como investigar uma nova proposta sintética com ${name}?`,referenceIds:['fixture-reference']});
-state.reset = () => {state.workflow=api.versionedWorkflowFixture();state.writes=state.aiCalls=0;state.versions=[];state.denied=false;state.failAI=false;state.beforeWrite=null;state.rsCalls=0;state.failRS=false;state.cardInput=null;};
+state.reset = () => {state.workflow=api.versionedWorkflowFixture();state.writes=state.aiCalls=0;state.versions=[];state.denied=false;state.failAI=false;state.beforeWrite=null;state.rsCalls=0;state.failRS=false;state.cardInput=null;state.authoringRole='advisor';state.advisorEmail=null;};
 class Query {
   constructor(table){this.table=table;this.filters=[];this.count=21;}
   select(columns){this.columns=columns;return this;} update(value){this.value=value;return this;}

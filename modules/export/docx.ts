@@ -237,10 +237,13 @@ export async function createFinalMapDocxExport(input: FinalMapExportInput) {
       rows: [
         new TableRow({ children: [cell("Objetivo", 16, true), cell("Levantamento", 24, true), cell("Análise/tratamento", 26, true), cell("Resultado esperado", 34, true)] }),
         ...finalMap.methodologyRows.map((row, index) => {
-          const objective = finalMap.specificObjectives.find((item) => item.id === row.objectiveId);
+          const specificIndex = finalMap.specificObjectives.findIndex((item) => item.id === row.objectiveId);
+          const isGeneral = row.objectiveId === finalMap.generalObjective?.id;
+          const objective = isGeneral ? finalMap.generalObjective : finalMap.specificObjectives[specificIndex];
+          const objectiveLabel = isGeneral ? "OEG" : `OE${specificIndex >= 0 ? specificIndex + 1 : index + 1}`;
           return new TableRow({
             children: [
-              cell(`OE${index + 1}. ${finalMapText(objective)}`, 16),
+              cell(`${objectiveLabel}. ${finalMapText(objective)}`, 16),
               cell(row.dataCollection, 24),
               cell(row.analysisTreatment, 26),
               cell(row.expectedResult, 34),

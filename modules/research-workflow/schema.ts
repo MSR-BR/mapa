@@ -99,7 +99,7 @@ export type AdvisorReview = z.infer<typeof advisorReviewSchema>;
 export const validatedElementSchema = z.object({
   approvedContent: z.string().trim().min(1).max(12_000).nullable(),
   id: z.string().uuid(),
-  proposedContent: z.string().trim().min(1).max(12_000),
+  proposedContent: z.string().trim().max(12_000),
   referenceIds: z.array(z.string().trim().min(1).max(120)).max(20).default([]),
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
@@ -145,15 +145,16 @@ export const knowledgeSuggestionSchema = z.object({
 
 export type KnowledgeSuggestion = z.infer<typeof knowledgeSuggestionSchema>;
 
+// Drafts may be incomplete; submission and AI output use stricter input schemas.
 export const methodologyClassificationSchema = z.object({
-  analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+  analysisTechniques: z.array(z.string().trim().min(2).max(120)).max(6),
   approach: z.enum(["Qualitativa", "Quantitativa", "Mista"]),
-  ethicsWarnings: z.array(z.string().trim().min(10).max(400)).max(6),
-  instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  ethicsWarnings: z.array(z.string().trim().min(1).max(400)).max(6),
+  instruments: z.array(z.string().trim().min(2).max(120)).max(8),
   nature: z.enum(["Básica", "Aplicada"]),
-  objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
-  procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
-  rationale: z.string().trim().min(20).max(800),
+  objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).max(3),
+  procedures: z.array(z.string().trim().min(2).max(120)).max(8),
+  rationale: z.string().trim().max(800),
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
@@ -163,10 +164,10 @@ export const methodologyClassificationSchema = z.object({
 export type MethodologyClassification = z.infer<typeof methodologyClassificationSchema>;
 
 export const methodologyRowSchema = z.object({
-  analysisTreatment: z.string().trim().min(20).max(1_200),
+  analysisTreatment: z.string().trim().max(1_200),
   associatedTopicIds: z.array(z.string().uuid()).max(12),
-  dataCollection: z.string().trim().min(20).max(1_200),
-  expectedResult: z.string().trim().min(20).max(1_000),
+  dataCollection: z.string().trim().max(1_200),
+  expectedResult: z.string().trim().max(1_000),
   id: z.string().uuid(),
   objectiveId: z.string().uuid(),
   revision: z.number().int().positive(),

@@ -1,0 +1,44 @@
+[
+  {
+    "test": "automatic initial matrix",
+    "emptyRequired": 0,
+    "rows": 4,
+    "title": "Estratégias de aprendizagem: proposta de análise educacional"
+  },
+  {
+    "test": "exact error focuses OE2 cell",
+    "activeElement": "methodology-00000000-0000-4000-8000-000000000023-analysisTreatment"
+  },
+  {
+    "test": "save partial and fill gaps",
+    "issues": 0,
+    "preserved": "Texto sintético preservado pelo autor.",
+    "restored": "Os dados serão analisados apenas como fixture sintética.",
+    "title": "Estratégias de aprendizagem: proposta de análise educacional"
+  },
+  {
+    "test": "mobile ready matrix",
+    "ready": "Sua matriz está pronta para continuarVocê pode seguir com esta sugestão. Avisos de coerência são recomendações e não impedem o avanço.",
+    "viewport": 390,
+    "width": 390
+  },
+  {
+    "test": "mobile_next_final_map",
+    "url": "http://127.0.0.1:3114/dashboard/projects/00000000-0000-4000-8000-000000000002?workflowRevision=12&workflowStep=final_map",
+    "oegCorrect": true,
+    "generalObjectivePresent": true
+  },
+  {
+    "test": "heading_center_mobile",
+    "documentWidth": 390,
+    "headingCenter": 195,
+    "textAlign": "center",
+    "viewport": 390
+  },
+  {
+    "test": "heading_center_desktop",
+    "documentWidth": 1280,
+    "headingCenter": 640,
+    "viewport": 1280
+  }
+]

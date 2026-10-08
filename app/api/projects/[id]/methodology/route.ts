@@ -1,3 +1,4 @@
+import { methodologyDraftInputSchema, methodologyIssues, mergeMethodologyCompletion } from "@/modules/research-workflow/methodology-assistance";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
@@ -20,8 +21,6 @@ import {
 import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/research-workflow/advisor-review";
 import { currentGuidanceNotesSchema, regenerationGuidanceSchema, scopedCurrentGuidanceNotes, scopedRegenerationGuidance } from "@/modules/research-workflow/regeneration-guidance";
 import {
-  FINAL_TITLE_MAX_LENGTH,
-  methodologyPlanInputSchema,
   validateMethodologyPlan,
   type MethodologyPlanInput,
 } from "@/modules/research-workflow/methodology-validation";
@@ -214,7 +213,7 @@ function replaceMethodology(
 function planFromContent(content: ResearchWorkflowContent): MethodologyPlanInput | null {
   const title = element(content, "research_title")?.proposedContent;
   const classification = content.methodologyClassification;
-  if (!title || !classification || content.methodologyRows.length === 0) return null;
+  if (!classification) return null;
   const classificationInput: MethodologyPlanInput["classification"] = {
     analysisTechniques: classification.analysisTechniques,
     approach: classification.approach,
@@ -225,7 +224,7 @@ function planFromContent(content: ResearchWorkflowContent): MethodologyPlanInput
     procedures: classification.procedures,
     rationale: classification.rationale,
   };
-  return methodologyPlanInputSchema.parse({
+  const parsed = methodologyDraftInputSchema.safeParse({
     classification: classificationInput,
     rows: content.methodologyRows.map((row) => ({
       analysisTreatment: row.analysisTreatment,
@@ -237,49 +236,15 @@ function planFromContent(content: ResearchWorkflowContent): MethodologyPlanInput
         studentJustification: row.studentJustification,
         warnings: row.warnings,
       })),
-    title,
+    title: title ?? "",
   });
+  return parsed.success ? parsed.data : null;
 }
 
 function planFromRequest(body: z.infer<typeof requestSchema>) {
-  if (!body.title || !body.classification || !body.rows) throw new Error("A matriz metodológica está incompleta.");
-  const parsed = methodologyPlanInputSchema.safeParse({
-    classification: body.classification,
-    rows: body.rows,
-    title: body.title,
-  });
-  if (!parsed.success) throw new MethodologyInputError(formatMethodologyPlanIssues(parsed.error));
+  const parsed = methodologyDraftInputSchema.safeParse({ classification: body.classification, rows: body.rows, title: body.title });
+  if (!parsed.success) throw new MethodologyInputError(["Não foi possível salvar: revise os limites de texto e os campos da matriz."]);
   return parsed.data;
-}
-
-function formatMethodologyPlanIssues(error: z.ZodError<MethodologyPlanInput>) {
-  return [...new Set(error.issues.map((issue) => {
-    const [section, second, third] = issue.path;
-    if (section === "title") return `Título final sugerido: escreva um título entre 3 e ${FINAL_TITLE_MAX_LENGTH} caracteres.`;
-    if (section === "classification") {
-      const field = second;
-      if (field === "nature") return "Natureza (*): selecione Básica ou Aplicada.";
-      if (field === "approach") return "Abordagem (*): selecione Qualitativa, Quantitativa ou Mista.";
-      if (field === "objectives") return "Objetivos metodológicos (*): selecione pelo menos uma opção.";
-      if (field === "rationale") return "Justificativa metodológica (*): escreva pelo menos 20 caracteres.";
-      if (field === "procedures") return "Procedimentos (*): informe pelo menos um procedimento.";
-      if (field === "instruments") return "Instrumentos (*): informe pelo menos um instrumento.";
-      if (field === "analysisTechniques") return "Técnicas de análise (*): informe pelo menos uma técnica.";
-      if (field === "ethicsWarnings") return "Avisos éticos ou de acesso: cada aviso deve ter entre 10 e 400 caracteres, ou deixe o campo em branco.";
-      return "Classificação metodológica: revise Natureza (*), Abordagem (*), Objetivos metodológicos (*), Procedimentos (*), Instrumentos (*), Técnicas de análise (*) e Justificativa (*).";
-    }
-    if (section === "rows") {
-      const rowIndex = second;
-      const field = third;
-      const label = typeof rowIndex === "number" ? `Linha ${rowIndex + 1}` : "Linha metodológica";
-      if (field === "dataCollection") return `${label} · Levantamento (*): descreva com pelo menos 20 caracteres.`;
-      if (field === "analysisTreatment") return `${label} · Análise/tratamento (*): descreva com pelo menos 20 caracteres.`;
-      if (field === "expectedResult") return `${label} · Resultado esperado (*): descreva com pelo menos 20 caracteres.`;
-      if (field === "studentJustification") return `${label} · Justificativa da linha (*): escreva entre 10 e 1000 caracteres.`;
-      return `${label}: revise Levantamento (*), Análise/tratamento (*), Resultado esperado (*) e Justificativa da linha (*).`;
-    }
-    return "Revise os campos obrigatórios da matriz metodológica.";
-  }))];
 }
 
 function validateContext(workflow: ResearchWorkflow) {
@@ -433,7 +398,9 @@ async function saveWorkflow(
     return NextResponse.json({ workflow: workflowForView(baseWorkflow!, "development_topics") });
   }
 
-  if (action === "initialize" && planFromContent(workflow.content)) {
+  const objectiveLabels = [...context.specifics.map((item, index) => ({ id: item.id, label: `OE${index + 1}` })), { id: context.general.id, label: "OEG" }];
+  const existingPlan = planFromContent(workflow.content);
+  if (action === "initialize" && existingPlan && methodologyIssues(existingPlan, objectiveLabels, allowedTopicIds).length === 0) {
     const content = reconcileTopicLinks(workflow.content);
     if (content === workflow.content) return NextResponse.json({ workflow });
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
@@ -467,7 +434,7 @@ async function saveWorkflow(
           allowedTopicIds,
           generalObjective: approvedGeneral,
           generalObjectiveId: context.general.id,
-          requireStudentJustification: !isSelfDirectedProject,
+          requireStudentJustification: false,
         }).warnings
         : [];
       plan = await generateMethodologyPlan(
@@ -497,6 +464,14 @@ async function saveWorkflow(
           ...studentContextNotes(generationContent),
         ],
       );
+      if (action === "initialize") {
+        const preserved = existingPlan ?? {
+          ...plan,
+          title: element(workflow.content, "research_title")?.proposedContent ?? "",
+          rows: existingRows,
+        };
+        plan = mergeMethodologyCompletion(preserved, plan, Boolean(workflow.content.methodologyClassification));
+      }
     } else {
       plan = planFromRequest(parsed.data);
     }
@@ -505,6 +480,11 @@ async function saveWorkflow(
       return NextResponse.json({ error: error.message, errors: error.errors }, { status: 422 });
     }
     return NextResponse.json({ error: error instanceof Error ? error.message : "A matriz metodológica está incompleta." }, { status: 400 });
+  }
+
+  if (action !== "save") {
+    const issues = methodologyIssues(plan, objectiveLabels, allowedTopicIds);
+    if (issues.length > 0) return NextResponse.json({ error: "Complete os campos indicados ou use Completar campos com IA.", errors: issues.map((issue) => issue.message), issues }, { status: 422 });
   }
 
   const reconciledWorkflowContent = reconcileTopicLinks(workflow.content);
@@ -525,14 +505,14 @@ async function saveWorkflow(
       allowedTopicIds,
       generalObjective: approvedGeneral,
       generalObjectiveId: context.general.id,
-      requireStudentJustification: !isSelfDirectedProject,
+      requireStudentJustification: false,
     });
     content = researchWorkflowContentSchema.parse({
       ...content,
       coherenceFindings: validationFindings(content, [], warnings),
     });
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-    const message = action === "save" ? "Rascunho metodológico salvo." : action === "regenerate" ? "Nova sugestão metodológica criada." : undefined;
+    const message = action === "save" ? "Rascunho metodológico salvo." : action === "regenerate" ? "Nova sugestão metodológica criada." : "Sugestão preenchida. Revise os campos e use Próximo para continuar.";
     return saved ? NextResponse.json({ message, workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
   }
 
@@ -541,7 +521,7 @@ async function saveWorkflow(
     allowedTopicIds,
     generalObjective: approvedGeneral,
     generalObjectiveId: context.general.id,
-    requireStudentJustification: !isSelfDirectedProject,
+    requireStudentJustification: false,
   });
   const advisoryMessages = [...new Set([...errors, ...warnings])];
 

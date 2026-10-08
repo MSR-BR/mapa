@@ -47,7 +47,7 @@ import {
 export const maxDuration = 120;
 
 const requestSchema = z.object({
-  action: z.enum(["back", "regenerate", "save", "validate"]),
+  action: z.enum(["back", "initialize", "regenerate", "save", "validate"]),
   content: z.string().optional(),
   generalObjective: z.string().optional(),
   generalStudentJustification: z.string().optional().nullable(),
@@ -72,7 +72,7 @@ const specificDraftsSchema = z.array(z.object({
   id: z.string().uuid(),
   content: z.string().trim().max(700),
   studentJustification: z.string().trim().max(1_000).nullable().default(null),
-})).min(3).max(6);
+})).max(6);
 
 type DefinitionRouteStep = z.infer<typeof requestSchema>["step"];
 const MIN_STUDENT_JUSTIFICATION_LENGTH = 10;
@@ -188,17 +188,16 @@ function draftContent(
   const value = step === "problem_statement"
     ? problemDraftSchema.parse(body.content)
     : generalDraftSchema.parse(body.content);
-  if (!value) throw new Error("O rascunho não pode ficar vazio.");
   const type = step;
   const existing = currentElement(workflow.content, type);
-  if (!existing) throw new Error("Conteúdo da etapa não encontrado.");
+
   return upsertElement(workflow.content, {
-    approvedContent: existing.approvedContent,
-    id: existing.id,
+    approvedContent: existing?.approvedContent ?? null,
+    id: existing?.id ?? crypto.randomUUID(),
     proposedContent: value,
-    referenceIds: existing.referenceIds,
+    referenceIds: existing?.referenceIds ?? [],
     sourceRevision,
-    status: existing.approvedContent === value ? "validated" : "edited",
+    status: existing?.approvedContent === value ? "validated" : "edited",
     studentJustification: (body.studentJustification ?? "").trim() || null,
     type,
     updatedBy: "user",
@@ -319,6 +318,41 @@ async function saveWorkflow(
       : NextResponse.json({ error: "O rascunho foi alterado em outra aba." }, { status: 409 });
   }
 
+  if (action === "initialize") {
+    const discoveryForGeneration = discoveryWithWorkflowReferences(discovery, content);
+    const notes = studentContextNotes(content);
+    const problem = currentElement(content, "problem_statement");
+    let general = currentElement(content, "general_objective");
+    if (!problem?.proposedContent.trim()) return NextResponse.json({ error: "Volte à problemática e confirme a pergunta antes de gerar objetivos." }, { status: 422 });
+    if (step === "problem_statement") return NextResponse.json({ workflow: workflowForView(baseWorkflow!, step) });
+    if (!general?.proposedContent.trim()) {
+      const generated = await generateGeneralObjective(problem.approvedContent ?? problem.proposedContent, candidate, discoveryForGeneration, notes);
+      content = upsertElement(content, { id: general?.id ?? crypto.randomUUID(), type: "general_objective", proposedContent: generated.content, approvedContent: null, referenceIds: generated.referenceIds, studentJustification: general?.studentJustification ?? null, sourceRevision: workflow.sourceRevision, status: "suggested", updatedBy: "ai" });
+      general = currentElement(content, "general_objective")!;
+    }
+    const existing = content.elements.filter((item) => item.type === "specific_objective");
+    if (step === "specific_objectives" && (existing.length < 3 || existing.some((item) => !item.proposedContent.trim()))) {
+      const suggestions = await generateSpecificObjectives(problem.approvedContent ?? problem.proposedContent, general!.proposedContent, discoveryForGeneration,
+        [...notes, `Preserve estes objetivos já escritos e proponha complementos distintos: ${JSON.stringify(existing.map((item) => item.proposedContent))}`]);
+      const count = Math.max(existing.length, existing.length >= 3 ? existing.length : suggestions.length);
+      for (let index = 0; index < count; index += 1) {
+        const previous = existing[index];
+        if (previous?.proposedContent.trim()) continue;
+        const suggestion = suggestions[index % suggestions.length];
+        content = upsertElement(content, { id: previous?.id ?? crypto.randomUUID(), type: "specific_objective", proposedContent: suggestion.content, approvedContent: null, referenceIds: suggestion.referenceIds, studentJustification: previous?.studentJustification ?? null, sourceRevision: workflow.sourceRevision, status: "suggested", updatedBy: "ai" });
+      }
+    }
+    const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
+    return saved ? NextResponse.json({ workflow: saved, message: "Objetivos preenchidos. Revise a sugestão e use Próximo para continuar." }) : NextResponse.json({ error: "A página mudou durante a geração. Recarregue para manter suas edições." }, { status: 409 });
+  }
+
+  if (action === "validate") {
+    const required = step === "specific_objectives" ? content.elements.filter((item) => item.type === "specific_objective" || item.type === "general_objective") : [currentElement(content, step)!];
+    const missing = required.flatMap((item, index) => !item?.proposedContent.trim() ? [`${item?.type === "specific_objective" ? `Objetivo específico ${index}` : step === "problem_statement" ? "Grande pergunta" : "Objetivo geral"}: preencha o texto ou use Completar campos com IA.`] : []);
+    if (step === "specific_objectives" && required.filter((item) => item.type === "specific_objective").length < 3) missing.push("São necessários pelo menos três objetivos específicos. Use Completar campos com IA para sugerir os que faltam.");
+    if (missing.length) return NextResponse.json({ error: missing[0], errors: missing }, { status: 422 });
+  }
+
   if (action === "regenerate") {
     const problem = currentElement(content, "problem_statement");
     const general = currentElement(content, "general_objective");
@@ -400,7 +434,7 @@ async function saveWorkflow(
       : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
   }
 
-  const errors = validationErrors(content, step, { requireStudentJustification: !isSelfDirectedProject });
+  const errors = validationErrors(content, step, { requireStudentJustification: false });
   const elementIds = step === "specific_objectives"
     ? content.elements.filter((element) => element.type === "specific_objective").map((element) => element.id)
     : [currentElement(content, step)?.id].filter((value): value is string => Boolean(value));

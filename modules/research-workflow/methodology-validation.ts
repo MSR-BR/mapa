@@ -13,6 +13,12 @@ export const methodologyClassificationInputSchema = methodologyClassificationSch
   sourceRevision: true,
   status: true,
   updatedBy: true,
+}).extend({
+  analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+  instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
+  procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  rationale: z.string().trim().min(3).max(800),
 });
 
 export const methodologyRowInputSchema = methodologyRowSchema.omit({
@@ -22,6 +28,9 @@ export const methodologyRowInputSchema = methodologyRowSchema.omit({
   updatedBy: true,
   warnings: true,
 }).extend({
+  analysisTreatment: z.string().trim().min(3).max(1_200),
+  dataCollection: z.string().trim().min(3).max(1_200),
+  expectedResult: z.string().trim().min(3).max(1_000),
   studentJustification: z.string().trim().max(1_000).nullable().default(null),
   warnings: z.array(z.string().trim().min(1).max(500)).max(6).default([]),
 });
@@ -61,8 +70,8 @@ export function reconcileGeneratedMethodologyRows(
   }
 
   return objectives.map((objective) => {
-    let rowIndex = rows.findIndex((row, index) => !usedRows.has(index) && row.objectiveId === objective.id);
-    if (rowIndex < 0) rowIndex = rows.findIndex((_, index) => !usedRows.has(index));
+    const rowIndex = rows.findIndex((row, index) => !usedRows.has(index) && row.objectiveId === objective.id);
+    // Never borrow another objective's row: missing rows get their own synthesis.
     if (rowIndex >= 0) usedRows.add(rowIndex);
     const source = rowIndex >= 0 ? rows[rowIndex] : null;
     const knownTopicIds = source
@@ -216,7 +225,7 @@ export function validateMethodologyPlan(
     const label = methodologyRowLabel(index, row, options);
     if (unknownTopics.length > 0) errors.push(`${label} aponta para tópico de capítulo inexistente.`);
     if (row.associatedTopicIds.length === 0) errors.push(`${label} precisa estar ligado a ao menos um tópico dos capítulos 2 ou 4.`);
-    if (options.requireStudentJustification !== false && (row.studentJustification?.trim().length ?? 0) < 10) {
+    if (options.requireStudentJustification === true && (row.studentJustification?.trim().length ?? 0) < 10) {
       errors.push(`${label} · Justificativa da linha (*): escreva pelo menos 10 caracteres.`);
     }
     if (includesAny(row.expectedResult, [
@@ -241,7 +250,7 @@ export function validateMethodologyPlan(
     warnings.push(`O título final tem mais de ${FINAL_TITLE_RECOMMENDED_LENGTH} caracteres; ele pode seguir assim, mas considere encurtá-lo para facilitar a identificação do projeto.`);
   }
   if (!includesAny(parsed.data.title, options.generalObjective.split(/\s+/).filter((word) => word.length > 5).slice(0, 6))) {
-    errors.push("O título final precisa derivar semanticamente do objetivo geral validado.");
+    warnings.push("O título pode ficar mais claro se retomar o tema do objetivo geral; você pode avançar e revisá-lo depois.");
   }
 
   return {

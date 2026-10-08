@@ -554,6 +554,7 @@ export async function generateMethodologyPlan(
   existingRows: MethodologyPlanInput["rows"] = [],
   improvementNotes: string[] = [],
   studentContext: string[] = [],
+  generate: typeof generateStructured = generateStructured,
 ) {
   const chapterTopics = [...literatureTopics, ...developmentTopics].map((topic) => ({
     chapter: literatureTopics.some((item) => item.id === topic.id) ? "Capítulo 2" : "Capítulo 4",
@@ -563,12 +564,15 @@ export async function generateMethodologyPlan(
   }));
   const existingByObjective = new Map(existingRows.map((row) => [row.objectiveId, row.id]));
 
-  const { output } = await generateStructured({
+  const { output } = await generate({
     operation: "generate_methodology_plan", schema: generatedMethodologyPlanSchema,
     prompt: [
       "Crie a matriz metodológica de uma proposta de pesquisa em português do Brasil.",
       "A matriz deve ter exatamente uma linha para cada objetivo específico validado e uma linha final para o objetivo geral, usando o ID informado como OEG.",
-      "Para cada linha, descreva como as informações/dados serão levantados, como serão analisados/tratados e qual resultado esperado ou impacto é pretendido.",
+      "Preencha todos os campos obrigatórios com uma proposta utilizável e editável, pronta para o autor revisar e usar Próximo. Não deixe título ou células em branco nem use 'a definir' como resposta.",
+      "Para cada linha, proponha fonte/tipo de dados, procedimento e instrumento de levantamento, passos de análise/tratamento e produto intelectual esperado, conectados ao objetivo específico. Na linha OEG, explique a síntese dos resultados esperados dos OEs.",
+      "Quando faltarem decisões do autor, proponha uma opção viável no futuro (por exemplo, 'Propõe-se...'), sem afirmar que foi escolhida ou executada. Justifique a adequação ao problema. As notas studentJustification são opcionais e pertencem ao autor; não as invente.",
+      `Rascunho existente a considerar e preservar: ${JSON.stringify(existingRows)}`,
       "Resultados esperados são contribuições, produtos intelectuais, sínteses ou impactos pretendidos. Nunca escreva achados como se a pesquisa já tivesse sido executada.",
       "Classifique a metodologia de modo editável: natureza, objetivos, abordagem, procedimentos, instrumentos, técnicas de análise e avisos éticos.",
       "A classificação deve ser coerente com os instrumentos e técnicas usados nas linhas.",
