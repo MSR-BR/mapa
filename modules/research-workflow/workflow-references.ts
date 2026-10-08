@@ -26,7 +26,7 @@ export function mergeReferenceArchive(
     ...existing.filter((reference) => reference.source !== "manual"),
     ...previousDiscovery,
   ]);
-  return [...manual, ...other];
+  return uniqueReferences([...manual, ...other]);
 }
 
 function elementLabel(element: ValidatedElement) {

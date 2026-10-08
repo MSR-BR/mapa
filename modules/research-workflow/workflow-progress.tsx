@@ -11,7 +11,7 @@ import {
 } from "./workflow-navigation";
 import type { ResearchWorkflow } from "./schema";
 
-export type WorkflowProgressHandle = { navigate: (target: WorkflowNavigationTarget) => void };
+export type WorkflowProgressHandle = { navigate: (target: WorkflowNavigationTarget) => void; saveAndNavigate: (target: WorkflowNavigationTarget) => Promise<void> };
 
 type WorkflowProgressProps = {
   ref?: Ref<WorkflowProgressHandle>;
@@ -93,11 +93,13 @@ export function WorkflowProgress({
     router.push(workflowTargetUrl(projectId, target), { scroll: false });
   }
 
-  useImperativeHandle(ref, () => ({ navigate }));
+  useImperativeHandle(ref, () => ({ navigate, saveAndNavigate: (target) => saveAndNavigate(target) }));
 
-  async function saveAndNavigate() {
-    if (!leaving || !onSave) return;
-    const target = leaving;
+  async function saveAndNavigate(destination?: WorkflowNavigationTarget) {
+    const target = destination ?? leaving;
+    if (!target || busy) return;
+    if (!hasUnsavedChanges) { navigate(target, true); return; }
+    if (!onSave) return;
     setPendingTarget(target);
     setError(null);
     try {

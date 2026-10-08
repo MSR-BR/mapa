@@ -11,12 +11,12 @@ import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
 
-export function PublicStartForm({ authenticated = false }: { authenticated?: boolean }) {
+export function PublicStartForm({ authenticated = false, initialMode = "advanced", explicitMode = false }: { authenticated?: boolean; initialMode?: "quick" | "advanced"; explicitMode?: boolean }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const quickSuggestionContinuePending = useRef(false);
   const [continuing, setContinuing] = useState(false);
-  const [mode, setMode] = useState<"quick" | "advanced">("advanced");
+  const [mode, setMode] = useState<"quick" | "advanced">(initialMode);
   const [intake, setIntake] = useState<ResearchIntakeDraft>(EMPTY_RESEARCH_INTAKE);
   const [quickPrompt, setQuickPrompt] = useState("");
   const [error, setError] = useState("");
@@ -33,19 +33,19 @@ export function PublicStartForm({ authenticated = false }: { authenticated?: boo
       }
       if (draft.mode === "quick" || (!draft.intake && typeof draft.prompt === "string")) {
         queueMicrotask(() => {
-          setMode("quick");
+          if (!explicitMode) setMode("quick");
           setQuickPrompt(typeof draft.prompt === "string" ? draft.prompt : "");
         });
       } else if (draft.intake && typeof draft.intake === "object") {
         queueMicrotask(() => {
-          setMode("advanced");
+          if (!explicitMode) setMode("advanced");
           setIntake({ ...EMPTY_RESEARCH_INTAKE, ...(draft.intake as Partial<ResearchIntakeDraft>) });
         });
       }
     } catch {
       localStorage.removeItem(PENDING_PROJECT_KEY);
     }
-  }, []);
+  }, [explicitMode]);
 
   useEffect(() => {
     if (!quickSuggestionContinuePending.current || continuing || !formRef.current) return;
@@ -152,7 +152,7 @@ export function PublicStartForm({ authenticated = false }: { authenticated?: boo
       {error ? <p className="research-intake-error" role="alert">{error}</p> : null}
       <div className="quick-start-toolbar quick-start-toolbar-simple">
         <span>{mode === "quick" ? "Enter para continuar · Shift + Enter para nova linha" : "Responda às cinco perguntas · Enter na pergunta final para continuar"}</span>
-        <button disabled={continuing} type="submit">{continuing ? "Continuando…" : "Gerar mapa"}<span aria-hidden="true">→</span></button>
+        <button disabled={continuing} type="submit">{continuing ? "Continuando…" : authenticated ? "Gerar mapa" : "Continuar com Google"}<span aria-hidden="true">→</span></button>
       </div>
     </form>
   );

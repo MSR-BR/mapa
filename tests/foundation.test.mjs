@@ -20,10 +20,11 @@ test("keeps the branded foundation and locale in the App Router", async () => {
   assert.match(layout, /display: "optional"/);
   assert.match(layout, /preload: false/);
   assert.match(brandLogo, /sizes=\{config\.sizes\}/);
-  assert.match(page, /Vamos construir o mapa da sua pesquisa\?/);
+  assert.match(page, /Escolha como começar seu mapa/);
   assert.match(page, /Da situação-problema ao projeto de pesquisa/);
   assert.doesNotMatch(page, /Comece pela ideia/);
-  assert.match(page, /PublicStartForm/);
+  assert.doesNotMatch(page, /PublicStartForm/);
+  assert.match(await readProjectFile("app/mapa/page.tsx"), /PublicStartForm/);
   assert.match(page, /auth\/callback\?code=/);
   assert.match(page, /dashboard\?resume=1/);
 });
@@ -52,7 +53,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /Mapa Rápido/);
   assert.match(publicStart, /public-mode-card-advanced/);
   assert.match(publicStart, /public-mode-card-quick/);
-  assert.match(publicStart, /useState<"quick" \| "advanced">\("advanced"\)/);
+  assert.match(publicStart, /initialMode = "advanced"/);
   assert.match(publicStart, /ResearchPromptInput/);
   assert.match(loginPage, /label="Google"/);
   assert.match(loginPage, /Acesse ou crie sua conta com o Google/);
@@ -624,7 +625,8 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
     readProjectFile("app/dashboard/error.tsx"),
   ]);
 
-  assert.match(home, /redirect\("\/dashboard\?continue=1"\)/);
+  assert.doesNotMatch(home, /redirect\("\/dashboard\?continue=1"\)/);
+  assert.match(home, /href="\/mapa"/);
   assert.match(dashboard, /Vamos construir o mapa da sua pesquisa\?/);
   assert.match(dashboard, /Continue de onde parou/);
   assert.match(dashboard, /continueParam === "1"/);
@@ -695,9 +697,9 @@ test("implements Change 011 with editable and versioned problem and objectives",
   assert.match(route, /markDescendantsStale/);
   assert.match(route, /elementVersions/);
   assert.match(route, /validating_specific_objectives/);
-  assert.match(workspace, /Regenerar com minhas orientações/);
+  assert.match(workspace, /saveThenRegenerateCard/);
   assert.match(workspace, /Salvar rascunho/);
-  assert.match(workspace, /Validar etapa/);
+  assert.match(workspace, /Próximo/);
   assert.match(workspace, /ManualReferencePanel/);
   assert.match(workspace, /AiGuidanceField/);
   assert.match(workspace, /required=\{!isSelfDirectedProject\}/);
@@ -757,7 +759,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /OEG/);
   assert.match(workspace, /apresentação do estudo de caso/);
   assert.match(workspace, /Contexto e orientações para a IA — tópico/);
-  assert.match(workspace, /required=\{!isSelfDirectedProject\}/);
+  assert.match(workspace, /Título do tópico \*/);
   assert.match(route, /parseSubmittedTopics/);
   assert.match(workspace, /Atende completamente/);
   assert.match(workspace, /Atende parcialmente/);
@@ -765,8 +767,8 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(validation, /OBJECTIVE_COVERAGE_LABELS/);
   assert.match(workspace, /literature-optimizer-card/);
   assert.match(workspace, /Quando otimizar:/);
-  assert.match(workspace, /associações específicas entre tópico e referência podem mudar/);
-  assert.match(workspace, /Se tudo estiver bom, você pode apenas validar e avançar/);
+  assert.match(workspace, /associações permanecem preservad/);
+  assert.match(workspace, /Gerar tópicos iniciais com IA/);
   assert.match(workspace, /requestBody\.topics = topics/);
   assert.match(workspace, /Referências encontradas e associadas/);
   assert.match(workspace, /Cobertura dos objetivos/);
@@ -802,9 +804,9 @@ test("implements Change 052 with a real Research Starter optimization and safe a
   assert.match(route, /mergeReferenceArchive/);
   assert.match(route, /A versão anterior foi preservada/);
   assert.match(route, /resultados parciais/);
-  assert.match(route, /associada\(s\) aos novos tópicos/);
-  assert.match(workspace, /nova busca no Research Starter/);
-  assert.match(workspace, /referências externas adicionadas manualmente permanecem preservadas/);
+  assert.match(route, /tópicos, referências anteriores e associações foram preservados/);
+  assert.match(workspace, /busca referências adicionais no Research Starter/);
+  assert.match(workspace, /As fontes anteriores, os tópicos e suas associações permanecem preservados/);
   assert.match(workspace, /externa\(s\) preservada\(s\)/);
   assert.match(references, /mergeReferenceArchive/);
   assert.match(evidence, /v25082026\.3/);
@@ -1411,7 +1413,7 @@ test("registers Change 079 premium promo while preserving version 1", async () =
   assert.ok(videoV2.byteLength > 2_000_000);
 });
 
-test("consolidates discovery, video and project start on the canonical root", async () => {
+test("keeps discovery and video on the canonical root with a dedicated public start page", async () => {
   const [landing, layout, authLayout, config, sitemap, robots, styles, roadmap, video, poster, socialCard] = await Promise.all([
     readProjectFile("app/page.tsx"),
     readProjectFile("app/layout.tsx"),
@@ -1427,7 +1429,8 @@ test("consolidates discovery, video and project start on the canonical root", as
   ]);
 
   assert.match(roadmap, /081 \| Vídeo de apresentação na landing page \| Concluída/);
-  assert.match(landing, /PublicStartForm/);
+  assert.doesNotMatch(landing, /PublicStartForm/);
+  assert.match(landing, /href="\/mapa"/);
   assert.match(landing, /id="criar-mapa"/);
   assert.match(landing, /id="apresentacao"/);
   assert.match(landing, /<video/);

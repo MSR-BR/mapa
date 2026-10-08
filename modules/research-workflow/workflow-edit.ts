@@ -31,7 +31,7 @@ export function prepareWorkflowEdit(edit: WorkflowEdit) {
   let stableState = base.stableState;
   let sourceRevision = base.sourceRevision;
   const proposal = ["regenerate", "optimize"].includes(action);
-  const draft = ["save", "initialize", "restore", "accept_proposal"].includes(action);
+  const draft = ["save", "initialize", "restore", "accept_proposal", "regenerate_card"].includes(action);
   if (draft || proposal) {
     const key = proposal ? "stepProposals" : "stepDrafts";
     const previous = base.content[key][step]?.unit ?? workflowUnit(base.content, step);
@@ -39,7 +39,7 @@ export function prepareWorkflowEdit(edit: WorkflowEdit) {
     content = researchWorkflowContentSchema.parse({
       ...base.content,
       [key]: { ...base.content[key], [step]: { baseRevision: base.sourceRevision, savedAt: now, unit, ...(action === "accept_proposal" && base.content.stepProposals[step]?.aiReview ? { aiReview: base.content.stepProposals[step]!.aiReview } : {}) } },
-      ...(action === "accept_proposal" ? { stepProposals: withoutStep(base.content.stepProposals, step) } : {}),
+      ...(["accept_proposal", "regenerate_card"].includes(action) ? { stepProposals: withoutStep(base.content.stepProposals, step) } : {}),
       // Keep newly fetched, validated references available without copying them into every version.
       referenceArchive: mergeReferenceArchive(edit.content.referenceArchive, [...(base.content.discovery?.references ?? []), ...(edit.content.discovery?.references ?? [])]),
     });

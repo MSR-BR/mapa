@@ -1,4 +1,7 @@
 "use client";
+import { useRegenerationRequests } from "./use-regeneration-requests";
+import { saveThenRegenerateCard } from "./regenerate-card-client";
+import { WorkflowAction } from "./workflow-action";
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
@@ -48,8 +51,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
   const [problemJustification, setProblemJustification] = useState(() => findElement(initialWorkflow, "problem_statement")?.studentJustification ?? "");
   const [generalJustification, setGeneralJustification] = useState(() => findElement(initialWorkflow, "general_objective")?.studentJustification ?? "");
   const [specifics, setSpecifics] = useState<ObjectiveDraft[]>(() => specificDrafts(initialWorkflow));
-  const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
-  const [regenerationEpoch, setRegenerationEpoch] = useState(0);
+  const [regenerationRequests, updateRequest] = useRegenerationRequests(projectId);
   const [promotionId, setPromotionId] = useState<string | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -89,7 +91,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
     : advisorRequired
       ? "Informe o orientador para avançar"
       : isSelfDirectedProject
-        ? "Validar etapa"
+        ? "Próximo"
         : "Enviar para validação";
 
   useEffect(() => {
@@ -110,8 +112,21 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
     setPromotionId(null);
   }
 
-  function updateRequest(id: string, value: string) {
-    setRegenerationRequests((current) => ({ ...current, [id]: value }));
+
+
+  async function regenerateCard(targetId: string) {
+    if (!step || busy) return;
+    setOperation("regenerate"); setMessage(null); setErrors([]);
+    try {
+      const result = await saveThenRegenerateCard({ projectId, step, targetId, instruction: regenerationRequests[targetId] ?? "",
+        savePath: `/api/projects/${projectId}/definition`,
+        saveBody: { revision: workflow.revision, step, content: step === "problem_statement" ? problem : step === "general_objective" ? general : undefined,
+          studentJustification: step === "problem_statement" ? problemJustification : generalJustification,
+          generalObjective: general, generalStudentJustification: generalJustification, objectives: specifics, promoteObjectiveId: promotionId ?? undefined },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) }, request: aiProgress.request, onSaved: applyWorkflow });
+      applyWorkflow(result.workflow); setMessage(result.message);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível regenerar este quadro."); }
+    finally { setOperation(null); }
   }
 
   async function submit(action: Exclude<Operation, null>) {
@@ -158,10 +173,6 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar esta etapa.");
-      if (action === "regenerate") {
-        setRegenerationRequests({});
-        setRegenerationEpoch((current) => current + 1);
-      }
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
@@ -272,19 +283,19 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
           <div className="definition-editor-with-note">
             <label>
               Grande pergunta da pesquisa
-              <textarea maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
+              <textarea disabled={busy || waitingForAdvisor} maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
               <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
             </label>
-            <AiGuidanceField key={regenerationEpoch} context={problemJustification} contextPlaceholder="Explique a relevância da pergunta e o recorte que deve orientar as próximas etapas." label="Contexto e orientações para a IA — problemática" onContextChange={setProblemJustification} onRequestChange={(value) => updateRequest("problem", value)} request={regenerationRequests.problem ?? ""} requestPlaceholder="Descreva como a IA deve ajustar a problemática na próxima regeneração." required={!isSelfDirectedProject} />
+            <AiGuidanceField context={problemJustification} contextPlaceholder="Explique a relevância da pergunta e o recorte que deve orientar as próximas etapas." label="Contexto e orientações para a IA — problemática" onContextChange={setProblemJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("problem")} onRequestChange={(value) => updateRequest("problem", value)} request={regenerationRequests.problem ?? ""} requestPlaceholder="Descreva como a IA deve ajustar a problemática na próxima regeneração." required={!isSelfDirectedProject} />
           </div>
         ) : step === "general_objective" ? (
           <div className="definition-editor-with-note">
             <label>
               Objetivo geral
-              <textarea maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+              <textarea disabled={busy || waitingForAdvisor} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
               <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
             </label>
-            <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo responde à problemática e o que deve permanecer nas próximas etapas." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral na próxima regeneração." required={!isSelfDirectedProject} />
+            <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo responde à problemática e o que deve permanecer nas próximas etapas." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("general")} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral na próxima regeneração." required={!isSelfDirectedProject} />
           </div>
         ) : (
           <div className="specific-objective-list">
@@ -292,10 +303,10 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
               <div className="definition-editor-with-note">
                 <label>
                   Objetivo geral (revisável nesta etapa)
-                  <textarea rows={6} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+                  <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
                   <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
                 </label>
-                <AiGuidanceField key={regenerationEpoch} context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
+                <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("general")} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." required={!isSelfDirectedProject} />
               </div>
             </article>
             {specifics.map((objective, index) => (
@@ -303,21 +314,21 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
                 <div className="definition-editor-with-note">
                   <label>
                     Objetivo específico {index + 1}
-                    <textarea rows={6} maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
+                    <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
                     <small>{objective.content.length}/700 caracteres</small>
                   </label>
-                  <AiGuidanceField key={regenerationEpoch} context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
+                  <AiGuidanceField context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(objective.id)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." required={!isSelfDirectedProject} />
                 </div>
                 <footer className="objective-card-actions">
                   <button
                     aria-label={`Remover objetivo específico ${index + 1}`}
-                    disabled={specifics.length <= 3}
+                    disabled={busy || waitingForAdvisor || specifics.length <= 3}
                     onClick={() => setSpecifics((current) => current.filter((item) => item.id !== objective.id))}
                     type="button"
                   >Remover</button>
                   <button
                     className="promote-specific-objective"
-                    disabled={specifics.length <= 3}
+                    disabled={busy || waitingForAdvisor || specifics.length <= 3}
                     onClick={() => promoteSpecificObjective(objective)}
                     type="button"
                   >Usar como objetivo geral</button>
@@ -326,7 +337,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
             ))}
             <button
               className="add-specific-objective"
-              disabled={specifics.length >= 6}
+              disabled={busy || waitingForAdvisor || specifics.length >= 6}
               onClick={() => setSpecifics((current) => [...current, { content: "", id: crypto.randomUUID(), studentJustification: "" }])}
               type="button"
             >+ Adicionar objetivo</button>
@@ -357,10 +368,9 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
       ) : null}
 
       <div className="definition-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.navigate(step === "specific_objectives" ? "general_objective" : "problem_statement")} type="button">Voltar</button>
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
-        <button className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-        <button aria-describedby={advisorRequired ? "student-advisor-required" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || advisorRequired} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <WorkflowAction help="Salva o conteúdo da página como rascunho e abre a etapa anterior. Se o salvamento falhar, você permanece aqui." className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.saveAndNavigate(step === "specific_objectives" ? "general_objective" : "problem_statement")} type="button">Voltar</WorkflowAction>
+        <WorkflowAction help="Salva o estado atual da página sem avançar nem mudar o contexto confirmado do projeto." className="definition-button secondary" disabled={busy || !currentValueChanged} onClick={() => void submit("save")} type="button">Salvar rascunho</WorkflowAction>
+        <WorkflowAction help="Processa os dados da página, confirma esta etapa e segue para a próxima. Projetos de aluno continuam sujeitos à aprovação do orientador." aria-describedby={advisorRequired ? "student-advisor-required" : undefined} className="definition-button primary" disabled={busy || waitingForAdvisor || advisorRequired} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</WorkflowAction>
       </div>
     </section>
   );

@@ -11,7 +11,7 @@ export async function reviewWorkflowProposal(edit: WorkflowEdit, generate: typeo
   const generator = aiOperation.getStore()?.lastGenerator;
   const stale = workflowUnit(edit.base.content, edit.step).elements.some((item) => item.status === "stale")
     || edit.step === "methodology_matrix" && edit.base.content.methodologyRows.some((row) => row.status === "stale");
-  if (!generator || !["regenerate", "initialize", "optimize"].includes(edit.action) || !(stale || edit.step === "methodology_matrix")) return null;
+  if (!generator || !["regenerate", "regenerate_card", "initialize", "optimize"].includes(edit.action) || !(stale || edit.step === "methodology_matrix")) return null;
   const provider = generator === "gemini" ? "openai" : "gemini";
   const base = { provider, model: configuredModel(provider), baseRevision: edit.base.sourceRevision, findings: [] } satisfies Omit<CollaborativeReview, "status">;
   if (process.env.MAPA_AI_CROSS_REVIEW_ENABLED !== "true") return { ...base, status: "disabled" };

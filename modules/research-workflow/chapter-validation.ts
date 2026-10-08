@@ -14,6 +14,20 @@ export const chapterTopicInputSchema = z.object({
 });
 
 export const chapterTopicsInputSchema = z.array(chapterTopicInputSchema).min(3).max(6);
+export const chapterTopicsDraftSchema = z.array(chapterTopicInputSchema.extend({ title: z.string().trim().min(1).max(180) })).max(6);
+export function chapterInputErrors(error: z.ZodError) {
+  return [...new Set(error.issues.map((issue) => {
+    const [index, field] = issue.path;
+    if (typeof index !== "number") return "Inclua de 3 a 6 tópicos para avançar. Use Gerar tópicos iniciais com IA ou Adicionar tópico. Você pode salvar um rascunho com menos tópicos.";
+    const label = `Tópico ${index + 1}`;
+    if (field === "title") return `${label}: preencha o título (3 a 180 caracteres para avançar).`;
+    if (field === "referenceIds") return `${label}: confira as referências associadas (máximo de 20).`;
+    if (field === "objectiveCoverage") return `${label}: confira os objetivos relacionados e seu grau de cobertura.`;
+    if (field === "studentJustification") return `${label}: o contexto deve ter no máximo 1000 caracteres.`;
+    if (field === "exceptionJustification") return `${label}: a justificativa de exceção deve ter no máximo 500 caracteres.`;
+    return `${label}: confira o campo ${String(field ?? "identificação")}.`;
+  }))];
+}
 export type ChapterTopicInput = z.infer<typeof chapterTopicInputSchema>;
 
 /** Human-readable labels for the persisted objective coverage degrees. */

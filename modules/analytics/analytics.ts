@@ -81,7 +81,7 @@ export function safeAnalyticsPageLocation(href: string): string {
   const url = new URL(href);
   const path = url.pathname.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "project");
   const safe = new URL(path, url.origin);
-  if (path === "/") {
+  if (path === "/" || path === "/mapa") {
     for (const key of PUBLIC_CAMPAIGN_KEYS) {
       const values = url.searchParams.getAll(key);
       if (values.length === 1 && isSafeCampaignValue(values[0])) safe.searchParams.set(key, values[0]);

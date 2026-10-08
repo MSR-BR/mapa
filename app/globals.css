@@ -103,8 +103,8 @@ body {
 .landing-brand .brand-logo-wordmark { width:min(15rem, 42vw); }
 .landing-login { border:1px solid var(--border); border-radius:999px; padding:.55rem 1rem; color:var(--foreground); font-weight:750; text-decoration:none; background:rgb(255 255 255 / 64%); }
 .landing-hero,.landing-start,.landing-video,.landing-section,.landing-feature,.landing-cta { width:min(100%,78rem); margin:0 auto; padding:clamp(4rem,10vw,8rem) clamp(1rem,5vw,4rem); }
-.landing-hero { min-height:clamp(34rem,72vh,52rem); display:flex; flex-direction:column; justify-content:center; }
-.landing-hero h1 { max-width:11ch; font-size:clamp(3.35rem,9vw,8rem); }
+.landing-hero { min-height:32rem; padding-top:clamp(2rem,5vw,4rem); padding-bottom:clamp(2rem,5vw,4rem); display:flex; flex-direction:column; justify-content:center; }
+.landing-hero h1 { max-width:20ch; font-size:clamp(2.5rem,5.5vw,4.7rem); }
 .landing-lede { max-width:38rem; margin:1.5rem 0 0; color:var(--muted); font-size:clamp(1.05rem,2vw,1.35rem); line-height:1.55; }
 .landing-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2rem; }
 .landing-proof-points { display:flex; flex-wrap:wrap; gap:.6rem 1.3rem; margin:1.5rem 0 0; padding:0; color:var(--muted); font-size:.82rem; font-weight:700; list-style:none; }
@@ -629,7 +629,7 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .ai-guidance-tabs button { border: 1px solid #bdcfc4; border-radius: 0.5rem; padding: 0.35rem 0.55rem; background: #fff; color: #35614d; font: inherit; font-size: 0.72rem; font-weight: 750; cursor: pointer; }
 .ai-guidance-tabs button[aria-pressed="true"] { border-color: #237351; background: #e8f4ec; color: #19583d; }
 .ai-guidance-field label { display: block; }
-.ai-guidance-field textarea { width: 100%; min-height: 7rem; background: #fff; font-size: 0.86rem; }
+.ai-guidance-field textarea { width: 100%; min-height: 7rem; border: 1px solid #b9cbc2; border-radius: .85rem; padding: .9rem; resize: vertical; background: #fff; color: var(--foreground); font: inherit; font-size: .86rem; line-height: 1.5; }
 .methodology-stage-request { margin: 0.8rem 0; border: 1px solid #d8e4de; border-radius: 0.95rem; padding: 0.8rem; background: #f7faf8; }
 .methodology-stage-request textarea { min-height: 5rem; }
 .definition-editor-cards { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
@@ -1147,3 +1147,18 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .workflow-version-list button { width: 100%; overflow-wrap: anywhere; }
 .workflow-leave-dialog { background: white; padding: 1rem; border: 2px solid #267555; border-radius: 12px; margin-top: 1rem; }
 @media (max-width: 640px) { .workflow-version-columns { grid-template-columns: 1fr; } }
+
+/* C114: entrada pública dedicada e ações explicadas por quadro. */
+.mapa-entry-heading { max-width: 850px; margin: 3rem auto 2rem; text-align: center; }
+.mapa-entry-heading h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
+.mapa-entry-heading p { margin-top: 1rem; }
+.mapa-entry-form { max-width: 960px; margin: 0 auto 3rem; border-radius: 24px; padding: clamp(1rem, 3vw, 2rem); background: #123d30; }
+.landing-entry-modes .landing-primary, .landing-entry-modes .landing-secondary { margin-top: 1rem; display: inline-flex; }
+.workflow-action { display: inline-flex; align-items: center; gap: .35rem; }
+.workflow-action-help { position: relative; }
+.workflow-action-help > summary { cursor: pointer; border: 1px solid #9abaaf; border-radius: 50%; width: 1.6rem; height: 1.6rem; text-align: center; list-style: none; }
+.workflow-action-help p { position: absolute; bottom: 2rem; right: 0; z-index: 5; width: min(280px, 70vw); background: #fff; color: #183b2e; border: 1px solid #9abaaf; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 24px #1233; font-size: .9rem; }
+.card-regeneration-action { margin-top: .8rem; }
+.chapter-empty-state { padding: 1.5rem; border: 1px solid #83b7a5; border-radius: 16px; background: #eff8f4; margin: 1rem 0; }
+.chapter-empty-state p { margin: .7rem 0; }
+.chapter-field-error { color: #9b3028; font-size: .9rem; }

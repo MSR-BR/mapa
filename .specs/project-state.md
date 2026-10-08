@@ -8,6 +8,13 @@
 
 ## Estado atual
 
+- C114 implementada localmente para revisão: landing com entrada dedicada `/mapa`, regeneração por quadro com salvamento prévio, Voltar/Próximo esclarecidos e literatura aditiva com recuperação de tópicos. 211 testes, 13 cenários de rotas, build e UI local aprovados. Sem publicação ou chamadas pagas. [Verificação](changes/114-landing-card-regeneration/validation-2026-10-08.md).
+
+- C113 preparada localmente para revisão: parâmetros Gemini auditados, smoke de
+  verificação corrigido e contrato HTTP testado com transporte simulado. Gerador
+  3.6 preservado; vínculo com o aviso de 07/10 não confirmado. Sem chamada paga,
+  troca de modelo ou publicação. [Auditoria](changes/113-gemini-deprecated-parameters/audit-2026-10-07.md).
+
 - Acompanhamento de **07/10**: Ads Mapa Enabled / Eligible (Learning), acumulado 1 impressão/0 cliques/€0,00; quatro palavras com baixo volume. Regra horária executou com sucesso, sem alterações. GA4 já atribui `codex_validation / qa`, excluído da análise de aquisição; `(not set)`, uso interno, baseline e conversões pagas ainda não resolvidos. Produção `v06102026.4` saudável; nenhuma configuração externa alterada. [Registro diário](changes/110-google-ads-controlled-pilot/monitor-2026-10-07.md). Os números de 06/10 abaixo são históricos.
 
 - C112 concluída e publicada em **`v06102026.4`**: Gemini principal, GPT complementar/fallback limitado e progresso identificado por provedor. Teto adicional US$5/mês com reserva prévia e bloqueio; 197 testes e smoke autenticado Gemini → GPT aprovados, sem alterar o conteúdo acadêmico vigente. Health canônico reconfirmado `ok` no fechamento documental de 06/10. [CPD C112](changes/112-collaborative-ai-provider-progress/cpd-2026-10-06.md).

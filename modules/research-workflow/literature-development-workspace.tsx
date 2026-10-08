@@ -1,4 +1,7 @@
 "use client";
+import { useRegenerationRequests } from "./use-regeneration-requests";
+import { saveThenRegenerateCard } from "./regenerate-card-client";
+import { WorkflowAction } from "./workflow-action";
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
@@ -61,8 +64,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const chapter: Chapter = workflow.content.activeStep === "development_topics" ? "development" : "literature";
   const [topics, setTopics] = useState<ChapterTopicInput[]>(() => readTopics(initialWorkflow, chapter));
-  const [regenerationRequests, setRegenerationRequests] = useState<Record<string, string>>({});
-  const [regenerationEpoch, setRegenerationEpoch] = useState(0);
+  const [regenerationRequests, updateRequest] = useRegenerationRequests(projectId);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -84,7 +86,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const validateButtonLabel = "Validar etapa";
+  const validateButtonLabel = "Próximo";
 
   useEffect(() => {
     const analyticsPosition = getAnalyticsWorkflowPosition(chapter === "literature" ? "literature_topics" : "development_topics");
@@ -101,13 +103,23 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     setKeywords(next.content.discovery?.interpreted.keywords.join(", ") ?? "");
   }
 
-  function updateRequest(id: string, value: string) {
-    setRegenerationRequests((current) => ({ ...current, [id]: value }));
+
+
+  async function regenerateCard(targetId: string) {
+    if (busy) return;
+    setOperation("regenerate"); setMessage(null); setErrors([]);
+    try {
+      const result = await saveThenRegenerateCard({ projectId, step: chapter === "literature" ? "literature_topics" : "development_topics", targetId, instruction: regenerationRequests[targetId] ?? "",
+        savePath: `/api/projects/${projectId}/chapters`, saveBody: { revision: workflow.revision, step: chapter, topics },
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) }, request: aiProgress.request, onSaved: applyWorkflow });
+      applyWorkflow(result.workflow); setMessage(result.message);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível regenerar este tópico."); }
+    finally { setOperation(null); }
   }
 
   async function submit(action: Exclude<Operation, null>, extra: Record<string, unknown> = {}) {
     if (busy) return;
-    if ((action === "regenerate" || action === "optimize") && changed) {
+    if (action === "regenerate" && changed) {
       setMessage("Salve o rascunho antes de solicitar uma proposta à IA. Suas edições permanecem nesta tela.");
       return false;
     }
@@ -118,7 +130,14 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
     if (action === "optimize") trackAnalyticsEvent("literature_optimization_started", { ...getAnalyticsWorkflowPosition("literature_topics"), app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
     try {
-      const requestBody: Record<string, unknown> = { action, revision: workflow.revision, step: chapter, ...extra };
+      let revision = workflow.revision;
+      if (action === "optimize" && changed) {
+        const saveResponse = await aiProgress.request(`/api/projects/${projectId}/chapters`, { method: "POST", headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) }, body: JSON.stringify({ action: "save", revision, step: chapter, topics }) });
+        const saved = await saveResponse.json();
+        if (!saveResponse.ok || !saved.workflow) throw new Error(saved.errors?.join(" ") || saved.error || "Não foi possível salvar a página.");
+        revision = saved.workflow.revision; applyWorkflow(saved.workflow);
+      }
+      const requestBody: Record<string, unknown> = { action, revision, step: chapter, ...extra };
       if (action === "save" || action === "validate") requestBody.topics = topics;
       if (action === "regenerate") {
         requestBody.currentGuidanceNotes = topics.filter((topic) => savedTopics.some((saved) => saved.id === topic.id)).map((topic) => ({ id: topic.id, note: topic.studentJustification }));
@@ -136,10 +155,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         return;
       }
       if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
-      if (action === "regenerate") {
-        setRegenerationRequests({});
-        setRegenerationEpoch((current) => current + 1);
-      }
       applyWorkflow(payload.workflow);
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
@@ -229,7 +244,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const visibleStepLabel = chapter === "literature" ? "Passo 1/2 · Etapa 3/4" : "Passo 2/2 · Etapa 3/4";
   return (
     <section className="chapter-planning" aria-labelledby="chapter-planning-title">
-      {topics.length === 0 ? <button className="button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("initialize")} type="button">Gerar sugestão inicial desta etapa</button> : null}
       {busy ? (
         <div className="generation-overlay" role="status" aria-live="polite">
           <div className="generation-overlay-card"><ResearchActivityIcon /><p className="section-kicker">{visibleStepLabel}</p><h2>{aiProgress.label}</h2><button type="button" onClick={aiProgress.cancel}>Cancelar solicitação</button></div>
@@ -273,15 +287,18 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         <p className="accepted-knowledge">Vocabulário aceito: {workflow.content.knowledgeSuggestions.filter((suggestion) => suggestion.status === "accepted").map((suggestion) => suggestion.term).join(", ")}.</p>
       ) : null}
 
+      {topics.length === 0 ? <div className="chapter-empty-state" role="status"><strong>Ainda não há tópicos neste capítulo.</strong><p>{chapter === "literature" ? "Gere uma primeira sugestão com os objetivos confirmados ou adicione os tópicos manualmente. Para avançar, inclua de 3 a 6 tópicos com título." : "Volte à revisão da literatura e use Próximo para preparar este capítulo, ou adicione de 3 a 6 tópicos."}</p>{chapter === "literature" ? <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("initialize")} type="button">Gerar tópicos iniciais com IA</button> : null}</div> : null}
+      <p className="chapter-requirements">Para avançar: de 3 a 6 tópicos, cada um com título de 3 a 180 caracteres. Objetivos, referências e contexto ajudam na revisão; recomendações de coerência não bloqueiam o avanço.</p>
       <div className="chapter-topic-list">
         {topics.map((topic, index) => (
           <article className="chapter-topic-editor" key={topic.id}>
-            <div className="chapter-topic-order"><span>{chapterNumber}.{index + 1}</span><button aria-label={`Mover ${topic.title} para cima`} disabled={index === 0} onClick={() => moveTopic(index, -1)} type="button">↑</button><button aria-label={`Mover ${topic.title} para baixo`} disabled={index === topics.length - 1} onClick={() => moveTopic(index, 1)} type="button">↓</button></div>
-            <label>Título do tópico<input maxLength={180} onChange={(event) => updateTopic(topic.id, { title: event.target.value })} value={topic.title} /></label>
+            <div className="chapter-topic-order"><span>{chapterNumber}.{index + 1}</span><button aria-label={`Mover ${topic.title} para cima`} disabled={busy || waitingForAdvisor || index === 0} onClick={() => moveTopic(index, -1)} type="button">↑</button><button aria-label={`Mover ${topic.title} para baixo`} disabled={busy || waitingForAdvisor || index === topics.length - 1} onClick={() => moveTopic(index, 1)} type="button">↓</button></div>
+            <label>Título do tópico *<input disabled={busy || waitingForAdvisor} aria-required="true" aria-invalid={errors.length > 0 && topic.title.trim().length < 3} maxLength={180} onChange={(event) => updateTopic(topic.id, { title: event.target.value })} value={topic.title} /></label>
+            {errors.length > 0 && topic.title.trim().length < 3 ? <p className="chapter-field-error">Preencha o título deste tópico com pelo menos 3 caracteres.</p> : null}
             <fieldset><legend>Objetivos relacionados</legend><p className="objective-coverage-help">OE = objetivo específico. OEG = objetivo geral. Use “Atende completamente” quando o tópico cobre o objetivo de modo central; use “Atende parcialmente” quando ele contribui, mas precisa ser complementado por outros tópicos.</p>{objectiveChoices.map((objective) => {
               const coverage = topic.objectiveCoverage.find((item) => item.objectiveId === objective.id);
               const label = objective.label;
-              return <div key={objective.id}><label><input checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage ? <select aria-label={`Grau de cobertura de ${label}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{OBJECTIVE_COVERAGE_LABELS.partial}</option><option value="full">{OBJECTIVE_COVERAGE_LABELS.full}</option></select> : null}</div>;
+              return <div key={objective.id}><label><input disabled={busy || waitingForAdvisor} checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage ? <select disabled={busy || waitingForAdvisor} aria-label={`Grau de cobertura de ${label}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{OBJECTIVE_COVERAGE_LABELS.partial}</option><option value="full">{OBJECTIVE_COVERAGE_LABELS.full}</option></select> : null}</div>;
             })}</fieldset>
             {chapter === "development" && index === 0 ? (
               <label className="case-study-note">
@@ -295,13 +312,13 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
                 />
               </label>
             ) : null}
-            <AiGuidanceField key={regenerationEpoch} className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={!isSelfDirectedProject} />
-            <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
-            {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral (OEG)</label>{!topic.generalObjectiveAligned ? <input onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
-            <button className="remove-topic" disabled={topics.length <= 3} onClick={() => setTopics((current) => current.filter((item) => item.id !== topic.id))} type="button">Remover tópico</button>
+            <AiGuidanceField className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(topic.id)} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={false} />
+            <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input disabled={busy || waitingForAdvisor} checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>
+            {chapter === "development" && index === topics.length - 1 ? <div className="general-alignment"><label><input disabled={busy || waitingForAdvisor} checked={topic.generalObjectiveAligned} onChange={(event) => updateTopic(topic.id, { generalObjectiveAligned: event.target.checked })} type="checkbox" /> Relaciona-se diretamente ao objetivo geral (OEG)</label>{!topic.generalObjectiveAligned ? <input disabled={busy || waitingForAdvisor} onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })} placeholder="Justificativa metodológica para a exceção" value={topic.exceptionJustification ?? ""} /> : null}</div> : null}
+            <button className="remove-topic" disabled={busy || waitingForAdvisor || topics.length <= 3} onClick={() => setTopics((current) => current.filter((item) => item.id !== topic.id))} type="button">Remover tópico</button>
           </article>
         ))}
-        <button className="add-specific-objective" disabled={topics.length >= 6 || objectiveChoices.length === 0} onClick={() => setTopics((current) => [...current, { exceptionJustification: null, generalObjectiveAligned: false, id: crypto.randomUUID(), objectiveCoverage: [{ degree: chapter === "literature" ? "partial" : "full", objectiveId: objectiveChoices[0].id }], referenceIds: [], studentJustification: null, title: "Novo tópico" }])} type="button">+ Adicionar tópico</button>
+        <button className="add-specific-objective" disabled={busy || waitingForAdvisor || topics.length >= 6 || objectiveChoices.length === 0} onClick={() => setTopics((current) => [...current, { exceptionJustification: null, generalObjectiveAligned: false, id: crypto.randomUUID(), objectiveCoverage: [{ degree: chapter === "literature" ? "partial" : "full", objectiveId: objectiveChoices[0].id }], referenceIds: [], studentJustification: null, title: "Novo tópico" }])} type="button">+ Adicionar tópico</button>
       </div>
 
       {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></div> : null}
@@ -313,9 +330,9 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
             <div>
               <p className="section-kicker">Research Starter</p>
               <h3>Otimizar literatura</h3>
-              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. A ação faz uma nova busca no Research Starter com as palavras-chave informadas e só substitui os tópicos depois de uma resposta válida. As referências externas adicionadas manualmente permanecem preservadas no arquivo. Depois da otimização, as associações específicas entre tópico e referência podem mudar. Se tudo estiver bom, você pode apenas validar e avançar.</p>
+              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. A ação busca referências adicionais no Research Starter. As fontes anteriores, os tópicos e suas associações permanecem preservados. Associe as novas fontes aos tópicos que desejar. Para reescrever um tópico, use Regenerar com IA no próprio quadro.</p>
             </div>
-            {showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar no Research Starter e regenerar</button></form> : <button onClick={() => setShowOptimize(true)} type="button">Otimizar literatura</button>}
+            {showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input disabled={busy || waitingForAdvisor} onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar e adicionar referências</button></form> : <button onClick={() => setShowOptimize(true)} type="button">Otimizar literatura</button>}
           </article>
         </div>
       ) : null}
@@ -344,10 +361,9 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       ) : null}
 
       <div className="definition-actions">
-        <button className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.navigate(chapter === "development" ? "literature_topics" : "specific_objectives")} type="button">Voltar</button>
-        <button className="definition-button secondary" disabled={busy} onClick={() => void submit("regenerate")} type="button">Regenerar com minhas orientações</button>
-        <button className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</button>
-            <button className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</button>
+        <WorkflowAction help="Salva o conteúdo da página como rascunho e abre a etapa anterior. Se o salvamento falhar, você permanece aqui." className="definition-button secondary" disabled={busy} onClick={() => progressRef.current?.saveAndNavigate(chapter === "development" ? "literature_topics" : "specific_objectives")} type="button">Voltar</WorkflowAction>
+        <WorkflowAction help="Salva o estado atual da página sem avançar nem mudar o contexto confirmado do projeto." className="definition-button secondary" disabled={busy || !changed} onClick={() => void submit("save")} type="button">Salvar rascunho</WorkflowAction>
+            <WorkflowAction help="Processa os dados da página, confirma esta etapa e segue para a próxima. Projetos de aluno continuam sujeitos à aprovação do orientador." className="definition-button primary" disabled={busy || waitingForAdvisor} onClick={() => void submit("validate")} type="button">{validateButtonLabel}</WorkflowAction>
       </div>
     </section>
   );

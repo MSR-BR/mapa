@@ -1,3 +1,4 @@
+import { topicsFromContent, replaceTopics } from "@/modules/research-workflow/chapter-content";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
@@ -25,22 +26,21 @@ import { pendingAdvisorReview, withAdvisorReviewRequest } from "@/modules/resear
 import { currentGuidanceNotesSchema, regenerationGuidanceSchema, scopedCurrentGuidanceNotes, scopedRegenerationGuidance } from "@/modules/research-workflow/regeneration-guidance";
 import {
   chapterTopicsInputSchema,
+  chapterTopicsDraftSchema,
+  chapterInputErrors,
   objectiveCoverageLabel,
   validateChapterTopics,
   validateCompleteObjectiveCoverage,
-  type ChapterTopicInput,
 } from "@/modules/research-workflow/chapter-validation";
 import { suggestControlledConcepts } from "@/modules/research-workflow/knowledge-library";
 import {
-  proposalDiscoverySchema,
   researchWorkflowContentSchema,
-  type ChapterTopicDetail,
+  discoveryReferenceSchema,
   type ResearchWorkflow,
   type ResearchWorkflowContent,
   type ValidatedElement,
 } from "@/modules/research-workflow/schema";
 import {
-  buildOptimizedDiscoveryKeywords,
   buildOptimizedResearchQuery,
   normalizeLiteratureSearchTerms,
 } from "@/modules/research-workflow/literature-optimization";
@@ -65,83 +65,17 @@ const requestSchema = z.object({
   topics: z.unknown().optional(),
 });
 
+function archive(elements: ValidatedElement[], history: ResearchWorkflowContent["elementVersions"]) {
+  const now = new Date().toISOString();
+  return elements.reduce((versions, item) => [...versions, { ...item, archivedAt: now, elementId: item.id }], history);
+}
+
 function element(content: ResearchWorkflowContent, type: ValidatedElement["type"]) {
   return content.elements.find((item) => item.type === type);
 }
 
 function specificObjectives(content: ResearchWorkflowContent) {
   return content.elements.filter((item) => item.type === "specific_objective" && item.status === "validated");
-}
-
-function topicsFromContent(content: ResearchWorkflowContent, chapter: "literature" | "development") {
-  const elementType = chapter === "literature" ? "literature_topic" : "development_topic";
-  const elements = new Map(content.elements.filter((item) => item.type === elementType).map((item) => [item.id, item]));
-  return content.chapterTopicDetails
-    .filter((detail) => detail.chapter === chapter)
-    .toSorted((left, right) => left.order - right.order)
-    .flatMap((detail): ChapterTopicInput[] => {
-      const topic = elements.get(detail.topicId);
-      return topic ? [{
-        exceptionJustification: detail.exceptionJustification,
-        generalObjectiveAligned: detail.generalObjectiveAligned,
-        id: topic.id,
-        objectiveCoverage: detail.objectiveCoverage,
-        referenceIds: topic.referenceIds,
-        studentJustification: detail.studentJustification,
-        title: topic.proposedContent,
-      }] : [];
-    });
-}
-
-function archive(elements: ValidatedElement[], history: ResearchWorkflowContent["elementVersions"]) {
-  const now = new Date().toISOString();
-  return elements.reduce((versions, item) => [...versions, { ...item, archivedAt: now, elementId: item.id }], history);
-}
-
-function replaceTopics(
-  content: ResearchWorkflowContent,
-  chapter: "literature" | "development",
-  topics: ChapterTopicInput[],
-  sourceRevision: number,
-  actor: "ai" | "user",
-) {
-  const type = chapter === "literature" ? "literature_topic" : "development_topic";
-  const oldElements = content.elements.filter((item) => item.type === type);
-  const oldById = new Map(oldElements.map((item) => [item.id, item]));
-  const nextElements = topics.map((topic): ValidatedElement => {
-    const previous = oldById.get(topic.id);
-    return {
-      approvedContent: previous?.approvedContent === topic.title ? topic.title : null,
-      id: topic.id,
-      proposedContent: topic.title,
-      referenceIds: [...new Set(topic.referenceIds)],
-      revision: previous ? previous.revision + 1 : 1,
-      sourceRevision,
-      status: previous?.approvedContent === topic.title ? "validated" : actor === "ai" ? "suggested" : "edited",
-      studentJustification: topic.studentJustification ?? null,
-      type,
-      updatedBy: actor,
-    };
-  });
-  const details: ChapterTopicDetail[] = topics.map((topic, index) => ({
-    chapter,
-    exceptionJustification: topic.exceptionJustification,
-    generalObjectiveAligned: topic.generalObjectiveAligned,
-    objectiveCoverage: topic.objectiveCoverage,
-    order: index + 1,
-    studentJustification: topic.studentJustification,
-    topicId: topic.id,
-  }));
-  return researchWorkflowContentSchema.parse({
-    ...content,
-    chapterTopicDetails: [
-      ...content.chapterTopicDetails.filter((detail) => detail.chapter !== chapter),
-      ...details,
-    ],
-    elementVersions: archive(oldElements, content.elementVersions),
-    elements: [...content.elements.filter((item) => item.type !== type), ...nextElements],
-    traceLinks: content.traceLinks.filter((link) => !oldElements.some((item) => !topics.some((topic) => topic.id === item.id) && (item.id === link.fromElementId || item.id === link.toElementId))),
-  });
 }
 
 function addTraceLinks(
@@ -178,24 +112,10 @@ function validateContext(workflow: ResearchWorkflow) {
   return { discovery, general, problem, specifics };
 }
 
-function parseSubmittedTopics(input: unknown) {
-  const parsed = chapterTopicsInputSchema.safeParse(input);
-  if (parsed.success) return { errors: [], topics: parsed.data };
-  return {
-    errors: [...new Set(parsed.error.issues.map((issue) => {
-      const [index, field] = issue.path;
-      const label = typeof index === "number" ? `Tópico ${index + 1}` : "Tópicos";
-      if (field === "title") return `${label}: informe um título entre 3 e 180 caracteres.`;
-      if (field === "referenceIds") return `${label}: confira as referências associadas.`;
-      if (field === "exceptionJustification") return `${label}: a justificativa da apresentação do estudo de caso deve ter no máximo 500 caracteres.`;
-      if (field === "studentJustification") return `${label}: a justificativa do aluno deve ter no máximo 1000 caracteres.`;
-      return `${label}: revise os campos obrigatórios.`;
-    }))],
-    topics: null,
-  };
+function parseSubmittedTopics(input: unknown, draft = false) {
+  const parsed = (draft ? chapterTopicsDraftSchema : chapterTopicsInputSchema).safeParse(input);
+  return parsed.success ? { errors: [], topics: parsed.data } : { errors: chapterInputErrors(parsed.error), topics: null };
 }
-
-
 
 async function generatedLiteratureTopics(
   context: NonNullable<ReturnType<typeof validateContext>>,
@@ -244,7 +164,7 @@ async function saveWorkflow(
   sourceRevision: number,
   supabase: AuthorizedProjectContext["supabase"],
 ) {
-  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction });
+  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction === "optimize" ? "augment_references" : editAction });
 }
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
@@ -276,7 +196,8 @@ async function saveWorkflow(
     if (!canNavigateToWorkflowTarget(workflow, "literature_topics")) {
       return NextResponse.json({ error: "A revisão da literatura não pode ser iniciada agora." }, { status: 409 });
     }
-    if (topicsFromContent(workflow.content, "literature").length >= 3) return NextResponse.json({ workflow });
+    if (topicsFromContent(workflow.content, step).length > 0) return NextResponse.json({ workflow: workflowForView(baseWorkflow!, activeStep) });
+    if (step !== "literature") return NextResponse.json({ error: "Confirme a revisão da literatura em Próximo para preparar o desenvolvimento." }, { status: 409 });
     const topics = await generatedLiteratureTopics(context, workflow.content);
     let content = replaceTopics(workflow.content, "literature", topics, workflow.sourceRevision, "ai");
     content = researchWorkflowContentSchema.parse({
@@ -319,33 +240,16 @@ async function saveWorkflow(
         report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-10-years" }, topic });
       }
       if (report.references.length === 0) return NextResponse.json({ error: "Nenhuma referência verificável foi encontrada. A versão anterior foi preservada; revise as palavras-chave e tente novamente." }, { status: 422 });
-      const optimizedKeywords = buildOptimizedDiscoveryKeywords(searchTerms, report, context.discovery.interpreted.keywords);
-      const nextDiscovery = proposalDiscoverySchema.parse({
-        ...context.discovery,
-        generatedAt: new Date().toISOString(),
-        interpreted: { ...context.discovery.interpreted, keywords: optimizedKeywords, researchQuery: topic },
-        references: report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => ({ authors: authors.slice(0, 8), doi, referenceId, title, url, year })),
-        reportId: report.reportId,
-        warnings: report.warnings.slice(0, 12),
-      });
-      const optimizedContext = { ...context, discovery: nextDiscovery };
-      const topics = await generatedLiteratureTopics(optimizedContext, workflow.content);
-      const archivedReferences = mergeReferenceArchive(workflow.content.referenceArchive, context.discovery.references);
-      const associatedReferenceIds = new Set(topics.flatMap((topic) => topic.referenceIds));
-      let content = replaceTopics(workflow.content, "literature", topics, workflow.sourceRevision, "ai");
-      content = researchWorkflowContentSchema.parse({
-        ...content,
-        discovery: nextDiscovery,
-        referenceArchive: archivedReferences,
-      });
+      const newReferences = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => discoveryReferenceSchema.parse({ authors: authors.slice(0, 8), doi, referenceId, title, url, year }));
+      // Adding literature never regenerates topics or replaces their links.
+      const archivedReferences = mergeReferenceArchive(baseWorkflow!.content.referenceArchive, [...context.discovery.references, ...newReferences]);
+      const priorIds = new Set([...baseWorkflow!.content.referenceArchive, ...context.discovery.references].map((reference) => reference.referenceId));
+      const added = newReferences.filter((reference) => !priorIds.has(reference.referenceId)).length;
+      const content = researchWorkflowContentSchema.parse({ ...baseWorkflow!.content, referenceArchive: archivedReferences });
       const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-      if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba. A versão anterior foi preservada; recarregue e tente novamente." }, { status: 409 });
-      const partialNotice = report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes antes de validar." : "";
-      const manualCount = archivedReferences.filter((reference) => reference.source === "manual").length;
-      return NextResponse.json({
-        message: `Literatura otimizada no Research Starter: ${nextDiscovery.references.length} fonte(s) encontrada(s), ${associatedReferenceIds.size} associada(s) aos novos tópicos e ${archivedReferences.length} preservada(s) no arquivo (${manualCount} externa(s) adicionada(s) manualmente). As associações foram recalculadas.${partialNotice}`,
-        workflow: saved,
-      });
+      if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba. As referências anteriores foram preservadas; recarregue e tente novamente." }, { status: 409 });
+      const partialNotice = report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes." : "";
+      return NextResponse.json({ message: `${added} nova(s) referência(s) adicionada(s). Os tópicos, referências anteriores e associações foram preservados.${partialNotice}`, workflow: saved });
     } catch (error) {
       if (error instanceof ResearchStarterClientError) {
         const retryMessage = error.retryable ? " Tente novamente em instantes; a versão anterior foi preservada." : " A versão anterior foi preservada.";
@@ -358,7 +262,7 @@ async function saveWorkflow(
   let content = workflow.content;
   if (action === "save" || action === "validate") {
     if (!parsed.data.topics) return NextResponse.json({ errors: ["Inclua os tópicos da etapa."], error: "Inclua os tópicos da etapa." }, { status: 422 });
-    const submittedTopics = parseSubmittedTopics(parsed.data.topics);
+    const submittedTopics = parseSubmittedTopics(parsed.data.topics, action === "save");
     if (!submittedTopics.topics) {
       return NextResponse.json({ errors: submittedTopics.errors, error: submittedTopics.errors[0] ?? "Revise os tópicos da etapa." }, { status: 422 });
     }

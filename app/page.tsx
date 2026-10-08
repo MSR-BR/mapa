@@ -4,10 +4,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { hasPublicCampaignAttribution, type PublicSearchParams } from "@/modules/analytics/campaign-attribution";
+import { type PublicSearchParams } from "@/modules/analytics/campaign-attribution";
 import { BrandLogo } from "@/modules/branding/brand-logo";
 import { LegalLinks } from "@/modules/legal/legal-links";
-import { PublicStartForm } from "@/modules/projects/public-start-form";
 
 const canonicalUrl = "https://mapadapesquisa.com.br/";
 const socialCardUrl = "/brand/mapa-da-pesquisa-social-card.png";
@@ -95,7 +94,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const authenticated = Boolean(data?.claims?.sub);
-  if (authenticated && !hasPublicCampaignAttribution(params)) redirect("/dashboard?continue=1");
 
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 
@@ -116,7 +114,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
           Responda cinco perguntas, escolha entre TCC, monografia, dissertação, tese ou artigo e construa uma proposta com IA, referências verificáveis e revisão humana.
         </p>
         <div className="landing-actions">
-          <Link className="landing-primary" href="#criar-mapa">Começar um mapa</Link>
+          <Link className="landing-primary" href="/mapa">Começar um mapa</Link>
           <Link className="landing-secondary" href="#apresentacao">Assistir ao vídeo</Link>
         </div>
         <ul className="landing-proof-points" aria-label="Características principais">
@@ -126,15 +124,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
         </ul>
       </section>
 
-      <section className="landing-start" id="criar-mapa" aria-labelledby="start-title">
-        <div className="landing-start-copy">
-          <BrandLogo variant="mark" className="landing-start-logo" decorative />
-          <p className="eyebrow">Comece agora</p>
-          <h2 id="start-title">Vamos construir o mapa da sua pesquisa?</h2>
-          <p>Escolha o modo que combina com o estágio da sua ideia. O rascunho fica preservado ao entrar com o Google.</p>
-        </div>
-        <div className="landing-start-form">
-          <PublicStartForm authenticated={authenticated} />
+      <section className="landing-section landing-entry-modes" id="criar-mapa" aria-labelledby="start-title">
+        <p className="eyebrow">Sua ideia é o ponto de partida</p>
+        <h2 id="start-title">Escolha como começar seu mapa.</h2>
+        <p>Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.</p>
+        <div className="landing-audience-grid">
+          <article><h3>Mapa Avançado</h3><p>Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.</p><Link className="landing-primary" href="/mapa?modo=avancado">Começar no modo Avançado →</Link></article>
+          <article><h3>Mapa Rápido</h3><p>Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.</p><Link className="landing-secondary" href="/mapa?modo=rapido">Começar no modo Rápido →</Link></article>
         </div>
       </section>
 
@@ -209,7 +205,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
       <section className="landing-cta" aria-labelledby="cta-title">
         <h2 id="cta-title">Comece com cinco respostas.</h2>
         <p>O próximo passo é organizar a ideia que você já tem e escolher o produto que deseja entregar.</p>
-        <Link className="landing-primary" href="#criar-mapa">Criar meu mapa</Link>
+        <Link className="landing-primary" href="/mapa">Criar meu mapa</Link>
       </section>
       <LegalLinks />
     </main>

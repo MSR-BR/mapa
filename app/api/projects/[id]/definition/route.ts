@@ -1,3 +1,4 @@
+import { replaceTopics } from "@/modules/research-workflow/chapter-content";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { canNavigateToWorkflowTarget, workflowForView } from "@/modules/research-workflow/workflow-navigation";
@@ -7,6 +8,7 @@ import { z } from "zod";
 import { notifyAdvisorOfReviewRequest } from "@/lib/email/project-notifications";
 import {
   generateGeneralObjective,
+  generateLiteratureTopics,
   generateSpecificObjectives,
   regenerateProblemStatement,
 } from "@/modules/generation/gemini";
@@ -547,6 +549,14 @@ async function saveWorkflow(
         type: "specific_objective",
         updatedBy: objective.updatedBy === "ai" ? "ai" : "user",
       });
+    }
+    if (!content.elements.some((item) => item.type === "literature_topic")) {
+      const problem = currentElement(content, "problem_statement")!;
+      const general = currentElement(content, "general_objective")!;
+      const topics = await generateLiteratureTopics(problem.approvedContent ?? problem.proposedContent, general.approvedContent ?? general.proposedContent,
+        content.elements.filter((item) => item.type === "specific_objective").map((item) => ({ id: item.id, content: item.approvedContent ?? item.proposedContent })),
+        discoveryWithWorkflowReferences(discovery, content), [], studentContextNotes(content));
+      content = replaceTopics(content, "literature", topics.map((topic) => ({ ...topic, id: crypto.randomUUID() })), sourceRevision, "ai");
     }
     content = researchWorkflowContentSchema.parse({ ...content, activeStep: "literature_topics" });
     state = "validating_literature";
