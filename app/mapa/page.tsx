@@ -24,7 +24,7 @@ export default async function MapaPage({ searchParams }: { searchParams: Promise
       <Link className="landing-login" href={authenticated ? "/dashboard" : "/login"}>{authenticated ? "Meus projetos" : "Entrar"}</Link>
     </header>
     <section className="mapa-entry-heading"><p className="eyebrow">Comece pela sua ideia</p><h1>Crie seu mapa de pesquisa.</h1><p>Escolha Rápido ou Avançado. Você pode preparar sua ideia sem login; a conta Google permite gerar e guardar o projeto.</p></section>
-    <section className="mapa-entry-form" aria-label="Escolha o modo e descreva sua pesquisa"><PublicStartForm authenticated={authenticated} initialMode={params.modo === "rapido" ? "quick" : "advanced"} explicitMode={Boolean(params.modo)} /></section>
+    <section className="mapa-entry-form" aria-label="Escolha o modo e descreva sua pesquisa"><PublicStartForm authenticated={authenticated} initialMode={params.modo === "avancado" ? "advanced" : "quick"} explicitMode={params.modo === "avancado" || params.modo === "rapido"} /></section>
     <LegalLinks />
   </main>;
 }

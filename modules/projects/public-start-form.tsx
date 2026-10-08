@@ -11,7 +11,7 @@ import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
 
-export function PublicStartForm({ authenticated = false, initialMode = "advanced", explicitMode = false }: { authenticated?: boolean; initialMode?: "quick" | "advanced"; explicitMode?: boolean }) {
+export function PublicStartForm({ authenticated = false, initialMode = "quick", explicitMode = false }: { authenticated?: boolean; initialMode?: "quick" | "advanced"; explicitMode?: boolean }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const quickSuggestionContinuePending = useRef(false);

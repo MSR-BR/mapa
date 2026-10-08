@@ -53,7 +53,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(publicStart, /Mapa Rápido/);
   assert.match(publicStart, /public-mode-card-advanced/);
   assert.match(publicStart, /public-mode-card-quick/);
-  assert.match(publicStart, /initialMode = "advanced"/);
+  assert.match(publicStart, /initialMode = "quick"/);
   assert.match(publicStart, /ResearchPromptInput/);
   assert.match(loginPage, /label="Google"/);
   assert.match(loginPage, /Acesse ou crie sua conta com o Google/);

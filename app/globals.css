@@ -1152,7 +1152,43 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .mapa-entry-heading { max-width: 850px; margin: 3rem auto 2rem; text-align: center; }
 .mapa-entry-heading h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
 .mapa-entry-heading p { margin-top: 1rem; }
-.mapa-entry-form { max-width: 960px; margin: 0 auto 3rem; border-radius: 24px; padding: clamp(1rem, 3vw, 2rem); background: #123d30; }
+.mapa-entry-form { max-width: 960px; margin: 0 auto 3rem; border-radius: 24px; padding: clamp(.75rem, 2.5vw, 1.5rem); background: #dce9e2; }
+/* C115: três superfícies distintas, sem moldura intermediária ou caixas de seção. */
+.mapa-entry-form .quick-start-form { width: 100%; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: var(--foreground); }
+.mapa-entry-form .public-mode-stack { gap: 1rem; }
+.mapa-entry-form .public-mode-card { --mode-accent: #206444; --mode-muted: #486454; --mode-border: #a5c5b3; --mode-field-border: #6a8875; border: 1px solid var(--mode-border); border-left: 4px solid var(--mode-accent); background: #f0f7f2; }
+.mapa-entry-form .public-mode-card-quick { --mode-accent: #285e7b; --mode-muted: #425e70; --mode-border: #a6bdcc; --mode-field-border: #67849a; background: #e8f1f8; }
+.mapa-entry-form .public-mode-card.is-open { border-color: var(--mode-accent); }
+.mapa-entry-form .public-mode-toggle { color: var(--foreground); }
+.mapa-entry-form .public-mode-toggle:hover { background: rgb(255 255 255 / 45%); }
+.mapa-entry-form .public-mode-toggle small { color: var(--mode-accent); }
+.mapa-entry-form .public-mode-toggle em, .mapa-entry-form .public-mode-hint { color: var(--mode-muted); }
+.mapa-entry-form .public-mode-chevron { border-color: var(--mode-accent); color: var(--mode-accent); }
+.mapa-entry-form .public-mode-content { border-color: var(--mode-border); padding: clamp(.8rem, 2.5vw, 1.25rem); }
+.mapa-entry-form .research-intake-intro { border-color: var(--mode-border); padding-inline: 0; }
+.mapa-entry-form .research-intake-intro h2, .mapa-entry-form .research-intake-section-heading h3, .mapa-entry-form .research-intake-label-row label, .mapa-entry-form .research-type-option strong { color: var(--foreground); }
+.mapa-entry-form .research-intake-intro p:not(.research-intake-kicker), .mapa-entry-form .research-intake-section-heading p:not(.research-intake-kicker), .mapa-entry-form .research-type-option small { color: var(--mode-muted); }
+.mapa-entry-form .research-intake-kicker, .mapa-entry-form .research-intake-required, .mapa-entry-form .research-intake-label-row sup { color: var(--mode-accent); }
+.mapa-entry-form .research-type-picker, .mapa-entry-form .research-intake-field { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.mapa-entry-form .research-intake-fields { gap: 1.2rem 1rem; }
+.mapa-entry-form .research-type-option { background: #fff; border-color: var(--mode-field-border); }
+.mapa-entry-form .research-type-option.is-selected { background: #d3eadd; border-color: var(--mode-accent); box-shadow: inset 0 0 0 1px var(--mode-accent); }
+.mapa-entry-form .research-type-option input { accent-color: var(--mode-accent); }
+.mapa-entry-form .research-intake-label-row label span { background: #d3eadd; color: var(--mode-accent); }
+.mapa-entry-form .research-info-button { border-color: var(--mode-accent); color: var(--mode-accent); }
+.mapa-entry-form .public-mode-card textarea { border: 1px solid var(--mode-field-border); border-radius: .65rem; padding: .8rem; background: #fff; color: var(--foreground); resize: vertical; }
+.mapa-entry-form .public-mode-card textarea::placeholder { color: #596e63; }
+.mapa-entry-form .public-mode-card textarea:focus { border-color: var(--mode-accent); outline: 2px solid var(--mode-accent); outline-offset: 2px; box-shadow: none; }
+.mapa-entry-form :is(button, input):focus-visible { outline: 2px solid var(--mode-accent, #206444); outline-offset: 3px; }
+.mapa-entry-form .prompt-suggestions { border-color: var(--mode-border); }
+.mapa-entry-form .prompt-suggestions > p, .mapa-entry-form .prompt-suggestions > p small { color: var(--mode-muted); }
+.mapa-entry-form .prompt-suggestion-list button { background: #fff; border-color: var(--mode-border); color: var(--foreground); }
+.mapa-entry-form .prompt-suggestion-list button:hover { background: #d5e5f0; border-color: var(--mode-accent); }
+.mapa-entry-form .prompt-suggestion-list button span { color: var(--mode-accent); border-color: var(--mode-border); }
+.mapa-entry-form .quick-start-toolbar { margin-top: 1rem; }
+.mapa-entry-form .quick-start-toolbar-simple > span { color: #486454; }
+.mapa-entry-form .quick-start-toolbar > button { background: #176b4d; color: #fff; }
+.mapa-entry-form .quick-start-toolbar > button:hover { background: #124f39; }
 .landing-entry-modes .landing-primary, .landing-entry-modes .landing-secondary { margin-top: 1rem; display: inline-flex; }
 .workflow-action { display: inline-flex; align-items: center; gap: .35rem; }
 .workflow-action-help { position: relative; }
