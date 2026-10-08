@@ -1,5 +1,7 @@
 # C115 — Hierarquia visual da entrada do Mapa
 
+**Estado:** concluída e publicada em `v08102026.2`. [CPD e evidências](cpd-2026-10-08.md).
+
 Autorização de 08/10/2026: o responsável pediu menos caixas aninhadas, cores/tonalidades diferentes para área externa, Mapa Rápido e Avançado, e **“cpd”**. Implementação e publicação no projeto existente `mapadapesquisa`, domínio `mapadapesquisa.com.br`.
 
 ## Escopo aprovado

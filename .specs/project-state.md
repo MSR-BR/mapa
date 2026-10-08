@@ -8,6 +8,8 @@
 
 ## Estado atual
 
+- C115 concluída e publicada em **`v08102026.2`**, release `08e4798`: entrada com três superfícies distintas, menos caixas aninhadas, Rápido aberto/Avançado fechado por padrão. Links explícitos e rascunhos preservados. 211 testes/build aprovados; versão, health, modos, cores, desktop/celular e logs conferidos em produção. [CPD](changes/115-mapa-entry-visual-hierarchy/cpd-2026-10-08.md).
+
 - C114 concluída e publicada em **`v08102026.1`**, release `702d3ee`: landing com entrada dedicada `/mapa`, regeneração por quadro com salvamento prévio, Voltar/Próximo esclarecidos e literatura aditiva com recuperação de tópicos. 211 testes, 13 cenários de rotas, regressão C111, UI local e build padrão aprovados. Produção confirmou versão, links, modos públicos, SEO técnico, health e bloqueios 401/403; logs consultados sem erros. Sem novo smoke pago. [CPD](changes/114-landing-card-regeneration/cpd-2026-10-08.md).
 
 - C113 concluída/versionada em `ce97e4d`: smoke Gemini corrigido por modelo e contrato HTTP testado com transporte simulado. Runtime 3.6 preservado; vínculo com o aviso de 07/10 **não confirmado**. Sem chamada paga ou troca de modelo. [Auditoria e fechamento](changes/113-gemini-deprecated-parameters/audit-2026-10-07.md).

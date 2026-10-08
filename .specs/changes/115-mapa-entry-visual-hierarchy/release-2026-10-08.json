@@ -1,0 +1,26 @@
+{
+  "sourceCommit": "08e4798ce7a8c56c670b6f2e4946c6f22b9fa4da",
+  "artifactPath": "/tmp/mapa-c115-release-08e4798",
+  "archiveSha256": "dbf00052bc2ce679d34d9d5d6f340fe96c1419961386fef9e0d67a5ca7f93c5b",
+  "version": "v08102026.2",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "deploymentId": "dpl_3GMByznobpVn94doEqXi59UVc9Xz",
+  "deploymentUrl": "https://mapadapesquisa-lu8kfr67f-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "createdAt": "2026-10-08T15:36:25-03:00",
+  "buildSeconds": 32,
+  "unitTests": 211,
+  "runtimeVulnerabilities": 0,
+  "knownDevelopmentHighFindings": 5,
+  "errorLogsInQueriedWindow": 0,
+  "visualViewportWidths": [
+    320,
+    390,
+    1280
+  ],
+  "defaultAdvancedOpen": false,
+  "defaultQuickOpen": true,
+  "paidApiCalls": false,
+  "rollbackDeployment": "dpl_FEYPqXiH4EAP1A9HpKYU2Mz3QB1b"
+}

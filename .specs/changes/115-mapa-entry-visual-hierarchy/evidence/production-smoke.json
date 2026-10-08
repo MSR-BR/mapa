@@ -1,0 +1,50 @@
+{
+  "observedAt": "2026-10-08T18:38:44.234587+00:00",
+  "health": {
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "service": "mapa-da-pesquisa",
+    "status": "ok",
+    "version": "v08102026.2"
+  },
+  "pages": [
+    {
+      "path": "/mapa",
+      "http": 200,
+      "modes": {
+        "advanced-research-mode": "false",
+        "quick-research-mode": "true"
+      },
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ]
+    },
+    {
+      "path": "/mapa?modo=rapido",
+      "http": 200,
+      "modes": {
+        "advanced-research-mode": "false",
+        "quick-research-mode": "true"
+      },
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ]
+    },
+    {
+      "path": "/mapa?modo=avancado",
+      "http": 200,
+      "modes": {
+        "advanced-research-mode": "true",
+        "quick-research-mode": "false"
+      },
+      "canonical": [
+        "https://mapadapesquisa.com.br/mapa"
+      ]
+    }
+  ]
+}
