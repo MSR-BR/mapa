@@ -8,6 +8,8 @@
 
 ## Estado atual
 
+- C117 concluída e publicada em **`v08102026.4`**, release `96ef0b0`: título centralizado; metodologia inicial preenchida automaticamente e ação para completar lacunas em objetivos/matriz preservando texto. Rascunhos incompletos salváveis, indicações por campo e recomendações opcionais; orientação acadêmica preservada. 217 testes, 14 cenários de rotas, regressão C111/C114, PostgreSQL local, UI móvel/desktop e build Vercel aprovados. Produção: health/alias, layout e negações 401; nenhuma nova chamada paga de IA. [CPD](changes/117-guided-methodology/cpd-2026-10-08.md).
+
 - C116 concluída e publicada em **`v08102026.3`**, release `33c2309`: + abre e − recolhe cada modo público, permitindo ambos fechados e preservando texto/seleção. Avançado segue fechado por padrão. 211 testes/build, 11 estados locais (desktop, celular e teclado), 7 estados no domínio canônico, health e logs conferidos. [CPD](changes/116-mapa-mode-collapse/cpd-2026-10-08.md).
 
 - C115 concluída e publicada em **`v08102026.2`**, release `08e4798`: entrada com três superfícies distintas, menos caixas aninhadas, Rápido aberto/Avançado fechado por padrão. Links explícitos e rascunhos preservados. 211 testes/build aprovados; versão, health, modos, cores, desktop/celular e logs conferidos em produção. [CPD](changes/115-mapa-entry-visual-hierarchy/cpd-2026-10-08.md).

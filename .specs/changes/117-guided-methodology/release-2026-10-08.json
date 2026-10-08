@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "96ef0b04ec3fe4d0bf43b2b9f5116a21096a0b23",
+  "artifactPath": "/tmp/mapa-c117-release-96ef0b0",
+  "archiveSha256": "c2c1167f0fc61e3776c0c06788d55fafc5813be4976b4a2a48332067823d466b",
+  "version": "v08102026.4",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "deploymentId": "dpl_4nAGry5QVeAFA2YyaEUfU3KACSSB",
+  "deploymentUrl": "https://mapadapesquisa-9bml8scbm-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "createdAt": "2026-10-08T17:21:03-03:00",
+  "buildSeconds": 46,
+  "unitTests": 217,
+  "runtimeVulnerabilities": 0,
+  "knownDevelopmentHighFindings": 5,
+  "localBehaviorStates": 7,
+  "paidApiCalls": false,
+  "rollbackDeployment": "dpl_92BFyktVi9wFH6WhA9upL9XqaSjQ",
+  "sourceProof": "Exact git archive uploaded; provider inspect does not expose sourceCommit metadata",
+  "verifiedAt": "2026-10-08T20:25:21.605506+00:00",
+  "errorLogsInQueriedWindow": 0,
+  "errorLogWindowMinutes": 15,
+  "canonicalVerified": true,
+  "anonymousRouteStatus": 401,
+  "productionLayoutWidths": [
+    390,
+    1280
+  ],
+  "generationValidation": "real local components/routes with synthetic providers; no live paid generation"
+}

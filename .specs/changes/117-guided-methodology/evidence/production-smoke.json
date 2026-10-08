@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-10-08T20:25:21.605506+00:00",
+  "health": {
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "service": "mapa-da-pesquisa",
+    "status": "ok",
+    "version": "v08102026.4"
+  },
+  "anonymousRoutes": [
+    {
+      "route": "definition",
+      "status": 401
+    },
+    {
+      "route": "methodology",
+      "status": 401
+    },
+    {
+      "route": "regenerate-card",
+      "status": 401
+    }
+  ]
+}

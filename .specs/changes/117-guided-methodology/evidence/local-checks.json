@@ -1,0 +1,19 @@
+{
+  "unitTests": 217,
+  "unitFailures": 0,
+  "lint": "pass",
+  "typecheck": "pass",
+  "explicitGrants": "pass",
+  "exports": "pass",
+  "webpackBuild": "pass",
+  "localTurbopack": "environment blocked: process/port creation EPERM",
+  "guidedRouteScenarios": 14,
+  "cardRouteScenarios": 13,
+  "versionedWorkflowRoutes": "pass",
+  "localPostgresHistory": "pass",
+  "productionDependencyVulnerabilities": 0,
+  "knownDevOnlyHighFindings": 5,
+  "staticSecurity": "PASS_WITH_ACCEPTED_RISK",
+  "paidApiCalls": false,
+  "remoteDatabaseMutations": false
+}

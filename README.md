@@ -10,6 +10,8 @@ As Changes 001 a 006 estão concluídas. O MVP possui autenticação, projetos e
 
 Produção: <https://mapadapesquisa.com.br>
 
+Atualização C117 (`v08102026.4`): objetivos e metodologia com preenchimento de lacunas pela IA, rascunhos parciais preservados e orientação clara para avançar. [Validação e limites da release](.specs/changes/117-guided-methodology/cpd-2026-10-08.md).
+
 ## Requisitos
 
 - Node.js 22.13 ou superior.

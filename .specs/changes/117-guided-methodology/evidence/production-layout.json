@@ -1,0 +1,14 @@
+{
+  "version": "v08102026.4",
+  "desktop": {
+    "documentWidth": 1280,
+    "headingCenter": 640,
+    "viewport": 1280
+  },
+  "mobile": {
+    "documentWidth": 390,
+    "headingCenter": 195,
+    "viewport": 390
+  },
+  "consoleErrors": 0
+}
