@@ -60,7 +60,14 @@ export type ResearchStarterSuccess = {
 
 export type ResearchStarterFailure = {
   ok: false;
-  code: "api-not-configured" | "unauthorized" | "invalid-request" | "search-failed" | "internal-error";
+  code:
+    | "api-not-configured"
+    | "unauthorized"
+    | "invalid-request"
+    | "upstream-rate-limited"
+    | "upstream-timeout"
+    | "search-failed"
+    | "internal-error";
   errors: string[];
 };
 
