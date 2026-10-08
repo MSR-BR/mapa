@@ -17,8 +17,12 @@ const { output } = await generateText({
     }),
   }),
   prompt: "Retorne chapterCount igual a 5 e schemaVersion igual a 1.0.0.",
-  providerOptions: { google: { thinkingConfig: { thinkingLevel: "minimal" } } },
-  temperature: 0,
+  // Only the validated 3.6 model uses minimal; 3.8 rejects this level.
+  providerOptions: model === "gemini-3.6-flash"
+    ? { google: { thinkingConfig: { thinkingLevel: "minimal" } } }
+    : undefined,
+  // Keep legacy 2.5 sampling unchanged; newer models deprecate these controls.
+  ...(model.startsWith("gemini-2.5-") ? { temperature: 0 } : {}),
 });
 
 if (output.chapterCount !== 5 || output.schemaVersion !== "1.0.0") {

@@ -177,7 +177,125 @@ test("C112: both real SDK adapters parse the same domain contract and keep provi
       if (provider === "openai") {
         assert.equal(sent?.store, false); assert.equal(sent?.service_tier, "default");
         assert.deepEqual(sent?.reasoning, { effort: "low" }); assert.equal(sent?.generationConfig, undefined);
-      } else { assert.equal(sent?.store, undefined); assert.equal(sent?.reasoning, undefined); }
+      } else {
+        assert.equal(sent?.store, undefined); assert.equal(sent?.reasoning, undefined);
+        const config = sent?.generationConfig as Record<string, unknown>;
+        assert.equal(config.maxOutputTokens, 700);
+        assert.equal(config.responseMimeType, "application/json");
+        assert.ok(config.responseSchema);
+        assert.deepEqual(config.thinkingConfig, { thinkingLevel: "minimal" });
+        assertNoDeprecatedGeminiControls(sent);
+      }
     } finally { globalThis.fetch = original; }
   }
+});
+
+function assertNoDeprecatedGeminiControls(body: unknown) {
+  // Inspect property names recursively, not words that might occur in a prompt.
+  const forbidden = new Set(["temperature", "topP", "top_p", "topK", "top_k", "thinkingBudget", "thinking_budget"]);
+  if (!body || typeof body !== "object") return;
+  for (const [key, value] of Object.entries(body)) {
+    assert.equal(forbidden.has(key), false, `Unexpected Gemini control: ${key}`);
+    assertNoDeprecatedGeminiControls(value);
+  }
+}
+
+test("C113: verification script serializes compatible controls without a network call", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalModel = process.env.GEMINI_MODEL;
+  for (const model of ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-2.5-flash"]) {
+    process.env.GEMINI_MODEL = model;
+    let calls = 0;
+    globalThis.fetch = async (input, init) => {
+      calls++;
+      assert.equal(String(input), `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`);
+      const sent = JSON.parse(String(init?.body));
+      const config = sent.generationConfig;
+      assert.equal(config.maxOutputTokens, 512);
+      assert.equal(config.responseMimeType, "application/json");
+      assert.ok(config.responseSchema);
+      if (model === "gemini-2.5-flash") {
+        assert.equal(config.temperature, 0);
+        delete config.temperature;
+      }
+      assertNoDeprecatedGeminiControls(sent);
+      assert.deepEqual(config.thinkingConfig, model === "gemini-3.6-flash" ? { thinkingLevel: "minimal" } : undefined);
+      return Response.json({
+        candidates: [{ content: { role: "model", parts: [{ text: JSON.stringify({ chapterCount: 5, schemaVersion: "1.0.0" }) }] }, finishReason: "STOP" }],
+        modelVersion: model,
+      });
+    };
+    try {
+      // No --env-file: this test process supplies only synthetic provider keys.
+      await import(`../scripts/verify-gemini.mjs?offline-contract=${model}`);
+      assert.equal(calls, 1);
+    } finally {
+      globalThis.fetch = originalFetch;
+      process.env.GEMINI_MODEL = originalModel;
+    }
+  }
+});
+
+test("C113: unsupported model overrides fail before transport or additional spending", async () => {
+  const originalModel = process.env.GEMINI_MODEL;
+  try {
+    for (const model of ["gemini-3.8-flash", "gemini-2.5-flash"]) {
+      process.env.GEMINI_MODEL = model;
+      await assert.rejects(() => generateStructured(request, {
+        invoke: async () => assert.fail("unapproved model must not reach the provider"),
+        reserve: async () => assert.fail("unapproved model must not reserve additional budget"),
+      }), (error) => classifyAiFailure(error) === "configuration");
+    }
+  } finally { process.env.GEMINI_MODEL = originalModel; }
+});
+
+test("C113: real Gemini adapter treats parameter HTTP 400 as configuration without retry or fallback", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalInfo = console.info;
+  const logs: string[] = [];
+  console.info = (line) => logs.push(String(line));
+  try {
+    for (const parameter of ["thinking_budget", "thinkingBudget", "temperature", "top_p", "topP", "top_k", "topK", "thinking_level", "thinkingLevel"]) {
+      let calls = 0;
+      globalThis.fetch = async (input, init) => {
+        calls++;
+        assert.match(String(input), /gemini-3\.6-flash:generateContent$/);
+        assertNoDeprecatedGeminiControls(JSON.parse(String(init?.body)));
+        return Response.json({ error: { code: 400, status: "INVALID_ARGUMENT", message: `Unsupported ${parameter}: SYNTHETIC_PRIVATE_PROMPT` } }, { status: 400 });
+      };
+      await assert.rejects(() => generateStructured(request, {
+        ...productionDependencies, reserve: async () => assert.fail("configuration failure must not spend on fallback"),
+      }), (error) => classifyAiFailure(error) === "configuration" && !String(error).includes("SYNTHETIC_PRIVATE_PROMPT"));
+      assert.equal(calls, 1);
+    }
+    assert.equal(logs.length, 9);
+    assert.ok(logs.every((line) => JSON.parse(line).errorCode === "configuration"));
+    assert.doesNotMatch(logs.join(""), /SYNTHETIC_PRIVATE_PROMPT|synthetic-.*key/);
+  } finally { globalThis.fetch = originalFetch; console.info = originalInfo; }
+});
+
+test("C113: real SDK transport retains one fallback for Gemini HTTP 429/503", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const status of [429, 503]) {
+      const urls: string[] = []; let reservations = 0;
+      globalThis.fetch = async (input) => {
+        const url = String(input); urls.push(url);
+        if (url.includes("generativelanguage.googleapis.com")) {
+          return Response.json({ error: { code: status, status: status === 429 ? "RESOURCE_EXHAUSTED" : "UNAVAILABLE", message: "Synthetic provider failure" } }, { status });
+        }
+        assert.equal(url, "https://api.openai.com/v1/responses");
+        return Response.json({
+          id: "resp_synthetic", created_at: 1791320000, model: "gpt-6-luna", status: "completed",
+          output: [{ id: "msg_synthetic", type: "message", role: "assistant", status: "completed", content: [{ type: "output_text", text: JSON.stringify(output), annotations: [] }] }],
+          usage: { input_tokens: 100, output_tokens: 50 },
+        });
+      };
+      const value = await generateStructured(request, { ...productionDependencies, reserve: async () => { reservations++; } });
+      assert.deepEqual(value.output, output);
+      assert.equal(value.provider, "openai");
+      assert.equal(urls.length, 2);
+      assert.equal(reservations, 1);
+    }
+  } finally { globalThis.fetch = originalFetch; }
 });
