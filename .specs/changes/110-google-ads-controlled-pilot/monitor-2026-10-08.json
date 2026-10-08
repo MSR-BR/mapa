@@ -1,0 +1,70 @@
+{
+  "observed_date_local": "2026-10-08",
+  "observed_time_approx_local": "10:20",
+  "timezone": "America/Sao_Paulo",
+  "source": "authenticated_browser_readback",
+  "campaign_id": "24325133699",
+  "customer_id": "383-835-9068",
+  "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+  "external_configuration_changes": [],
+  "ads": {
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE_LEARNING",
+    "average_daily_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "strategy": "MAXIMIZE_CLICKS",
+    "today": {"date": "2026-10-08", "partial": true, "impressions": 0, "clicks": 0, "cost_eur": 0},
+    "yesterday": {"date": "2026-10-07", "impressions": 1, "clicks": 0, "cost_eur": 0},
+    "all_time": {"through": "2026-10-08", "impressions": 2, "clicks": 0, "cost_eur": 0, "conversions": 0},
+    "ad_id": "827109934468",
+    "ad_policy": "APPROVED",
+    "eligible_keywords": 4,
+    "low_volume_keywords": 4,
+    "negative_keywords_count": 17,
+    "all_negative_names_reread": false,
+    "search_terms": [
+      {"term": "projeto de pesquisa", "match": "EXACT", "impressions": 1, "clicks": 0, "cost_eur": 0, "conversions": 0},
+      {"term": "criador de tcc", "match": "EXACT_CLOSE_VARIANT", "impressions": 1, "clicks": 0, "cost_eur": 0, "conversions": 0, "decision": "OBSERVE_AMBIGUOUS_INTENT"}
+    ],
+    "rule": {"id": "61994210", "status": "ENABLED", "frequency": "HOURLY", "data_window": "ALL_TIME", "cost_threshold_eur": 14, "last_observed_success_at": "2026-10-08T09:53:37-03:00", "result": "NO_CHANGES", "duration_seconds": 4, "threshold_pause_exercised": false, "strict_total_cap_guaranteed": false},
+    "schedule_dates_reread": false,
+    "authorized_end_date_from_launch": "2026-10-12"
+  },
+  "ga4": {
+    "property_id": "550650234",
+    "dimension": "SESSION_SOURCE_MEDIUM",
+    "key_event_filter": "project_start",
+    "reports": [
+      {
+        "date": "2026-10-06",
+        "data_quality": "UNSAMPLED_DAILY_NO_ATTRIBUTION_WARNING",
+        "total": {"sessions": 12, "engaged_sessions": 8, "events": 279, "project_start": 3},
+        "rows": [
+          {"source_medium": "(direct) / (none)", "sessions": 8, "engaged_sessions": 4, "events": 230, "project_start": 3, "external_acquisition_verified": false},
+          {"source_medium": "codex_validation / qa", "sessions": 4, "engaged_sessions": 4, "events": 49, "project_start": 0, "excluded_from_acquisition_assessment": true}
+        ],
+        "session_row_sum_matches_total": true,
+        "not_set_present": false
+      },
+      {
+        "date": "2026-10-07",
+        "data_quality": "MOSTLY_COMPLETE_INTRADAY_ATTRIBUTION_NOT_SET_AND_NOT_AVAILABLE",
+        "total": {"sessions": 5, "engaged_sessions": 1, "events": 71, "project_start": 2},
+        "rows": [
+          {"source_medium": "(not set)", "sessions": 3, "engaged_sessions": 0, "events": 38, "project_start": 2, "external_acquisition_verified": false},
+          {"source_medium": "(direct) / (none)", "sessions": 2, "engaged_sessions": 0, "events": 4, "project_start": 0, "external_acquisition_verified": false},
+          {"source_medium": "(data not available)", "sessions": 1, "engaged_sessions": 1, "events": 27, "project_start": 0, "external_acquisition_verified": false},
+          {"source_medium": "codex_validation / qa", "sessions": 1, "engaged_sessions": 0, "events": 2, "project_start": 0, "excluded_from_acquisition_assessment": true}
+        ],
+        "session_row_sum_matches_total": false,
+        "not_set_present": true
+      }
+    ],
+    "qa_processed_attribution_observed": true,
+    "paid_attribution_verified": false,
+    "paid_conversion_observed": false
+  },
+  "site": {"home_http": 200, "health": "ok", "version": "v06102026.4", "consent_ui_reviewed": true, "new_network_payload_capture": false, "project_created": false, "qa_campaign": "c110_monitor_20261008"},
+  "local_verification": {"analytics_tests_passed": 15, "analytics_tests_failed": 0, "measurement_diff_from_recorded_production_revision": false, "recorded_production_revision": "9df1b4f", "production_sha_independently_verified_today": false},
+  "open_items": ["low_delivery", "2026_10_07_provisional_session_attribution", "internal_traffic_segmentation", "complete_baseline", "paid_conversion", "cost_threshold_pause_branch", "optional_logo_review"]
+}

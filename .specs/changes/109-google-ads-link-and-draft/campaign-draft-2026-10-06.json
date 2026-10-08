@@ -44,7 +44,18 @@
     "qa_project_revisit_duplicate_key_event_observed": false,
     "qa_processed_session_source_medium_verified": true,
     "qa_processed_session_source_medium_verified_on": "2026-10-07",
-    "processed_attribution_remaining_limit": "Session source/medium still contains not set in mostly complete intraday data. Paid attribution and internal traffic segmentation are not verified."
+    "processed_attribution_remaining_limit": "October 6 daily report reconciled without not set on October 8. October 7 remains mostly complete intraday with not set/data not available and session row sum mismatch. Paid attribution and internal traffic segmentation are not verified.",
+    "daily_report_2026_10_06_reconciled_on": "2026-10-08",
+    "daily_report_2026_10_06_readback": {
+      "sessions": 12,
+      "events": 279,
+      "project_start": 3,
+      "qa_sessions": 4,
+      "qa_project_start": 0,
+      "not_set_present": false,
+      "session_row_sum_matches_total": true,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-08.md"
+    }
   },
   "campaign": {
     "status_after_import": "PAUSED",
@@ -84,7 +95,7 @@
       "pause_rule_preview_affected_campaigns": 0,
       "pause_rule_execution_verified": false,
       "pause_rule_scheduled_execution_verified": true,
-      "pause_rule_last_observed_success_at": "2026-10-07T06:53:37-03:00",
+      "pause_rule_last_observed_success_at": "2026-10-08T09:53:37-03:00",
       "pause_rule_threshold_pause_verified": false,
       "pause_rule_execution_note": "Scheduled runs finished successfully with no changes; COST_GTE_14 pause branch has not been exercised."
     },
@@ -400,12 +411,12 @@
     "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
   },
   "latest_monitoring": {
-    "observed_on": "2026-10-07",
-    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-07.md",
-    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-07.json",
+    "observed_on": "2026-10-08",
+    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-08.md",
+    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-08.json",
     "status": "ENABLED",
     "eligibility": "ELIGIBLE_LEARNING",
-    "all_time_impressions": 1,
+    "all_time_impressions": 2,
     "all_time_clicks": 0,
     "all_time_cost_eur": 0,
     "paid_conversions": 0,
