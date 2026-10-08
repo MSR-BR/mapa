@@ -1,5 +1,7 @@
 # C116 — Abrir e fechar os modos do Mapa
 
+Status: **concluída e publicada em `v08102026.3`**. [Validação e CPD](cpd-2026-10-08.md).
+
 Autorização em 08/10/2026: corrigir os controles +/− do Mapa Rápido/Avançado e **“cpd”** no projeto existente `mapadapesquisa` / `mapadapesquisa.com.br`.
 
 ## Diagnóstico e correção

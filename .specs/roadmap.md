@@ -111,6 +111,7 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 113 | Auditoria de parâmetros depreciados Gemini | Concluída / vínculo não confirmado | Smoke corrigido por modelo e versionado em ce97e4d; runtime 3.6 preservado. Contrato simulado e build padrão aprovados, sem chamada paga. Vínculo com o aviso Google não confirmado. [Auditoria](changes/113-gemini-deprecated-parameters/audit-2026-10-07.md). |
 | 114 | Entrada pública e regeneração por quadro | Concluída / publicada v08102026.1 | Landing → `/mapa`, regeneração isolada, salvamento ao voltar e literatura aditiva. 211 testes, 13 cenários de rotas, regressão C111, UI local e build padrão aprovados. Produção: versão/health, links/modos/SEO e bloqueios 401/403 confirmados; sem novo smoke pago. [CPD](changes/114-landing-card-regeneration/cpd-2026-10-08.md). |
 | 115 | Hierarquia visual da entrada do Mapa | Concluída / publicada v08102026.2 | Área externa, Avançado e Rápido com tons distintos; molduras redundantes removidas; Avançado fechado por padrão. 211 testes/build, contraste e layout 320–1280 px aprovados; health, modos, cores e logs confirmados em produção. [CPD](changes/115-mapa-entry-visual-hierarchy/cpd-2026-10-08.md). |
+| 116 | Abrir e fechar os modos do Mapa | Concluída / publicada v08102026.3 | + abre e − fecha sem abrir o outro modo; textos e seleção preservados, envio bloqueado com ambos fechados. 211 testes/build, 11 estados locais e 7 em produção aprovados; health, alias e logs conferidos. [CPD](changes/116-mapa-mode-collapse/cpd-2026-10-08.md). |
 
 ## Marcos
 

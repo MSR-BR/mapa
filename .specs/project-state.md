@@ -8,6 +8,8 @@
 
 ## Estado atual
 
+- C116 concluída e publicada em **`v08102026.3`**, release `33c2309`: + abre e − recolhe cada modo público, permitindo ambos fechados e preservando texto/seleção. Avançado segue fechado por padrão. 211 testes/build, 11 estados locais (desktop, celular e teclado), 7 estados no domínio canônico, health e logs conferidos. [CPD](changes/116-mapa-mode-collapse/cpd-2026-10-08.md).
+
 - C115 concluída e publicada em **`v08102026.2`**, release `08e4798`: entrada com três superfícies distintas, menos caixas aninhadas, Rápido aberto/Avançado fechado por padrão. Links explícitos e rascunhos preservados. 211 testes/build aprovados; versão, health, modos, cores, desktop/celular e logs conferidos em produção. [CPD](changes/115-mapa-entry-visual-hierarchy/cpd-2026-10-08.md).
 
 - C114 concluída e publicada em **`v08102026.1`**, release `702d3ee`: landing com entrada dedicada `/mapa`, regeneração por quadro com salvamento prévio, Voltar/Próximo esclarecidos e literatura aditiva com recuperação de tópicos. 211 testes, 13 cenários de rotas, regressão C111, UI local e build padrão aprovados. Produção confirmou versão, links, modos públicos, SEO técnico, health e bloqueios 401/403; logs consultados sem erros. Sem novo smoke pago. [CPD](changes/114-landing-card-regeneration/cpd-2026-10-08.md).

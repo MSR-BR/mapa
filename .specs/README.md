@@ -4,7 +4,7 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v08102026.2`** (C115). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/115-mapa-entry-visual-hierarchy/cpd-2026-10-08.md).
+- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v08102026.3`** (C116). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/116-mapa-mode-collapse/cpd-2026-10-08.md).
 - Fluxo v2 em produção; fluxo v1 preservado para projetos legados. Entrada pública em `/mapa`, modos Rápido/Avançado, Google OAuth para gerar/guardar e regras Aluno/Orientador mantidas.
 - Contexto confirmado, rascunhos e histórico C111; Gemini principal e GPT complementar/fallback limitado C112; edição por quadro e literatura aditiva C114.
 - Integrações server-side: Gemini, OpenAI, Research Starter e Supabase no projeto documentado. Auditoria C113 concluída, mas vínculo com o aviso Google não confirmado.

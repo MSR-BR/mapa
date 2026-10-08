@@ -1,0 +1,119 @@
+{
+  "url": "https://mapadapesquisa.com.br/mapa?utm_source=codex_validation&utm_medium=qa&utm_campaign=c116_release",
+  "version": "v08102026.3",
+  "checkedAt": "2026-10-08T18:53:46.286Z",
+  "assertions": [
+    {
+      "name": "initial",
+      "advanced": false,
+      "checked": [],
+      "fields": 1,
+      "quick": true,
+      "submitDisabled": false,
+      "symbols": [
+        "+",
+        "−"
+      ],
+      "values": [
+        ""
+      ]
+    },
+    {
+      "name": "quick minus closes both",
+      "advanced": false,
+      "checked": [],
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ],
+      "values": []
+    },
+    {
+      "name": "quick plus restores text",
+      "advanced": false,
+      "checked": [],
+      "fields": 1,
+      "quick": true,
+      "submitDisabled": false,
+      "symbols": [
+        "+",
+        "−"
+      ],
+      "values": [
+        "C116 QA"
+      ]
+    },
+    {
+      "name": "advanced plus opens advanced",
+      "advanced": true,
+      "checked": [],
+      "fields": 5,
+      "quick": false,
+      "submitDisabled": false,
+      "symbols": [
+        "−",
+        "+"
+      ],
+      "values": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "advanced minus closes both",
+      "advanced": false,
+      "checked": [],
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ],
+      "values": []
+    },
+    {
+      "name": "advanced plus preserves text and TCC",
+      "advanced": true,
+      "checked": [
+        "tcc"
+      ],
+      "fields": 5,
+      "quick": false,
+      "submitDisabled": false,
+      "symbols": [
+        "−",
+        "+"
+      ],
+      "values": [
+        "C116 QA",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "final both collapsed",
+      "advanced": false,
+      "checked": [],
+      "fields": 0,
+      "quick": false,
+      "submitDisabled": true,
+      "symbols": [
+        "+",
+        "+"
+      ],
+      "values": []
+    }
+  ],
+  "consoleErrors": [],
+  "noSubmission": true,
+  "noPaidCalls": true
+}
