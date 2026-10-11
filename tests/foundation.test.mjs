@@ -21,7 +21,7 @@ test("keeps the branded foundation and locale in the App Router", async () => {
   assert.match(layout, /preload: false/);
   assert.match(brandLogo, /sizes=\{config\.sizes\}/);
   assert.match(page, /Escolha como começar seu mapa/);
-  assert.match(page, /Da situação-problema ao projeto de pesquisa/);
+  assert.match(page, /Planeje seu projeto de pesquisa com IA/);
   assert.doesNotMatch(page, /Comece pela ideia/);
   assert.doesNotMatch(page, /PublicStartForm/);
   assert.match(await readProjectFile("app/mapa/page.tsx"), /PublicStartForm/);

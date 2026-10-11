@@ -12,13 +12,13 @@ const canonicalUrl = "https://mapadapesquisa.com.br/";
 const socialCardUrl = "/brand/mapa-da-pesquisa-social-card.png";
 
 export const metadata: Metadata = {
-  title: { absolute: "Mapa da Pesquisa | Da situação-problema ao projeto" },
-  description: "Formule a situação-problema em cinco perguntas, escolha TCC, monografia, dissertação, tese ou artigo e construa um mapa de pesquisa revisável.",
+  title: { absolute: "Projeto de pesquisa com IA | Mapa da Pesquisa" },
+  description: "Planeje seu projeto de pesquisa com IA. Organize problema, objetivos, revisão da literatura e metodologia para TCC, dissertação ou tese. Acesso gratuito.",
   keywords: ["mapa da pesquisa", "situação-problema", "projeto de pesquisa", "TCC", "monografia", "dissertação", "tese", "artigo científico", "metodologia de pesquisa", "Research Starter"],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Mapa da Pesquisa | Da situação-problema ao projeto",
-    description: "Cinco perguntas, seis produtos acadêmicos e um mapa de pesquisa com IA, referências verificáveis e revisão humana.",
+    title: "Projeto de pesquisa com IA | Mapa da Pesquisa",
+    description: "Organize problema, objetivos, revisão da literatura e metodologia. Comece pela sua ideia e revise as sugestões da IA. Acesso gratuito.",
     locale: "pt_BR",
     siteName: "Mapa da Pesquisa",
     type: "website",
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mapa da Pesquisa | Da situação-problema ao projeto",
-    description: "Formule, escolha o nível e construa seu projeto de pesquisa.",
+    title: "Projeto de pesquisa com IA | Mapa da Pesquisa",
+    description: "Planeje seu projeto de pesquisa, organize as etapas e revise as sugestões da IA.",
     images: [socialCardUrl],
   },
   robots: { index: true, follow: true },
@@ -109,13 +109,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
 
       <section className="landing-hero" aria-labelledby="landing-title">
         <p className="eyebrow">Mapa da Pesquisa</p>
-        <h1 id="landing-title">Da situação-problema ao projeto de pesquisa.</h1>
+        <h1 id="landing-title">Planeje seu projeto de pesquisa com IA.</h1>
         <p className="landing-lede">
-          Responda cinco perguntas, escolha entre TCC, monografia, dissertação, tese ou artigo e construa uma proposta com IA, referências verificáveis e revisão humana.
+          Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.
         </p>
         <div className="landing-actions">
-          <Link className="landing-primary" href="/mapa">Começar um mapa</Link>
-          <Link className="landing-secondary" href="#apresentacao">Assistir ao vídeo</Link>
+          <Link className="landing-primary" href="/mapa">Começar meu projeto</Link>
+          <Link className="landing-secondary" href="#como-funciona">Como funciona</Link>
         </div>
         <ul className="landing-proof-points" aria-label="Características principais">
           <li>Acesso gratuito</li>
@@ -167,7 +167,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
 
       <section className="landing-section" id="como-funciona" aria-labelledby="how-title">
         <p className="eyebrow">Um processo guiado</p>
-        <h2 id="how-title">Clareza para decidir o próximo passo.</h2>
+        <h2 id="how-title">Como planejar seu projeto de pesquisa.</h2>
         <div className="landing-steps">
           <article><span>01</span><h3>Formule o problema</h3><p>Responda cinco perguntas guiadas para transformar uma inquietação em situação-problema e pergunta de pesquisa.</p></article>
           <article><span>02</span><h3>Escolha o produto</h3><p>Selecione TCC, monografia, dissertação, tese ou artigo. A escolha ajusta o rigor, a literatura e a contribuição esperada.</p></article>
@@ -203,8 +203,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
       </section>
 
       <section className="landing-cta" aria-labelledby="cta-title">
-        <h2 id="cta-title">Comece com cinco respostas.</h2>
-        <p>O próximo passo é organizar a ideia que você já tem e escolher o produto que deseja entregar.</p>
+        <h2 id="cta-title">Sua ideia pode virar um projeto de pesquisa.</h2>
+        <p>Comece no modo Rápido ou responda cinco perguntas no Avançado. Entre com Google para gerar e guardar seu mapa.</p>
         <Link className="landing-primary" href="/mapa">Criar meu mapa</Link>
       </section>
       <LegalLinks />
