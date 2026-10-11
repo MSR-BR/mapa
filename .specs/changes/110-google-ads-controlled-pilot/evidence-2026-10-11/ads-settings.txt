@@ -1,0 +1,469 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Enabled
+- generic: "Status:"
+- generic: Eligible (Learning)
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- generic: "Optimization score:"
+- link "81.1%":
+  - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreInfosnack&authuser=2&__u=7626112293&__c=5611930892
+- button "The budget simulator isn't available because this campaign doesn't have enough recent performance data." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports" [expanded]:
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Insights":
+      - generic: Insights
+    - menuitem "Brand report":
+      - generic: Brand report
+    - menuitem "Auction insights":
+      - generic: Auction insights
+    - menuitem "Search terms":
+      - generic: Search terms
+    - menuitem "When and where ads showed":
+      - generic: When and where ads showed
+    - menuitem "Channel performance":
+      - generic: Channel performance
+    - menuitem "Landing pages":
+      - generic: Landing pages
+    - menuitem "Report editor":
+      - generic: Report editor
+    - menuitem "Dashboards":
+      - generic: Dashboards
+    - menuitem "Campaigns" [expanded]:
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+    - menuitem "Ad groups":
+      - generic: Ad groups
+    - menuitem "Ads":
+      - generic: Ads
+    - menuitem "Experiments":
+      - generic: Experiments
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content" [expanded]:
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Keywords":
+      - generic: Keywords
+    - menuitem "Audiences":
+      - generic: Audiences
+    - menuitem "Locations":
+      - generic: Locations
+    - menuitem "Ad schedule":
+      - generic: Ad schedule
+    - menuitem "Advanced bid adjustments":
+      - generic: Advanced bid adjustments
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Ads" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 11, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 11, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- main:
+  - generic: "Add sitelinks to your ads:"
+  - generic: Get more conversions at a similar or better ROI by adding at least 6 sitelinks to your campaigns. You may see increases in clicks, CTR, and cost if you add sitelinks.
+  - button "More information":
+    - img: help_outline
+  - button "+3.3%"
+  - button "View":
+    - generic: View
+  - button "More options":
+    - img: more_vert
+  - generic: keyboard_arrow_right
+  - generic: 1 / 3
+  - generic: keyboard_arrow_left
+  - region "Primary toolbelt for Ads":
+    - button "Create ad":
+      - img: add
+    - button "Show 1 active filters":
+      - img: filter_alt
+      - generic: "1"
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:"
+    - generic: + 1 more
+    - button "Add filter":
+      - generic: Add filter
+    - search:
+      - button "Search":
+        - img: search
+        - generic: Search
+    - button "Segment. Segmentation off":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Reports":
+      - img: assessment
+      - generic: Reports
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "More options":
+      - img: more_vert
+      - generic: More
+    - button "Show chart":
+      - img: keyboard_arrow_up
+  - grid "Ads":
+    - row "Select all rows Ad status Ad Ad group Status Ad strength Ad type Clicks Impr. CTR Avg. CPC Cost Policy details Ad ID Conv. rate Conversions Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Ad status":
+        - img "Ad status"
+      - columnheader "Ad"
+      - columnheader "Ad group"
+      - columnheader "Status":
+        - text: Status
+        - img: help_outline
+      - columnheader "Ad strength":
+        - text: Ad strength
+        - img: help_outline
+      - columnheader "Ad type"
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "CTR":
+        - text: CTR
+        - img: help_outline
+      - columnheader "Avg. CPC":
+        - text: Avg. CPC
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Policy details":
+        - text: Policy details
+        - img: help_outline
+      - columnheader "Ad ID"
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - row "Select row Enabled Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa +12 more ‪mapadapesquisa.com.br/pesquisa/projeto‬ Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more View assets details · Preview ads Planejamento Academico Eligible Pending Responsive search ad 0 3 0.00% — €0.00 Approved 827109934468 0.00% 0.00 €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "Enabled":
+        - img "Enabled"
+      - gridcell "Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa +12 more ‪mapadapesquisa.com.br/pesquisa/projeto‬ Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more View assets details · Preview ads":
+        - link "Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa":
+          - /url: https://mapadapesquisa.com.br/
+        - text: +12 more
+        - generic: ‪mapadapesquisa.com.br/pesquisa/projeto‬
+        - generic: Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito. +2 more
+        - button "View assets details"
+        - generic: ·
+        - button "Preview ads"
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "Eligible":
+        - generic: Eligible
+      - gridcell "Pending":
+        - generic: Pending
+      - gridcell "Responsive search ad":
+        - generic: Responsive search ad
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "3":
+        - generic: "3"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "Approved":
+        - generic: Approved
+      - gridcell "827109934468":
+        - generic: "827109934468"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Ads in your current view More information 0 3 0.00% — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - gridcell:
+        - button:
+          - img: expand_more
+      - 'gridcell "Total: Ads in your current view More information"':
+        - generic: "Total: Ads in your current view"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "3":
+        - generic: "3"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell
+      - gridcell
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Expand row Total: Campaign More information 0 3 0.00% — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - gridcell "Expand row":
+        - button "Expand row":
+          - img "Expand row": expand_more
+      - 'gridcell "Total: Campaign More information"':
+        - generic: "Total: Campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "3":
+        - generic: "3"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell
+      - gridcell
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+  - generic: 1 - 1 of 1
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "Campaign settings":
+  - button "Close" [active]:
+    - img: close
+  - text: Campaign settings
+  - generic: "Status:"
+  - generic: Eligible (Learning)
+  - generic: "Type:"
+  - generic: Search
+  - generic: "Optimization score:"
+  - link "81.1%":
+    - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreEditPanel&authuser=2&__u=7626112293&__c=5611930892
+  - navigation
+  - main:
+    - heading "Campaign name" [level=2]:
+      - button "Campaign name":
+        - paragraph: Campaign name
+        - generic: Mapa | Search | BR | Ativacao | Piloto
+        - img: expand_less
+    - heading "Campaign status" [level=2]:
+      - button "Campaign status":
+        - paragraph: Campaign status
+        - generic: Enabled
+        - img: expand_less
+    - heading "Networks" [level=2]:
+      - button "Networks":
+        - paragraph: Networks
+        - generic: Google Search Network
+        - img: expand_less
+    - generic: Budget and bidding optimization
+    - text: Your Search campaign is optimized to drive
+    - button "Mapa | Projeto iniciado":
+      - generic: Mapa | Projeto iniciado
+    - text: .
+    - text: Your bidding strategy is
+    - button "Maximize clicks":
+      - generic: Maximize clicks
+    - text: .
+    - text: Your budget is
+    - button "€2.00 a day":
+      - generic: €2.00 a day
+    - text: .
+    - heading "Budget" [level=2]:
+      - button "Budget":
+        - paragraph: Budget
+        - generic: €2.00/day
+        - img: expand_less
+    - heading "Conversion goals" [level=2]:
+      - button "Conversion goals":
+        - paragraph: Conversion goals
+        - generic: "Campaign-specific: Mapa | Projeto iniciado"
+        - img: expand_less
+    - heading "Bidding" [level=2]:
+      - button "Bidding":
+        - paragraph: Bidding
+        - generic: Maximize clicks
+        - img: expand_less
+    - heading "Customer acquisition" [level=2]:
+      - button "Customer acquisition":
+        - paragraph: Customer acquisition
+        - generic: Bid equally for new and existing customers
+        - img: expand_less
+    - heading "Value rules" [level=2]:
+      - button "Value rules":
+        - paragraph: Value rules
+        - generic: No rule set
+        - img: expand_less
+    - heading "Promotion mode" [level=2]:
+      - button "Promotion mode":
+        - text: Promotion mode
+        - generic: Beta
+        - generic: "Off"
+        - img: expand_less
+    - generic: AI Max for Search campaigns
+    - generic: Get the best AI-powered performance on Google Search
+    - generic: Advertisers that activate AI Max in Search Campaigns will typically see 14% more conversions or conversion value at a similar CPA / ROAS
+    - img: trending_up
+    - text: Engage more customers and boost performance. Easily expand your keywords with broad match technology and let Google AI match content from your landing pages and assets to help you show up on more relevant searches. New ad group settings help you guide which customers you reach.
+    - img: tune
+    - text: Tailor your ads and keep them fresh. Use Google AI to serve the most relevant ad copy and landing pages to each customer based on their unique interest and intent.
+    - img: add_chart
+    - text: Take charge and understand how the newest and best Google AI is working for you. You'll get new actionable insights in search term reports that show how AI Max improves performance.
+    - button "Learn more about AI Max":
+      - generic: Learn more
+    - button "Optimize your campaign with AI Max":
+      - switch "Optimize your campaign with AI Max"
+    - generic: Optimize your campaign with AI Max
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - generic: Other settings
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+    - paragraph: Loading name
+    - paragraph: Loading summary
+- dialog "dialog"
+- dialog "dialog"
+- text: "* *"
+- dialog "dialog"
+- text: search search
+- dialog "dialog"
+- dialog "dialog"

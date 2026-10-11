@@ -1,0 +1,11 @@
+Observed 2026-10-09, GA4 550650234. Aggregate Realtime page_view parameter drilldown; QA visit not individually identified.
+  - generic: page_location
+    - row "Event parameter value Event count":
+    - row "https://mapadapesquisa.com.br/dashboard/projects/project 2":
+      - cell "https://mapadapesquisa.com.br/dashboard/projects/project"
+    - row "https://mapadapesquisa.com.br/ 1":
+      - cell "https://mapadapesquisa.com.br/"
+    - row "https://mapadapesquisa.com.br/dashboard 1":
+      - cell "https://mapadapesquisa.com.br/dashboard"
+    - row "https://mapadapesquisa.com.br/mapa 1":
+      - cell "https://mapadapesquisa.com.br/mapa"

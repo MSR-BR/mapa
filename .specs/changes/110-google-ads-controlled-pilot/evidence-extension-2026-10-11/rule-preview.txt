@@ -1,0 +1,124 @@
+- banner:
+  - button:
+    - img: close
+  - heading [level=1]:
+  - img: search
+  - generic: "\"What are my biggest opportunities for growth right now?\""
+  - combobox "\"What are my biggest opportunities for growth right now?\""
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Get 196.00% more clicks with the right spend View":
+      - text: Get 196.00% more clicks with the right spend
+      - generic: View
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- main:
+  - generic: Editing will create a new version of your rule for campaigns.
+  - region "Name":
+    - button "Name panel" [expanded]:
+      - img "Name panel": expand_less
+    - heading "Name" [level=2]
+    - textbox "Name your rule": Mapa | Pausa por custo EUR28 | C110
+  - heading "Owner" [level=2]:
+    - heading [level=2]: Owner
+    - generic: MSR-BR (383-835-9068)
+  - region "Action":
+    - button "Action panel" [expanded]:
+      - img "Action panel": expand_less
+    - heading "Action" [level=2]
+    - generic: Add up to 5 actions, and set the order they happen in.
+    - navigation:
+      - list:
+        - img: drag_handle
+        - generic: Pause campaigns
+        - button "Deselect":
+          - img: cancel
+      - button "Add":
+        - generic: Add
+      - button "Duplicate":
+        - generic: Duplicate
+    - text: Pause campaigns
+    - button "Edit":
+      - img: mode_edit
+    - generic: Apply to
+    - button "Selected campaigns":
+      - generic: Selected campaigns
+      - img: arrow_drop_down
+    - button "Mapa | Search | BR | Ativacao | Piloto":
+      - generic: Mapa | Search | BR | Ativacao | Piloto
+      - img: mode_edit
+    - generic: Conditions
+    - img: filter_alt
+    - generic: "Filters Applied:"
+    - grid "Filters Applied:":
+      - 'row "Campaign: Campaign status: Enabled, Paused"':
+        - 'gridcell "Campaign: Campaign status: Enabled, Paused"':
+          - 'button "Campaign: Campaign status: Enabled, Paused"': "Campaign: Campaign status: Enabled, Paused"
+      - 'row "Campaign: Cost >= €28.00 Delete"':
+        - 'gridcell "Campaign: Cost >= €28.00"':
+          - 'button "Campaign: Cost >= €28.00"': "Campaign: Cost >= €28.00"
+        - 'gridcell "Delete Campaign: Cost >= €28.00"':
+          - 'button "Delete Campaign: Cost >= €28.00"': close
+      - row:
+        - gridcell:
+          - combobox "Add condition"
+          - status
+    - generic: Action
+    - button "Select the type of action":
+      - generic: Pause campaigns
+      - img: arrow_drop_down
+  - button "Frequency":
+    - heading [level=2]: Frequency
+    - generic: Hourly using data from all time
+    - img: expand_less
+  - button "Email results":
+    - heading [level=2]: Email results
+    - generic: Only if there are changes or errors
+    - img: expand_less
+  - button "Save rule":
+    - generic: Save rule
+  - button "Preview":
+    - generic: Preview
+  - button "Cancel":
+    - generic: Cancel
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "Preview":
+  - generic: Preview
+  - paragraph [active]: Approximately 0 campaigns would change if you ran your rule now.
+  - grid:
+    - row "Change description":
+      - columnheader "Change description"
+    - generic: There are no changes in this rule.
+  - button "Close":
+    - generic: Close
+  - button "Save":
+    - generic: Save

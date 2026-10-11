@@ -4,11 +4,11 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v08102026.3`** (C116). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/116-mapa-mode-collapse/cpd-2026-10-08.md).
+- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v11102026.1`** (landing C110, recursos C117 preservados). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/110-google-ads-controlled-pilot/cpd-2026-10-11.md).
 - Fluxo v2 em produção; fluxo v1 preservado para projetos legados. Entrada pública em `/mapa`, modos Rápido/Avançado, Google OAuth para gerar/guardar e regras Aluno/Orientador mantidas.
 - Contexto confirmado, rascunhos e histórico C111; Gemini principal e GPT complementar/fallback limitado C112; edição por quadro e literatura aditiva C114.
 - Integrações server-side: Gemini, OpenAI, Research Starter e Supabase no projeto documentado. Auditoria C113 concluída, mas vínculo com o aviso Google não confirmado.
-- Piloto Ads C110 e medição C108/C097 continuam em acompanhamento com suas limitações; este fechamento não os declara concluídos.
+- Piloto Ads C110 prorrogado por autorização até 19/10: €2/dia, CPC máximo €0,30, limiar acumulado de pausa €28. Otimização de anúncio/palavras e landing aplicada em 11/10; duas palavras novas ainda em revisão. Medição C108/C097, atribuição paga e avaliação de resultado continuam abertas.
 
 ## Ordem de leitura
 

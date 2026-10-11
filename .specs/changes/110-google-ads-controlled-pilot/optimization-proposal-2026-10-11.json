@@ -1,0 +1,222 @@
+{
+  "status": "APPLIED_LIVE_NEW_KEYWORDS_UNDER_REVIEW",
+  "date": "2026-10-11",
+  "account": "383-835-9068",
+  "campaign_id": "24325133699",
+  "existing_ad_id": "827109934468",
+  "objective": "Melhorar a correspondência entre busca, anúncio e página sem alterar o lance.",
+  "baseline": {
+    "impressions": 3,
+    "clicks": 0,
+    "cost_eur": 0,
+    "paid_project_start": 0
+  },
+  "unchanged": {
+    "daily_average_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "accumulated_pause_threshold_eur": 28,
+    "end_date": "2026-10-19",
+    "network": "Google Search only",
+    "location": "Brazil presence",
+    "language": "Portuguese",
+    "goal_action_id": "7825220596",
+    "termo_campaign_id": "24027143907",
+    "negative_keywords": "preservar as 17 atuais",
+    "tracking": "preservar URL final, auto-tagging e sufixo UTM"
+  },
+  "keyword_plan": {
+    "pause": [
+      "[planejar projeto de pesquisa]",
+      "[criar projeto de pesquisa]",
+      "[organizar projeto de pesquisa]",
+      "\"ferramenta projeto de pesquisa\""
+    ],
+    "pause_reason": "Not eligible / Low search volume. Pausa é organização do conjunto; sozinha não aumenta entrega.",
+    "retain": [
+      "[projeto de pesquisa]",
+      "[como fazer um projeto de pesquisa]",
+      "[ferramenta para tcc]",
+      "\"projeto de pesquisa com ia\""
+    ],
+    "add": [
+      "[estrutura projeto de pesquisa]",
+      "[pré projeto de pesquisa]"
+    ],
+    "excluded_candidate": {
+      "keyword": "[projeto de pesquisa tcc]",
+      "reason": "Aguardar primeira rodada com duas adições. Faixa histórica de topo começa acima do CPC atual; não elevar lance para incluí-la."
+    },
+    "matching": "Novas palavras somente exatas; variantes próximas ainda podem ocorrer.",
+    "search_term_watch": "criador de tcc: uma impressão, sem clique. Não inferir intenção inadequada apenas desse termo; avaliar consultas e qualidade antes de negativar."
+  },
+  "planner_evidence": {
+    "read_at": "2026-10-11",
+    "source": "Google Ads Keyword Planner / Discover new keywords",
+    "location": "Brazil",
+    "language": "Portuguese",
+    "network": "Google",
+    "historical_window": "2025-09 / 2026-08",
+    "rows": [
+      {
+        "keyword": "projeto de pesquisa",
+        "average_monthly_searches": 4400,
+        "competition": "Low",
+        "top_of_page_low_eur": 0.26,
+        "top_of_page_high_eur": 0.61
+      },
+      {
+        "keyword": "como fazer um projeto de pesquisa",
+        "average_monthly_searches": 590,
+        "competition": "Low",
+        "top_of_page_low_eur": 0.13,
+        "top_of_page_high_eur": 0.46
+      },
+      {
+        "keyword": "pré projeto de pesquisa",
+        "average_monthly_searches": 320,
+        "competition": "Low",
+        "top_of_page_low_eur": 0.26,
+        "top_of_page_high_eur": 0.75
+      },
+      {
+        "keyword": "estrutura projeto de pesquisa",
+        "average_monthly_searches": 720,
+        "competition": "Low",
+        "top_of_page_low_eur": 0.24,
+        "top_of_page_high_eur": 1
+      },
+      {
+        "keyword": "projeto de pesquisa tcc",
+        "average_monthly_searches": 320,
+        "competition": "Low",
+        "top_of_page_low_eur": 0.32,
+        "top_of_page_high_eur": 1.2
+      }
+    ],
+    "limitations": "Médias históricas, não previsão de cliques nem mínimo de lance. Variantes próximas podem ser agrupadas; não somar como demanda incremental independente. Elegibilidade das novas palavras só pode ser confirmada após aplicação."
+  },
+  "responsive_search_ad": {
+    "final_url": "https://mapadapesquisa.com.br/",
+    "display_paths": [
+      "pesquisa",
+      "projeto"
+    ],
+    "final_url_suffix": "utm_source=google&utm_medium=cpc&utm_campaign=mapa_search_br_ativacao_piloto&utm_content=planejamento_rsa",
+    "headlines": [
+      "Mapa da Pesquisa",
+      "Projeto de Pesquisa com IA",
+      "Planeje Seu Projeto",
+      "Estruture Sua Pesquisa",
+      "Do Problema à Metodologia",
+      "Objetivos da Pesquisa",
+      "Planeje Seu TCC",
+      "Sua Ideia Ganha Estrutura",
+      "Pré-Projeto de Pesquisa",
+      "TCC, Dissertação e Tese",
+      "Mapa Rápido ou Avançado",
+      "Acesso Gratuito",
+      "Sugestões de IA, Você Revisa",
+      "Comece Pela Sua Ideia",
+      "Organize Sua Metodologia"
+    ],
+    "descriptions": [
+      "Planeje seu projeto de pesquisa com IA. Organize problema, objetivos e metodologia.",
+      "Estruture seu TCC, dissertação ou tese. Comece pela sua ideia e revise as sugestões.",
+      "Use o Mapa Rápido ou Avançado. Acesso gratuito para planejar sua pesquisa com clareza.",
+      "Prepare a ideia sem login. Entre com Google para gerar, revisar e guardar seu mapa."
+    ],
+    "delivery": "Preparar RSA substituto pausado; verificar aprovação, habilitar e então pausar original. Não apagar o anúncio original nem prometer comparação A/B com esta amostra."
+  },
+  "landing": {
+    "file": "app/page.tsx",
+    "headline": "Planeje seu projeto de pesquisa com IA.",
+    "primary_cta": "Começar meu projeto",
+    "destination": "/mapa",
+    "secondary_cta": "Como funciona",
+    "changes": "Título/metadados, abertura focada em entregáveis e etapas. Preserva layout, autenticação, consentimento, eventos, referências e fluxos."
+  },
+  "release_sequence": [
+    "Publicar a alteração restrita da landing e verificar desktop/mobile, CTA /mapa, canonical e ausência de regressão em consentimento/atribuição.",
+    "Aplicar apenas as seis palavras selecionadas ao grupo Planejamento Academico e preparar o RSA substituto; verificar aprovação e elegibilidade.",
+    "Registrar horário efetivo de publicação e aprovação. Começar observação a partir da elegibilidade; preservar anúncio original para reversão.",
+    "Revisar em 72 horas após elegibilidade: impressões, cliques, termos, qualidade, CPC e project_start pago. Não usar 72 horas como prova de significância.",
+    "Se continuar praticamente sem entrega, quantificar perda por ranking quando disponível e propor separadamente um teste de CPC; nenhum aumento autorizado neste pacote."
+  ],
+  "rollback": "Pausar novo RSA e novas palavras; restaurar os estados anteriores de anúncio/palavras. Reverter somente diff de app/page.tsx por novo deploy. Não reativar campanha encerrada ou pausada por guardrail.",
+  "limitations": "Três impressões são insuficientes para atribuir causalidade ou comparar CTR. O pacote testa uma hipótese conjunta de relevância/seleção, não prova separada de cada componente.",
+  "external_campaign_mutations_this_turn": true,
+  "production_deploy_this_turn": true,
+  "validation": {
+    "result": "APPLIED_AND_VERIFIED_WITH_PENDING_GOOGLE_KEYWORD_REVIEW",
+    "unit_tests_passed": 217,
+    "lint": "PASS",
+    "typescript": "PASS",
+    "static_grants": "PASS; somente local; 17 funções, 21 migrations, 11 tabelas",
+    "export_smoke": "PASS; DOCX/PDF sintéticos",
+    "local_build": "PASS com --webpack; build padrão local impedido por restrição de porta do sandbox",
+    "vercel_build": "PASS; build padrão Turbopack",
+    "runtime_vulnerabilities": 0,
+    "development_high_findings": 5,
+    "security_gate": "PASS_WITH_ACCEPTED_RISK; mesma cadeia dev-only ESLint já documentada, sem alteração de dependências",
+    "browser_widths": [
+      390,
+      1280
+    ],
+    "primary_cta_destination": "/mapa",
+    "canonical": "https://mapadapesquisa.com.br",
+    "health_version": "v11102026.1",
+    "consent_ui": "Revisada sem salvar mudanças: métricas habilitadas na sessão QA, publicidade desabilitada, personalização desabilitada.",
+    "new_network_payload_capture": false,
+    "live_paid_conversion_verified": false,
+    "error_logs_returned": 0,
+    "error_log_window_minutes": 15,
+    "browser_errors_returned": 0,
+    "rsa_lengths": {
+      "headlines": 15,
+      "max_chars": 28,
+      "limit": 30,
+      "descriptions": 4,
+      "max_description_chars": 86,
+      "description_limit": 90
+    },
+    "remaining": [
+      "Revisão automática de duas palavras novas",
+      "Resultados de entrega e atribuição paga",
+      "Execução agendada da versão 62128225 e ramo de pausa por limiar ainda não comprovados"
+    ]
+  },
+  "authorized_by": "faça alteracao do gogle ads completo. depois cpd limpo e atualizacao das paginas",
+  "prepared_plan_note": "keyword_plan e release_sequence preservam a proposta. execution registra a sequência efetiva e seu estado verificado.",
+  "execution": {
+    "verified_on": "2026-10-11",
+    "new_ad_id": "827659065358",
+    "new_ad_status": "ENABLED",
+    "new_ad_policy": "APPROVED",
+    "new_ad_eligibility": "ELIGIBLE",
+    "new_ad_strength": "PENDING",
+    "previous_ad_status": "PAUSED",
+    "keywords_enabled": 6,
+    "keywords_paused": 4,
+    "added_keyword_policy": "PENDING_UNDER_REVIEW",
+    "enabled_keywords_eligible": 3,
+    "enabled_keywords_eligible_limited_quality": 1,
+    "enabled_keywords_pending_review": 2,
+    "negative_keywords_count": 17,
+    "bidding_readback_eur": 0.3,
+    "daily_budget_readback_eur": 2,
+    "campaign_goal_readback": "Campaign-specific: Mapa | Projeto iniciado",
+    "actual_sequence": [
+      "UI criou o novo RSA habilitado; não ofereceu estado inicial pausado. Aprovação/Eligible confirmados antes da pausa do original.",
+      "Revisão automática inicialmente interpretou Ad strength Pending como política pendente. Evidência de Approved/Eligible esclareceu e a pausa foi aceita; nenhum bloqueio permanece.",
+      "Duas palavras exatas adicionadas e quatro sem volume pausadas, sem exclusão.",
+      "Landing validada em deployment de produção sem domínio e depois promovida ao domínio canônico.",
+      "Automação existente atualizada para acompanhar aprovação, elegibilidade e revisão após 72 horas."
+    ],
+    "evidence_directory": "evidence-optimization-2026-10-11",
+    "release": "release-2026-10-11.json",
+    "paid_api_calls": false,
+    "termo_campaign_mutations": false,
+    "performance_improvement_verified": false,
+    "observation_clock": "Aguardar elegibilidade das duas novas palavras; registrar primeira observação e revisar após 72 horas. Não tratar essa janela como significância estatística."
+  }
+}

@@ -44,7 +44,7 @@
     "qa_project_revisit_duplicate_key_event_observed": false,
     "qa_processed_session_source_medium_verified": true,
     "qa_processed_session_source_medium_verified_on": "2026-10-07",
-    "processed_attribution_remaining_limit": "October 6 daily report reconciled without not set on October 8. October 7 remains mostly complete intraday with not set/data not available and session row sum mismatch. Paid attribution and internal traffic segmentation are not verified.",
+    "processed_attribution_remaining_limit": "October 6 through 9 daily reports reconciled without not set and with matching row sums. October 9 reconciled on October 11: two project_start attributed to direct, QA zero. October 10 remains mostly complete intraday with not set and session row sum mismatch. Paid attribution and internal traffic segmentation are not verified.",
     "daily_report_2026_10_06_reconciled_on": "2026-10-08",
     "daily_report_2026_10_06_readback": {
       "sessions": 12,
@@ -55,6 +55,44 @@
       "not_set_present": false,
       "session_row_sum_matches_total": true,
       "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-08.md"
+    },
+    "daily_report_2026_10_07_reconciled_on": "2026-10-09",
+    "daily_report_2026_10_07_readback": {
+      "sessions": 5,
+      "events": 90,
+      "project_start": 2,
+      "qa_sessions": 1,
+      "qa_project_start": 0,
+      "direct_project_start": 1,
+      "google_organic_project_start": 1,
+      "not_set_present": false,
+      "session_row_sum_matches_total": true,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-09.md"
+    },
+    "daily_report_2026_10_08_reconciled_on": "2026-10-10",
+    "daily_report_2026_10_08_readback": {
+      "sessions": 22,
+      "events": 289,
+      "project_start": 3,
+      "qa_sessions": 3,
+      "qa_project_start": 0,
+      "direct_project_start": 1,
+      "scanned_page_referral_project_start": 2,
+      "not_set_present": false,
+      "session_row_sum_matches_total": true,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-10.md"
+    },
+    "daily_report_2026_10_09_reconciled_on": "2026-10-11",
+    "daily_report_2026_10_09_readback": {
+      "sessions": 9,
+      "events": 99,
+      "project_start": 2,
+      "qa_sessions": 2,
+      "qa_project_start": 0,
+      "direct_project_start": 2,
+      "not_set_present": false,
+      "session_row_sum_matches_total": true,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-11.md"
     }
   },
   "campaign": {
@@ -81,23 +119,30 @@
       "account_currency_daily_amount": 2,
       "assumed_exchange_rate": null,
       "recommended_review_days": 7,
-      "proposed_cost_pause_threshold_eur": 14,
+      "proposed_cost_pause_threshold_eur": 28,
       "strict_total_cap_guaranteed": false,
       "pause_mechanism_verified": true,
       "persisted_budget_readback_verified": true,
-      "pause_rule_id": "61994210",
-      "pause_rule_name": "Mapa | Pausa por custo EUR14 | C110",
+      "pause_rule_id": "62128225",
+      "pause_rule_name": "Mapa | Pausa por custo EUR28 | C110",
       "pause_rule_status": "ENABLED",
       "pause_rule_frequency": "HOURLY",
       "pause_rule_data_window": "ALL_TIME",
       "pause_rule_action": "PAUSE_ONLY_MAPA_CAMPAIGN",
-      "pause_rule_condition": "COST_GTE_14_EUR",
+      "pause_rule_condition": "COST_GTE_28_EUR",
       "pause_rule_preview_affected_campaigns": 0,
       "pause_rule_execution_verified": false,
-      "pause_rule_scheduled_execution_verified": true,
-      "pause_rule_last_observed_success_at": "2026-10-08T09:53:37-03:00",
+      "pause_rule_scheduled_execution_verified": false,
+      "pause_rule_last_observed_success_at": null,
       "pause_rule_threshold_pause_verified": false,
-      "pause_rule_execution_note": "Scheduled runs finished successfully with no changes; COST_GTE_14 pause branch has not been exercised."
+      "pause_rule_execution_note": "New version 62128225 saved on October 11; enabled hourly, all time, only Mapa, cost >= EUR28. Preview: zero campaigns affected. Scheduled execution of this version not yet observed; prior EUR14 version had successful runs without changes. Threshold pause branch not exercised.",
+      "pause_rule_previous_version": {
+        "id": "61994210",
+        "name": "Mapa | Pausa por custo EUR14 | C110",
+        "cost_threshold_eur": 14,
+        "last_observed_success_at": "2026-10-11T07:53:37-03:00",
+        "replaced_on": "2026-10-11"
+      }
     },
     "bidding": {
       "strategy_proposal": "MAXIMIZE_CLICKS_WITH_CPC_LIMIT",
@@ -155,61 +200,94 @@
         "keywords": [
           {
             "text": "criar projeto de pesquisa",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "PAUSED"
           },
           {
             "text": "organizar projeto de pesquisa",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "PAUSED"
           },
           {
             "text": "projeto de pesquisa com ia",
-            "match": "PHRASE"
+            "match": "PHRASE",
+            "status": "ENABLED"
           },
           {
             "text": "ferramenta projeto de pesquisa",
-            "match": "PHRASE"
+            "match": "PHRASE",
+            "status": "PAUSED"
           },
           {
             "text": "ferramenta para tcc",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "ENABLED"
           },
           {
             "text": "planejar projeto de pesquisa",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "PAUSED"
           },
           {
             "text": "projeto de pesquisa",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "ENABLED"
           },
           {
             "text": "como fazer um projeto de pesquisa",
-            "match": "EXACT"
+            "match": "EXACT",
+            "status": "ENABLED"
+          },
+          {
+            "text": "estrutura projeto de pesquisa",
+            "match": "EXACT",
+            "status": "ENABLED",
+            "eligibility": "PENDING_UNDER_REVIEW",
+            "added_on": "2026-10-11"
+          },
+          {
+            "text": "pré projeto de pesquisa",
+            "match": "EXACT",
+            "status": "ENABLED",
+            "eligibility": "PENDING_UNDER_REVIEW",
+            "added_on": "2026-10-11"
           }
         ],
         "responsive_search_ad": {
+          "final_url": "https://mapadapesquisa.com.br/",
+          "display_paths": [
+            "pesquisa",
+            "projeto"
+          ],
+          "final_url_suffix": "utm_source=google&utm_medium=cpc&utm_campaign=mapa_search_br_ativacao_piloto&utm_content=planejamento_rsa",
           "headlines": [
             "Mapa da Pesquisa",
-            "Seu Projeto Ganha Estrutura",
-            "Organize Sua Pesquisa",
-            "Crie Seu Projeto Com IA",
-            "Comece Seu TCC Com Clareza",
-            "Da Ideia Ao Projeto",
-            "Objetivos E Metodologia",
-            "Planeje Sua Dissertação",
-            "Aluno Ou Orientador",
-            "Modo Rápido Ou Avançado",
+            "Projeto de Pesquisa com IA",
+            "Planeje Seu Projeto",
+            "Estruture Sua Pesquisa",
+            "Do Problema à Metodologia",
+            "Objetivos da Pesquisa",
+            "Planeje Seu TCC",
+            "Sua Ideia Ganha Estrutura",
+            "Pré-Projeto de Pesquisa",
+            "TCC, Dissertação e Tese",
+            "Mapa Rápido ou Avançado",
             "Acesso Gratuito",
-            "Referências Verificáveis",
-            "Sugestões Com Revisão Humana",
+            "Sugestões de IA, Você Revisa",
             "Comece Pela Sua Ideia",
-            "Construa Seu Mapa De Pesquisa"
+            "Organize Sua Metodologia"
           ],
           "descriptions": [
-            "Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir.",
-            "Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.",
-            "Para TCC, dissertação, tese ou artigo. Escolha o modo Rápido ou Avançado e comece.",
-            "Estudantes e orientadores planejam pesquisas com sugestões de IA e revisão humana."
-          ]
+            "Planeje seu projeto de pesquisa com IA. Organize problema, objetivos e metodologia.",
+            "Estruture seu TCC, dissertação ou tese. Comece pela sua ideia e revise as sugestões.",
+            "Use o Mapa Rápido ou Avançado. Acesso gratuito para planejar sua pesquisa com clareza.",
+            "Prepare a ideia sem login. Entre com Google para gerar, revisar e guardar seu mapa."
+          ],
+          "ad_id": "827659065358",
+          "status": "ENABLED",
+          "policy": "APPROVED",
+          "eligibility": "ELIGIBLE",
+          "ad_strength": "PENDING"
         },
         "callouts": [
           "Acesso gratuito",
@@ -217,7 +295,39 @@
           "Aluno e Orientador",
           "Revisão humana"
         ],
-        "remote_name": "Planejamento Academico"
+        "remote_name": "Planejamento Academico",
+        "previous_responsive_search_ads": [
+          {
+            "headlines": [
+              "Mapa da Pesquisa",
+              "Seu Projeto Ganha Estrutura",
+              "Organize Sua Pesquisa",
+              "Crie Seu Projeto Com IA",
+              "Comece Seu TCC Com Clareza",
+              "Da Ideia Ao Projeto",
+              "Objetivos E Metodologia",
+              "Planeje Sua Dissertação",
+              "Aluno Ou Orientador",
+              "Modo Rápido Ou Avançado",
+              "Acesso Gratuito",
+              "Referências Verificáveis",
+              "Sugestões Com Revisão Humana",
+              "Comece Pela Sua Ideia",
+              "Construa Seu Mapa De Pesquisa"
+            ],
+            "descriptions": [
+              "Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir.",
+              "Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.",
+              "Para TCC, dissertação, tese ou artigo. Escolha o modo Rápido ou Avançado e comece.",
+              "Estudantes e orientadores planejam pesquisas com sugestões de IA e revisão humana."
+            ],
+            "ad_id": "827109934468",
+            "status": "PAUSED",
+            "paused_on": "2026-10-11",
+            "reason": "Substituído pelo pacote autorizado C110; preservado para reversão"
+          }
+        ],
+        "remote_id": "199190407125"
       }
     ],
     "negative_keywords": [
@@ -305,8 +415,8 @@
       }
     ],
     "scheduled_start_date": "2026-10-06",
-    "scheduled_end_date": "2026-10-12",
-    "schedule_note": "Seven calendar dates, first day partial; authorized operational launch 06 Oct, end 12 Oct. No automatic extension.",
+    "scheduled_end_date": "2026-10-19",
+    "schedule_note": "Explicit extension authorized October 11: seven additional calendar dates, October 13–19 inclusive. EUR2/day and EUR0.30 CPC unchanged; accumulated cost pause threshold EUR28. No extension beyond October 19 without new authorization.",
     "asset_isolation": {
       "account_sitelink_associations": "PAUSED_AFTER_COPY_TO_PREEXISTING_CAMPAIGNS",
       "preserved_campaigns": [
@@ -333,7 +443,7 @@
     },
     "current_status": "ENABLED",
     "ad_policy_status": "APPROVED",
-    "ad_id": "827109934468"
+    "ad_id": "827659065358"
   },
   "remote_changes_performed": [
     "created_draft_in_msr_br",
@@ -359,7 +469,14 @@
     "added_four_campaign_phrase_negatives_for_ready_made_projects",
     "rescheduled_pilot_06_to_12_october",
     "enabled_only_mapa_after_operational_checks",
-    "updated_existing_daily_monitor_for_active_pilot"
+    "updated_existing_daily_monitor_for_active_pilot",
+    "extended_mapa_end_date_to_2026_10_19_after_explicit_authorization",
+    "updated_cost_pause_rule_to_28_eur_new_version_62128225",
+    "updated_daily_monitor_for_authorized_extension",
+    "created_approved_rsa_827659065358_and_paused_original",
+    "added_two_exact_keywords_and_paused_four_low_volume_keywords",
+    "published_aligned_landing_v11102026_1",
+    "updated_existing_monitor_for_post_optimization_review"
   ],
   "launch_blockers": [],
   "remote_draft_id": "10217353351",
@@ -391,7 +508,8 @@
     "activation_authorized_only_after_all_gates": false,
     "do_not_duplicate_existing_c097_automation": true,
     "launch_gate_basis": "LATEST_USER_OPERATIONAL_AUTHORIZATION",
-    "pilot_end_date": "2026-10-12"
+    "pilot_end_date": "2026-10-19",
+    "optimization_review": "72 horas após primeira elegibilidade observada do novo anúncio e duas novas palavras; não aumentar CPC automaticamente."
   },
   "activated_at_approx": "2026-10-06T13:46:00-03:00",
   "monitoring_open_items": [
@@ -401,7 +519,10 @@
     "real_paid_conversion_not_observed",
     "optional_logo_review",
     "low_delivery",
-    "cost_pause_threshold_execution_not_yet_observed"
+    "cost_pause_threshold_execution_not_yet_observed",
+    "keyword_quality_score_2_of_10",
+    "new_exact_keywords_policy_review",
+    "post_optimization_delivery_evaluation"
   ],
   "launch_authorization": {
     "latest_user_instruction": "faça 1, 2 e 3. Se tudo estiver funcionando, pode lancar.",
@@ -411,15 +532,96 @@
     "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
   },
   "latest_monitoring": {
-    "observed_on": "2026-10-08",
-    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-08.md",
-    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-08.json",
+    "observed_on": "2026-10-11",
+    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-11.md",
+    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-11.json",
     "status": "ENABLED",
     "eligibility": "ELIGIBLE_LEARNING",
-    "all_time_impressions": 2,
+    "all_time_impressions": 3,
     "all_time_clicks": 0,
     "all_time_cost_eur": 0,
     "paid_conversions": 0,
-    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS"
+    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+    "keyword_quality_diagnostic": {
+      "keyword": "projeto de pesquisa",
+      "match": "EXACT",
+      "status": "ELIGIBLE_LIMITED_LOW_QUALITY_SCORE",
+      "quality_score": 2,
+      "scale_max": 10,
+      "expected_ctr": "BELOW_AVERAGE",
+      "landing_page_experience": "BELOW_AVERAGE",
+      "ad_relevance": "AVERAGE",
+      "policy_violation_confirmed": false,
+      "correction_applied": false,
+      "components_observed_on": "2026-10-10",
+      "components_reread_today": false,
+      "status_reread_today": true
+    },
+    "delivery_diagnostic": {
+      "observed_on": "2026-10-11",
+      "strategy": "MAXIMIZE_CLICKS",
+      "strategy_status": "LEARNING_NEW_STRATEGY",
+      "estimated_learning_days_remaining": 1,
+      "days_since_last_significant_change": 4,
+      "limited_by_budget_reported": false,
+      "limited_by_bid_cap_reported": false,
+      "low_search_volume_keywords": 4,
+      "eligible_limited_quality_keywords": 1,
+      "eligible_keywords_without_limit": 3,
+      "cpc_cap_contribution": "PLAUSIBLE_NOT_CONFIRMED",
+      "evidence": "../110-google-ads-controlled-pilot/delivery-diagnosis-2026-10-11.md"
+    },
+    "snapshot_note": "Observação anterior à otimização; configuração efetiva atual em latest_optimization e campaign."
+  },
+  "latest_extension": {
+    "authorized_on": "2026-10-11",
+    "user_instruction": "Mais 7 dias a €2/dia, até €28 acumulados",
+    "previous_end_date": "2026-10-12",
+    "new_end_date": "2026-10-19",
+    "average_daily_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "total_cost_pause_threshold_eur": 28,
+    "new_rule_id": "62128225",
+    "previous_rule_id": "61994210",
+    "campaign_dates_saved_and_verified": true,
+    "rule_saved_and_verified": true,
+    "automation_updated_and_active": true,
+    "evidence": "../110-google-ads-controlled-pilot/extension-2026-10-11.md"
+  },
+  "latest_optimization": {
+    "verified_on": "2026-10-11",
+    "new_ad_id": "827659065358",
+    "new_ad_status": "ENABLED",
+    "new_ad_policy": "APPROVED",
+    "new_ad_eligibility": "ELIGIBLE",
+    "new_ad_strength": "PENDING",
+    "previous_ad_status": "PAUSED",
+    "keywords_enabled": 6,
+    "keywords_paused": 4,
+    "added_keyword_policy": "PENDING_UNDER_REVIEW",
+    "enabled_keywords_eligible": 3,
+    "enabled_keywords_eligible_limited_quality": 1,
+    "enabled_keywords_pending_review": 2,
+    "negative_keywords_count": 17,
+    "bidding_readback_eur": 0.3,
+    "daily_budget_readback_eur": 2,
+    "campaign_goal_readback": "Campaign-specific: Mapa | Projeto iniciado",
+    "actual_sequence": [
+      "UI criou o novo RSA habilitado; não ofereceu estado inicial pausado. Aprovação/Eligible confirmados antes da pausa do original.",
+      "Revisão automática inicialmente interpretou Ad strength Pending como política pendente. Evidência de Approved/Eligible esclareceu e a pausa foi aceita; nenhum bloqueio permanece.",
+      "Duas palavras exatas adicionadas e quatro sem volume pausadas, sem exclusão.",
+      "Landing validada em deployment de produção sem domínio e depois promovida ao domínio canônico.",
+      "Automação existente atualizada para acompanhar aprovação, elegibilidade e revisão após 72 horas."
+    ],
+    "evidence_directory": "evidence-optimization-2026-10-11",
+    "release": "release-2026-10-11.json",
+    "paid_api_calls": false,
+    "termo_campaign_mutations": false,
+    "performance_improvement_verified": false,
+    "observation_clock": "Aguardar elegibilidade das duas novas palavras; registrar primeira observação e revisar após 72 horas. Não tratar essa janela como significância estatística.",
+    "evidence": "../110-google-ads-controlled-pilot/cpd-2026-10-11.md",
+    "authorized_on": "2026-10-11",
+    "landing_version": "v11102026.1",
+    "source_commit": "a565fc8b9373c03f39f80221803f64cc233440c1"
   }
 }

@@ -1,0 +1,356 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Enabled
+- generic: "Status:"
+- generic: Eligible (Learning)
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- generic: "Optimization score:"
+- link "81.1%":
+  - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreInfosnack&authuser=2&__u=7626112293&__c=5611930892
+- button "The budget simulator isn't available because this campaign doesn't have enough recent performance data." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports" [expanded]:
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Insights":
+      - generic: Insights
+    - menuitem "Brand report":
+      - generic: Brand report
+    - menuitem "Auction insights":
+      - generic: Auction insights
+    - menuitem "Search terms":
+      - generic: Search terms
+    - menuitem "When and where ads showed":
+      - generic: When and where ads showed
+    - menuitem "Channel performance":
+      - generic: Channel performance
+    - menuitem "Landing pages":
+      - generic: Landing pages
+    - menuitem "Report editor":
+      - generic: Report editor
+    - menuitem "Dashboards":
+      - generic: Dashboards
+    - menuitem "Campaigns":
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content" [expanded]:
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Keywords":
+      - generic: Keywords
+    - menuitem "Audiences":
+      - generic: Audiences
+    - menuitem "Locations":
+      - generic: Locations
+    - menuitem "Ad schedule":
+      - generic: Ad schedule
+    - menuitem "Advanced bid adjustments":
+      - generic: Advanced bid adjustments
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Search terms More information" [level=2]:
+  - text: Search terms
+  - button "Search terms More information":
+    - img: help_outline
+- generic: All time
+- button "Feb 20, 2025 – Oct 9, 2026 Not applicable" [active]:
+  - generic: Feb 20, 2025 – Oct 9, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Search terms" [selected]:
+    - generic: Search terms
+  - tab "Search terms and ad combinations":
+    - generic: Search terms and ad combinations
+- main:
+  - img "Education": school
+  - paragraph: Use the search terms report to see what people searched for when your ads appeared. To understand broader themes and find new opportunities, use search terms insights. This report groups related terms into categories and shows performance and search volume data.
+  - button "Hide for now":
+    - generic: Hide for now
+  - button "View search terms insights":
+    - generic: View search terms insights
+  - generic: Chart type Expand Adjust
+  - region "Primary toolbelt for Search terms":
+    - img: filter_alt
+    - grid
+    - button "Add filter":
+      - generic: Add filter
+    - button "Segment. Segmentation off":
+      - img: segment
+      - generic: Segment
+    - button "Columns":
+      - img: view_column
+      - generic: Columns
+    - button "Download":
+      - img: file_download
+      - generic: Download
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+    - button "Show chart":
+      - img: keyboard_arrow_up
+  - grid "Search terms":
+    - row "Select all rows Search term Match type Added/Excluded Ad group Clicks Impr. CTR Avg. CPC Cost Conv. rate Conversions Cost / conv.":
+      - gridcell "Select all rows":
+        - checkbox "Select all rows":
+      - columnheader "Search term":
+        - text: Search term
+        - img: help_outline
+      - columnheader "Match type":
+        - text: Match type
+        - img: help_outline
+      - columnheader "Added/Excluded":
+        - text: Added/Excluded
+        - img: help_outline
+      - columnheader "Ad group"
+      - columnheader "Clicks":
+        - text: Clicks
+        - img: help_outline
+      - columnheader "Impr.":
+        - text: Impr.
+        - img: help_outline
+      - columnheader "CTR":
+        - text: CTR
+        - img: help_outline
+      - columnheader "Avg. CPC":
+        - text: Avg. CPC
+        - img: help_outline
+      - columnheader "Cost":
+        - text: Cost
+        - img: help_outline
+      - columnheader "Conv. rate":
+        - text: Conv. rate
+        - img: help_outline
+      - columnheader "Conversions":
+        - text: Conversions
+        - img: help_outline
+      - columnheader "Cost / conv.":
+        - text: Cost / conv.
+        - img: help_outline
+    - row "Select row projeto de pesquisa Exact match Added Planejamento Academico 0 1 0.00% — €0.00 0.00% 0.00 €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "projeto de pesquisa":
+        - generic: projeto de pesquisa
+      - gridcell "Exact match":
+        - generic: Exact match
+      - gridcell "Added":
+        - generic: Added
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "1":
+        - generic: "1"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - row "Select row criador de tcc Exact match (close variant) None Planejamento Academico 0 1 0.00% — €0.00 0.00% 0.00 €0.00":
+      - gridcell "Select row":
+        - checkbox "Select row":
+      - gridcell "criador de tcc":
+        - generic: criador de tcc
+      - gridcell "Exact match (close variant)":
+        - generic: Exact match (close variant)
+      - gridcell "None":
+        - generic: None
+      - gridcell "Planejamento Academico":
+        - generic: Planejamento Academico
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "1":
+        - generic: "1"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Search terms More information 0 2 0.00% — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - 'gridcell "Total: Search terms More information"':
+        - generic: "Total: Search terms"
+        - button "More information":
+          - img: help_outline
+      - gridcell:
+        - button:
+          - img: expand_more
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "2":
+        - generic: "2"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Other search terms More information 0 0 — — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - 'gridcell "Total: Other search terms More information"':
+        - generic: "Total: Other search terms"
+        - button "More information":
+          - img: help_outline
+      - gridcell:
+        - button:
+          - img: expand_more
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "—":
+        - generic: —
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+    - 'row "Total: Campaign More information 0 2 0.00% — €0.00 0.00% 0.00 €0.00"':
+      - gridcell
+      - 'gridcell "Total: Campaign More information"':
+        - generic: "Total: Campaign"
+        - button "More information":
+          - img: help_outline
+      - gridcell:
+        - button:
+          - img: expand_more
+      - gridcell
+      - gridcell
+      - gridcell
+      - gridcell "0":
+        - generic: "0"
+      - gridcell "2":
+        - generic: "2"
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "—":
+        - generic: —
+      - gridcell "€0.00":
+        - generic: €0.00
+      - gridcell "0.00%":
+        - generic: 0.00%
+      - gridcell "0.00":
+        - generic: "0.00"
+      - gridcell "€0.00":
+        - generic: €0.00
+  - generic: 1 - 2 of 2
+  - link "Reporting is not real-time.":
+    - /url: https://support.google.com/google-ads/?p=help_2544985&hl=en_US
+  - text: "Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time."
+  - link "Learn more about changing your Google Ads account settings":
+    - /url: https://support.google.com/google-ads/?p=help_9842104&hl=en_US
+    - text: Learn more
+  - generic: Some inventory may be provided through third party intermediaries.
+  - generic: You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+  - generic: © Google, 2026.
+- text: Chart type Expand Adjust
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: "* *"
+- dialog "dialog"

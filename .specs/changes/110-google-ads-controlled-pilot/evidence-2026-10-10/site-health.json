@@ -1,0 +1,16 @@
+{
+  "checked_on": "2026-10-10",
+  "source": "https://mapadapesquisa.com.br/api/health",
+  "response": {
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "service": "mapa-da-pesquisa",
+    "status": "ok",
+    "version": "v08102026.4"
+  }
+}

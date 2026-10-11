@@ -1,0 +1,218 @@
+{
+  "observed_date_local": "2026-10-10",
+  "observed_time_approx_local": "08:12",
+  "timezone": "America/Sao_Paulo",
+  "source": "authenticated_browser_readback",
+  "campaign_id": "24325133699",
+  "customer_id": "383-835-9068",
+  "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+  "external_configuration_changes": [],
+  "ads": {
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE_LEARNING",
+    "average_daily_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "strategy": "MAXIMIZE_CLICKS",
+    "today": {
+      "date": "2026-10-10",
+      "partial": true,
+      "impressions": 0,
+      "clicks": 0,
+      "cost_eur": 0
+    },
+    "yesterday": {
+      "date": "2026-10-09",
+      "impressions": 1,
+      "clicks": 0,
+      "cost_eur": 0
+    },
+    "all_time": {
+      "through": "2026-10-10",
+      "impressions": 3,
+      "clicks": 0,
+      "cost_eur": 0,
+      "conversions": 0
+    },
+    "ad_id": "827109934468",
+    "ad_policy": "APPROVED",
+    "eligible_keywords": 3,
+    "low_volume_keywords": 4,
+    "negative_keywords_count": 17,
+    "all_negative_names_reread": false,
+    "search_terms": [
+      {
+        "term": "projeto de pesquisa",
+        "match": "EXACT",
+        "impressions": 2,
+        "clicks": 0,
+        "cost_eur": 0,
+        "conversions": 0
+      },
+      {
+        "term": "criador de tcc",
+        "match": "EXACT_CLOSE_VARIANT",
+        "impressions": 1,
+        "clicks": 0,
+        "cost_eur": 0,
+        "conversions": 0,
+        "decision": "OBSERVE_AMBIGUOUS_INTENT"
+      }
+    ],
+    "rule": {
+      "id": "61994210",
+      "status": "ENABLED",
+      "frequency": "HOURLY",
+      "data_window": "ALL_TIME",
+      "cost_threshold_eur": 14,
+      "last_observed_success_at": "2026-10-10T07:53:37-03:00",
+      "result": "NO_CHANGES",
+      "duration_seconds": 5,
+      "threshold_pause_exercised": false,
+      "strict_total_cap_guaranteed": false
+    },
+    "schedule_dates_reread": false,
+    "authorized_end_date_from_launch": "2026-10-12",
+    "eligible_limited_quality_keywords": 1,
+    "quality_diagnostic": {
+      "keyword": "projeto de pesquisa",
+      "match": "EXACT",
+      "status": "ELIGIBLE_LIMITED_LOW_QUALITY_SCORE",
+      "quality_score": 2,
+      "scale_max": 10,
+      "expected_ctr": "BELOW_AVERAGE",
+      "landing_page_experience": "BELOW_AVERAGE",
+      "ad_relevance": "AVERAGE",
+      "policy_violation_confirmed": false,
+      "correction_applied": false
+    }
+  },
+  "ga4": {
+    "property_id": "550650234",
+    "dimension": "SESSION_SOURCE_MEDIUM",
+    "key_event_filter": "project_start",
+    "reports": [
+      {
+        "date": "2026-10-08",
+        "data_quality": "UNSAMPLED_DAILY_NO_ATTRIBUTION_WARNING",
+        "total": {
+          "sessions": 22,
+          "engaged_sessions": 14,
+          "events": 289,
+          "project_start": 3
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 11,
+            "engaged_sessions": 8,
+            "events": 172,
+            "project_start": 1,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 5,
+            "engaged_sessions": 3,
+            "events": 82,
+            "project_start": 2,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 3,
+            "engaged_sessions": 2,
+            "events": 11,
+            "project_start": 0,
+            "excluded_from_acquisition_assessment": true
+          },
+          {
+            "source_medium": "google / organic",
+            "sessions": 3,
+            "engaged_sessions": 1,
+            "events": 24,
+            "project_start": 0,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum_matches_total": true,
+        "not_set_present": false
+      },
+      {
+        "date": "2026-10-09",
+        "data_quality": "MOSTLY_COMPLETE_INTRADAY_ATTRIBUTION_NOT_SET",
+        "total": {
+          "sessions": 8,
+          "engaged_sessions": 2,
+          "events": 75,
+          "project_start": 2
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 6,
+            "engaged_sessions": 2,
+            "events": 26,
+            "project_start": 0,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "(not set)",
+            "sessions": 5,
+            "engaged_sessions": 0,
+            "events": 45,
+            "project_start": 2,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 2,
+            "engaged_sessions": 0,
+            "events": 4,
+            "project_start": 0,
+            "excluded_from_acquisition_assessment": true
+          }
+        ],
+        "session_row_sum_matches_total": false,
+        "not_set_present": true
+      }
+    ],
+    "qa_processed_attribution_observed": true,
+    "paid_attribution_verified": false,
+    "paid_conversion_observed": false
+  },
+  "site": {
+    "health": "ok",
+    "version": "v08102026.4",
+    "consent_ui_reviewed": true,
+    "new_network_payload_capture": false,
+    "project_created": false,
+    "qa_campaign": "c110_monitor_20261010",
+    "home_browser_loaded": true,
+    "mapa_cta_navigation_verified": true,
+    "realtime_sanitized_page_locations_observed": false,
+    "today_qa_individually_identified": false,
+    "previous_sanitized_realtime_evidence": "evidence-2026-10-09/ga4-realtime-page-location.txt"
+  },
+  "local_verification": {
+    "analytics_tests_passed": 15,
+    "analytics_tests_failed": 0,
+    "measurement_diff_from_recorded_production_revision": false,
+    "recorded_production_revision": "96ef0b04ec3fe4d0bf43b2b9f5116a21096a0b23",
+    "production_sha_independently_verified_today": false,
+    "observed_local_head": "a3b4796",
+    "analytics_tests_last_run": "2026-10-09",
+    "analytics_tests_rerun_today": false
+  },
+  "open_items": [
+    "low_delivery",
+    "2026_10_09_provisional_session_attribution",
+    "internal_traffic_segmentation",
+    "complete_baseline",
+    "paid_conversion",
+    "cost_threshold_pause_branch",
+    "optional_logo_review",
+    "keyword_quality_score_2_of_10"
+  ],
+  "evidence_directory": "evidence-2026-10-10",
+  "temporary_report_view_changes": "Quality score, expected CTR, landing page experience and ad relevance columns added for diagnosis and removed afterward; original columns restored."
+}

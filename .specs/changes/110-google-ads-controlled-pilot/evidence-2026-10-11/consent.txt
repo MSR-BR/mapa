@@ -1,0 +1,119 @@
+- main:
+  - link "Mapa da Pesquisa":
+    - /url: /
+    - img "Mapa da Pesquisa"
+  - link "Entrar":
+    - /url: /login
+  - region "Da situação-problema ao projeto de pesquisa.":
+    - paragraph: Mapa da Pesquisa
+    - heading "Da situação-problema ao projeto de pesquisa." [level=1]
+    - paragraph: Responda cinco perguntas, escolha entre TCC, monografia, dissertação, tese ou artigo e construa uma proposta com IA, referências verificáveis e revisão humana.
+    - link "Começar um mapa":
+      - /url: /mapa
+    - link "Assistir ao vídeo":
+      - /url: "#apresentacao"
+    - list "Características principais":
+      - listitem: Acesso gratuito
+      - listitem: Mapa Rápido ou Avançado
+      - listitem: Aluno ou Orientador
+  - region "Escolha como começar seu mapa.":
+    - paragraph: Sua ideia é o ponto de partida
+    - heading "Escolha como começar seu mapa." [level=2]
+    - paragraph: Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.
+    - article:
+      - heading "Mapa Avançado" [level=3]
+      - paragraph: Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.
+      - link "Começar no modo Avançado →":
+        - /url: /mapa?modo=avancado
+    - article:
+      - heading "Mapa Rápido" [level=3]
+      - paragraph: Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.
+      - link "Começar no modo Rápido →":
+        - /url: /mapa?modo=rapido
+  - region "Conheça o Mapa da Pesquisa.":
+    - paragraph: Veja em ação
+    - heading "Conheça o Mapa da Pesquisa." [level=2]
+    - paragraph: Em pouco mais de um minuto, veja como uma ideia ganha estrutura, como a IA apoia cada decisão e como estudante e orientador avançam juntos.
+    - list "Destaques da apresentação":
+      - listitem: Mapa Rápido ou Mapa Avançado
+      - listitem: Problemática, objetivos, capítulos e metodologia
+      - listitem: Sugestões da IA com revisão humana
+    - figure "Apresentação do Mapa da Pesquisa · 1 min 17 s":
+      - generic "Vídeo de apresentação do Mapa da Pesquisa": Seu navegador não oferece suporte à reprodução deste vídeo.
+      - generic: Apresentação do Mapa da Pesquisa · 1 min 17 s
+  - region "Clareza para decidir o próximo passo.":
+    - paragraph: Um processo guiado
+    - heading "Clareza para decidir o próximo passo." [level=2]
+    - article:
+      - generic: "01"
+      - heading "Formule o problema" [level=3]
+      - paragraph: Responda cinco perguntas guiadas para transformar uma inquietação em situação-problema e pergunta de pesquisa.
+    - article:
+      - generic: "02"
+      - heading "Escolha o produto" [level=3]
+      - paragraph: Selecione TCC, monografia, dissertação, tese ou artigo. A escolha ajusta o rigor, a literatura e a contribuição esperada.
+    - article:
+      - generic: "03"
+      - heading "Construa e valide" [level=3]
+      - paragraph: Compare caminhos, use referências verificáveis e avance com revisão humana adequada ao perfil escolhido.
+  - region "Um mapa na medida do seu produto.":
+    - paragraph: Níveis de pesquisa
+    - heading "Um mapa na medida do seu produto." [level=2]
+    - article:
+      - strong: TCC / Graduação
+      - generic: Recorte viável e fundamentos essenciais.
+    - article:
+      - strong: Monografia / Especialização
+      - generic: Aprofundamento aplicado e análise consistente.
+    - article:
+      - strong: Dissertação / Mestrado
+      - generic: Lacuna delimitada e contribuição original.
+    - article:
+      - strong: Tese / Doutorado
+      - generic: Avanço robusto para uma agenda científica.
+    - article:
+      - strong: Artigo de evento
+      - generic: Contribuição concisa e comunicável.
+    - article:
+      - strong: Artigo de periódico
+      - generic: Rigor, transparência e relevância internacional.
+  - region "Ideias apoiadas por literatura.":
+    - paragraph: Pesquisa com rastreabilidade
+    - heading "Ideias apoiadas por literatura." [level=2]
+    - paragraph: O Research Starter ajuda a localizar fontes relacionadas ao tema. As referências entram no mapa para que tópicos, objetivos e metodologia possam ser revisados com mais contexto.
+    - strong: Você decide.
+    - generic: A IA sugere; você revisa, justifica e valida.
+  - region "Autoria própria e orientação quando necessária.":
+    - paragraph: Para cada papel
+    - heading "Autoria própria e orientação quando necessária." [level=2]
+    - article:
+      - heading "Aluno" [level=3]
+      - paragraph: Construa seus projetos, salve o progresso e vincule um orientador para revisar e aprovar cada avanço.
+    - article:
+      - heading "Orientador" [level=3]
+      - paragraph: Crie projetos próprios sem supervisor externo e acompanhe, comente ou valide os projetos de alunos vinculados.
+  - region "Comece com cinco respostas.":
+    - heading "Comece com cinco respostas." [level=2]
+    - paragraph: O próximo passo é organizar a ideia que você já tem e escolher o produto que deseja entregar.
+    - link "Criar meu mapa":
+      - /url: /mapa
+  - navigation "Informações legais":
+    - button "Termos de uso"
+    - button "Privacidade"
+    - button "Preferências de cookies" [active]
+    - button "Suporte"
+    - button "Relatar problema"
+    - button "Créditos"
+    - generic: v08102026.4
+- alert
+- dialog "Preferências de privacidade":
+  - strong: Privacidade e métricas
+  - paragraph: Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.
+  - checkbox "Métricas de uso (GA4)" [checked]
+  - text: Métricas de uso (GA4)
+  - checkbox "Publicidade e medição de anúncios (opcional)"
+  - text: Publicidade e medição de anúncios (opcional)
+  - paragraph: Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.
+  - button "Recusar todos"
+  - button "Cancelar"
+  - button "Salvar escolhas"

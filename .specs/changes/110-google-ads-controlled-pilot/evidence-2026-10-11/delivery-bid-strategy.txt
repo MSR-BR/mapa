@@ -1,0 +1,170 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Enabled
+- generic: "Status:"
+- generic: Eligible (Learning)
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- generic: "Optimization score:"
+- link "81.1%":
+  - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreInfosnack&authuser=2&__u=7626112293&__c=5611930892
+- button "The budget simulator isn't available because this campaign doesn't have enough recent performance data." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings":
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns" [expanded]:
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+    - menuitem "Ad groups":
+      - generic: Ad groups
+    - menuitem "Ads":
+      - generic: Ads
+    - menuitem "Experiments":
+      - generic: Experiments
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- link "Campaigns":
+  - /url: /aw/campaigns?campaignId=24325133699&ocid=6924780908&authuser=2&__u=7626112293&__c=5611930892
+- img: chevron_right
+- heading "Bid strategy report (Maximize clicks)" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 11, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 11, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- main:
+  - generic: Strategy status
+  - generic "A menu with additional card options. Press enter to open.":
+    - button "Leave feedback":
+      - img: more_vert
+  - generic: Get current status of your bid strategy and actions that may improve performance
+  - img: info
+  - generic: Learning (new strategy)
+  - text: Google Ads is optimizing your new bid strategy. Performance may improve further. No action is needed at this time.
+  - link "Learn more about budget limitations.":
+    - /url: https://support.google.com/google-ads/answer/13020501?hl=en_US
+    - text: Learn more
+  - list:
+    - listitem: 1 day left for learning
+    - listitem: 4 days since the last significant change
+  - generic: Performance history
+  - generic "A menu with additional card options. Press enter to open.":
+    - button "Leave feedback":
+      - img: more_vert
+  - generic: Review past performance and compare metrics
+  - generic: "Campaign Budget:"
+  - generic: €2.00
+  - grid:
+    - row "Cost More information €0.00 Clicks More information 0 Avg. CPC More information — CTR More information 0%":
+      - gridcell "Cost More information €0.00":
+        - text: Cost
+        - button "More information":
+          - img: help_outline
+        - generic: €0.00
+      - gridcell "Clicks More information 0":
+        - text: Clicks
+        - button "More information":
+          - img: help_outline
+        - generic: "0"
+      - gridcell "Avg. CPC More information —":
+        - text: Avg. CPC
+        - button "More information":
+          - img: help_outline
+        - generic: —
+      - gridcell "CTR More information 0%":
+        - text: CTR
+        - button "More information":
+          - img: help_outline
+        - generic: 0%
+  - button "Clicks":
+    - generic: Clicks
+  - button "Avg. CPC":
+    - generic: Avg. CPC
+  - button "Chart options":
+    - img: more_vert
+  - button "Settings":
+    - paragraph: Settings
+    - img: expand_less
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

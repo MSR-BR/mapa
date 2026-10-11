@@ -1,0 +1,5 @@
+GA4 550650234, Realtime aggregate readback 2026-10-09.
+3 active users in last 30 minutes; 1 in last 5 minutes.
+Event counts: stage_started 6, page_view 5, session_start 4, stage_submitted 3, login_success 2, stage_completed 2.
+Key event panel: No data available.
+Not a QA-specific proof or a paid conversion. Location map and unrelated navigation omitted.

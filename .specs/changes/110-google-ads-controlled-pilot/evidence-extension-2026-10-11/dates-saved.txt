@@ -1,0 +1,260 @@
+- banner:
+  - heading [level=1]:
+  - button:
+    - img: arrow_back
+  - button "Mapa | Search | BR | Ativacao | Piloto Search campaign":
+    - generic: Mapa | Search | BR | Ativacao | Piloto
+    - generic: Search campaign
+    - img: arrow_drop_down
+  - button "Search":
+    - img: search
+    - generic: Search
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Change status":
+  - generic: Enabled
+- generic: "Status:"
+- generic: Eligible (Learning)
+- generic: "Type:"
+- generic: Search
+- generic: "Budget:"
+- link "€2.00/day"
+- generic: "Optimization score:"
+- link "81.1%":
+  - /url: /aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreInfosnack&authuser=2&__u=7626112293&__c=5611930892
+- button "The budget simulator isn't available because this campaign doesn't have enough recent performance data." [disabled]:
+  - generic: Simulate campaign changes
+- button "Settings" [disabled]:
+  - img: settings
+  - generic: Campaign settings
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Overview":
+      - generic: Overview
+    - menuitem "Recommendations":
+      - generic: Recommendations
+    - menuitem "Insights and reports":
+      - generic: Insights and reports
+      - img: expand_more
+    - menuitem "Campaigns" [expanded]:
+      - generic: Campaigns
+      - img: expand_more
+    - menuitem "Campaigns":
+      - generic: Campaigns
+    - menuitem "Ad groups":
+      - generic: Ad groups
+    - menuitem "Ads":
+      - generic: Ads
+    - menuitem "Experiments":
+      - generic: Experiments
+    - menuitem "Assets":
+      - generic: Assets
+      - img: expand_more
+    - menuitem "Audiences, keywords, and content":
+      - generic: Audiences, keywords, and content
+      - img: expand_more
+    - menuitem "Change history":
+      - generic: Change history
+- heading "Campaigns" [level=2]
+- button "Not applicable" [disabled]:
+  - generic: Not applicable
+  - img: arrow_drop_down
+- tablist:
+  - tab "Campaigns":
+    - generic: Campaigns
+  - tab "Drafts":
+    - generic: Drafts
+  - tab "Settings" [selected]:
+    - generic: Settings
+- navigation
+- main:
+  - heading "Campaign name" [level=2]:
+    - button "Campaign name":
+      - paragraph: Campaign name
+      - generic: Mapa | Search | BR | Ativacao | Piloto
+      - img: expand_less
+  - heading "Campaign status" [level=2]:
+    - button "Campaign status":
+      - paragraph: Campaign status
+      - generic: Enabled
+      - img: expand_less
+  - heading "Networks" [level=2]:
+    - button "Networks":
+      - paragraph: Networks
+      - generic: Google Search Network
+      - img: expand_less
+  - generic: Budget and bidding optimization
+  - text: Your Search campaign is optimized to drive
+  - button "Mapa | Projeto iniciado":
+    - generic: Mapa | Projeto iniciado
+  - text: .
+  - text: Your bidding strategy is
+  - button "Maximize clicks":
+    - generic: Maximize clicks
+  - text: .
+  - text: Your budget is
+  - button "€2.00 a day":
+    - generic: €2.00 a day
+  - text: .
+  - heading "Budget" [level=2]:
+    - button "Budget":
+      - paragraph: Budget
+      - generic: €2.00/day
+      - img: expand_less
+  - heading "Conversion goals" [level=2]:
+    - button "Conversion goals":
+      - paragraph: Conversion goals
+      - generic: "Campaign-specific: Mapa | Projeto iniciado"
+      - img: expand_less
+  - heading "Bidding" [level=2]:
+    - button "Bidding":
+      - paragraph: Bidding
+      - generic: Maximize clicks
+      - img: expand_less
+  - heading "Customer acquisition" [level=2]:
+    - button "Customer acquisition":
+      - paragraph: Customer acquisition
+      - generic: Bid equally for new and existing customers
+      - img: expand_less
+  - heading "Value rules" [level=2]:
+    - button "Value rules":
+      - paragraph: Value rules
+      - generic: No rule set
+      - img: expand_less
+  - heading "Promotion mode" [level=2]:
+    - button "Promotion mode":
+      - text: Promotion mode
+      - generic: Beta
+      - generic: "Off"
+      - img: expand_less
+  - generic: AI Max for Search campaigns
+  - generic: Get the best AI-powered performance on Google Search
+  - generic: Advertisers that activate AI Max in Search Campaigns will typically see 14% more conversions or conversion value at a similar CPA / ROAS
+  - img: trending_up
+  - text: Engage more customers and boost performance. Easily expand your keywords with broad match technology and let Google AI match content from your landing pages and assets to help you show up on more relevant searches. New ad group settings help you guide which customers you reach.
+  - img: tune
+  - text: Tailor your ads and keep them fresh. Use Google AI to serve the most relevant ad copy and landing pages to each customer based on their unique interest and intent.
+  - img: add_chart
+  - text: Take charge and understand how the newest and best Google AI is working for you. You'll get new actionable insights in search term reports that show how AI Max improves performance.
+  - button "Learn more about AI Max":
+    - generic: Learn more
+  - button "Optimize your campaign with AI Max":
+    - switch "Optimize your campaign with AI Max"
+  - generic: Optimize your campaign with AI Max
+  - heading "Asset optimization" [level=2]:
+    - button "Asset optimization":
+      - paragraph: Asset optimization
+      - generic: Text customization and Final URL expansion turned off
+      - img: expand_less
+  - heading "Branded searches" [level=2]:
+    - button "Branded searches":
+      - paragraph: Branded searches
+      - generic: Showing ads on all relevant searches
+      - img: expand_less
+  - generic: Other settings
+  - heading "Locations" [level=2]:
+    - button "Locations":
+      - paragraph: Locations
+      - img: expand_less
+  - heading "Languages" [level=2]:
+    - button "Languages":
+      - paragraph: Languages
+      - generic: Portuguese
+      - img: expand_less
+  - heading "Automatically created assets" [level=2]:
+    - button "Automatically created assets":
+      - paragraph: Automatically created assets
+      - generic: "Off: Use only assets I provide directly for my ads"
+      - img: expand_less
+  - heading "Start and end dates" [level=2]:
+    - button "Start and end dates" [active]:
+      - paragraph: Start and end dates
+      - generic: "Start date: October 6, 2026 End date: October 19, 2026"
+      - img: expand_less
+  - heading "Broad match keywords" [level=2]:
+    - button "Broad match keywords":
+      - paragraph: Broad match keywords
+      - generic: "Off: Use keyword match types"
+      - img: expand_less
+  - heading "Dynamic Search Ads setting" [level=2]:
+    - button "Dynamic Search Ads setting":
+      - paragraph: Dynamic Search Ads setting
+      - generic: Get automated search targeting and customized ad headlines based on your website
+      - img: expand_less
+  - heading "Ad rotation" [level=2]:
+    - button "Ad rotation":
+      - paragraph: Ad rotation
+      - generic: "Optimize: Prefer best performing ads"
+      - img: expand_less
+  - heading "Campaign URL options" [level=2]:
+    - button "Campaign URL options":
+      - paragraph: Campaign URL options
+      - generic: Using URL tracking options
+      - img: expand_less
+  - heading "Page feeds" [level=2]:
+    - button "Page feeds":
+      - paragraph: Page feeds
+      - generic: Add page feeds to your campaign
+      - img: expand_less
+  - heading "IP exclusions" [level=2]:
+    - button "IP exclusions":
+      - paragraph: IP exclusions
+      - generic: No exclusions set
+      - img: expand_less
+  - heading "Brands" [level=2]:
+    - button "Brands":
+      - paragraph: Brands
+      - generic: "Limiting to: 0 brand lists"
+      - generic: "Excluding: 0 brand lists"
+      - img: expand_less
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: search
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- text: search
