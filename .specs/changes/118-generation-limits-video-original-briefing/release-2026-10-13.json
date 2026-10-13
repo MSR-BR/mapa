@@ -1,0 +1,50 @@
+{
+  "sourceCommit": "32e33e223c283cf7f672536bca35c8937df226da",
+  "version": "v13102026.1",
+  "archiveSha256": "05d563b71e49ea28bf61c8ab09f2ce7ecf1cd21c6b099aa70cfb0ced129d3fc7",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "deploymentId": "dpl_B8kvePR8p3Qj44JqyXyX5Su8j8po",
+  "deploymentUrl": "https://mapadapesquisa-ofouo5j2d-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "canonicalVerified": true,
+  "sourceProof": "Exact git archive uploaded; CLI inspect does not expose sourceCommit metadata. Staged deployment ID equals canonical deployment ID after promotion without rebuild.",
+  "verifiedAt": "2026-10-13T14:33:05Z",
+  "unitTests": 223,
+  "runtimeVulnerabilities": 0,
+  "knownDevelopmentHighFindings": 5,
+  "gate": "PASS_WITH_ACCEPTED_RISK",
+  "localBuild": "Webpack PASS; local Turbopack blocked by environment process/port limitation",
+  "remoteBuild": "Default Turbopack PASS",
+  "productionVideoRatesVerified": [
+    1,
+    1.5,
+    2
+  ],
+  "productionViewportWidths": [
+    390,
+    1280
+  ],
+  "anonymousDefinitionRouteStatus": 401,
+  "malformedRequestStatus": 400,
+  "errorLogsInQueriedWindow": 0,
+  "errorLogWindowMinutes": 15,
+  "paidApiCalls": false,
+  "generationValidation": "Actual local components, routes and provider adapters with synthetic boundaries; no live paid generation",
+  "pdfValidation": "Advanced final and draft, quick mode; text extraction and visual pagination of original answers, without changing report",
+  "publicEnvironmentChange": {
+    "name": "NEXT_PUBLIC_APP_VERSION",
+    "value": "v13102026.1",
+    "target": "production"
+  },
+  "rollbackDeployment": "dpl_2H37LDo1RfmAH9TjqWWDeyn1c7sG",
+  "preserved": [
+    "models",
+    "keys",
+    "provider budgets",
+    "Ads",
+    "TERMO",
+    "database schema",
+    "authorization"
+  ]
+}

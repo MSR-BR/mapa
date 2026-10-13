@@ -17,8 +17,8 @@ Autorização: em 13/10/2026, o responsável aprovou executar em uma única chan
 
 ## Verificação e release
 
-Testes locais e transporte de IA simulado (nenhuma chamada paga), lint/typecheck, exportações, renderização do PDF, regressão de rotas e gates de segurança/build. Sem migration, chaves, novos modelos, Ads ou TERMO. Versão prevista v13102026.1. Publicar artefato do commit exato, validar antes de promover e conferir domínio canônico/logs. Rollback: deployment dpl_2H37LDo1RfmAH9TjqWWDeyn1c7sG (v11102026.1). Preservar e versionar separadamente os registros de acompanhamento C110 já presentes no Git.
+Testes locais e transporte de IA simulado (nenhuma chamada paga), lint/typecheck, exportações, renderização do PDF, regressão de rotas e gates de segurança/build. Sem migration, chaves, novos modelos, Ads ou TERMO. Versão publicada v13102026.1. Publicar artefato do commit exato, validar antes de promover e conferir domínio canônico/logs. Rollback: deployment dpl_2H37LDo1RfmAH9TjqWWDeyn1c7sG (v11102026.1). Preservar e versionar separadamente os registros de acompanhamento C110 já presentes no Git.
 
 ## Implementação e gate local
 
-Implementação concluída; [validação local](validation-2026-10-13.md) aprovada com risco residual dev-only preexistente. O salvamento aceita recuperar problemática já excessiva sem permitir sua ampliação; confirmação e novas gerações continuam limitadas a 500. Publicação aguardando build remoto e promoção do candidato exato.
+Implementação concluída; [validação local](validation-2026-10-13.md) aprovada com risco residual dev-only preexistente. O salvamento aceita recuperar problemática já excessiva sem permitir sua ampliação; confirmação e novas gerações continuam limitadas a 500. Build remoto aprovado; candidato exato promovido e validado no domínio canônico. Change concluída; [CPD](cpd-2026-10-13.md).
