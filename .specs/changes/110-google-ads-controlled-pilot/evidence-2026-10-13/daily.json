@@ -1,0 +1,42 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "segments__date",
+        "metrics__impressions",
+        "metrics__clicks",
+        "metrics__cost",
+        "metrics__conversions"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "segments__date": "2026-10-06",
+          "metrics__impressions": 1,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        },
+        {
+          "campaign__id": 24325133699,
+          "segments__date": "2026-10-07",
+          "metrics__impressions": 1,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        },
+        {
+          "campaign__id": 24325133699,
+          "segments__date": "2026-10-09",
+          "metrics__impressions": 1,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        }
+      ]
+    }
+  }
+}

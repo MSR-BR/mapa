@@ -1,0 +1,35 @@
+- alert: Criar mapa de pesquisa — Rápido ou Avançado | Mapa da Pesquisa
+- main:
+  - link "Mapa da Pesquisa — apresentação":
+    - /url: /
+    - img "Mapa da Pesquisa"
+  - link "Entrar":
+    - /url: /login
+  - paragraph: Comece pela sua ideia
+  - heading "Crie seu mapa de pesquisa." [level=1]
+  - paragraph: Escolha Rápido ou Avançado. Você pode preparar sua ideia sem login; a conta Google permite gerar e guardar o projeto.
+  - region "Escolha o modo e descreva sua pesquisa":
+    - button "Opção 1 · recomendado Mapa Avançado Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.":
+      - generic: Opção 1 · recomendado
+      - strong: Mapa Avançado
+      - emphasis: Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.
+      - generic: +
+    - button "Opção 2 Mapa Rápido Escreva sua ideia em linguagem natural e receba sugestões enquanto digita." [expanded]:
+      - generic: Opção 2
+      - strong: Mapa Rápido
+      - emphasis: Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.
+      - generic: −
+    - textbox "Informe as palavras-chave (mínimo duas) ou escreva o tema da pesquisa." [active]
+    - paragraph: A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.
+    - generic: Enter para continuar · Shift + Enter para nova linha
+    - button "Continuar com Google":
+      - text: Continuar com Google
+      - generic: →
+  - navigation "Informações legais":
+    - button "Termos de uso"
+    - button "Privacidade"
+    - button "Preferências de cookies"
+    - button "Suporte"
+    - button "Relatar problema"
+    - button "Créditos"
+    - generic: v11102026.1

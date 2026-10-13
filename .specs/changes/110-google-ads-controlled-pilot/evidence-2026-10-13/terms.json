@@ -1,0 +1,37 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "search_term_view__search_term",
+        "segments__search_term_match_type",
+        "metrics__impressions",
+        "metrics__clicks",
+        "metrics__cost",
+        "metrics__conversions"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "search_term_view__search_term": "projeto de pesquisa",
+          "segments__search_term_match_type": "EXACT",
+          "metrics__impressions": 2,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        },
+        {
+          "campaign__id": 24325133699,
+          "search_term_view__search_term": "criador de tcc",
+          "segments__search_term_match_type": "NEAR_EXACT",
+          "metrics__impressions": 1,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        }
+      ]
+    }
+  }
+}

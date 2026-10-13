@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "lookback": "30m",
+  "level": "error",
+  "row_count": 0,
+  "field_names": [],
+  "stderr": "Fetching project \"prj_uz62Dh56BHDeHozBfrAACFFZ5mUS\"\nFetching logs...\n",
+  "metadata": []
+}

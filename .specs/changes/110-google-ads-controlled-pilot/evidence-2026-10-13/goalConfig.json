@@ -1,0 +1,20 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "conversion_goal_campaign_config__goal_config_level",
+        "conversion_goal_campaign_config__custom_conversion_goal"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "conversion_goal_campaign_config__goal_config_level": "CAMPAIGN",
+          "conversion_goal_campaign_config__custom_conversion_goal": "customers/3838359068/customConversionGoals/6459352879"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: analytics does not send events before consent
+ok 1 - analytics does not send events before consent
+  ---
+  duration_ms: 0.650583
+  type: 'test'
+  ...
+# Subtest: analytics sends only enumerated parameters and never free text
+ok 2 - analytics sends only enumerated parameters and never free text
+  ---
+  duration_ms: 0.197791
+  type: 'test'
+  ...
+# Subtest: analytics accepts Google as the only social provider
+ok 3 - analytics accepts Google as the only social provider
+  ---
+  duration_ms: 0.151
+  type: 'test'
+  ...
+# Subtest: ads preference alone cannot send analytics events
+ok 4 - ads preference alone cannot send analytics events
+  ---
+  duration_ms: 0.044666
+  type: 'test'
+  ...
+# Subtest: only a sent event returns success for conversion deduplication
+ok 5 - only a sent event returns success for conversion deduplication
+  ---
+  duration_ms: 0.097
+  type: 'test'
+  ...
+# Subtest: page URLs strip project IDs and private parameters but preserve safe public campaign attribution
+ok 6 - page URLs strip project IDs and private parameters but preserve safe public campaign attribution
+  ---
+  duration_ms: 0.140458
+  type: 'test'
+  ...
+# Subtest: authenticated campaign entries stay public using the same values admitted to measurement
+ok 7 - authenticated campaign entries stay public using the same values admitted to measurement
+  ---
+  duration_ms: 0.195791
+  type: 'test'
+  ...
+# Subtest: Consent Mode v2 grants only separately chosen advertising signals
+ok 8 - Consent Mode v2 grants only separately chosen advertising signals
+  ---
+  duration_ms: 0.27275
+  type: 'test'
+  ...
+# Subtest: every custom event strips private document context, not only page_view
+ok 9 - every custom event strips private document context, not only page_view
+  ---
+  duration_ms: 0.235167
+  type: 'test'
+  ...
+# Subtest: tag bootstrap queues safe configuration and consent before any script can collect
+ok 10 - tag bootstrap queues safe configuration and consent before any script can collect
+  ---
+  duration_ms: 4.166416
+  type: 'test'
+  ...
+# Subtest: referrer privacy preserves origin attribution but removes user-specific paths and queries
+ok 11 - referrer privacy preserves origin attribution but removes user-specific paths and queries
+  ---
+  duration_ms: 0.090542
+  type: 'test'
+  ...
+# Subtest: bootstrap cannot load measurement after a metrics refusal
+ok 12 - bootstrap cannot load measurement after a metrics refusal
+  ---
+  duration_ms: 0.040334
+  type: 'test'
+  ...
+# Subtest: project completion counts only the persisted transition, not an advisor-pending 200
+ok 13 - project completion counts only the persisted transition, not an advisor-pending 200
+  ---
+  duration_ms: 0.033083
+  type: 'test'
+  ...
+# Subtest: reference buckets are stable and bounded
+ok 14 - reference buckets are stable and bounded
+  ---
+  duration_ms: 0.036791
+  type: 'test'
+  ...
+# Subtest: workflow analytics separates four macro stages from internal steps
+ok 15 - workflow analytics separates four macro stages from internal steps
+  ---
+  duration_ms: 0.084458
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 154.461166

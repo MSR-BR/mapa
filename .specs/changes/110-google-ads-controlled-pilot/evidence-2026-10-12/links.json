@@ -1,0 +1,10 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "customerId": "3838359068",
+    "adsPersonalizationEnabled": false,
+    "createTime": "2026-10-06T15:23:42.456Z",
+    "updateTime": "2026-10-06T15:23:42.456Z"
+  }
+}

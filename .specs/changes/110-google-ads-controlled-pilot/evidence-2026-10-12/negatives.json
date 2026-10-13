@@ -1,0 +1,119 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "campaign_criterion__keyword__text",
+        "campaign_criterion__keyword__match_type",
+        "campaign_criterion__negative"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "mapa astral",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "trabalho pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "trabalhos prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "tcc pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "monografia pronta",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "mapa do brasil",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "comprar monografia",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "comprar tcc",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "projetos de pesquisa prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "pré projeto pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "projeto de pesquisa pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "comprar projeto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "mapa geográfico",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "mapa geografico",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "tcc prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "mapa rodoviário",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__keyword__text": "tcc para copiar",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        }
+      ]
+    }
+  }
+}

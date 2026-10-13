@@ -1,0 +1,47 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "campaign__name",
+        "campaign__status",
+        "campaign__primary_status",
+        "campaign__primary_status_reasons",
+        "campaign__start_date_time",
+        "campaign__end_date_time",
+        "campaign__bidding_strategy_type",
+        "campaign__target_spend__cpc_bid_ceiling",
+        "campaign_budget__amount",
+        "campaign__network_settings__target_search_network",
+        "campaign__network_settings__target_content_network",
+        "metrics__impressions",
+        "metrics__clicks",
+        "metrics__cost",
+        "metrics__conversions"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "campaign__name": "Mapa | Search | BR | Ativacao | Piloto",
+          "campaign__status": "ENABLED",
+          "campaign__primary_status": "ELIGIBLE",
+          "campaign__primary_status_reasons": "[]",
+          "campaign__start_date_time": "2026-10-06 13:44:02",
+          "campaign__end_date_time": "2026-10-19 23:59:59",
+          "campaign__bidding_strategy_type": "TARGET_SPEND",
+          "campaign__target_spend__cpc_bid_ceiling": 0.3,
+          "campaign_budget__amount": 2,
+          "campaign__network_settings__target_search_network": false,
+          "campaign__network_settings__target_content_network": false,
+          "metrics__impressions": 3,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        }
+      ]
+    }
+  }
+}

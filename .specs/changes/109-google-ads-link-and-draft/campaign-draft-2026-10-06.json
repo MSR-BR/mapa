@@ -44,7 +44,7 @@
     "qa_project_revisit_duplicate_key_event_observed": false,
     "qa_processed_session_source_medium_verified": true,
     "qa_processed_session_source_medium_verified_on": "2026-10-07",
-    "processed_attribution_remaining_limit": "October 6 through 9 daily reports reconciled without not set and with matching row sums. October 9 reconciled on October 11: two project_start attributed to direct, QA zero. October 10 remains mostly complete intraday with not set and session row sum mismatch. Paid attribution and internal traffic segmentation are not verified.",
+    "processed_attribution_remaining_limit": "October 6–9 reports previously reconciled. Reread October 13: October 10 unchanged (13 sessions, 373 events, 12 starts; four starts not set). October 11 now 14 sessions, 117 events, one start from scanned.page; row sums match but one session remains not set. October 12: 10 sessions, 118 events, three starts not set; session rows sum to 14. Paid attribution and internal segmentation remain unverified; GA4 and Ads daily windows differ by two hours.",
     "daily_report_2026_10_06_reconciled_on": "2026-10-08",
     "daily_report_2026_10_06_readback": {
       "sessions": 12,
@@ -93,6 +93,46 @@
       "not_set_present": false,
       "session_row_sum_matches_total": true,
       "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-11.md"
+    },
+    "ga4_property_timezone": "America/Rio_Branco",
+    "ga4_property_currency": "BRL",
+    "metadata_verified_on": "2026-10-12",
+    "daily_timezone_comparison_note": "GA4 days differ by two hours from Ads America/Sao_Paulo; do not align daily windows or currency automatically.",
+    "daily_report_2026_10_10_readback": {
+      "sessions": 13,
+      "engaged_sessions": 7,
+      "events": 373,
+      "project_start": 12,
+      "observed_on": "2026-10-13",
+      "not_set_present": true,
+      "session_row_sum": 13,
+      "session_row_sum_matches_total": true,
+      "attribution_reconciled": false,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
+    },
+    "daily_report_2026_10_11_readback": {
+      "sessions": 14,
+      "engaged_sessions": 8,
+      "events": 117,
+      "project_start": 1,
+      "observed_on": "2026-10-13",
+      "not_set_present": true,
+      "session_row_sum": 14,
+      "session_row_sum_matches_total": true,
+      "attribution_reconciled": false,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
+    },
+    "daily_report_2026_10_12_readback": {
+      "sessions": 10,
+      "engaged_sessions": 0,
+      "events": 118,
+      "project_start": 3,
+      "observed_on": "2026-10-13",
+      "not_set_present": true,
+      "session_row_sum": 14,
+      "session_row_sum_matches_total": false,
+      "attribution_reconciled": false,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
     }
   },
   "campaign": {
@@ -132,10 +172,10 @@
       "pause_rule_condition": "COST_GTE_28_EUR",
       "pause_rule_preview_affected_campaigns": 0,
       "pause_rule_execution_verified": false,
-      "pause_rule_scheduled_execution_verified": false,
-      "pause_rule_last_observed_success_at": null,
+      "pause_rule_scheduled_execution_verified": true,
+      "pause_rule_last_observed_success_at": "2026-10-13T07:16:10-03:00",
       "pause_rule_threshold_pause_verified": false,
-      "pause_rule_execution_note": "New version 62128225 saved on October 11; enabled hourly, all time, only Mapa, cost >= EUR28. Preview: zero campaigns affected. Scheduled execution of this version not yet observed; prior EUR14 version had successful runs without changes. Threshold pause branch not exercised.",
+      "pause_rule_execution_note": "Version 62128225: scheduled execution observed October 13 07:16:10 BRT, Finished successfully, No changes, 5 seconds. Enabled hourly, all time, one Mapa campaign, cost >= EUR28. Threshold pause branch remains unexercised; not an instantaneous hard cap.",
       "pause_rule_previous_version": {
         "id": "61994210",
         "name": "Mapa | Pausa por custo EUR14 | C110",
@@ -242,15 +282,19 @@
             "text": "estrutura projeto de pesquisa",
             "match": "EXACT",
             "status": "ENABLED",
-            "eligibility": "PENDING_UNDER_REVIEW",
-            "added_on": "2026-10-11"
+            "eligibility": "ELIGIBLE",
+            "added_on": "2026-10-11",
+            "policy": "APPROVED",
+            "first_eligible_observed_at": "2026-10-12T06:03:09-03:00"
           },
           {
             "text": "pré projeto de pesquisa",
             "match": "EXACT",
             "status": "ENABLED",
-            "eligibility": "PENDING_UNDER_REVIEW",
-            "added_on": "2026-10-11"
+            "eligibility": "ELIGIBLE",
+            "added_on": "2026-10-11",
+            "policy": "APPROVED",
+            "first_eligible_observed_at": "2026-10-12T06:03:09-03:00"
           }
         ],
         "responsive_search_ad": {
@@ -509,7 +553,11 @@
     "do_not_duplicate_existing_c097_automation": true,
     "launch_gate_basis": "LATEST_USER_OPERATIONAL_AUTHORIZATION",
     "pilot_end_date": "2026-10-19",
-    "optimization_review": "72 horas após primeira elegibilidade observada do novo anúncio e duas novas palavras; não aumentar CPC automaticamente."
+    "optimization_review": "72 horas após primeira elegibilidade observada do novo anúncio e duas novas palavras; não aumentar CPC automaticamente.",
+    "optimization_first_eligible_observed_at": "2026-10-12T06:03:09-03:00",
+    "optimization_review_after": "2026-10-15T06:03:09-03:00",
+    "last_heartbeat_received_at": "2026-10-13T09:01:35.699Z",
+    "schedule_timezone_note": "Stored RRULE preserved. This heartbeat arrived around 09:00 UTC (06:00 BRT); historical daily_time_local is not a verified scheduler timezone."
   },
   "activated_at_approx": "2026-10-06T13:46:00-03:00",
   "monitoring_open_items": [
@@ -521,8 +569,9 @@
     "low_delivery",
     "cost_pause_threshold_execution_not_yet_observed",
     "keyword_quality_score_2_of_10",
-    "new_exact_keywords_policy_review",
-    "post_optimization_delivery_evaluation"
+    "post_optimization_delivery_evaluation",
+    "ads_ga4_daily_timezone_alignment",
+    "historical_generation_export_validation_diagnostics"
   ],
   "launch_authorization": {
     "latest_user_instruction": "faça 1, 2 e 3. Se tudo estiver funcionando, pode lancar.",
@@ -532,11 +581,11 @@
     "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
   },
   "latest_monitoring": {
-    "observed_on": "2026-10-11",
-    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-11.md",
-    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-11.json",
+    "observed_on": "2026-10-13",
+    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md",
+    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-13.json",
     "status": "ENABLED",
-    "eligibility": "ELIGIBLE_LEARNING",
+    "eligibility": "ELIGIBLE",
     "all_time_impressions": 3,
     "all_time_clicks": 0,
     "all_time_cost_eur": 0,
@@ -544,34 +593,20 @@
     "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
     "keyword_quality_diagnostic": {
       "keyword": "projeto de pesquisa",
-      "match": "EXACT",
-      "status": "ELIGIBLE_LIMITED_LOW_QUALITY_SCORE",
-      "quality_score": 2,
-      "scale_max": 10,
-      "expected_ctr": "BELOW_AVERAGE",
-      "landing_page_experience": "BELOW_AVERAGE",
+      "score": 2,
       "ad_relevance": "AVERAGE",
-      "policy_violation_confirmed": false,
-      "correction_applied": false,
-      "components_observed_on": "2026-10-10",
-      "components_reread_today": false,
-      "status_reread_today": true
+      "landing_page_experience": "BELOW_AVERAGE",
+      "expected_ctr": "BELOW_AVERAGE",
+      "components_reread_on": "2026-10-13",
+      "policy_violation": false
     },
-    "delivery_diagnostic": {
-      "observed_on": "2026-10-11",
-      "strategy": "MAXIMIZE_CLICKS",
-      "strategy_status": "LEARNING_NEW_STRATEGY",
-      "estimated_learning_days_remaining": 1,
-      "days_since_last_significant_change": 4,
-      "limited_by_budget_reported": false,
-      "limited_by_bid_cap_reported": false,
-      "low_search_volume_keywords": 4,
-      "eligible_limited_quality_keywords": 1,
-      "eligible_keywords_without_limit": 3,
-      "cpc_cap_contribution": "PLAUSIBLE_NOT_CONFIRMED",
-      "evidence": "../110-google-ads-controlled-pilot/delivery-diagnosis-2026-10-11.md"
-    },
-    "snapshot_note": "Observação anterior à otimização; configuração efetiva atual em latest_optimization e campaign."
+    "new_ad_impressions": 0,
+    "all_enabled_keywords_approved_eligible": true,
+    "rule_scheduled_execution_verified": true,
+    "threshold_pause_verified": false,
+    "attribution_reconciled": false,
+    "product_diagnostics_followup_required": true,
+    "human_action_required": false
   },
   "latest_extension": {
     "authorized_on": "2026-10-11",
@@ -618,10 +653,23 @@
     "paid_api_calls": false,
     "termo_campaign_mutations": false,
     "performance_improvement_verified": false,
-    "observation_clock": "Aguardar elegibilidade das duas novas palavras; registrar primeira observação e revisar após 72 horas. Não tratar essa janela como significância estatística.",
+    "observation_clock": "Full set first observed approved/eligible October 12 around 06:03 BRT; review after October 15 06:03 BRT (72 hours). Actual approval timestamp unknown; no statistical significance guaranteed. Original fields above preserve the October 11 snapshot; latest_readback is current.",
     "evidence": "../110-google-ads-controlled-pilot/cpd-2026-10-11.md",
     "authorized_on": "2026-10-11",
     "landing_version": "v11102026.1",
-    "source_commit": "a565fc8b9373c03f39f80221803f64cc233440c1"
+    "source_commit": "a565fc8b9373c03f39f80221803f64cc233440c1",
+    "latest_readback": {
+      "observed_on": "2026-10-13",
+      "new_ad_policy": "APPROVED",
+      "new_ad_eligibility": "ELIGIBLE",
+      "previous_ad_status": "PAUSED",
+      "keywords_enabled_approved_eligible": 6,
+      "keywords_paused": 4,
+      "added_keyword_policy": "APPROVED",
+      "added_keyword_eligibility": "ELIGIBLE",
+      "first_complete_eligibility_observed_at": "2026-10-12T06:03:09-03:00",
+      "review_after": "2026-10-15T06:03:09-03:00",
+      "actual_approval_time_known": false
+    }
   }
 }

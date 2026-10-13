@@ -1,0 +1,103 @@
+{
+  "ads": {
+    "campaign": "SELECT campaign.id, campaign.name, campaign.status, campaign.primary_status, campaign.primary_status_reasons, campaign.start_date_time, campaign.end_date_time, campaign.bidding_strategy_type, campaign.target_spend.cpc_bid_ceiling_micros, campaign_budget.amount_micros, campaign.network_settings.target_search_network, campaign.network_settings.target_content_network, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions FROM campaign WHERE campaign.id = 24325133699 AND segments.date BETWEEN '2026-10-06' AND '2026-10-13'",
+    "daily": "SELECT campaign.id, segments.date, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions FROM campaign WHERE campaign.id = 24325133699 AND segments.date BETWEEN '2026-10-06' AND '2026-10-13' ORDER BY segments.date",
+    "keywords": "SELECT campaign.id, ad_group_criterion.criterion_id, ad_group_criterion.keyword.text, ad_group_criterion.keyword.match_type, ad_group_criterion.status, ad_group_criterion.system_serving_status, ad_group_criterion.approval_status, ad_group_criterion.quality_info.quality_score, ad_group_criterion.quality_info.creative_quality_score, ad_group_criterion.quality_info.post_click_quality_score, ad_group_criterion.quality_info.search_predicted_ctr, metrics.impressions, metrics.clicks, metrics.cost_micros FROM keyword_view WHERE campaign.id = 24325133699 AND ad_group_criterion.status != 'REMOVED' AND segments.date BETWEEN '2026-10-06' AND '2026-10-13'",
+    "ads": "SELECT campaign.id, ad_group_ad.ad.id, ad_group_ad.status, ad_group_ad.primary_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.policy_summary.review_status, ad_group_ad.ad.final_urls, metrics.impressions, metrics.clicks, metrics.cost_micros FROM ad_group_ad WHERE campaign.id = 24325133699 AND ad_group_ad.status != 'REMOVED' AND segments.date BETWEEN '2026-10-06' AND '2026-10-13'",
+    "terms": "SELECT campaign.id, search_term_view.search_term, segments.search_term_match_type, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions FROM search_term_view WHERE campaign.id = 24325133699 AND segments.date BETWEEN '2026-10-06' AND '2026-10-13'",
+    "negatives": "SELECT campaign.id, campaign_criterion.criterion_id, campaign_criterion.keyword.text, campaign_criterion.keyword.match_type, campaign_criterion.negative FROM campaign_criterion WHERE campaign.id = 24325133699 AND campaign_criterion.type = 'KEYWORD' AND campaign_criterion.negative = TRUE"
+  },
+  "ga4": {
+    "sources": {
+      "propertyId": "properties/550650234",
+      "dateRanges": [
+        {
+          "startDate": "2026-10-10",
+          "endDate": "2026-10-12"
+        }
+      ],
+      "dimensions": [
+        "date",
+        "sessionSourceMedium"
+      ],
+      "metrics": [
+        "sessions",
+        "engagedSessions",
+        "eventCount",
+        "keyEvents:project_start"
+      ],
+      "limit": 100
+    },
+    "totals": {
+      "propertyId": "properties/550650234",
+      "dateRanges": [
+        {
+          "startDate": "2026-10-10",
+          "endDate": "2026-10-12"
+        }
+      ],
+      "dimensions": [
+        "date"
+      ],
+      "metrics": [
+        "sessions",
+        "engagedSessions",
+        "eventCount",
+        "keyEvents:project_start"
+      ],
+      "limit": 10
+    },
+    "diagnostics": {
+      "propertyId": "properties/550650234",
+      "dimensions": [
+        "date",
+        "eventName",
+        "customEvent:app_stage",
+        "customEvent:app_reason_code",
+        "sessionSourceMedium"
+      ],
+      "metrics": [
+        "eventCount"
+      ],
+      "dimensionFilter": {
+        "filter": {
+          "fieldName": "eventName",
+          "inListFilter": {
+            "values": [
+              "generation_failed",
+              "export_pdf_failed",
+              "stage_blocked"
+            ]
+          }
+        }
+      },
+      "dateRanges": [
+        {
+          "startDate": "2026-10-10",
+          "endDate": "2026-10-12"
+        }
+      ],
+      "limit": 100
+    },
+    "events": {
+      "propertyId": "properties/550650234",
+      "dateRanges": [
+        {
+          "startDate": "2026-10-10",
+          "endDate": "2026-10-12"
+        }
+      ],
+      "dimensions": [
+        "date",
+        "eventName"
+      ],
+      "metrics": [
+        "eventCount"
+      ],
+      "limit": 200
+    }
+  },
+  "diagnostics_compatibility_verified": true,
+  "source_estimated_rows": 13,
+  "diagnostics_estimated_rows": 7
+}

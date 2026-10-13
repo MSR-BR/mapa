@@ -1,0 +1,47 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "ad_group_ad__ad__id",
+        "ad_group_ad__status",
+        "ad_group_ad__primary_status",
+        "ad_group_ad__policy_summary__approval_status",
+        "ad_group_ad__policy_summary__review_status",
+        "ad_group_ad__ad__final_urls",
+        "metrics__impressions",
+        "metrics__clicks",
+        "metrics__cost"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "ad_group_ad__ad__id": 827109934468,
+          "ad_group_ad__status": "PAUSED",
+          "ad_group_ad__primary_status": "PAUSED",
+          "ad_group_ad__policy_summary__approval_status": "APPROVED",
+          "ad_group_ad__policy_summary__review_status": "REVIEWED",
+          "ad_group_ad__ad__final_urls": "[\"https://mapadapesquisa.com.br/\"]",
+          "metrics__impressions": 3,
+          "metrics__clicks": 0,
+          "metrics__cost": 0
+        },
+        {
+          "campaign__id": 24325133699,
+          "ad_group_ad__ad__id": 827659065358,
+          "ad_group_ad__status": "ENABLED",
+          "ad_group_ad__primary_status": "ELIGIBLE",
+          "ad_group_ad__policy_summary__approval_status": "APPROVED",
+          "ad_group_ad__policy_summary__review_status": "REVIEWED",
+          "ad_group_ad__ad__final_urls": "[\"https://mapadapesquisa.com.br/\"]",
+          "metrics__impressions": 0,
+          "metrics__clicks": 0,
+          "metrics__cost": 0
+        }
+      ]
+    }
+  }
+}

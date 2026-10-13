@@ -1,0 +1,347 @@
+{
+  "observed_date_local": "2026-10-12",
+  "observed_at": "2026-10-12T06:03:09-03:00",
+  "observation_finished_approx_local": "06:15",
+  "timezone": "America/Sao_Paulo",
+  "source": "authenticated_Google_Ads_GAQL_and_GA4_Data_Admin_API_via_connector_plus_browser_rule_site_consent",
+  "campaign_id": "24325133699",
+  "customer_id": "383-835-9068",
+  "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+  "external_configuration_changes": [
+    "existing_monitor_prompt_updated_with_verified_eligibility_and_followup"
+  ],
+  "ads_configuration_changes": [],
+  "production_code_changes": false,
+  "ads": {
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE",
+    "primary_status_reasons": [],
+    "average_daily_budget_eur": 2,
+    "max_cpc_eur": 0.3,
+    "strategy": "MAXIMIZE_CLICKS",
+    "api_strategy": "TARGET_SPEND",
+    "today": {
+      "date": "2026-10-12",
+      "partial": true,
+      "impressions": 0,
+      "clicks": 0,
+      "cost_eur": 0
+    },
+    "yesterday": {
+      "date": "2026-10-11",
+      "impressions": 0,
+      "clicks": 0,
+      "cost_eur": 0
+    },
+    "all_time": {
+      "through": "2026-10-12",
+      "impressions": 3,
+      "clicks": 0,
+      "cost_eur": 0,
+      "conversions": 0
+    },
+    "daily_nonzero_rows": [
+      {
+        "campaign__id": 24325133699,
+        "segments__date": "2026-10-06",
+        "metrics__impressions": 1,
+        "metrics__clicks": 0,
+        "metrics__cost": 0,
+        "metrics__conversions": 0
+      },
+      {
+        "campaign__id": 24325133699,
+        "segments__date": "2026-10-07",
+        "metrics__impressions": 1,
+        "metrics__clicks": 0,
+        "metrics__cost": 0,
+        "metrics__conversions": 0
+      },
+      {
+        "campaign__id": 24325133699,
+        "segments__date": "2026-10-09",
+        "metrics__impressions": 1,
+        "metrics__clicks": 0,
+        "metrics__cost": 0,
+        "metrics__conversions": 0
+      }
+    ],
+    "zero_day_note": "Query covers October 6–12; GAQL omits zero metric rows. Zero days inferred from omitted rows and cumulative totals.",
+    "scheduled_start_date_time": "2026-10-06 13:44:02",
+    "scheduled_end_date_time": "2026-10-19 23:59:59",
+    "schedule_dates_reread": true,
+    "search_partners": false,
+    "display_network": false,
+    "ad_id": "827659065358",
+    "ad_policy": "APPROVED",
+    "ad_review_status": "REVIEWED",
+    "ad_eligibility": "ELIGIBLE",
+    "new_ad_impressions": 0,
+    "previous_ad_id": "827109934468",
+    "previous_ad_status": "PAUSED",
+    "enabled_keywords": 6,
+    "eligible_enabled_keywords": 6,
+    "approved_enabled_keywords": 6,
+    "paused_keywords": 4,
+    "negative_keywords_count": 17,
+    "all_negative_names_reread": true,
+    "optimization": {
+      "first_all_eligible_observed_at": "2026-10-12T06:03:09-03:00",
+      "actual_approval_timestamp_known": false,
+      "review_after": "2026-10-15T06:03:09-03:00",
+      "statistical_significance_guaranteed": false
+    },
+    "quality_diagnostic": {
+      "keyword": "projeto de pesquisa",
+      "match": "EXACT",
+      "api_system_serving_status": "ELIGIBLE",
+      "quality_score": 2,
+      "quality_components_reread": false,
+      "policy_violation_confirmed": false,
+      "cause_of_low_delivery_confirmed": false
+    },
+    "search_terms": [
+      {
+        "campaign__id": 24325133699,
+        "search_term_view__search_term": "projeto de pesquisa",
+        "segments__search_term_match_type": "EXACT",
+        "metrics__impressions": 2,
+        "metrics__clicks": 0,
+        "metrics__cost": 0,
+        "metrics__conversions": 0
+      },
+      {
+        "campaign__id": 24325133699,
+        "search_term_view__search_term": "criador de tcc",
+        "segments__search_term_match_type": "NEAR_EXACT",
+        "metrics__impressions": 1,
+        "metrics__clicks": 0,
+        "metrics__cost": 0,
+        "metrics__conversions": 0
+      }
+    ],
+    "rule": {
+      "id": "62128225",
+      "status": "ENABLED",
+      "frequency": "HOURLY",
+      "data_window": "ALL_TIME",
+      "cost_threshold_eur": 28,
+      "selected_campaign_count": 1,
+      "last_observed_success_at": "2026-10-12T05:16:10-03:00",
+      "result": "NO_CHANGES",
+      "duration_seconds": 5,
+      "scheduled_execution_verified": true,
+      "threshold_pause_exercised": false,
+      "strict_total_cap_guaranteed": false,
+      "manually_executed": false
+    }
+  },
+  "ga4": {
+    "property_id": "550650234",
+    "timezone": "America/Rio_Branco",
+    "currency": "BRL",
+    "ads_timezone": "America/Sao_Paulo",
+    "ads_currency": "EUR",
+    "daily_time_window_offset_hours": 2,
+    "metadata_settings_changed": false,
+    "ads_link_personalization_enabled": false,
+    "reports": [
+      {
+        "date": "2026-10-10",
+        "total": {
+          "sessions": 13,
+          "engaged_sessions": 7,
+          "events": 373,
+          "project_start": 12
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 7,
+            "engaged_sessions": 5,
+            "events": 168,
+            "project_start": 7,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 4,
+            "engaged_sessions": 1,
+            "events": 126,
+            "project_start": 1,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "(not set)",
+            "sessions": 1,
+            "engaged_sessions": 0,
+            "events": 76,
+            "project_start": 4,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 1,
+            "engaged_sessions": 1,
+            "events": 3,
+            "project_start": 0,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": true
+          }
+        ],
+        "session_row_sum": 13,
+        "session_row_sum_matches_total": true,
+        "not_set_present": true,
+        "data_quality": "ATTRIBUTION_INCOMPLETE_OR_NOT_RECONCILED",
+        "freshness_sampling_threshold_flags_returned": false
+      },
+      {
+        "date": "2026-10-11",
+        "total": {
+          "sessions": 13,
+          "engaged_sessions": 1,
+          "events": 104,
+          "project_start": 1
+        },
+        "rows": [
+          {
+            "source_medium": "(not set)",
+            "sessions": 8,
+            "engaged_sessions": 0,
+            "events": 51,
+            "project_start": 1,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 5,
+            "engaged_sessions": 0,
+            "events": 21,
+            "project_start": 0,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 3,
+            "engaged_sessions": 1,
+            "events": 28,
+            "project_start": 0,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          },
+          {
+            "source_medium": "accounts.google.com / referral",
+            "sessions": 1,
+            "engaged_sessions": 0,
+            "events": 4,
+            "project_start": 0,
+            "external_acquisition_verified": false,
+            "excluded_from_acquisition_assessment": false
+          }
+        ],
+        "session_row_sum": 17,
+        "session_row_sum_matches_total": false,
+        "not_set_present": true,
+        "data_quality": "ATTRIBUTION_INCOMPLETE_OR_NOT_RECONCILED",
+        "freshness_sampling_threshold_flags_returned": false
+      }
+    ],
+    "paid_attribution_verified": false,
+    "paid_conversion_observed": false,
+    "internal_traffic_fully_segmented": false,
+    "diagnostics": [
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "51"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_failed",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "6"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "4"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "accounts.google.com / referral",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_blocked",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1"
+      }
+    ],
+    "diagnostic_limit": "Event counts, not unique users or failure rates. Reason codes are coarse catch-all classifications in the app. A failed export fetch attempts normal URL navigation; completion may not be tracked. No current outage or product/privacy violation demonstrated.",
+    "realtime_observation": {
+      "page_view": 2,
+      "session_start": 1,
+      "qa_visit_individually_identified": false
+    }
+  },
+  "site": {
+    "health": "ok",
+    "version": "v11102026.1",
+    "home_browser_loaded": true,
+    "mapa_cta_navigation_verified": true,
+    "consent_ui_reviewed": true,
+    "metrics_selected": true,
+    "advertising_unselected": true,
+    "personalization_disabled": true,
+    "consent_saved": false,
+    "qa_campaign": "c110_monitor_20261012",
+    "project_created": false,
+    "paid_generation_triggered": false,
+    "new_network_payload_capture": false
+  },
+  "local_verification": {
+    "analytics_tests_passed": 15,
+    "analytics_tests_failed": 0,
+    "analytics_tests_rerun_today": true,
+    "measurement_diff_from_recorded_production_revision": false,
+    "recorded_production_revision": "a565fc8b9373c03f39f80221803f64cc233440c1",
+    "production_sha_independently_verified_today": false,
+    "observed_local_head": "bd2021d"
+  },
+  "open_items": [
+    "low_delivery",
+    "72_hour_post_optimization_review_on_2026_10_15",
+    "2026_10_10_and_11_attribution",
+    "ads_ga4_daily_timezone_alignment",
+    "internal_traffic_segmentation",
+    "long_baseline",
+    "paid_conversion",
+    "cost_threshold_pause_branch",
+    "optional_logo_review",
+    "keyword_quality_score_2_of_10",
+    "historical_generation_export_validation_diagnostics"
+  ],
+  "evidence_directory": "evidence-2026-10-12",
+  "temporary_report_view_changes": "Read-only reports and native rule results; no saved Ads or consent setting changed."
+}

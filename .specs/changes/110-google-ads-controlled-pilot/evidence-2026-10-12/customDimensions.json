@@ -1,0 +1,170 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "customDimensions": [
+      {
+        "name": "properties/550650234/customDimensions/15501967018",
+        "parameterName": "has_advisor",
+        "displayName": "has_advisor",
+        "description": "Indica se há orientador vinculado.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15501972384",
+        "parameterName": "stage_number",
+        "displayName": "stage_number",
+        "description": "Número da etapa do mapa.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502014779",
+        "parameterName": "reason_code",
+        "displayName": "reason_code",
+        "description": "Código técnico resumido do motivo de falha ou bloqueio.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502070952",
+        "parameterName": "entry_mode",
+        "displayName": "entry_mode",
+        "description": "Modo de entrada: rápido ou avançado.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502074468",
+        "parameterName": "auth_state",
+        "displayName": "auth_state",
+        "description": "Estado de autenticação do utilizador no evento.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502086890",
+        "parameterName": "product_type",
+        "displayName": "product_type",
+        "description": "Tipo de produto acadêmico selecionado.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502099921",
+        "parameterName": "stage",
+        "displayName": "stage",
+        "description": "Etapa do mapa associada ao evento.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502103025",
+        "parameterName": "reference_count_bucket",
+        "displayName": "reference_count_bucket",
+        "description": "Faixa de quantidade de referências associadas.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502123747",
+        "parameterName": "profile_role",
+        "displayName": "profile_role",
+        "description": "Perfil de acesso no evento.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502124031",
+        "parameterName": "source",
+        "displayName": "source",
+        "description": "Origem da interação no produto.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15502127912",
+        "parameterName": "result",
+        "displayName": "result",
+        "description": "Resultado da ação ou operação.",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837913176",
+        "parameterName": "app_role",
+        "displayName": "App role",
+        "description": "Perfil ativo no evento: aluno, orientador ou desconhecido (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837928455",
+        "parameterName": "app_result",
+        "displayName": "App result",
+        "description": "Resultado controlado da ação ou operação (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837937324",
+        "parameterName": "app_entry_mode",
+        "displayName": "App entry mode",
+        "description": "Modo de entrada rápido, avançado ou desconhecido (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837939227",
+        "parameterName": "app_product_type",
+        "displayName": "App product type",
+        "description": "Tipo de produto acadêmico selecionado (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837941139",
+        "parameterName": "app_macro_stage",
+        "displayName": "App macro stage",
+        "description": "Macroetapa visível da jornada: 1, 2, 3 ou 4 (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837949769",
+        "parameterName": "app_auth_state",
+        "displayName": "App auth state",
+        "description": "Estado de autenticação do usuário no evento (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837957432",
+        "parameterName": "app_reason_code",
+        "displayName": "App reason code",
+        "description": "Código controlado de falha, bloqueio ou repetição (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837960429",
+        "parameterName": "app_stage",
+        "displayName": "App stage",
+        "description": "Categoria semântica da etapa do produto (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837963094",
+        "parameterName": "app_surface",
+        "displayName": "App surface",
+        "description": "Superfície interna de origem da ação, sem alterar aquisição (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837973250",
+        "parameterName": "app_reference_count_bucket",
+        "displayName": "App reference count bucket",
+        "description": "Faixa controlada de quantidade de referências (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837980080",
+        "parameterName": "app_has_advisor",
+        "displayName": "App has advisor",
+        "description": "Indica de forma controlada se há orientador vinculado (C097).",
+        "scope": "EVENT"
+      },
+      {
+        "name": "properties/550650234/customDimensions/15837995903",
+        "parameterName": "app_step",
+        "displayName": "App step",
+        "description": "Passo interno controlado da jornada de pesquisa (C097).",
+        "scope": "EVENT"
+      }
+    ],
+    "customMetrics": []
+  }
+}

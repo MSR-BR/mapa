@@ -1,0 +1,409 @@
+- banner:
+  - heading [level=1]:
+  - img: search
+  - generic: "\"What are my biggest opportunities for growth right now?\""
+  - combobox "\"What are my biggest opportunities for growth right now?\""
+  - button "Appearance":
+    - img: responsive_layout
+    - generic: Appearance
+  - button "Refresh":
+    - img: refresh
+    - generic: Refresh
+  - button "Help":
+    - img: help_outline
+    - generic: Help
+  - button "Notifications":
+    - img: notifications
+    - generic: Notifications
+  - dialog "Notifications":
+    - img "Informational notification icon": info_outline
+    - button "Get 196.00% more clicks with the right spend View":
+      - text: Get 196.00% more clicks with the right spend
+      - generic: View
+    - img "Warning notification icon": error_outline
+    - button "Protect your account from unauthorized activity View":
+      - text: Protect your account from unauthorized activity
+      - generic: View
+    - button "Close notifications":
+      - img: clear
+  - button "Ask Advisor Beta":
+    - img: search_spark
+    - generic: Ask Advisor
+    - generic: Beta
+  - button "Google account":
+    - img "Google account (mario.reis.junior@gmail.com)"
+- button "Create":
+- generic: Create
+- menu:
+  - menu:
+    - menuitem "Campaigns":
+      - img: campaign
+      - generic: Campaigns
+    - menuitem "Goals":
+      - img: rewarded_ads
+      - generic: Goals
+    - menuitem "Tools":
+      - img: construction
+      - generic: Tools
+    - menuitem "Billing":
+      - img: credit_card
+      - generic: Billing
+    - menuitem "Admin":
+      - img: settings
+      - generic: Admin
+- button "Collapse":
+  - img: chevron_right
+  - generic: Collapse
+- navigation:
+  - menu:
+    - menuitem "Asset studio":
+      - generic: Asset studio
+    - menuitem "Planning":
+      - generic: Planning
+      - img: expand_more
+    - menuitem "App advertising hub":
+      - generic: App advertising hub
+    - menuitem "Shared library":
+      - generic: Shared library
+      - img: expand_more
+    - menuitem "YouTube creator partnerships Beta":
+      - generic: YouTube creator partnerships
+      - generic: Beta
+    - menuitem "Content suitability":
+      - generic: Content suitability
+    - menuitem "Data manager":
+      - generic: Data manager
+    - menuitem "Troubleshooting":
+      - generic: Troubleshooting
+      - img: expand_more
+    - menuitem "Bulk actions" [expanded]:
+      - generic: Bulk actions
+      - img: expand_more
+    - menuitem "All bulk actions":
+      - generic: All bulk actions
+    - menuitem "Rules":
+      - generic: Rules
+    - menuitem "Scripts":
+      - generic: Scripts
+    - menuitem "Solutions":
+      - generic: Solutions
+    - menuitem "Uploads":
+      - generic: Uploads
+    - menuitem "Budgets and bidding":
+      - generic: Budgets and bidding
+      - img: expand_more
+    - menuitem "Business data":
+      - generic: Business data
+- heading "Rules" [level=2]
+- generic: All time
+- button "Feb 20, 2025 – Oct 12, 2026 Not applicable":
+  - generic: Feb 20, 2025 – Oct 12, 2026
+  - img: arrow_drop_down
+- button "Previous" [disabled]:
+  - img: chevron_left
+- button "Next" [disabled]:
+  - img: chevron_right
+- button "Show last 30 days":
+  - generic: Show last 30 days
+- tablist:
+  - tab "Automated rules":
+    - generic: Automated rules
+  - tab "Results" [active] [selected]:
+    - generic: Results
+  - tab "Version history":
+    - generic: Version history
+- main:
+  - text: The history of bulk actions (edits, rules, and uploads) are now only visible based on the account you're signed into. Scripts and Solutions are still visible based on the account you're drilled into.
+  - link "Learn more about bulk actions with a manager account":
+    - /url: https://support.google.com/google-ads/answer/9254269?hl=en_US
+  - region "Primary toolbelt for Results":
+    - img: filter_alt
+    - grid
+    - button "Add filter":
+      - generic: Add filter
+    - button "Expand":
+      - img: fullscreen
+      - generic: Expand
+  - grid "Results":
+    - row "Rule name User / Date & time Status Description Changes Actions Rule ID Duration (seconds)":
+      - columnheader "Rule name"
+      - columnheader "User / Date & time"
+      - columnheader "Status"
+      - columnheader "Description"
+      - columnheader "Changes"
+      - columnheader "Actions"
+      - columnheader "Rule ID"
+      - columnheader "Duration (seconds)"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 5:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 5:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 5:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "5":
+        - generic: "5"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 4:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 4:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 4:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 3:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 3:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 3:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 2:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 2:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 2:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "6":
+        - generic: "6"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 1:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 1:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 1:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 12, 2026 12:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 12, 2026 12:16:10 AM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 12, 2026 12:16:10 AM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "5":
+        - generic: "5"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 11:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 11:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 11:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "5":
+        - generic: "5"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 10:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 10:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 10:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 9:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 9:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 9:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 8:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 8:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 8:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 7:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 7:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 7:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "5":
+        - generic: "5"
+    - 'row "Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 11, 2026 6:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4"':
+      - gridcell "Mapa | Pausa por custo EUR28 | C110":
+        - paragraph: Mapa | Pausa por custo EUR28 | C110
+      - gridcell "mario.reis.junior@gmail.com Oct 11, 2026 6:16:10 PM (GMT-03:00) São Paulo Time":
+        - generic: mario.reis.junior@gmail.com
+        - generic: Oct 11, 2026 6:16:10 PM
+        - generic: (GMT-03:00) São Paulo Time
+      - gridcell "Finished successfully":
+        - generic: Finished successfully
+      - 'gridcell "Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign"':
+        - generic: Pause campaigns
+        - paragraph: "Campaign status: Enabled, Paused"
+        - paragraph: Cost >= €28.00
+        - generic: Selected 1 campaign
+      - gridcell "No changes":
+        - generic: No changes
+      - gridcell
+      - gridcell "62128225":
+        - generic: "62128225"
+      - gridcell "4":
+        - generic: "4"
+  - generic: "Show rows:"
+  - 'button "Show rows: 30 selected."':
+    - generic: "30"
+    - img: arrow_drop_down
+  - generic: 1 - 30 of 137
+  - button "Go to the first page" [disabled]:
+    - img: first_page
+  - button "Go to the previous page" [disabled]:
+    - img: chevron_left
+  - button "Go to the next page":
+    - img: chevron_right
+  - button "Go to the last page":
+    - img: last_page
+  - generic: © Google, 2026.
+- dialog:
+  - heading [level=1]: Turn off ad blockers
+  - paragraph: Google Ads can't work when you're using an ad blocker. To use Google Ads, please turn off any ad blockers for now.
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"
+- dialog "dialog"

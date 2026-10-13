@@ -1,0 +1,22 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "custom_conversion_goal__id",
+        "custom_conversion_goal__name",
+        "custom_conversion_goal__status",
+        "custom_conversion_goal__conversion_actions"
+      ],
+      "rows": [
+        {
+          "custom_conversion_goal__id": 6459352879,
+          "custom_conversion_goal__name": "Mapa | Projeto iniciado",
+          "custom_conversion_goal__status": "ENABLED",
+          "custom_conversion_goal__conversion_actions": "[\"customers/3838359068/conversionActions/7825220596\"]"
+        }
+      ]
+    }
+  }
+}

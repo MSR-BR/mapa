@@ -1,0 +1,46 @@
+- alert: Criar mapa de pesquisa — Rápido ou Avançado | Mapa da Pesquisa
+- main:
+  - link "Mapa da Pesquisa — apresentação":
+    - /url: /
+    - img "Mapa da Pesquisa"
+  - link "Entrar":
+    - /url: /login
+  - paragraph: Comece pela sua ideia
+  - heading "Crie seu mapa de pesquisa." [level=1]
+  - paragraph: Escolha Rápido ou Avançado. Você pode preparar sua ideia sem login; a conta Google permite gerar e guardar o projeto.
+  - region "Escolha o modo e descreva sua pesquisa":
+    - button "Opção 1 · recomendado Mapa Avançado Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.":
+      - generic: Opção 1 · recomendado
+      - strong: Mapa Avançado
+      - emphasis: Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.
+      - generic: +
+    - button "Opção 2 Mapa Rápido Escreva sua ideia em linguagem natural e receba sugestões enquanto digita." [expanded]:
+      - generic: Opção 2
+      - strong: Mapa Rápido
+      - emphasis: Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.
+      - generic: −
+    - textbox "Informe as palavras-chave (mínimo duas) ou escreva o tema da pesquisa."
+    - paragraph: A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.
+    - generic: Enter para continuar · Shift + Enter para nova linha
+    - button "Continuar com Google":
+      - text: Continuar com Google
+      - generic: →
+  - navigation "Informações legais":
+    - button "Termos de uso"
+    - button "Privacidade"
+    - button "Preferências de cookies" [active]
+    - button "Suporte"
+    - button "Relatar problema"
+    - button "Créditos"
+    - generic: v11102026.1
+- dialog "Preferências de privacidade":
+  - strong: Privacidade e métricas
+  - paragraph: Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.
+  - checkbox "Métricas de uso (GA4)" [checked]
+  - text: Métricas de uso (GA4)
+  - checkbox "Publicidade e medição de anúncios (opcional)"
+  - text: Publicidade e medição de anúncios (opcional)
+  - paragraph: Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.
+  - button "Recusar todos"
+  - button "Cancelar"
+  - button "Salvar escolhas"

@@ -1,0 +1,15 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "status": "ok",
+    "version": "v11102026.1",
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "observed_on": "2026-10-13"
+  }
+}

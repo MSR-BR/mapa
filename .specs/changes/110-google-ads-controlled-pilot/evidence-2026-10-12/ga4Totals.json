@@ -1,0 +1,75 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "dimensionHeaders": [
+      "date"
+    ],
+    "metricHeaders": [
+      {
+        "name": "sessions",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "engagedSessions",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "eventCount",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "keyEvents:project_start",
+        "type": "TYPE_INTEGER"
+      }
+    ],
+    "rows": [
+      {
+        "date": "20261010",
+        "sessions": "13",
+        "engagedSessions": "7",
+        "eventCount": "373",
+        "keyEvents:project_start": "12"
+      },
+      {
+        "date": "20261011",
+        "sessions": "13",
+        "engagedSessions": "1",
+        "eventCount": "104",
+        "keyEvents:project_start": "1"
+      }
+    ],
+    "rowCount": 2,
+    "totals": null,
+    "metadata": {
+      "currencyCode": "BRL",
+      "timeZone": "America/Rio_Branco"
+    },
+    "propertyQuota": {
+      "tokensPerDay": {
+        "consumed": 1,
+        "remaining": 199898
+      },
+      "tokensPerHour": {
+        "consumed": 1,
+        "remaining": 39898
+      },
+      "concurrentRequests": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "serverErrorsPerProjectPerHour": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "potentiallyThresholdedRequestsPerHour": {
+        "consumed": 0,
+        "remaining": 120
+      },
+      "tokensPerProjectPerHour": {
+        "consumed": 1,
+        "remaining": 13898
+      }
+    }
+  }
+}

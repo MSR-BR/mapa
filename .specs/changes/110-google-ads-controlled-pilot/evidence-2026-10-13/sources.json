@@ -1,0 +1,140 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "dimensionHeaders": [
+      "date",
+      "sessionSourceMedium"
+    ],
+    "metricHeaders": [
+      {
+        "name": "sessions",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "engagedSessions",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "eventCount",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "keyEvents:project_start",
+        "type": "TYPE_INTEGER"
+      }
+    ],
+    "rows": [
+      {
+        "date": "20261010",
+        "sessionSourceMedium": "(direct) / (none)",
+        "sessions": "7",
+        "engagedSessions": "5",
+        "eventCount": "168",
+        "keyEvents:project_start": "7"
+      },
+      {
+        "date": "20261011",
+        "sessionSourceMedium": "(direct) / (none)",
+        "sessions": "7",
+        "engagedSessions": "5",
+        "eventCount": "40",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261012",
+        "sessionSourceMedium": "(not set)",
+        "sessions": "7",
+        "engagedSessions": "0",
+        "eventCount": "99",
+        "keyEvents:project_start": "3"
+      },
+      {
+        "date": "20261012",
+        "sessionSourceMedium": "(direct) / (none)",
+        "sessions": "5",
+        "engagedSessions": "0",
+        "eventCount": "14",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261010",
+        "sessionSourceMedium": "scanned.page / referral",
+        "sessions": "4",
+        "engagedSessions": "1",
+        "eventCount": "126",
+        "keyEvents:project_start": "1"
+      },
+      {
+        "date": "20261011",
+        "sessionSourceMedium": "scanned.page / referral",
+        "sessions": "3",
+        "engagedSessions": "1",
+        "eventCount": "63",
+        "keyEvents:project_start": "1"
+      },
+      {
+        "date": "20261011",
+        "sessionSourceMedium": "codex_validation / qa",
+        "sessions": "2",
+        "engagedSessions": "2",
+        "eventCount": "7",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261010",
+        "sessionSourceMedium": "(not set)",
+        "sessions": "1",
+        "engagedSessions": "0",
+        "eventCount": "76",
+        "keyEvents:project_start": "4"
+      },
+      {
+        "date": "20261010",
+        "sessionSourceMedium": "codex_validation / qa",
+        "sessions": "1",
+        "engagedSessions": "1",
+        "eventCount": "3",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261011",
+        "sessionSourceMedium": "(not set)",
+        "sessions": "1",
+        "engagedSessions": "0",
+        "eventCount": "3",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261011",
+        "sessionSourceMedium": "accounts.google.com / referral",
+        "sessions": "1",
+        "engagedSessions": "0",
+        "eventCount": "4",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261012",
+        "sessionSourceMedium": "codex_validation / qa",
+        "sessions": "1",
+        "engagedSessions": "0",
+        "eventCount": "2",
+        "keyEvents:project_start": "0"
+      },
+      {
+        "date": "20261012",
+        "sessionSourceMedium": "scanned.page / referral",
+        "sessions": "1",
+        "engagedSessions": "0",
+        "eventCount": "3",
+        "keyEvents:project_start": "0"
+      }
+    ],
+    "rowCount": 13,
+    "totals": null,
+    "metadata": {
+      "currencyCode": "BRL",
+      "timeZone": "America/Rio_Branco"
+    },
+    "propertyQuota": null
+  }
+}

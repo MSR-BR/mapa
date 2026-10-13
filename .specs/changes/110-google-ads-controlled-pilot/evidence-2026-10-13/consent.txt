@@ -1,0 +1,126 @@
+Browser tab: 2, Title: "Projeto de pesquisa com IA | Mapa da Pesquisa", URL: "https://mapadapesquisa.com.br/?utm_source=codex_validation&utm_medium=qa&utm_campaign=c110_monitor_20261013".
+0 AXWebArea Projeto de pesquisa com IA | Mapa da Pesquisa, URL: mapadapesquisa.com.br/?utm_source=codex_validation&utm_medium=qa&utm_campaign=c110_monitor_20261013
+	1 container
+		2 container
+			3 link Description: Mapa da Pesquisa, Value: mapadapesquisa.com.br/
+			4 link Description: Entrar, Value: mapadapesquisa.com.br/login
+		5 container Planeje seu projeto de pesquisa com IA.
+			6 text MAPA DA PESQUISA
+			7 heading Planeje seu projeto de pesquisa com IA., Value: 1, ID: landing-title
+				8 text Planeje seu projeto de pesquisa com IA.
+			9 text Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.
+			10 link Description: Começar meu projeto, Value: mapadapesquisa.com.br/mapa
+			11 link Description: Como funciona, Value: mapadapesquisa.com.br/?utm_source=codex_validation&utm_medium=qa&utm_campaign=c110_monitor_20261013#como-funciona
+			12 content list Características principais
+				13 text Acesso gratuito
+				14 text Mapa Rápido ou Avançado
+				15 text Aluno ou Orientador
+		16 container Escolha como começar seu mapa., ID: criar-mapa
+			17 text SUA IDEIA É O PONTO DE PARTIDA
+			18 heading Escolha como começar seu mapa., Value: 2, ID: start-title
+				19 text Escolha como começar seu mapa.
+			20 text Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.
+			21 container
+				22 heading Mapa Avançado, Value: 3
+					23 text Mapa Avançado
+				24 text Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.
+				25 link Description: Começar no modo Avançado →, Value: mapadapesquisa.com.br/mapa?modo=avancado
+			26 container
+				27 heading Mapa Rápido, Value: 3
+					28 text Mapa Rápido
+				29 text Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.
+				30 link Description: Começar no modo Rápido →, Value: mapadapesquisa.com.br/mapa?modo=rapido
+		31 container Conheça o Mapa da Pesquisa., ID: apresentacao
+			32 text VEJA EM AÇÃO
+			33 heading Conheça o Mapa da Pesquisa., Value: 2, ID: landing-video-title
+				34 text Conheça o Mapa da Pesquisa.
+			35 text Em pouco mais de um minuto, veja como uma ideia ganha estrutura, como a IA apoia cada decisão e como estudante e orientador avançam juntos.
+			36 content list Destaques da apresentação
+				37 text Mapa Rápido ou Mapa Avançado
+				38 text Problemática, objetivos, capítulos e metodologia
+				39 text Sugestões da IA com revisão humana
+			40 container
+				41 container Vídeo de apresentação do Mapa da Pesquisa
+					42 container
+						43 button
+						44 pop up button
+					45 slider (disabled) video time scrubber
+				46 text Apresentação do Mapa da Pesquisa · 1 min 17 s
+		47 container Como planejar seu projeto de pesquisa., ID: como-funciona
+			48 text UM PROCESSO GUIADO
+			49 heading Como planejar seu projeto de pesquisa., Value: 2, ID: how-title
+				50 text Como planejar seu projeto de pesquisa.
+			51 container
+				52 text 01
+				53 heading Formule o problema, Value: 3
+					54 text Formule o problema
+				55 text Responda cinco perguntas guiadas para transformar uma inquietação em situação-problema e pergunta de pesquisa.
+			56 container
+				57 text 02
+				58 heading Escolha o produto, Value: 3
+					59 text Escolha o produto
+				60 text Selecione TCC, monografia, dissertação, tese ou artigo. A escolha ajusta o rigor, a literatura e a contribuição esperada.
+			61 container
+				62 text 03
+				63 heading Construa e valide, Value: 3
+					64 text Construa e valide
+				65 text Compare caminhos, use referências verificáveis e avance com revisão humana adequada ao perfil escolhido.
+		66 container Um mapa na medida do seu produto.
+			67 text NÍVEIS DE PESQUISA
+			68 heading Um mapa na medida do seu produto., Value: 2, ID: products-title
+				69 text Um mapa na medida do seu produto.
+			70 container
+				71 text TCC / Graduação Recorte viável e fundamentos essenciais.
+			72 container
+				73 text Monografia / Especialização Aprofundamento aplicado e análise consistente.
+			74 container
+				75 text Dissertação / Mestrado Lacuna delimitada e contribuição original.
+			76 container
+				77 text Tese / Doutorado Avanço robusto para uma agenda científica.
+			78 container
+				79 text Artigo de evento Contribuição concisa e comunicável.
+			80 container
+				81 text Artigo de periódico Rigor, transparência e relevância internacional.
+		82 container Ideias apoiadas por literatura.
+			83 text PESQUISA COM RASTREABILIDADE
+			84 heading Ideias apoiadas por literatura., Value: 2, ID: references-title
+				85 text Ideias apoiadas por literatura.
+			86 text O Research Starter ajuda a localizar fontes relacionadas ao tema. As referências entram no mapa para que tópicos, objetivos e metodologia possam ser revisados com mais contexto.
+			87 text Você decide.
+			88 text A IA sugere; você revisa, justifica e valida.
+		89 container Autoria própria e orientação quando necessária.
+			90 text PARA CADA PAPEL
+			91 heading Autoria própria e orientação quando necessária., Value: 2, ID: audience-title
+				92 text Autoria própria e orientação quando necessária.
+			93 container
+				94 heading Aluno, Value: 3
+					95 text Aluno
+				96 text Construa seus projetos, salve o progresso e vincule um orientador para revisar e aprovar cada avanço.
+			97 container
+				98 heading Orientador, Value: 3
+					99 text Orientador
+				100 text Crie projetos próprios sem supervisor externo e acompanhe, comente ou valide os projetos de alunos vinculados.
+		101 container Sua ideia pode virar um projeto de pesquisa.
+			102 heading Sua ideia pode virar um projeto de pesquisa., Value: 2, ID: cta-title
+				103 text Sua ideia pode virar um projeto de pesquisa.
+			104 text Comece no modo Rápido ou responda cinco perguntas no Avançado. Entre com Google para gerar e guardar seu mapa.
+			105 link Description: Criar meu mapa, Value: mapadapesquisa.com.br/mapa
+		106 container Informações legais
+			107 button Termos de uso
+			108 button Privacidade
+			109 button Preferências de cookies
+			110 button Suporte
+			111 button Relatar problema
+			112 button Créditos
+			113 text v11102026.1
+		114 container Preferências de privacidade
+			115 text Privacidade e métricas
+			116 text Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.
+			117 checkbox (settable, integer) Description: Métricas de uso (GA4), Value: 1
+			118 checkbox (settable, integer) Description: Publicidade e medição de anúncios (opcional), Value: 0
+			119 text Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.
+			120 button Recusar todos
+			121 button Cancelar
+			122 button Salvar escolhas
+
+The focused UI element is 109 button Preferências de cookies

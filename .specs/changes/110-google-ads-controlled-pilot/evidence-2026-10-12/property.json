@@ -1,0 +1,19 @@
+{
+  "observed_on": "2026-10-12",
+  "source": "authenticated_connector_read_only",
+  "response": {
+    "object": {
+      "name": "properties/550650234",
+      "parent": "accounts/346683903",
+      "createTime": "2026-08-18T21:11:34.239Z",
+      "updateTime": "2026-08-18T21:11:34.239Z",
+      "displayName": "Mapa da Pesquisa",
+      "industryCategory": "SCIENCE",
+      "timeZone": "America/Rio_Branco",
+      "currencyCode": "BRL",
+      "serviceLevel": "GOOGLE_ANALYTICS_STANDARD",
+      "account": "accounts/346683903",
+      "propertyType": "PROPERTY_TYPE_ORDINARY"
+    }
+  }
+}

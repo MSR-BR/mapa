@@ -1,0 +1,369 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "dimensionHeaders": [
+      "date",
+      "eventName"
+    ],
+    "metricHeaders": [
+      {
+        "name": "eventCount",
+        "type": "TYPE_INTEGER"
+      }
+    ],
+    "rows": [
+      {
+        "date": "20261010",
+        "eventName": "page_view",
+        "eventCount": "70"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_started",
+        "eventCount": "59"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "eventCount": "55"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_submitted",
+        "eventCount": "27"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_started",
+        "eventCount": "26"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_started",
+        "eventCount": "26"
+      },
+      {
+        "date": "20261011",
+        "eventName": "page_view",
+        "eventCount": "25"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_completed",
+        "eventCount": "22"
+      },
+      {
+        "date": "20261012",
+        "eventName": "page_view",
+        "eventCount": "18"
+      },
+      {
+        "date": "20261010",
+        "eventName": "proposal_viewed",
+        "eventCount": "17"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_started",
+        "eventCount": "15"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_completed",
+        "eventCount": "15"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_submitted",
+        "eventCount": "14"
+      },
+      {
+        "date": "20261010",
+        "eventName": "user_engagement",
+        "eventCount": "13"
+      },
+      {
+        "date": "20261011",
+        "eventName": "session_start",
+        "eventCount": "13"
+      },
+      {
+        "date": "20261010",
+        "eventName": "project_start",
+        "eventCount": "12"
+      },
+      {
+        "date": "20261010",
+        "eventName": "session_start",
+        "eventCount": "12"
+      },
+      {
+        "date": "20261010",
+        "eventName": "login_success",
+        "eventCount": "11"
+      },
+      {
+        "date": "20261011",
+        "eventName": "user_engagement",
+        "eventCount": "11"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_completed",
+        "eventCount": "9"
+      },
+      {
+        "date": "20261011",
+        "eventName": "login_success",
+        "eventCount": "9"
+      },
+      {
+        "date": "20261010",
+        "eventName": "proposal_selected",
+        "eventCount": "8"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_completed",
+        "eventCount": "8"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_submitted",
+        "eventCount": "7"
+      },
+      {
+        "date": "20261012",
+        "eventName": "session_start",
+        "eventCount": "7"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_started",
+        "eventCount": "6"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_failed",
+        "eventCount": "6"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_saved",
+        "eventCount": "6"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_completed",
+        "eventCount": "5"
+      },
+      {
+        "date": "20261010",
+        "eventName": "login_started",
+        "eventCount": "5"
+      },
+      {
+        "date": "20261012",
+        "eventName": "proposal_viewed",
+        "eventCount": "5"
+      },
+      {
+        "date": "20261012",
+        "eventName": "user_engagement",
+        "eventCount": "5"
+      },
+      {
+        "date": "20261010",
+        "eventName": "advisor_link_started",
+        "eventCount": "4"
+      },
+      {
+        "date": "20261012",
+        "eventName": "login_success",
+        "eventCount": "4"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_saved",
+        "eventCount": "4"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_saved",
+        "eventCount": "3"
+      },
+      {
+        "date": "20261012",
+        "eventName": "generation_completed",
+        "eventCount": "3"
+      },
+      {
+        "date": "20261012",
+        "eventName": "login_started",
+        "eventCount": "3"
+      },
+      {
+        "date": "20261012",
+        "eventName": "project_start",
+        "eventCount": "3"
+      },
+      {
+        "date": "20261010",
+        "eventName": "advisor_approved",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261010",
+        "eventName": "advisor_review_opened",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_retry",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_started",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261011",
+        "eventName": "proposal_viewed",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261012",
+        "eventName": "advisor_approved",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261012",
+        "eventName": "generation_started",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261010",
+        "eventName": "advisor_link_succeeded",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261010",
+        "eventName": "consent_choice",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_failed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261010",
+        "eventName": "first_visit",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261010",
+        "eventName": "project_resumed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "advisor_approved",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "advisor_review_opened",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_completed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_failed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "generation_completed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "generation_started",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "project_resumed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "project_start",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "proposal_selected",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "scroll",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_blocked",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "advisor_review_opened",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "export_pdf_completed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "export_pdf_started",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "project_completed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "project_resumed",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "proposal_selected",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_blocked",
+        "eventCount": "1"
+      }
+    ],
+    "rowCount": 69,
+    "totals": null,
+    "metadata": {
+      "currencyCode": "BRL",
+      "timeZone": "America/Rio_Branco"
+    },
+    "propertyQuota": null
+  }
+}

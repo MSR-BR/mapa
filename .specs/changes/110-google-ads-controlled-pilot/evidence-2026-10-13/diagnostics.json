@@ -1,0 +1,83 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "dimensionHeaders": [
+      "date",
+      "eventName",
+      "customEvent:app_stage",
+      "customEvent:app_reason_code",
+      "sessionSourceMedium"
+    ],
+    "metricHeaders": [
+      {
+        "name": "eventCount",
+        "type": "TYPE_INTEGER"
+      }
+    ],
+    "rows": [
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "51"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_failed",
+        "customEvent:app_stage": "discovery",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "6"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "literature",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "4"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_stage": "final",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_stage": "final",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "accounts.google.com / referral",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(not set)",
+        "eventCount": "1"
+      }
+    ],
+    "rowCount": 7,
+    "totals": null,
+    "metadata": {
+      "currencyCode": "BRL",
+      "timeZone": "America/Rio_Branco"
+    },
+    "propertyQuota": null
+  }
+}

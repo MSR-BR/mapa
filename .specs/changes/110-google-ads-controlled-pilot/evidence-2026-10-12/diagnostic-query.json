@@ -1,0 +1,84 @@
+{
+  "query": {
+    "propertyId": "properties/550650234",
+    "dimensions": [
+      "date",
+      "eventName",
+      "customEvent:app_reason_code",
+      "sessionSourceMedium"
+    ],
+    "metrics": [
+      "eventCount"
+    ],
+    "dimensionFilter": {
+      "filter": {
+        "fieldName": "eventName",
+        "inListFilter": {
+          "values": [
+            "generation_failed",
+            "export_pdf_failed",
+            "stage_blocked"
+          ]
+        }
+      }
+    },
+    "dateRanges": [
+      {
+        "startDate": "2026-10-10",
+        "endDate": "2026-10-11"
+      }
+    ]
+  },
+  "dimensionCompatibilities": [
+    {
+      "dimensionMetadata": {
+        "apiName": "date",
+        "uiName": "Date",
+        "description": "The date of the event, formatted as YYYYMMDD.",
+        "category": "Time"
+      },
+      "compatibility": "COMPATIBLE"
+    },
+    {
+      "dimensionMetadata": {
+        "apiName": "eventName",
+        "uiName": "Event name",
+        "description": "The name of the event.",
+        "category": "Event"
+      },
+      "compatibility": "COMPATIBLE"
+    },
+    {
+      "dimensionMetadata": {
+        "apiName": "sessionSourceMedium",
+        "uiName": "Session source / medium",
+        "description": "The combined values of the dimensions `sessionSource` and `sessionMedium`.",
+        "category": "Traffic Source"
+      },
+      "compatibility": "COMPATIBLE"
+    },
+    {
+      "dimensionMetadata": {
+        "apiName": "customEvent:app_reason_code",
+        "uiName": "App reason code",
+        "description": "An event scoped custom dimension for your Analytics property.",
+        "customDefinition": true,
+        "category": "Event-scoped Custom Dimension"
+      },
+      "compatibility": "COMPATIBLE"
+    }
+  ],
+  "metricCompatibilities": [
+    {
+      "metricMetadata": {
+        "apiName": "eventCount",
+        "uiName": "Event count",
+        "description": "The count of events.",
+        "type": "TYPE_INTEGER",
+        "category": "Event"
+      },
+      "compatibility": "COMPATIBLE"
+    }
+  ],
+  "estimated_rows": 6
+}

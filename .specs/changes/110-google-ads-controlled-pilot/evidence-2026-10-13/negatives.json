@@ -1,0 +1,136 @@
+{
+  "observed_on": "2026-10-13",
+  "response": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "campaign_criterion__criterion_id",
+        "campaign_criterion__keyword__text",
+        "campaign_criterion__keyword__match_type",
+        "campaign_criterion__negative"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 253730190,
+          "campaign_criterion__keyword__text": "mapa astral",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 552372089,
+          "campaign_criterion__keyword__text": "trabalho pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 1523076754,
+          "campaign_criterion__keyword__text": "trabalhos prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 296626826376,
+          "campaign_criterion__keyword__text": "tcc pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 301454779889,
+          "campaign_criterion__keyword__text": "monografia pronta",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 303965254707,
+          "campaign_criterion__keyword__text": "mapa do brasil",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 308899256601,
+          "campaign_criterion__keyword__text": "comprar monografia",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 308899256761,
+          "campaign_criterion__keyword__text": "comprar tcc",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 314462370886,
+          "campaign_criterion__keyword__text": "projetos de pesquisa prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 321455895082,
+          "campaign_criterion__keyword__text": "pré projeto pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 325374771255,
+          "campaign_criterion__keyword__text": "projeto de pesquisa pronto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 334708859165,
+          "campaign_criterion__keyword__text": "comprar projeto",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 335137093153,
+          "campaign_criterion__keyword__text": "mapa geográfico",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 336076587998,
+          "campaign_criterion__keyword__text": "mapa geografico",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 358601643805,
+          "campaign_criterion__keyword__text": "tcc prontos",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 358871358879,
+          "campaign_criterion__keyword__text": "mapa rodoviário",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign_criterion__criterion_id": 2424311645730,
+          "campaign_criterion__keyword__text": "tcc para copiar",
+          "campaign_criterion__keyword__match_type": "PHRASE",
+          "campaign_criterion__negative": true
+        }
+      ]
+    }
+  }
+}
