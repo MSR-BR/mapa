@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { type PublicSearchParams } from "@/modules/analytics/campaign-attribution";
 import { BrandLogo } from "@/modules/branding/brand-logo";
+import { PresentationVideo } from "@/modules/landing/presentation-video";
 import { LegalLinks } from "@/modules/legal/legal-links";
 
 const canonicalUrl = "https://mapadapesquisa.com.br/";
@@ -145,24 +146,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
             <li>Sugestões da IA com revisão humana</li>
           </ul>
         </div>
-        <figure className="landing-video-figure">
-          <div className="landing-video-shell">
-            <video
-              aria-describedby="landing-video-description"
-              aria-label="Vídeo de apresentação do Mapa da Pesquisa"
-              controls
-              height={976}
-              playsInline
-              poster="/media/mapa-da-pesquisa-apresentacao-poster.webp"
-              preload="none"
-              width={576}
-            >
-              <source src="/media/mapa-da-pesquisa-apresentacao.mp4" type="video/mp4" />
-              Seu navegador não oferece suporte à reprodução deste vídeo.
-            </video>
-          </div>
-          <figcaption>Apresentação do Mapa da Pesquisa · 1 min 17 s</figcaption>
-        </figure>
+        <PresentationVideo />
       </section>
 
       <section className="landing-section" id="como-funciona" aria-labelledby="how-title">

@@ -6,7 +6,7 @@ import {
   type ResearchProductType,
 } from "@/modules/research-workflow/research-level-guidance";
 
-export const researchIntakeFieldSchema = z.string().trim().min(1).max(2_000);
+export const researchIntakeFieldSchema = z.string().min(1).max(2_000).regex(/\S/, "Preencha a resposta.");
 
 export const researchIntakeSchema = z.object({
   problemContext: researchIntakeFieldSchema,

@@ -4,6 +4,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, Output, type LanguageModelUsage } from "ai";
 import { z } from "zod";
 import { observeAiAttempt } from "@/lib/observability/ai-usage";
+import { structuredTextInstruction } from "./schema-instructions";
 import { reserveAdditionalAiBudget } from "./budget";
 import type { AiProvider, AiRole } from "./contract";
 import { AiError, canFallback, classifyAiFailure } from "./failure";
@@ -57,8 +58,8 @@ export async function generateStructured<T>(request: StructuredRequest<T>, depen
     const model = configuredModel(provider);
     const price = priceFor(model);
     if (!price) throw new AiError("configuration");
-    const prompt = request.prompt + (fallbackReason === "invalid_output"
-      ? "\nA resposta anterior falhou na validação. Confira todas as regras, os limites do schema e os IDs permitidos antes de responder." : "");
+    const prompt = request.prompt + structuredTextInstruction(request.schema) + (fallbackReason === "invalid_output"
+      ? "\nA resposta anterior falhou na validação. Reformule a resposta para respeitar os limites de cada campo, mantendo o sentido, frases completas e os IDs permitidos. Confira todas as regras antes de responder." : "");
     // UTF-8 bytes bound text tokens conservatively; include schema and framing overhead.
     const bytes = Buffer.byteLength(prompt + JSON.stringify(z.toJSONSchema(request.schema, { unrepresentable: "any" })), "utf8") + 4096;
     if (bytes > AI_LIMITS.maxPromptBytes) throw new AiError("configuration");

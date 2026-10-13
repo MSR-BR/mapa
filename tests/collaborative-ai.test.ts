@@ -299,3 +299,55 @@ test("C113: real SDK transport retains one fallback for Gemini HTTP 429/503", as
     }
   } finally { globalThis.fetch = originalFetch; }
 });
+
+test("C118: real Gemini adapter repairs oversized problem output once, before accepting it", async () => {
+  const { regenerateProblemStatement } = await import("../modules/generation/gemini");
+  const { versionedWorkflowFixture } = await import("./fixtures/versioned-workflow");
+  const { content } = versionedWorkflowFixture();
+  const originalFetch = globalThis.fetch;
+  const originalEnabled = process.env.MAPA_OPENAI_ENABLED;
+  process.env.MAPA_OPENAI_ENABLED = "false";
+  const valid = { content: "Como compreender a aprendizagem no contexto delimitado pelo autor?", referenceIds: ["fixture-reference"] };
+  try {
+    for (const repeatedFailure of [false, true]) {
+      let calls = 0;
+      const originalContent = JSON.stringify(content);
+      globalThis.fetch = async (_input, init) => {
+        calls++;
+        const body = JSON.parse(String(init?.body));
+        const prompt = JSON.stringify(body.contents);
+        assert.match(prompt, /content: 500/);
+        if (calls === 2) assert.match(prompt, /Reformule a resposta/);
+        const response = calls === 1 || repeatedFailure ? { ...valid, content: "Como " + "texto ".repeat(100) + "?" } : valid;
+        return Response.json({ candidates: [{ content: { role: "model", parts: [{ text: JSON.stringify(response) }] }, finishReason: "STOP" }], modelVersion: "gemini-3.6-flash" });
+      };
+      const run = () => regenerateProblemStatement(content.discovery!.candidates[0], content.discovery!);
+      if (repeatedFailure) await assert.rejects(run, (error) => classifyAiFailure(error) === "invalid_output");
+      else assert.deepEqual(await run(), valid);
+      assert.equal(calls, 2);
+      assert.equal(JSON.stringify(content), originalContent);
+    }
+  } finally { globalThis.fetch = originalFetch; process.env.MAPA_OPENAI_ENABLED = originalEnabled; }
+});
+
+test("C118: nested/nullable text constraints reach both providers and only valid card output is returned", async () => {
+  const { cardRowSchema, cardClassificationSchema } = await import("../modules/research-workflow/card-regeneration");
+  const { schemaTextLimits } = await import("../modules/ai/schema-instructions");
+  const nested = z.object({ rows: z.array(cardRowSchema), classification: cardClassificationSchema.nullable() });
+  const instruction = schemaTextLimits(nested);
+  assert.match(instruction, /rows\[\].dataCollection: 1200/);
+  assert.match(instruction, /rows\[\].expectedResult: 1000/);
+  assert.match(instruction, /classification.instruments\[\]: 120/);
+  assert.match(instruction, /classification.rationale: 800/);
+  for (const provider of ["gemini", "openai"] as const) {
+    let calls = 0;
+    const good = { dataCollection: "Propõe-se consultar registros do contexto delimitado.", analysisTreatment: "Propõe-se comparar categorias temáticas do material.", expectedResult: "Espera-se uma síntese que responda ao objetivo." };
+    const value = await generateStructured({ ...request, provider, operation: "generate_methodology_plan", schema: cardRowSchema }, {
+      reserve: async () => {}, invoke: async ({ prompt, provider: actual }) => {
+        calls++; assert.match(prompt, /expectedResult: 1000/);
+        return { ...result(actual), output: calls === 1 ? { ...good, expectedResult: "x".repeat(1001) } : good };
+      },
+    });
+    assert.equal(calls, 2); assert.deepEqual(value.output, good);
+  }
+});

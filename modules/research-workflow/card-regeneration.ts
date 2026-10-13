@@ -1,3 +1,4 @@
+import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 import type { AiOperation } from "@/modules/ai/policy";
 import { researchWorkflowContentSchema, type AdvisorReviewStep, type ResearchWorkflowContent } from "./schema";
@@ -16,7 +17,7 @@ export function regenerationCard(content: ResearchWorkflowContent, step: Advisor
     return { kind: "classification" as const, classification: unit.methodologyClassification, operation: "generate_methodology_plan" as AiOperation };
   }
   if (!element || ["final_map", "methodology_mapping"].includes(element.type)) throw new Error("Quadro não encontrado nesta etapa. Salve a página e tente novamente.");
-  const maxLength = element.type.endsWith("_topic") ? 180 : element.type === "problem_statement" ? 500 : element.type === "research_title" ? 240 : 700;
+  const maxLength = element.type.endsWith("_topic") ? FIELD_LIMITS.topic : element.type === "problem_statement" ? FIELD_LIMITS.problem : element.type === "research_title" ? FIELD_LIMITS.title : FIELD_LIMITS.objective;
   const operation: AiOperation = element.type.endsWith("_topic") ? element.type === "literature_topic" ? "generate_literature_topics" : "generate_development_topics"
     : element.type === "problem_statement" ? "regenerate_problem_statement" : element.type === "general_objective" ? "generate_general_objective" : element.type === "specific_objective" ? "generate_specific_objectives" : "generate_methodology_plan";
   return { kind: "element" as const, element, maxLength, operation };
@@ -25,9 +26,9 @@ export function regenerationCard(content: ResearchWorkflowContent, step: Advisor
 export type RegenerationCard = ReturnType<typeof regenerationCard>;
 export const cardClassificationSchema = methodologyClassificationInputSchema;
 export const cardRowSchema = z.object({
-  dataCollection: z.string().trim().min(20).max(1200),
-  analysisTreatment: z.string().trim().min(20).max(1200),
-  expectedResult: z.string().trim().min(20).max(1000),
+  dataCollection: z.string().trim().min(20).max(FIELD_LIMITS.dataCollection),
+  analysisTreatment: z.string().trim().min(20).max(FIELD_LIMITS.analysisTreatment),
+  expectedResult: z.string().trim().min(20).max(FIELD_LIMITS.expectedResult),
 });
 export type CardResult = { kind: "element"; text: string } | { kind: "row"; value: z.infer<typeof cardRowSchema> } | { kind: "classification"; value: z.infer<typeof cardClassificationSchema> };
 

@@ -1,4 +1,6 @@
 "use client";
+import { FIELD_LIMITS, classificationListMaxLength, classificationListText, parseClassificationList } from "@/modules/research-workflow/field-limits";
+
 import { saveThenCompleteStep } from "./complete-step-client";
 import { methodologyIssues } from "./methodology-assistance";
 import { useRegenerationRequests } from "./use-regeneration-requests";
@@ -136,23 +138,6 @@ function rowsDraft(workflow: ResearchWorkflow): MethodologyRowDraft[] {
   }));
 }
 
-function textToList(value: string) {
-  return value.split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8);
-}
-
-function ethicsTextToList(value: string) {
-  return value.split(/\n+/).map((item) => item.trim()).filter(Boolean).slice(0, 6);
-}
-
-function listToText(items: string[]) {
-  return items.join(", ");
-}
-
-function listToEthicsText(items: string[]) {
-  const cleaned = items.map((item) => item.trim()).filter(Boolean);
-  if (cleaned.length > 1 && cleaned.some((item) => item.length < 10)) return cleaned.join(", ");
-  return cleaned.join("\n");
-}
 
 function referenceText(reference: WorkflowReference) {
   const author = reference.authors[0] ?? "Fonte";
@@ -173,10 +158,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [title, setTitle] = useState(() => findTitle(initialWorkflow));
   const [classification, setClassification] = useState<ClassificationDraft>(() => classificationDraft(initialWorkflow));
-  const [proceduresText, setProceduresText] = useState(() => listToText(classificationDraft(initialWorkflow).procedures));
-  const [instrumentsText, setInstrumentsText] = useState(() => listToText(classificationDraft(initialWorkflow).instruments));
-  const [analysisText, setAnalysisText] = useState(() => listToText(classificationDraft(initialWorkflow).analysisTechniques));
-  const [ethicsText, setEthicsText] = useState(() => listToEthicsText(classificationDraft(initialWorkflow).ethicsWarnings));
+  const [proceduresText, setProceduresText] = useState(() => classificationListText(classificationDraft(initialWorkflow).procedures));
+  const [instrumentsText, setInstrumentsText] = useState(() => classificationListText(classificationDraft(initialWorkflow).instruments));
+  const [analysisText, setAnalysisText] = useState(() => classificationListText(classificationDraft(initialWorkflow).analysisTechniques));
+  const [ethicsText, setEthicsText] = useState(() => classificationListText(classificationDraft(initialWorkflow).ethicsWarnings));
   const [rows, setRows] = useState<MethodologyRowDraft[]>(() => rowsDraft(initialWorkflow));
   const [regenerationRequests, updateRequest] = useRegenerationRequests(projectId);
   const [operation, setOperation] = useState<Operation>(null);
@@ -196,10 +181,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const referenceById = new Map(references.map((reference) => [reference.referenceId, reference]));
   const currentClassification = useMemo<ClassificationDraft>(() => ({
     ...classification,
-    analysisTechniques: textToList(analysisText),
-    ethicsWarnings: ethicsTextToList(ethicsText),
-    instruments: textToList(instrumentsText),
-    procedures: textToList(proceduresText),
+    analysisTechniques: parseClassificationList(analysisText),
+    ethicsWarnings: parseClassificationList(ethicsText),
+    instruments: parseClassificationList(instrumentsText),
+    procedures: parseClassificationList(proceduresText),
   }), [analysisText, classification, ethicsText, instrumentsText, proceduresText]);
   const savedPlan = JSON.stringify({ classification: classificationDraft(workflow), rows: rowsDraft(workflow), title: findTitle(workflow) });
   const currentPlan = JSON.stringify({ classification: currentClassification, rows, title });
@@ -250,10 +235,10 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
     const nextClassification = classificationDraft(next);
     setTitle(findTitle(next));
     setClassification(nextClassification);
-    setProceduresText(listToText(nextClassification.procedures));
-    setInstrumentsText(listToText(nextClassification.instruments));
-    setAnalysisText(listToText(nextClassification.analysisTechniques));
-    setEthicsText(listToEthicsText(nextClassification.ethicsWarnings));
+    setProceduresText(classificationListText(nextClassification.procedures));
+    setInstrumentsText(classificationListText(nextClassification.instruments));
+    setAnalysisText(classificationListText(nextClassification.analysisTechniques));
+    setEthicsText(classificationListText(nextClassification.ethicsWarnings));
     setRows(rowsDraft(next));
   }
 
@@ -525,11 +510,12 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
             <label key={value}><input disabled={busy || waitingForAdvisor} checked={classification.objectives.includes(value)} onChange={() => toggleClassificationObjective(value)} type="checkbox" />{value}</label>
           ))}
         </fieldset>
-        <label>Procedimentos *<input id="methodology-procedures" disabled={busy || waitingForAdvisor} onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
-        <label>Instrumentos *<input id="methodology-instruments" disabled={busy || waitingForAdvisor} onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
-        <label>Técnicas de análise *<input id="methodology-analysisTechniques" disabled={busy || waitingForAdvisor} onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
-        <label>Justificativa metodológica *<textarea id="methodology-rationale" disabled={busy || waitingForAdvisor} maxLength={800} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
-        <label>Avisos éticos ou de acesso<textarea id="methodology-ethicsWarnings" disabled={busy || waitingForAdvisor} maxLength={2400} onChange={(event) => setEthicsText(event.target.value)} placeholder="Opcional. Se houver mais de um aviso, coloque um por linha." value={ethicsText} /></label>
+        <p className="methodology-list-help">Procedimentos e instrumentos: até 8 itens. Técnicas de análise: até 6. Escreva um item por linha, com até {FIELD_LIMITS.classificationItem} caracteres. Vírgulas podem fazer parte do texto.</p>
+        <label>Procedimentos *<textarea rows={3} maxLength={classificationListMaxLength("procedures")} id="methodology-procedures" disabled={busy || waitingForAdvisor} onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
+        <label>Instrumentos *<textarea rows={3} maxLength={classificationListMaxLength("instruments")} id="methodology-instruments" disabled={busy || waitingForAdvisor} onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
+        <label>Técnicas de análise *<textarea rows={3} maxLength={classificationListMaxLength("analysisTechniques")} id="methodology-analysisTechniques" disabled={busy || waitingForAdvisor} onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
+        <label>Justificativa metodológica *<textarea id="methodology-rationale" disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.rationale} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
+        <label>Avisos éticos ou de acesso<textarea id="methodology-ethicsWarnings" disabled={busy || waitingForAdvisor} maxLength={classificationListMaxLength("ethicsWarnings")} onChange={(event) => setEthicsText(event.target.value)} placeholder="Opcional. Se houver mais de um aviso, coloque um por linha." value={ethicsText} /></label>
         <label>Orientação para a classificação (opcional)<textarea disabled={busy || waitingForAdvisor} maxLength={1000} value={regenerationRequests.classification ?? ""} onChange={(event) => updateRequest("classification", event.target.value)} /></label>
         <WorkflowAction className="definition-button secondary" disabled={busy || waitingForAdvisor} type="button" onClick={() => void regenerateCard("classification")} help="Reescreve somente a classificação metodológica com os valores atuais e sua orientação. Preserva título e matriz.">Regenerar classificação com IA</WorkflowAction>
       </aside>
@@ -553,9 +539,9 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
                 </div>
                 <p>{objective?.content}</p>
               </div>
-              <label role="cell">Levantamento *<textarea id={`methodology-${row.id}-dataCollection`} disabled={busy || waitingForAdvisor} maxLength={1200} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
-              <label role="cell">Análise/tratamento *<textarea id={`methodology-${row.id}-analysisTreatment`} disabled={busy || waitingForAdvisor} maxLength={1200} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
-              <label role="cell">Resultado esperado *<textarea id={`methodology-${row.id}-expectedResult`} disabled={busy || waitingForAdvisor} maxLength={1000} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
+              <label role="cell">Levantamento *<textarea id={`methodology-${row.id}-dataCollection`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.dataCollection} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
+              <label role="cell">Análise/tratamento *<textarea id={`methodology-${row.id}-analysisTreatment`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.analysisTreatment} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
+              <label role="cell">Resultado esperado *<textarea id={`methodology-${row.id}-expectedResult`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.expectedResult} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
               <details className="methodology-row-note">
                 <summary>Contexto e pedido para regenerar — {objective?.label ?? `linha ${index + 1}`}</summary>
                 <AiGuidanceField context={row.studentJustification ?? ""} contextPlaceholder="Explique a contribuição desta linha metodológica e o contexto que deve orientar a análise." label={`Contexto e orientações para a IA — ${objective?.label ?? `linha ${index + 1}`}`} onContextChange={(value) => updateRow(row.id, { studentJustification: value || null })} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(row.id)} onRequestChange={(value) => updateRequest(row.id, value)} request={regenerationRequests[row.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para esta linha na próxima regeneração." />

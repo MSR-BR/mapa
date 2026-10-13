@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import path from "node:path";
 
+import { RESEARCH_INTAKE_FIELDS } from "@/modules/projects/research-intake";
 import type { ExportDocumentInput, FinalMapExportInput } from "./types";
 import type { FinalMap } from "@/modules/research-workflow/final-map";
 import {
@@ -388,6 +389,22 @@ export async function createFinalMapPdfExport(input: FinalMapExportInput) {
     doc.fillColor(COLORS.muted).font("Helvetica").fontSize(8.5).text([authors, reference.year, reference.doi ? `DOI: ${reference.doi}` : null].filter(Boolean).join(". "), { lineGap: 2 });
     if (reference.url) doc.fillColor("#176B4D").text(reference.url, { link: reference.url, underline: true });
     doc.moveDown(0.65);
+  }
+
+  const briefing = finalMap.workflow.content.initialBriefing;
+  if (briefing) {
+    doc.addPage();
+    addFinalMapHeading(doc, "APÊNDICE — RESPOSTAS INICIAIS DO MAPA AVANÇADO");
+    addWrappedParagraph(doc, "Registro das respostas fornecidas pelo autor no início do projeto, conforme armazenadas, sem reescrita pela IA.");
+    const initialProduct = getResearchProductGuidance(briefing.researchType);
+    if (initialProduct) addWrappedParagraph(doc, `Produto acadêmico escolhido: ${initialProduct.label}.`);
+    for (const [index, field] of RESEARCH_INTAKE_FIELDS.entries()) {
+      ensureSpace(doc, 110);
+      addFinalMapSubheading(doc, `${index + 1}. ${field.label}`);
+      doc.fillColor(COLORS.text).font("Helvetica").fontSize(10.2)
+        .text(briefing[field.name], { align: "left", lineGap: 4 });
+      doc.moveDown(1);
+    }
   }
 
   addCblRegistrationPage(doc);

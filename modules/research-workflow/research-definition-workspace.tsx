@@ -1,4 +1,6 @@
 "use client";
+import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+
 import { saveThenCompleteStep } from "./complete-step-client";
 import { useRegenerationRequests } from "./use-regeneration-requests";
 import { saveThenRegenerateCard } from "./regenerate-card-client";
@@ -305,7 +307,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
           <div className="definition-editor-with-note">
             <label>
               Grande pergunta da pesquisa
-              <textarea disabled={busy || waitingForAdvisor} maxLength={500} onChange={(event) => setProblem(event.target.value)} value={problem} />
+              <textarea disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.problem} onChange={(event) => setProblem(event.target.value)} value={problem} />
               <small>{problem.length}/500 · Comece com “Como” ou “De que forma” e formule uma única pergunta.</small>
             </label>
             <AiGuidanceField context={problemJustification} contextPlaceholder="Explique a relevância da pergunta e o recorte que deve orientar as próximas etapas." label="Contexto e orientações para a IA — problemática" onContextChange={setProblemJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("problem")} onRequestChange={(value) => updateRequest("problem", value)} request={regenerationRequests.problem ?? ""} requestPlaceholder="Descreva como a IA deve ajustar a problemática na próxima regeneração." />
@@ -314,7 +316,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
           <div className="definition-editor-with-note">
             <label>
               Objetivo geral
-              <textarea disabled={busy || waitingForAdvisor} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+              <textarea disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.objective} onChange={(event) => setGeneral(event.target.value)} value={general} />
               <small>{general.length}/700 · Comece com verbo no infinitivo e mantenha o escopo da problemática.</small>
             </label>
             <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo responde à problemática e o que deve permanecer nas próximas etapas." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("general")} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral na próxima regeneração." />
@@ -325,7 +327,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
               <div className="definition-editor-with-note">
                 <label>
                   Objetivo geral (revisável nesta etapa)
-                  <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={700} onChange={(event) => setGeneral(event.target.value)} value={general} />
+                  <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={FIELD_LIMITS.objective} onChange={(event) => setGeneral(event.target.value)} value={general} />
                   <small>{general.length}/700 · Se um objetivo específico representar melhor a finalidade da pesquisa, use “Usar como objetivo geral” abaixo.</small>
                 </label>
                 <AiGuidanceField context={generalJustification} contextPlaceholder="Explique como o objetivo geral responde à problemática e orienta os objetivos específicos." label="Contexto e orientações para a IA — objetivo geral" onContextChange={setGeneralJustification} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard("general")} onRequestChange={(value) => updateRequest("general", value)} request={regenerationRequests.general ?? ""} requestPlaceholder="Descreva como a IA deve ajustar o objetivo geral nesta etapa." />
@@ -336,7 +338,7 @@ export function ResearchDefinitionWorkspace({ advisorEmail, initialWorkflow, isS
                 <div className="definition-editor-with-note">
                   <label>
                     Objetivo específico {index + 1}
-                    <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={700} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
+                    <textarea disabled={busy || waitingForAdvisor} rows={6} maxLength={FIELD_LIMITS.objective} onChange={(event) => updateSpecific(objective.id, event.target.value)} value={objective.content} />
                     <small>{objective.content.length}/700 caracteres</small>
                   </label>
                   <AiGuidanceField context={objective.studentJustification} contextPlaceholder="Explique a contribuição deste objetivo específico e o contexto que a IA deve considerar depois." label={`Contexto e orientações para a IA — OE${index + 1}`} onContextChange={(value) => updateSpecificJustification(objective.id, value)} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(objective.id)} onRequestChange={(value) => updateRequest(objective.id, value)} request={regenerationRequests[objective.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este objetivo específico na próxima regeneração." />

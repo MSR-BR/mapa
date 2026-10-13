@@ -1,3 +1,4 @@
+import { FIELD_LIMITS, problemDraftLimit } from "@/modules/research-workflow/field-limits";
 import { replaceTopics } from "@/modules/research-workflow/chapter-content";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
@@ -66,11 +67,10 @@ const requestSchema = z.object({
   studentJustification: z.string().optional().nullable(),
 });
 
-const problemDraftSchema = z.string().trim().max(500);
-const generalDraftSchema = z.string().trim().max(700);
+const generalDraftSchema = z.string().trim().max(FIELD_LIMITS.objective);
 const specificDraftsSchema = z.array(z.object({
   id: z.string().uuid(),
-  content: z.string().trim().max(700),
+  content: z.string().trim().max(FIELD_LIMITS.objective),
   studentJustification: z.string().trim().max(1_000).nullable().default(null),
 })).max(6);
 
@@ -185,11 +185,11 @@ function draftContent(
     });
   }
 
+  const existing = currentElement(workflow.content, step);
   const value = step === "problem_statement"
-    ? problemDraftSchema.parse(body.content)
+    ? z.string().trim().max(body.action === "validate" ? FIELD_LIMITS.problem : problemDraftLimit(existing?.proposedContent)).parse(body.content)
     : generalDraftSchema.parse(body.content);
   const type = step;
-  const existing = currentElement(workflow.content, type);
 
   return upsertElement(workflow.content, {
     approvedContent: existing?.approvedContent ?? null,

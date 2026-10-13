@@ -1,3 +1,4 @@
+import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
 import "server-only";
 
 import { z } from "zod";
@@ -70,15 +71,15 @@ const broaderResearchQuerySchema = z.object({
 const generatedStructureSchema = z.object({
   chapters: z.array(z.object({
     sections: z.array(z.object({
-      content: z.string(),
+      content: z.string().trim().min(1).max(12_000),
       optional: z.boolean(),
       provenance: z.enum(["briefing", "suggestion", "user"]),
       referenceIds: z.array(z.string()),
-      title: z.string(),
+      title: z.string().trim().min(1).max(160),
     })).min(1).max(8),
   })).length(REQUIRED_CHAPTERS.length),
   title: z.string().trim().min(3).max(80),
-  warnings: z.array(z.string()),
+  warnings: z.array(z.string().trim().min(1).max(500)).max(12),
 });
 
 type GeneratedStructure = z.infer<typeof generatedStructureSchema>;
@@ -88,8 +89,12 @@ const generatedProblemCandidatesSchema = z.object({
 });
 
 const generatedDefinitionSchema = z.object({
-  content: z.string().trim().min(20).max(700),
+  content: z.string().trim().min(20).max(FIELD_LIMITS.objective),
   referenceIds: z.array(z.string().trim().min(1).max(120)).max(12),
+});
+
+const generatedProblemStatementSchema = generatedDefinitionSchema.extend({
+  content: z.string().trim().min(20).max(FIELD_LIMITS.problem),
 });
 
 const generatedSpecificObjectivesSchema = z.object({
@@ -98,38 +103,38 @@ const generatedSpecificObjectivesSchema = z.object({
 
 const generatedChapterTopicsSchema = z.object({
   topics: z.array(z.object({
-    exceptionJustification: z.string().trim().min(10).max(500).nullable(),
+    exceptionJustification: z.string().trim().min(10).max(FIELD_LIMITS.exceptionJustification).nullable(),
     generalObjectiveAligned: z.boolean(),
     objectiveCoverage: z.array(z.object({
       degree: z.enum(["partial", "full"]),
       objectiveId: z.string().uuid(),
     })).max(7),
     referenceIds: z.array(z.string().trim().min(1).max(120)).min(1).max(12),
-    studentJustification: z.string().trim().max(1_000).nullable().default(null),
-    title: z.string().trim().min(3).max(180),
+    studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
+    title: z.string().trim().min(3).max(FIELD_LIMITS.topic),
   })).min(3).max(6),
 });
 
 const generatedMethodologyPlanSchema = z.object({
   classification: z.object({
-    analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+    analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(6),
     approach: z.enum(["Qualitativa", "Quantitativa", "Mista"]),
-    ethicsWarnings: z.array(z.string().trim().min(10).max(400)).max(6),
-    instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+    ethicsWarnings: z.array(z.string().trim().min(10).max(FIELD_LIMITS.ethicsWarning)).max(6),
+    instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
     nature: z.enum(["Básica", "Aplicada"]),
     objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
-    procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
-    rationale: z.string().trim().min(20).max(800),
+    procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
+    rationale: z.string().trim().min(20).max(FIELD_LIMITS.rationale),
   }),
   rows: z.array(z.object({
-    analysisTreatment: z.string().trim().min(20).max(1_200),
+    analysisTreatment: z.string().trim().min(20).max(FIELD_LIMITS.analysisTreatment),
     associatedTopicIds: z.array(z.string().uuid()).max(12),
-    dataCollection: z.string().trim().min(20).max(1_200),
-    expectedResult: z.string().trim().min(20).max(1_000),
+    dataCollection: z.string().trim().min(20).max(FIELD_LIMITS.dataCollection),
+    expectedResult: z.string().trim().min(20).max(FIELD_LIMITS.expectedResult),
     objectiveId: z.string().uuid(),
-    studentJustification: z.string().trim().max(1_000).nullable().default(null),
+    studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
   })).min(3).max(7),
-  title: z.string().trim().min(3).max(240),
+  title: z.string().trim().min(3).max(FIELD_LIMITS.title),
 });
 
 const generatedCoherenceReviewSchema = z.object({
@@ -144,17 +149,17 @@ function normalizeGeneratedStructure(output: GeneratedStructure) {
       id: `chapter-${chapterIndex + 1}`,
       number: chapterIndex + 1,
       sections: chapter.sections.map((section, sectionIndex) => ({
-        content: section.content.trim().slice(0, 12_000),
+        content: section.content.trim(),
         id: `chapter-${chapterIndex + 1}-section-${sectionIndex + 1}`,
         optional: section.optional,
         provenance: section.provenance,
         referenceIds: [...new Set(section.referenceIds.map((referenceId) => referenceId.trim()).filter(Boolean))].slice(0, 12),
-        title: section.title.trim().slice(0, 160),
+        title: section.title.trim(),
       })),
       title: REQUIRED_CHAPTERS[chapterIndex],
     })),
     schemaVersion: RESEARCH_STRUCTURE_SCHEMA_VERSION,
-    title: output.title.trim().slice(0, 80),
+    title: output.title.trim(),
     warnings: output.warnings.map((warning) => warning.trim()).filter(Boolean).slice(0, 12),
   });
 }
@@ -386,7 +391,7 @@ export async function regenerateProblemStatement(
   studentContext: string[] = [],
 ) {
   const { output } = await generateStructured({
-    operation: "regenerate_problem_statement", schema: generatedDefinitionSchema,
+    operation: "regenerate_problem_statement", schema: generatedProblemStatementSchema,
     prompt: [
       "Reescreva uma única problemática de pesquisa em português do Brasil.",
       "Comece exatamente por 'Como' ou 'De que forma' e termine com um único ponto de interrogação.",
@@ -399,7 +404,7 @@ export async function regenerateProblemStatement(
       `Evidências: ${JSON.stringify(compactDiscoveryEvidence(discovery))}`,
     ].join("\n"),
   });
-  const result = generatedDefinitionSchema.parse(output);
+  const result = generatedProblemStatementSchema.parse(output);
   assertDiscoveryReferenceIds(result.referenceIds, discovery);
   return result;
 }

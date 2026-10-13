@@ -927,12 +927,8 @@ test("keeps methodology controls responsive and reference-aware", async () => {
   assert.match(workspace, /referenceText\(reference\)/);
   assert.match(workspace, /METHODOLOGY_HELP/);
   assert.match(workspace, /data-methodology-help/);
-  assert.match(workspace, /function ethicsTextToList/);
-  assert.match(workspace, /cleaned\.some\(\(item\) => item\.length < 10\)/);
-  assert.match(workspace, /return cleaned\.join\(", "\)/);
-  assert.match(workspace, /ethicsWarnings: ethicsTextToList\(ethicsText\)/);
+  assert.match(workspace, /ethicsWarnings: parseClassificationList\(ethicsText\)/);
   assert.match(workspace, /Avisos éticos ou de acesso<textarea/);
-  assert.doesNotMatch(workspace, /ethicsWarnings: textToList\(ethicsText\)/);
   assert.match(workspace, /clearValidationErrors/);
   assert.match(workspace, /blockingMessages/);
   assert.match(workspace, /warningFindings/);
@@ -1423,16 +1419,18 @@ test("keeps discovery and video on the canonical root with a dedicated public st
     readFile(new URL("../public/brand/mapa-da-pesquisa-social-card.png", import.meta.url)),
   ]);
 
+  const player = await readProjectFile("modules/landing/presentation-video.tsx");
   assert.match(roadmap, /081 \| Vídeo de apresentação na landing page \| Concluída/);
   assert.doesNotMatch(landing, /PublicStartForm/);
   assert.match(landing, /href="\/mapa"/);
   assert.match(landing, /id="criar-mapa"/);
   assert.match(landing, /id="apresentacao"/);
-  assert.match(landing, /<video/);
-  assert.match(landing, /preload="none"/);
-  assert.match(landing, /playsInline/);
-  assert.match(landing, /mapa-da-pesquisa-apresentacao\.mp4/);
-  assert.match(landing, /mapa-da-pesquisa-apresentacao-poster\.webp/);
+  assert.match(landing, /<PresentationVideo/);
+  assert.match(player, /<video/);
+  assert.match(player, /preload="none"/);
+  assert.match(player, /playsInline/);
+  assert.match(player, /mapa-da-pesquisa-apresentacao\.mp4/);
+  assert.match(player, /mapa-da-pesquisa-apresentacao-poster\.webp/);
   assert.match(landing, /"@type": "WebApplication"/);
   assert.match(landing, /price: 0/);
   assert.match(landing, /priceCurrency: "BRL"/);

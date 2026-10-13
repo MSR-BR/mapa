@@ -1207,3 +1207,11 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .workflow-assistance ul { padding-left: 1.25rem; margin: 1rem 0 0; }
 .field-issue-link { padding: .35rem 0; text-align: left; text-decoration: underline; background: none; border: 0; color: #20583f; cursor: pointer; }
 .workflow-assistance :focus-visible, .methodology-workspace :is(input,textarea,select):focus-visible { outline: 2px solid #176b4d; outline-offset: 3px; }
+
+.landing-video-speeds { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.5rem; }
+.landing-video-speeds span { color:var(--muted); font-size:.9rem; }
+.landing-video-speeds button { min-width:3rem; min-height:2.75rem; padding:.4rem .65rem; border:1px solid var(--accent); border-radius:999px; background:var(--surface); color:var(--accent); font:inherit; font-weight:700; cursor:pointer; }
+.landing-video-speeds button[aria-pressed="true"] { background:var(--accent); color:white; }
+.landing-video-speeds button:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+
+.methodology-classification > .methodology-list-help { grid-column:1 / -1; margin:0; color:var(--muted); font-size:.85rem; line-height:1.5; }

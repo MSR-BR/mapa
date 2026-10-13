@@ -1,3 +1,4 @@
+import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 
 import type { ChapterTopicInput } from "./chapter-validation";
@@ -14,11 +15,11 @@ export const methodologyClassificationInputSchema = methodologyClassificationSch
   status: true,
   updatedBy: true,
 }).extend({
-  analysisTechniques: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
-  instruments: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
+  analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(6),
+  instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
   objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
-  procedures: z.array(z.string().trim().min(2).max(120)).min(1).max(8),
-  rationale: z.string().trim().min(3).max(800),
+  procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
+  rationale: z.string().trim().min(3).max(FIELD_LIMITS.rationale),
 });
 
 export const methodologyRowInputSchema = methodologyRowSchema.omit({
@@ -28,15 +29,15 @@ export const methodologyRowInputSchema = methodologyRowSchema.omit({
   updatedBy: true,
   warnings: true,
 }).extend({
-  analysisTreatment: z.string().trim().min(3).max(1_200),
-  dataCollection: z.string().trim().min(3).max(1_200),
-  expectedResult: z.string().trim().min(3).max(1_000),
-  studentJustification: z.string().trim().max(1_000).nullable().default(null),
+  analysisTreatment: z.string().trim().min(3).max(FIELD_LIMITS.analysisTreatment),
+  dataCollection: z.string().trim().min(3).max(FIELD_LIMITS.dataCollection),
+  expectedResult: z.string().trim().min(3).max(FIELD_LIMITS.expectedResult),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
   warnings: z.array(z.string().trim().min(1).max(500)).max(6).default([]),
 });
 
 export const FINAL_TITLE_RECOMMENDED_LENGTH = 120;
-export const FINAL_TITLE_MAX_LENGTH = 240;
+export const FINAL_TITLE_MAX_LENGTH = FIELD_LIMITS.title;
 
 export const methodologyPlanInputSchema = z.object({
   classification: methodologyClassificationInputSchema,
