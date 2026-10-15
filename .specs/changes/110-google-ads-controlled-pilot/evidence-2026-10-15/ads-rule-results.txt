@@ -1,0 +1,385 @@
+Browser tab: 6, Title: "Results - MSR-BR - Google Ads", URL: "https://ads.google.com/aw/bulk/rules/executions?ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2".
+0 AXWebArea Results - MSR-BR - Google Ads, URL: ads.google.com/aw/bulk/rules/executions?ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2
+	1 container
+		2 container
+			3 container
+				4 heading 1
+					5 image
+				6 container
+					7 container a2FE87858-E081-4102-8FAC-53D96F212D1A--1
+						8 container
+							9 text "What are my biggest opportunities for growth right now?"
+							10 combo box (collapsed, settable) Description: "What are my biggest opportunities for growth right now?", ID: a53CB95D0-E596-4636-AA67-72F59F8FB16E--0, Secondary Actions: Expand
+				11 button Appearance
+					12 text Appearance
+				13 button Refresh
+					14 text Refresh
+				15 button Help
+					16 text Help
+				17 container notificationsBellPortal
+					18 pop up button Notifications
+						19 container
+							20 text Notifications
+					183 container Description: Notifications, ID: a5197C0FB-E40B-4B36-A5A2-34029A06E898--4
+						184 container
+							185 container Informational notification icon
+							186 button Get 196.00% more clicks with the right spend View
+								187 text Get 196.00% more clicks with the right spend
+								188 text View
+							189 container Warning notification icon
+							190 button Protect your account from unauthorized activity View
+								191 text Protect your account from unauthorized activity
+								192 text View
+							193 button Close notifications
+				32 button Ask Advisor BETA
+					33 container
+						34 text Ask Advisor BETA
+				35 button Google account
+					36 image Google account (mario.reis.junior@gmail.com)
+			37 container
+				38 container
+					39 button Create
+					40 text Create
+					41 menu
+						42 Campaigns
+							43 text Campaigns
+						44 Goals
+							45 text Goals
+						46 Tools
+							47 text Tools
+						48 Billing
+							49 text Billing
+						50 Admin
+							51 text Admin
+					52 button Collapse
+					53 menu
+						54 Asset studio
+							55 text Asset studio
+						56 (collapsed) Planning, Secondary Actions: Expand
+							57 text Planning
+						58 App advertising hub
+							59 text App advertising hub
+						60 (collapsed) Shared library, Secondary Actions: Expand
+							61 text Shared library
+						62 YouTube creator partnerships BETA, Help: YouTube creator partnerships
+							63 text YouTube creator partnerships
+							64 text BETA
+						65 Content suitability
+							66 text Content suitability
+						67 Data manager
+							68 text Data manager
+						69 (collapsed) Troubleshooting, Secondary Actions: Expand
+							70 text Troubleshooting
+						71 (expanded) Bulk actions, Secondary Actions: Collapse
+							72 text Bulk actions
+						73 container
+							74 All bulk actions
+								75 text All bulk actions
+							76 Rules
+								77 text Rules
+							78 Scripts
+								79 text Scripts
+							80 Solutions
+								81 text Solutions
+							82 Uploads
+								83 text Uploads
+						84 (collapsed) Budgets and bidding, Secondary Actions: Expand
+							85 text Budgets and bidding
+						86 Business data
+							87 text Business data
+				89 heading Rules, Value: 2, ID: aF8DB9B46-16AB-4E25-A97B-85506A6D8F9D--0
+					90 text Rules
+				165 container
+					166 container
+						167 text All time
+						168 pop up button (collapsed) Description: Feb 20, 2025 – Oct 15, 2026 Not applicable, ID: a611D1BD4-47C4-4B5B-B0EC-4F4FC12783EC--2, Secondary Actions: Expand
+						169 button (disabled) Previous
+						170 button (disabled) Next
+					171 button Show last 30 days
+				92 tab group
+					93 tab (selectable, settable, boolean) Description: Automated rules, Value: 0, ID: navigation.tools.bulkActions.rules.automatedRules
+					94 tab (selected, settable, boolean) Description: Results, Value: 1, ID: navigation.tools.bulkActions.rules.results
+					95 tab (selectable, settable, boolean) Description: Version history, Value: 0, ID: navigation.tools.bulkActions.rules.versionHistory
+				96 container
+					172 container
+						173 text The history of bulk actions (edits, rules, and uploads) are now only visible based on the account you're signed into. Scripts and Solutions are still visible based on the account you're drilled into.
+						174 link Description: Learn more about bulk actions with a manager account, Value: support.google.com/google-ads/answer/9254269?hl=en_US
+					175 container Primary toolbelt for Results
+						176 container
+							177 table
+							178 button Add filter
+						179 container
+							180 button Expand
+								181 text Expand
+					182 table Results
+						194 row Rule name User / Date & time Status Description Changes Actions Rule ID Duration (seconds)
+							195 cell
+								196 text Rule name
+							197 cell
+								198 text User / Date & time
+							199 cell
+								200 text Status
+							201 cell
+								202 text Description
+							203 cell
+								204 text Changes
+							205 cell
+								206 text Actions
+							207 cell
+								208 text Rule ID
+							209 cell
+								210 text Duration (seconds)
+						211 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 6:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5
+							212 cell
+								213 link Mapa | Pausa por custo EUR28 | C110
+									214 text Mapa | Pausa por custo EUR28 | C110
+							215 cell
+								216 text mario.reis.junior@gmail.com
+								217 container
+									218 text Oct 15, 2026 6:16:10 AM (GMT-03:00) São Paulo Time
+							219 cell
+								220 text Finished successfully
+							221 cell
+								222 container
+									223 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							224 cell
+								225 text No changes
+							226 cell
+							227 cell
+								228 text 62128225
+							229 cell
+								230 text 5
+						231 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 5:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6
+							232 cell
+								233 link Mapa | Pausa por custo EUR28 | C110
+									234 text Mapa | Pausa por custo EUR28 | C110
+							235 cell
+								236 text mario.reis.junior@gmail.com
+								237 container
+									238 text Oct 15, 2026 5:16:10 AM (GMT-03:00) São Paulo Time
+							239 cell
+								240 text Finished successfully
+							241 cell
+								242 container
+									243 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							244 cell
+								245 text No changes
+							246 cell
+							247 cell
+								248 text 62128225
+							249 cell
+								250 text 6
+						251 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 4:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6
+							252 cell
+								253 link Mapa | Pausa por custo EUR28 | C110
+									254 text Mapa | Pausa por custo EUR28 | C110
+							255 cell
+								256 text mario.reis.junior@gmail.com
+								257 container
+									258 text Oct 15, 2026 4:16:10 AM (GMT-03:00) São Paulo Time
+							259 cell
+								260 text Finished successfully
+							261 cell
+								262 container
+									263 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							264 cell
+								265 text No changes
+							266 cell
+							267 cell
+								268 text 62128225
+							269 cell
+								270 text 6
+						271 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 3:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5
+							272 cell
+								273 link Mapa | Pausa por custo EUR28 | C110
+									274 text Mapa | Pausa por custo EUR28 | C110
+							275 cell
+								276 text mario.reis.junior@gmail.com
+								277 container
+									278 text Oct 15, 2026 3:16:10 AM (GMT-03:00) São Paulo Time
+							279 cell
+								280 text Finished successfully
+							281 cell
+								282 container
+									283 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							284 cell
+								285 text No changes
+							286 cell
+							287 cell
+								288 text 62128225
+							289 cell
+								290 text 5
+						291 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 2:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5
+							292 cell
+								293 link Mapa | Pausa por custo EUR28 | C110
+									294 text Mapa | Pausa por custo EUR28 | C110
+							295 cell
+								296 text mario.reis.junior@gmail.com
+								297 container
+									298 text Oct 15, 2026 2:16:10 AM (GMT-03:00) São Paulo Time
+							299 cell
+								300 text Finished successfully
+							301 cell
+								302 container
+									303 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							304 cell
+								305 text No changes
+							306 cell
+							307 cell
+								308 text 62128225
+							309 cell
+								310 text 5
+						311 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 1:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6
+							312 cell
+								313 link Mapa | Pausa por custo EUR28 | C110
+									314 text Mapa | Pausa por custo EUR28 | C110
+							315 cell
+								316 text mario.reis.junior@gmail.com
+								317 container
+									318 text Oct 15, 2026 1:16:10 AM (GMT-03:00) São Paulo Time
+							319 cell
+								320 text Finished successfully
+							321 cell
+								322 container
+									323 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							324 cell
+								325 text No changes
+							326 cell
+							327 cell
+								328 text 62128225
+							329 cell
+								330 text 6
+						331 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 15, 2026 12:16:10 AM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6
+							332 cell
+								333 link Mapa | Pausa por custo EUR28 | C110
+									334 text Mapa | Pausa por custo EUR28 | C110
+							335 cell
+								336 text mario.reis.junior@gmail.com
+								337 container
+									338 text Oct 15, 2026 12:16:10 AM (GMT-03:00) São Paulo Time
+							339 cell
+								340 text Finished successfully
+							341 cell
+								342 container
+									343 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							344 cell
+								345 text No changes
+							346 cell
+							347 cell
+								348 text 62128225
+							349 cell
+								350 text 6
+						351 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 14, 2026 11:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5
+							352 cell
+								353 link Mapa | Pausa por custo EUR28 | C110
+									354 text Mapa | Pausa por custo EUR28 | C110
+							355 cell
+								356 text mario.reis.junior@gmail.com
+								357 container
+									358 text Oct 14, 2026 11:16:10 PM (GMT-03:00) São Paulo Time
+							359 cell
+								360 text Finished successfully
+							361 cell
+								362 container
+									363 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							364 cell
+								365 text No changes
+							366 cell
+							367 cell
+								368 text 62128225
+							369 cell
+								370 text 5
+						371 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 14, 2026 10:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 6
+							372 cell
+								373 link Mapa | Pausa por custo EUR28 | C110
+									374 text Mapa | Pausa por custo EUR28 | C110
+							375 cell
+								376 text mario.reis.junior@gmail.com
+								377 container
+									378 text Oct 14, 2026 10:16:10 PM (GMT-03:00) São Paulo Time
+							379 cell
+								380 text Finished successfully
+							381 cell
+								382 container
+									383 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							384 cell
+								385 text No changes
+							386 cell
+							387 cell
+								388 text 62128225
+							389 cell
+								390 text 6
+						391 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 14, 2026 9:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 5
+							392 cell
+								393 link Mapa | Pausa por custo EUR28 | C110
+									394 text Mapa | Pausa por custo EUR28 | C110
+							395 cell
+								396 text mario.reis.junior@gmail.com
+								397 container
+									398 text Oct 14, 2026 9:16:10 PM (GMT-03:00) São Paulo Time
+							399 cell
+								400 text Finished successfully
+							401 cell
+								402 container
+									403 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							404 cell
+								405 text No changes
+							406 cell
+							407 cell
+								408 text 62128225
+							409 cell
+								410 text 5
+						411 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 14, 2026 8:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4
+							412 cell
+								413 link Mapa | Pausa por custo EUR28 | C110
+									414 text Mapa | Pausa por custo EUR28 | C110
+							415 cell
+								416 text mario.reis.junior@gmail.com
+								417 container
+									418 text Oct 14, 2026 8:16:10 PM (GMT-03:00) São Paulo Time
+							419 cell
+								420 text Finished successfully
+							421 cell
+								422 container
+									423 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							424 cell
+								425 text No changes
+							426 cell
+							427 cell
+								428 text 62128225
+							429 cell
+								430 text 4
+						431 row Mapa | Pausa por custo EUR28 | C110 mario.reis.junior@gmail.com Oct 14, 2026 7:16:10 PM (GMT-03:00) São Paulo Time Finished successfully Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign No changes 62128225 4
+							432 cell
+								433 link Mapa | Pausa por custo EUR28 | C110
+									434 text Mapa | Pausa por custo EUR28 | C110
+							435 cell
+								436 text mario.reis.junior@gmail.com
+								437 container
+									438 text Oct 14, 2026 7:16:10 PM (GMT-03:00) São Paulo Time
+							439 cell
+								440 text Finished successfully
+							441 cell
+								442 container
+									443 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							444 cell
+								445 text No changes
+							446 cell
+							447 cell
+								448 text 62128225
+							449 cell
+								450 text 4
+					451 text Show rows:
+					452 pop up button (collapsed) Description: Show rows: 30 selected., ID: a5C6E618D-7C05-4404-B7C1-74CFDA74C388--0, Secondary Actions: Expand
+					453 text 1 - 30 of 210
+					454 button (disabled) Go to the first page
+					455 button (disabled) Go to the previous page
+					456 button Go to the next page
+					457 button Go to the last page
+					160 text © Google, 2026.
+		161 container default-acx-overlay-container
+			162 container dialog
+			164 container dialog
+		163 container dialog
+
+The focused UI element is 94 tab (selected, settable, boolean) Description: Results, Value: 1, ID: navigation.tools.bulkActions.rules.results

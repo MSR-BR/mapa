@@ -1,0 +1,448 @@
+{
+  "source": "authenticated_connector_APIs_browser_and_Vercel_CLI",
+  "campaign_id": "24325133699",
+  "customer_id": "383-835-9068",
+  "ads": {
+    "status": "ENABLED",
+    "eligibility": "ELIGIBLE",
+    "primary_status_reasons": [],
+    "currency": "EUR",
+    "timezone": "America/Sao_Paulo",
+    "average_daily_budget": 2,
+    "max_cpc": 0.3,
+    "strategy": "MAXIMIZE_CLICKS",
+    "end_at_local": "2026-10-19T23:59:59-03:00",
+    "search_partners": false,
+    "display": false,
+    "all_time": {
+      "impressions": 3,
+      "clicks": 0,
+      "cost": 0,
+      "conversions": 0
+    },
+    "yesterday": {
+      "date": "2026-10-14",
+      "impressions": 0,
+      "clicks": 0,
+      "cost": 0
+    },
+    "today": {
+      "date": "2026-10-15",
+      "partial": true,
+      "impressions": 0,
+      "clicks": 0,
+      "cost": 0
+    },
+    "zero_day_note": "GAQL omits zero rows. Only October 6, 7 and 9 have one impression each; missing dates reconcile to all-time total. Current day and reported metrics subject to processing latency.",
+    "new_ad": {
+      "id": "827659065358",
+      "status": "ENABLED",
+      "policy": "APPROVED",
+      "eligibility": "ELIGIBLE",
+      "impressions": 0
+    },
+    "previous_ad": {
+      "id": "827109934468",
+      "status": "PAUSED"
+    },
+    "enabled_approved_eligible_keywords": 6,
+    "paused_keywords": 4,
+    "negative_phrase_keywords": 17,
+    "quality": {
+      "keyword": "projeto de pesquisa",
+      "score": 2,
+      "ad_relevance": "AVERAGE",
+      "landing_page_experience": "BELOW_AVERAGE",
+      "expected_ctr": "BELOW_AVERAGE",
+      "components_reread_on": "2026-10-15",
+      "policy_violation": false
+    },
+    "goal": {
+      "level": "CAMPAIGN",
+      "custom_goal_id": "6459352879",
+      "name": "Mapa | Projeto iniciado",
+      "status": "ENABLED",
+      "conversion_action_ids": [
+        "7825220596"
+      ]
+    },
+    "rule": {
+      "id": "62128225",
+      "status": "ENABLED",
+      "frequency": "HOURLY",
+      "window": "ALL_TIME",
+      "cost_threshold_eur": 28,
+      "selected_campaign_count": 1,
+      "last_observed_success_at": "2026-10-15T06:16:10-03:00",
+      "result": "NO_CHANGES",
+      "duration_seconds": 5,
+      "threshold_pause_exercised": false,
+      "strict_instant_cap": false
+    },
+    "optimization": {
+      "first_full_eligibility_observed_at": "2026-10-12T06:03:09-03:00",
+      "review_after": "2026-10-15T06:03:09-03:00",
+      "window_complete": true,
+      "improvement_verified": false,
+      "reviewed_at": "2026-10-15T06:06:15-03:00",
+      "post_observation_date_window": {
+        "start": "2026-10-12",
+        "end": "2026-10-15",
+        "end_partial": true,
+        "impressions": 0,
+        "clicks": 0,
+        "cost_eur": 0,
+        "conversions": 0,
+        "search_share_raw": 0.0999,
+        "search_share_interpretation": "less than 10%",
+        "rank_lost_share_raw": 0.9001,
+        "rank_lost_share_interpretation": "more than 90%",
+        "budget_lost_share": 0,
+        "note": "Date window includes October 12 hours before first eligibility observation. Not an exact hourly cohort; estimates are rounded/censored and lagged."
+      }
+    },
+    "keyword_status_limit": "All six system_serving_status ELIGIBLE and APPROVED. For projeto de pesquisa, primary_status is UNKNOWN and connector reason [11] is not decoded; do not infer a separate policy status from that value.",
+    "cpc_proposal": {
+      "status": "PENDING_EXPLICIT_AUTHORIZATION_NOT_APPLIED",
+      "from_eur": 0.3,
+      "to_eur": 0.45,
+      "duration_hours": 72,
+      "evidence": "cpc-test-proposal-2026-10-15.md"
+    }
+  },
+  "observed_on": "2026-10-15",
+  "observed_at": "2026-10-15T09:12:53.481689+00:00",
+  "heartbeat_received_at": "2026-10-15T08:58:27.397Z",
+  "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS_PROPOSE_CPC_TEST",
+  "human_action_required": true,
+  "human_action_scope": "Only to approve the separate CPC test; current authorized pilot continues.",
+  "ads_configuration_changes": [],
+  "production_changes": [],
+  "automation_changes": [
+    "Update evidence and pending proposal; preserve schedule, status and financial guardrails."
+  ],
+  "ga4": {
+    "property_id": "550650234",
+    "timezone": "America/Rio_Branco",
+    "currency": "BRL",
+    "settings_changed": false,
+    "reports": [
+      {
+        "date": "20261010",
+        "totals": {
+          "sessions": 13,
+          "events": 373,
+          "project_start": 12
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 7,
+            "events": 168,
+            "project_start": 7,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 4,
+            "events": 126,
+            "project_start": 1,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "(not set)",
+            "sessions": 1,
+            "events": 76,
+            "project_start": 4,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 1,
+            "events": 3,
+            "project_start": 0,
+            "excluded_qa": true,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum": 13,
+        "session_row_sum_matches_total": true,
+        "not_set_present": true,
+        "final_processing_verified": false
+      },
+      {
+        "date": "20261011",
+        "totals": {
+          "sessions": 14,
+          "events": 117,
+          "project_start": 1
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 7,
+            "events": 40,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 3,
+            "events": 63,
+            "project_start": 1,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 2,
+            "events": 7,
+            "project_start": 0,
+            "excluded_qa": true,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "(not set)",
+            "sessions": 1,
+            "events": 3,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "accounts.google.com / referral",
+            "sessions": 1,
+            "events": 4,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum": 14,
+        "session_row_sum_matches_total": true,
+        "not_set_present": true,
+        "final_processing_verified": false
+      },
+      {
+        "date": "20261012",
+        "totals": {
+          "sessions": 11,
+          "events": 145,
+          "project_start": 3
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 8,
+            "events": 98,
+            "project_start": 2,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 2,
+            "events": 44,
+            "project_start": 1,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 1,
+            "events": 3,
+            "project_start": 0,
+            "excluded_qa": true,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum": 11,
+        "session_row_sum_matches_total": true,
+        "not_set_present": false,
+        "final_processing_verified": false
+      },
+      {
+        "date": "20261013",
+        "totals": {
+          "sessions": 7,
+          "events": 80,
+          "project_start": 1
+        },
+        "rows": [
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 4,
+            "events": 24,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "codex_validation / qa",
+            "sessions": 2,
+            "events": 6,
+            "project_start": 0,
+            "excluded_qa": true,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "scanned.page / referral",
+            "sessions": 1,
+            "events": 50,
+            "project_start": 1,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum": 7,
+        "session_row_sum_matches_total": true,
+        "not_set_present": false,
+        "final_processing_verified": false
+      },
+      {
+        "date": "20261014",
+        "totals": {
+          "sessions": 7,
+          "events": 28,
+          "project_start": 0
+        },
+        "rows": [
+          {
+            "source_medium": "(not set)",
+            "sessions": 4,
+            "events": 10,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "(direct) / (none)",
+            "sessions": 3,
+            "events": 13,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          },
+          {
+            "source_medium": "google / organic",
+            "sessions": 1,
+            "events": 5,
+            "project_start": 0,
+            "excluded_qa": false,
+            "external_acquisition_verified": false
+          }
+        ],
+        "session_row_sum": 8,
+        "session_row_sum_matches_total": false,
+        "not_set_present": true,
+        "final_processing_verified": false
+      }
+    ],
+    "paid_conversion_verified": false,
+    "google_cpc_rows": 0,
+    "internal_segmentation_complete": false,
+    "attribution_reconciled": false,
+    "limitations": [
+      "QA rows excluded from acquisition evaluation. Direct and referral may contain internal use.",
+      "Event counts are not unique people or verified unique persisted projects.",
+      "GA4 and Ads daily windows and currencies differ.",
+      "October 14 source rows sum to 8 sessions versus 7 total; processing/attribution remains incomplete."
+    ]
+  },
+  "diagnostics": {
+    "window": [
+      "2026-10-12",
+      "2026-10-14"
+    ],
+    "failures": [
+      {
+        "date": "20261013",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261014",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "2"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "1"
+      }
+    ],
+    "generation_failed_rows": 0,
+    "export_pdf_failed_rows": 0,
+    "cause_confirmed": false,
+    "unique_affected_users_known": false,
+    "application_version_in_events": false,
+    "current_systemic_failure_proven": false,
+    "code_note": "methodology-workspace.tsx catch emits provider_invalid_response for any caught request/JSON/HTTP or missing-workflow error; does not identify provider or cause.",
+    "historical_logs": {
+      "start": "2026-10-14T05:00:00Z",
+      "end": "2026-10-15T05:00:00Z",
+      "result": "HTTP_400",
+      "cause_or_retention_confirmed": false
+    },
+    "recent_error_logs": {
+      "window": "30 minutes preceding query around 2026-10-15T09:08Z",
+      "command_exit": 0,
+      "rows": 0,
+      "historical_failure_refuted": false
+    },
+    "followup_required": true
+  },
+  "site": {
+    "health": {
+      "checks": {
+        "openai": "configured",
+        "gemini": "configured",
+        "resend": "configured",
+        "researchStarter": "configured",
+        "supabase": "configured"
+      },
+      "service": "mapa-da-pesquisa",
+      "status": "ok",
+      "version": "v13102026.1"
+    },
+    "landing_version": "v13102026.1",
+    "functional_commit": "32e33e223c283cf7f672536bca35c8937df226da",
+    "deployment": "dpl_B8kvePR8p3Qj44JqyXyX5Su8j8po",
+    "qa_campaign": "c110_monitor_20261015",
+    "cta_navigated_to": "/mapa",
+    "advanced_initial_state": "collapsed",
+    "quick_initial_state": "expanded",
+    "consent_ui": {
+      "metrics": true,
+      "advertising": false,
+      "ad_personalization": false,
+      "saved": false
+    },
+    "generation_triggered": false,
+    "analytics_code_diff_since_c110": false,
+    "new_event_payload_or_realtime_inspection": false
+  },
+  "preservation": {
+    "termo_modified": false,
+    "other_account_completed_or_funded": false,
+    "paid_generation_calls": false,
+    "keys_or_environment_changed": false,
+    "code_changed": false,
+    "deploy_performed": false,
+    "c097_modified": false
+  },
+  "evidence_directory": "evidence-2026-10-15"
+}

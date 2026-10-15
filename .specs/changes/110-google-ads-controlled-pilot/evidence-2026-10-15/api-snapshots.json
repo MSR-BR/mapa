@@ -1,0 +1,1895 @@
+{
+  "observed_on": "2026-10-15",
+  "collected_between_utc": [
+    "2026-10-15T08:59:00Z",
+    "2026-10-15T09:06:15Z"
+  ],
+  "unit_note": "HYPD normalizes micros to EUR values in metrics__cost, campaign_budget__amount and cpc_bid_ceiling. Do not divide these outputs by 1e6.",
+  "raw_gaql_sentinel_note": "0.0999 means <10% share; 0.9001 means >90% lost share.",
+  "responses": {
+    "campaign": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "campaign__id",
+          "campaign__name",
+          "campaign__status",
+          "campaign__primary_status",
+          "campaign__primary_status_reasons",
+          "campaign__start_date_time",
+          "campaign__end_date_time",
+          "campaign_budget__amount",
+          "campaign__bidding_strategy_type",
+          "campaign__target_spend__cpc_bid_ceiling",
+          "campaign__network_settings__target_google_search",
+          "campaign__network_settings__target_search_network",
+          "campaign__network_settings__target_content_network",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions",
+          "metrics__search_impression_share",
+          "metrics__search_rank_lost_impression_share",
+          "metrics__search_budget_lost_impression_share"
+        ],
+        "rows": [
+          {
+            "campaign__id": 24325133699,
+            "campaign__name": "Mapa | Search | BR | Ativacao | Piloto",
+            "campaign__status": "ENABLED",
+            "campaign__primary_status": "ELIGIBLE",
+            "campaign__primary_status_reasons": "[]",
+            "campaign__start_date_time": "2026-10-06 13:44:02",
+            "campaign__end_date_time": "2026-10-19 23:59:59",
+            "campaign_budget__amount": 2,
+            "campaign__bidding_strategy_type": "TARGET_SPEND",
+            "campaign__target_spend__cpc_bid_ceiling": 0.3,
+            "campaign__network_settings__target_google_search": true,
+            "campaign__network_settings__target_search_network": false,
+            "campaign__network_settings__target_content_network": false,
+            "metrics__impressions": 3,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__search_impression_share": 0.0999,
+            "metrics__search_rank_lost_impression_share": 0.6928571428571428,
+            "metrics__search_budget_lost_impression_share": 0.2857142857142857
+          }
+        ]
+      }
+    },
+    "daily": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "segments__date",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "segments__date": "2026-10-06",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "segments__date": "2026-10-07",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "segments__date": "2026-10-09",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "ads": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "ad_group__id",
+          "ad_group_ad__ad__id",
+          "ad_group_ad__status",
+          "ad_group_ad__primary_status",
+          "ad_group_ad__policy_summary__approval_status",
+          "ad_group_ad__policy_summary__review_status",
+          "ad_group_ad__ad__final_urls",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "ad_group__id": 199190407125,
+            "ad_group_ad__ad__id": 827109934468,
+            "ad_group_ad__status": "PAUSED",
+            "ad_group_ad__primary_status": "PAUSED",
+            "ad_group_ad__policy_summary__approval_status": "APPROVED",
+            "ad_group_ad__policy_summary__review_status": "REVIEWED",
+            "ad_group_ad__ad__final_urls": "[\"https://mapadapesquisa.com.br/\"]",
+            "metrics__impressions": 3,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group_ad__ad__id": 827659065358,
+            "ad_group_ad__status": "ENABLED",
+            "ad_group_ad__primary_status": "ELIGIBLE",
+            "ad_group_ad__policy_summary__approval_status": "APPROVED",
+            "ad_group_ad__policy_summary__review_status": "REVIEWED",
+            "ad_group_ad__ad__final_urls": "[\"https://mapadapesquisa.com.br/\"]",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "keywords": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "ad_group_criterion__criterion_id",
+          "ad_group_criterion__keyword__text",
+          "ad_group_criterion__keyword__match_type",
+          "ad_group_criterion__status",
+          "ad_group_criterion__primary_status",
+          "ad_group_criterion__primary_status_reasons",
+          "ad_group_criterion__approval_status",
+          "ad_group_criterion__quality_info__quality_score",
+          "ad_group_criterion__quality_info__creative_quality_score",
+          "ad_group_criterion__quality_info__post_click_quality_score",
+          "ad_group_criterion__quality_info__search_predicted_ctr",
+          "ad_group_criterion__position_estimates__first_page_cpc",
+          "ad_group_criterion__position_estimates__top_of_page_cpc",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost"
+        ],
+        "rows": [
+          {
+            "ad_group_criterion__criterion_id": 305088182391,
+            "ad_group_criterion__keyword__text": "projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "UNKNOWN",
+            "ad_group_criterion__primary_status_reasons": "[11]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": 2,
+            "ad_group_criterion__quality_info__creative_quality_score": "AVERAGE",
+            "ad_group_criterion__quality_info__post_click_quality_score": "BELOW_AVERAGE",
+            "ad_group_criterion__quality_info__search_predicted_ctr": "BELOW_AVERAGE",
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 2,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 328402457250,
+            "ad_group_criterion__keyword__text": "como fazer um projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "ELIGIBLE",
+            "ad_group_criterion__primary_status_reasons": "[]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 388493401167,
+            "ad_group_criterion__keyword__text": "pré projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "ELIGIBLE",
+            "ad_group_criterion__primary_status_reasons": "[]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 442770938605,
+            "ad_group_criterion__keyword__text": "estrutura projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "ELIGIBLE",
+            "ad_group_criterion__primary_status_reasons": "[]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 658730575617,
+            "ad_group_criterion__keyword__text": "ferramenta para tcc",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "ELIGIBLE",
+            "ad_group_criterion__primary_status_reasons": "[]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 1743497671437,
+            "ad_group_criterion__keyword__text": "planejar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__primary_status": "PAUSED",
+            "ad_group_criterion__primary_status_reasons": "[17, 10]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 2558635152127,
+            "ad_group_criterion__keyword__text": "criar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__primary_status": "PAUSED",
+            "ad_group_criterion__primary_status_reasons": "[17, 10]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 2558635152167,
+            "ad_group_criterion__keyword__text": "organizar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__primary_status": "PAUSED",
+            "ad_group_criterion__primary_status_reasons": "[17, 10]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 2558635153087,
+            "ad_group_criterion__keyword__text": "projeto de pesquisa com ia",
+            "ad_group_criterion__keyword__match_type": "PHRASE",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__primary_status": "ELIGIBLE",
+            "ad_group_criterion__primary_status_reasons": "[]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          },
+          {
+            "ad_group_criterion__criterion_id": 2558635153167,
+            "ad_group_criterion__keyword__text": "ferramenta projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "PHRASE",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__primary_status": "PAUSED",
+            "ad_group_criterion__primary_status_reasons": "[17, 10]",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null,
+            "ad_group_criterion__position_estimates__first_page_cpc": null,
+            "ad_group_criterion__position_estimates__top_of_page_cpc": null,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0
+          }
+        ]
+      }
+    },
+    "terms": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "search_term_view__search_term",
+          "search_term_view__status",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "search_term_view__search_term": "criador de tcc",
+            "search_term_view__status": "NONE",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "search_term_view__search_term": "projeto de pesquisa",
+            "search_term_view__status": "ADDED",
+            "metrics__impressions": 2,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "negatives": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "campaign_criterion__criterion_id",
+          "campaign_criterion__keyword__text",
+          "campaign_criterion__keyword__match_type"
+        ],
+        "rows": [
+          {
+            "campaign_criterion__criterion_id": 253730190,
+            "campaign_criterion__keyword__text": "mapa astral",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 552372089,
+            "campaign_criterion__keyword__text": "trabalho pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 1523076754,
+            "campaign_criterion__keyword__text": "trabalhos prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 296626826376,
+            "campaign_criterion__keyword__text": "tcc pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 301454779889,
+            "campaign_criterion__keyword__text": "monografia pronta",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 303965254707,
+            "campaign_criterion__keyword__text": "mapa do brasil",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 308899256601,
+            "campaign_criterion__keyword__text": "comprar monografia",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 308899256761,
+            "campaign_criterion__keyword__text": "comprar tcc",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 314462370886,
+            "campaign_criterion__keyword__text": "projetos de pesquisa prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 321455895082,
+            "campaign_criterion__keyword__text": "pré projeto pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 325374771255,
+            "campaign_criterion__keyword__text": "projeto de pesquisa pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 334708859165,
+            "campaign_criterion__keyword__text": "comprar projeto",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 335137093153,
+            "campaign_criterion__keyword__text": "mapa geográfico",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 336076587998,
+            "campaign_criterion__keyword__text": "mapa geografico",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 358601643805,
+            "campaign_criterion__keyword__text": "tcc prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 358871358879,
+            "campaign_criterion__keyword__text": "mapa rodoviário",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          },
+          {
+            "campaign_criterion__criterion_id": 2424311645730,
+            "campaign_criterion__keyword__text": "tcc para copiar",
+            "campaign_criterion__keyword__match_type": "PHRASE"
+          }
+        ]
+      }
+    },
+    "post_eligibility": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions",
+          "metrics__search_impression_share",
+          "metrics__search_rank_lost_impression_share",
+          "metrics__search_budget_lost_impression_share"
+        ],
+        "rows": [
+          {
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__search_impression_share": 0.0999,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          }
+        ]
+      }
+    },
+    "goal": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "conversion_goal_campaign_config__campaign",
+          "conversion_goal_campaign_config__goal_config_level",
+          "conversion_goal_campaign_config__custom_conversion_goal"
+        ],
+        "rows": [
+          {
+            "conversion_goal_campaign_config__campaign": "customers/3838359068/campaigns/24325133699",
+            "conversion_goal_campaign_config__goal_config_level": "CAMPAIGN",
+            "conversion_goal_campaign_config__custom_conversion_goal": "customers/3838359068/customConversionGoals/6459352879"
+          }
+        ]
+      }
+    },
+    "extra2": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "custom_conversion_goal__id",
+          "custom_conversion_goal__name",
+          "custom_conversion_goal__conversion_actions",
+          "custom_conversion_goal__status"
+        ],
+        "rows": [
+          {
+            "custom_conversion_goal__id": 6459352879,
+            "custom_conversion_goal__name": "Mapa | Projeto iniciado",
+            "custom_conversion_goal__conversion_actions": "[\"customers/3838359068/conversionActions/7825220596\"]",
+            "custom_conversion_goal__status": "ENABLED"
+          }
+        ]
+      }
+    },
+    "sourcesResult1": {
+      "dimensionHeaders": [
+        "date",
+        "sessionSourceMedium"
+      ],
+      "metricHeaders": [
+        {
+          "name": "sessions",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "keyEvents:project_start",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "8",
+          "eventCount": "98",
+          "keyEvents:project_start": "2"
+        },
+        {
+          "date": "20261010",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "7",
+          "eventCount": "168",
+          "keyEvents:project_start": "7"
+        },
+        {
+          "date": "20261011",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "7",
+          "eventCount": "40",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261010",
+          "sessionSourceMedium": "scanned.page / referral",
+          "sessions": "4",
+          "eventCount": "126",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "4",
+          "eventCount": "24",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "sessions": "4",
+          "eventCount": "10",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261011",
+          "sessionSourceMedium": "scanned.page / referral",
+          "sessions": "3",
+          "eventCount": "63",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "3",
+          "eventCount": "13",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261011",
+          "sessionSourceMedium": "codex_validation / qa",
+          "sessions": "2",
+          "eventCount": "7",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "sessions": "2",
+          "eventCount": "44",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "codex_validation / qa",
+          "sessions": "2",
+          "eventCount": "6",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261010",
+          "sessionSourceMedium": "(not set)",
+          "sessions": "1",
+          "eventCount": "76",
+          "keyEvents:project_start": "4"
+        },
+        {
+          "date": "20261010",
+          "sessionSourceMedium": "codex_validation / qa",
+          "sessions": "1",
+          "eventCount": "3",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261011",
+          "sessionSourceMedium": "(not set)",
+          "sessions": "1",
+          "eventCount": "3",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261011",
+          "sessionSourceMedium": "accounts.google.com / referral",
+          "sessions": "1",
+          "eventCount": "4",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "codex_validation / qa",
+          "sessions": "1",
+          "eventCount": "3",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "sessions": "1",
+          "eventCount": "50",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "sessions": "1",
+          "eventCount": "5",
+          "keyEvents:project_start": "0"
+        }
+      ],
+      "rowCount": 18,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "ga4Totals": {
+      "dimensionHeaders": [
+        "date"
+      ],
+      "metricHeaders": [
+        {
+          "name": "sessions",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "keyEvents:project_start",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261011",
+          "sessions": "14",
+          "eventCount": "117",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261010",
+          "sessions": "13",
+          "eventCount": "373",
+          "keyEvents:project_start": "12"
+        },
+        {
+          "date": "20261012",
+          "sessions": "11",
+          "eventCount": "145",
+          "keyEvents:project_start": "3"
+        },
+        {
+          "date": "20261013",
+          "sessions": "7",
+          "eventCount": "80",
+          "keyEvents:project_start": "1"
+        },
+        {
+          "date": "20261014",
+          "sessions": "7",
+          "eventCount": "28",
+          "keyEvents:project_start": "0"
+        }
+      ],
+      "rowCount": 5,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "ga4Diagnostics": {
+      "dimensionHeaders": [
+        "date",
+        "sessionSourceMedium",
+        "eventName",
+        "customEvent:app_stage",
+        "customEvent:app_result"
+      ],
+      "metricHeaders": [
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "15"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "7"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "login_success",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "6"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "6"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "6"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "6"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "proposal_viewed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "user_engagement",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "login_success",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "5"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "codex_validation / qa",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "eventName": "page_view",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "4"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "success",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "user_engagement",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "login_success",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "session_start",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "",
+          "eventCount": "3"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "generation_completed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "generation_started",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "login_started",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "started",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "proposal_selected",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "codex_validation / qa",
+          "eventName": "page_view",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "login_success",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "proposal_viewed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_saved",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "codex_validation / qa",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "export_pdf_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "export_pdf_started",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "login_success",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "proposal_viewed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "blocked",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_saved",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "success",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "page_view",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "failed",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_approved",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_approved",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_link_started",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_link_succeeded",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_review_opened",
+          "customEvent:app_stage": "definition",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_review_opened",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "export_pdf_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "export_pdf_started",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "login_started",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "project_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "project_resumed",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "project_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "project_start",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "session_start",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "failed",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_saved",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "codex_validation / qa",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "generation_completed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "generation_started",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "project_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "project_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "proposal_selected",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_saved",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261012",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_approved",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "advisor_review_opened",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "generation_completed",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "generation_started",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "project_resumed",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "project_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "proposal_selected",
+          "customEvent:app_stage": "discovery",
+          "customEvent:app_result": "started",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "session_start",
+          "customEvent:app_stage": "(not set)",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_started",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "final",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261013",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "problem",
+          "customEvent:app_result": "(not set)",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventName": "user_engagement",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "eventName": "stage_completed",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "eventName": "stage_submitted",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(not set)",
+          "eventName": "user_engagement",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "eventName": "advisor_approved",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "success",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "eventName": "advisor_review_opened",
+          "customEvent:app_stage": "literature",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "eventName": "login_success",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "eventName": "page_view",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "eventName": "session_start",
+          "customEvent:app_stage": "",
+          "customEvent:app_result": "",
+          "eventCount": "1"
+        }
+      ],
+      "rowCount": 122,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "ga4Reasons": {
+      "dimensionHeaders": [
+        "date",
+        "eventName",
+        "customEvent:app_stage",
+        "customEvent:app_reason_code",
+        "sessionSourceMedium"
+      ],
+      "metricHeaders": [
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261013",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "validation",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261014",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "provider_invalid_response",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "provider_invalid_response",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventCount": "1"
+        }
+      ],
+      "rowCount": 3,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "review72_0": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "campaign__id",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions",
+          "metrics__search_impression_share",
+          "metrics__search_rank_lost_impression_share",
+          "metrics__search_budget_lost_impression_share"
+        ],
+        "rows": [
+          {
+            "campaign__id": 24325133699,
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__search_impression_share": 0.0999,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          }
+        ]
+      }
+    },
+    "review72_1": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "ad_group__id",
+          "ad_group__status",
+          "ad_group_criterion__criterion_id",
+          "ad_group_criterion__keyword__text",
+          "ad_group_criterion__status",
+          "ad_group_criterion__system_serving_status",
+          "ad_group_criterion__approval_status"
+        ],
+        "rows": [
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 305088182391,
+            "ad_group_criterion__keyword__text": "projeto de pesquisa",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 328402457250,
+            "ad_group_criterion__keyword__text": "como fazer um projeto de pesquisa",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 388493401167,
+            "ad_group_criterion__keyword__text": "pré projeto de pesquisa",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 442770938605,
+            "ad_group_criterion__keyword__text": "estrutura projeto de pesquisa",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 658730575617,
+            "ad_group_criterion__keyword__text": "ferramenta para tcc",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          },
+          {
+            "ad_group__id": 199190407125,
+            "ad_group__status": "ENABLED",
+            "ad_group_criterion__criterion_id": 2558635153087,
+            "ad_group_criterion__keyword__text": "projeto de pesquisa com ia",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__approval_status": "APPROVED"
+          }
+        ]
+      }
+    }
+  }
+}

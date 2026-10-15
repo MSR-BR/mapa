@@ -1,0 +1,37 @@
+Browser tab: 5, Title: "Criar mapa de pesquisa — Rápido ou Avançado | Mapa da Pesquisa", URL: "https://mapadapesquisa.com.br/mapa".
+0 AXWebArea Criar mapa de pesquisa — Rápido ou Avançado | Mapa da Pesquisa, URL: mapadapesquisa.com.br/mapa
+	1 container
+		2 text Criar mapa de pesquisa — Rápido ou Avançado | Mapa da Pesquisa
+		3 container
+			4 link Description: Mapa da Pesquisa — apresentação, Value: mapadapesquisa.com.br/
+			5 link Description: Entrar, Value: mapadapesquisa.com.br/login
+		6 container
+			7 text COMECE PELA SUA IDEIA
+			8 heading Crie seu mapa de pesquisa., Value: 1
+				9 text Crie seu mapa de pesquisa.
+			10 text Escolha Rápido ou Avançado. Você pode preparar sua ideia sem login; a conta Google permite gerar e guardar o projeto.
+		11 container Escolha o modo e descreva sua pesquisa
+			12 container
+				13 button (collapsed) Secondary Actions: Expand, OPÇÃO 1 · RECOMENDADO Mapa Avançado Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.
+					14 text OPÇÃO 1 · RECOMENDADO
+					15 text Mapa Avançado
+					16 text Responda cinco perguntas orientadas para formular uma situação-problema mais precisa.
+				17 button (expanded) OPÇÃO 2 Mapa Rápido Escreva sua ideia em linguagem natural e receba sugestões enquanto digita., Secondary Actions: Collapse
+					18 text OPÇÃO 2
+					19 text Mapa Rápido
+					20 text Escreva sua ideia em linguagem natural e receba sugestões enquanto digita.
+				21 container quick-research-mode
+					22 text entry area (settable) quick-research-prompt
+					23 text A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.
+				24 text Enter para continuar · Shift + Enter para nova linha
+				25 button Continuar com Google
+		26 container Informações legais
+			27 button Termos de uso
+			28 button Privacidade
+			29 button Preferências de cookies
+			30 button Suporte
+			31 button Relatar problema
+			32 button Créditos
+			33 text v13102026.1
+
+The focused UI element is 22 text entry area (settable) quick-research-prompt

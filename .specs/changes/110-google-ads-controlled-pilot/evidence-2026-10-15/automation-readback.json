@@ -1,0 +1,11 @@
+{
+  "id": "mapa-concluir-ads-e-acompanhar-piloto",
+  "kind": "heartbeat",
+  "name": "Mapa — acompanhar piloto Google Ads",
+  "status": "ACTIVE",
+  "rrule": "RRULE:FREQ=DAILY;BYHOUR=9;BYMINUTE=0;COUNT=23",
+  "target_thread_id": "01a10eda-341c-76b1-a181-beefcd7013ef",
+  "updated_at": 1792055835435,
+  "prompt_updated_to_latest_monitoring": true,
+  "cpc_test_authorized": false
+}

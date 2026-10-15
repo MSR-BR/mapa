@@ -44,7 +44,7 @@
     "qa_project_revisit_duplicate_key_event_observed": false,
     "qa_processed_session_source_medium_verified": true,
     "qa_processed_session_source_medium_verified_on": "2026-10-07",
-    "processed_attribution_remaining_limit": "October 6–9 reports previously reconciled. Reread October 13: October 10 unchanged (13 sessions, 373 events, 12 starts; four starts not set). October 11 now 14 sessions, 117 events, one start from scanned.page; row sums match but one session remains not set. October 12: 10 sessions, 118 events, three starts not set; session rows sum to 14. Paid attribution and internal segmentation remain unverified; GA4 and Ads daily windows differ by two hours.",
+    "processed_attribution_remaining_limit": "October 6-9 previously reconciled. Reread October 15: October 10 13 sessions/373 events/12 starts (four starts not set); October 11 14/117/1 (QR); October 12 11/145/3 (direct2, QR1), rows match; October 13 7/80/1 (QR), rows match; October 14 7/28/0, source rows sum8. Paid attribution and internal segmentation unverified; do not sum source rows for acquisition rates. GA4 and Ads days differ by two hours.",
     "daily_report_2026_10_06_reconciled_on": "2026-10-08",
     "daily_report_2026_10_06_readback": {
       "sessions": 12,
@@ -96,43 +96,72 @@
     },
     "ga4_property_timezone": "America/Rio_Branco",
     "ga4_property_currency": "BRL",
-    "metadata_verified_on": "2026-10-12",
+    "metadata_verified_on": "2026-10-15",
     "daily_timezone_comparison_note": "GA4 days differ by two hours from Ads America/Sao_Paulo; do not align daily windows or currency automatically.",
     "daily_report_2026_10_10_readback": {
       "sessions": 13,
-      "engaged_sessions": 7,
       "events": 373,
       "project_start": 12,
-      "observed_on": "2026-10-13",
+      "observed_on": "2026-10-15",
       "not_set_present": true,
       "session_row_sum": 13,
       "session_row_sum_matches_total": true,
       "attribution_reconciled": false,
-      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
+      "qa_sessions": 1,
+      "qa_project_start": 0,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md"
     },
     "daily_report_2026_10_11_readback": {
       "sessions": 14,
-      "engaged_sessions": 8,
       "events": 117,
       "project_start": 1,
-      "observed_on": "2026-10-13",
+      "observed_on": "2026-10-15",
       "not_set_present": true,
       "session_row_sum": 14,
       "session_row_sum_matches_total": true,
       "attribution_reconciled": false,
-      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
+      "qa_sessions": 2,
+      "qa_project_start": 0,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md"
     },
     "daily_report_2026_10_12_readback": {
-      "sessions": 10,
-      "engaged_sessions": 0,
-      "events": 118,
+      "sessions": 11,
+      "events": 145,
       "project_start": 3,
-      "observed_on": "2026-10-13",
+      "observed_on": "2026-10-15",
+      "not_set_present": false,
+      "session_row_sum": 11,
+      "session_row_sum_matches_total": true,
+      "attribution_reconciled": false,
+      "qa_sessions": 1,
+      "qa_project_start": 0,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md"
+    },
+    "daily_report_2026_10_13_readback": {
+      "sessions": 7,
+      "events": 80,
+      "project_start": 1,
+      "observed_on": "2026-10-15",
+      "not_set_present": false,
+      "session_row_sum": 7,
+      "session_row_sum_matches_total": true,
+      "attribution_reconciled": false,
+      "qa_sessions": 2,
+      "qa_project_start": 0,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md"
+    },
+    "daily_report_2026_10_14_readback": {
+      "sessions": 7,
+      "events": 28,
+      "project_start": 0,
+      "observed_on": "2026-10-15",
       "not_set_present": true,
-      "session_row_sum": 14,
+      "session_row_sum": 8,
       "session_row_sum_matches_total": false,
       "attribution_reconciled": false,
-      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md"
+      "qa_sessions": 0,
+      "qa_project_start": 0,
+      "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md"
     }
   },
   "campaign": {
@@ -571,7 +600,8 @@
     "keyword_quality_score_2_of_10",
     "post_optimization_delivery_evaluation",
     "ads_ga4_daily_timezone_alignment",
-    "historical_generation_export_validation_diagnostics"
+    "historical_generation_export_validation_diagnostics",
+    "cpc_test_pending_explicit_authorization"
   ],
   "launch_authorization": {
     "latest_user_instruction": "faça 1, 2 e 3. Se tudo estiver funcionando, pode lancar.",
@@ -581,23 +611,23 @@
     "evidence": "../110-google-ads-controlled-pilot/launch-2026-10-06.md"
   },
   "latest_monitoring": {
-    "observed_on": "2026-10-13",
-    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-13.md",
-    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-13.json",
+    "observed_on": "2026-10-15",
+    "evidence": "../110-google-ads-controlled-pilot/monitor-2026-10-15.md",
+    "snapshot": "../110-google-ads-controlled-pilot/monitor-2026-10-15.json",
     "status": "ENABLED",
     "eligibility": "ELIGIBLE",
     "all_time_impressions": 3,
     "all_time_clicks": 0,
     "all_time_cost_eur": 0,
     "paid_conversions": 0,
-    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS",
+    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS_PROPOSE_CPC_TEST",
     "keyword_quality_diagnostic": {
       "keyword": "projeto de pesquisa",
       "score": 2,
       "ad_relevance": "AVERAGE",
       "landing_page_experience": "BELOW_AVERAGE",
       "expected_ctr": "BELOW_AVERAGE",
-      "components_reread_on": "2026-10-13",
+      "components_reread_on": "2026-10-15",
       "policy_violation": false
     },
     "new_ad_impressions": 0,
@@ -606,7 +636,11 @@
     "threshold_pause_verified": false,
     "attribution_reconciled": false,
     "product_diagnostics_followup_required": true,
-    "human_action_required": false
+    "human_action_required": true,
+    "human_action_scope": "Only to approve the separate CPC test; current authorized pilot continues.",
+    "post_72h_review_complete": true,
+    "cpc_proposal": "../110-google-ads-controlled-pilot/cpc-test-proposal-2026-10-15.md",
+    "cpc_proposal_applied": false
   },
   "latest_extension": {
     "authorized_on": "2026-10-11",
@@ -659,7 +693,7 @@
     "landing_version": "v11102026.1",
     "source_commit": "a565fc8b9373c03f39f80221803f64cc233440c1",
     "latest_readback": {
-      "observed_on": "2026-10-13",
+      "observed_on": "2026-10-15",
       "new_ad_policy": "APPROVED",
       "new_ad_eligibility": "ELIGIBLE",
       "previous_ad_status": "PAUSED",
@@ -669,7 +703,9 @@
       "added_keyword_eligibility": "ELIGIBLE",
       "first_complete_eligibility_observed_at": "2026-10-12T06:03:09-03:00",
       "review_after": "2026-10-15T06:03:09-03:00",
-      "actual_approval_time_known": false
+      "actual_approval_time_known": false,
+      "review_completed_at": "2026-10-15T06:06:15-03:00",
+      "new_ad_impressions": 0
     }
   }
 }
