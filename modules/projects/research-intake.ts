@@ -6,6 +6,9 @@ import {
   type ResearchProductType,
 } from "@/modules/research-workflow/research-level-guidance";
 
+export const RESEARCH_INTAKE_MAX_LENGTH = 400;
+
+// Stored answers remain readable at the historical limit; new input is stricter.
 export const researchIntakeFieldSchema = z.string().min(1).max(2_000).regex(/\S/, "Preencha a resposta.");
 
 export const researchIntakeSchema = z.object({
@@ -15,6 +18,14 @@ export const researchIntakeSchema = z.object({
   existingKnowledgeGap: researchIntakeFieldSchema,
   delimitationQuestion: researchIntakeFieldSchema,
   researchType: researchProductTypeSchema.nullable().default(null),
+});
+
+export const researchIntakeInputSchema = researchIntakeSchema.extend({
+  problemContext: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
+  observedSituation: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
+  discrepancyConsequences: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
+  existingKnowledgeGap: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
+  delimitationQuestion: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
 });
 
 export type ResearchIntake = z.infer<typeof researchIntakeSchema>;
@@ -94,7 +105,7 @@ export function parseResearchIntakeJson(raw: FormDataEntryValue | null) {
   if (typeof raw !== "string" || !raw.trim()) return null;
   try {
     const parsed = JSON.parse(raw) as unknown;
-    const result = researchIntakeSchema.safeParse(parsed);
+    const result = researchIntakeInputSchema.safeParse(parsed);
     return result.success && isCompleteResearchIntake(result.data) ? result.data : null;
   } catch {
     return null;
@@ -102,9 +113,24 @@ export function parseResearchIntakeJson(raw: FormDataEntryValue | null) {
 }
 
 export function isCompleteResearchIntake(value: ResearchIntakeDraft) {
-  return RESEARCH_INTAKE_FIELDS.every((field) => value[field.name].trim().length >= 10);
+  return RESEARCH_INTAKE_FIELDS.every((field) => value[field.name].trim().length >= 10 && value[field.name].length <= RESEARCH_INTAKE_MAX_LENGTH);
 }
 
 export function hasResearchProductType(value: ResearchIntakeDraft) {
   return RESEARCH_PRODUCT_TYPES.some((item) => item.id === value.researchType);
+}
+
+// An appendix suggestion is separate from the original and confirmed project context.
+export const researchIntakeReviewTextsSchema = researchIntakeInputSchema.omit({ researchType: true });
+export const researchIntakeReviewSchema = z.object({
+  sourceBriefing: researchIntakeSchema,
+  texts: researchIntakeReviewTextsSchema,
+});
+export type ResearchIntakeReview = z.infer<typeof researchIntakeReviewSchema>;
+export function currentResearchIntakeReview(content: {
+  initialBriefing: ResearchIntake | null;
+  initialBriefingReview?: z.infer<typeof researchIntakeReviewSchema> | null;
+}) {
+  const review = content.initialBriefingReview;
+  return review && content.initialBriefing && JSON.stringify(review.sourceBriefing) === JSON.stringify(content.initialBriefing) ? review.texts : null;
 }

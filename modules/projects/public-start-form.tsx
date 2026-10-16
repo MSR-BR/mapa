@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
-import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeSchema, type ResearchIntakeDraft } from "./research-intake";
+import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeInputSchema, type ResearchIntakeDraft } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
 import { ResearchPromptInput } from "./research-prompt-input";
 import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
@@ -73,7 +73,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
       return;
     }
     const prompt = quickPrompt.trim();
-    const parsed = researchIntakeSchema.safeParse(intake);
+    const parsed = researchIntakeInputSchema.safeParse(intake);
     if (mode === "quick") {
       if (prompt.length < 10) {
         setError("Escreva pelo menos uma frase para iniciar o roteiro rápido.");
@@ -81,7 +81,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
       }
     } else {
       if (!parsed.success || !isCompleteResearchIntake(intake)) {
-        setError("Preencha os cinco campos para formular a situação-problema.");
+        setError("Preencha os cinco campos com 10 a 400 caracteres cada para formular a situação-problema.");
         return;
       }
       if (!hasResearchProductType(intake)) {

@@ -1,0 +1,24 @@
+[
+  {
+    "variant": "advanced",
+    "pdfPages": 13,
+    "blocks": 108,
+    "everyBlockPresentInPdfAndWord": true,
+    "baselinePdfBeforeAppendixUnchanged": true,
+    "wordRenderedPages": 13
+  },
+  {
+    "variant": "advanced-draft",
+    "pdfPages": 14,
+    "blocks": 120,
+    "everyBlockPresentInPdfAndWord": true,
+    "baselinePdfBeforeAppendixUnchanged": true
+  },
+  {
+    "variant": "quick",
+    "pdfPages": 9,
+    "blocks": 79,
+    "everyBlockPresentInPdfAndWord": true,
+    "baselinePdfBeforeAppendixUnchanged": true
+  }
+]

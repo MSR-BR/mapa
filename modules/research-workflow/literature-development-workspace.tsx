@@ -16,7 +16,6 @@ import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/acti
 import { pendingAdvisorReview } from "./advisor-review";
 import { AdvisorReviewNotice } from "./advisor-review-notice";
 import { OBJECTIVE_COVERAGE_LABELS, objectiveCoverageStatus, type ChapterTopicInput } from "./chapter-validation";
-import { normalizeLiteratureSearchTerms } from "./literature-optimization";
 import { ManualReferencePanel } from "./manual-reference-panel";
 import { WorkflowHistory } from "./workflow-history";
 import { WorkflowProgress, type WorkflowProgressHandle } from "./workflow-progress";
@@ -25,7 +24,7 @@ import type { ResearchWorkflow } from "./schema";
 
 type Props = { initialWorkflow: ResearchWorkflow; isSelfDirectedProject?: boolean; projectId: string };
 type Chapter = "literature" | "development";
-type Operation = "back" | "concept" | "initialize" | "optimize" | "regenerate" | "save" | "validate" | null;
+type Operation = "back" | "concept" | "initialize" | "regenerate" | "save" | "validate" | null;
 type WorkflowReference = NonNullable<ResearchWorkflow["content"]["discovery"]>["references"][number];
 
 function referenceText(reference: WorkflowReference) {
@@ -70,8 +69,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
-  const [showOptimize, setShowOptimize] = useState(false);
-  const [keywords, setKeywords] = useState(() => initialWorkflow.content.discovery?.interpreted.keywords.join(", ") ?? "");
   const discovery = workflow.content.discovery;
   const specifics = workflow.content.elements.filter((element) => element.type === "specific_objective" && element.status === "validated");
   const generalObjective = validatedGeneralObjective(workflow);
@@ -88,7 +85,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   const changed = JSON.stringify(topics) !== JSON.stringify(savedTopics);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const validateButtonLabel = "Próximo";
+  const validateButtonLabel = waitingForAdvisor ? "Aguardando validação do orientador" : isSelfDirectedProject ? "Próximo" : "Enviar para validação do orientador";
 
   useEffect(() => {
     const analyticsPosition = getAnalyticsWorkflowPosition(chapter === "literature" ? "literature_topics" : "development_topics");
@@ -102,7 +99,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     if (!received.navigation && changed) return;
     const nextChapter: Chapter = next.content.activeStep === "development_topics" ? "development" : "literature";
     setTopics(readTopics(next, nextChapter));
-    setKeywords(next.content.discovery?.interpreted.keywords.join(", ") ?? "");
   }
 
 
@@ -130,15 +126,8 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
     setErrors([]);
     const analyticsPosition = getAnalyticsWorkflowPosition(chapter === "literature" ? "literature_topics" : "development_topics");
     if (action === "validate") trackAnalyticsEvent("stage_submitted", { ...analyticsPosition, app_role: activeRole });
-    if (action === "optimize") trackAnalyticsEvent("literature_optimization_started", { ...getAnalyticsWorkflowPosition("literature_topics"), app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
     try {
-      let revision = workflow.revision;
-      if (action === "optimize" && changed) {
-        const saveResponse = await aiProgress.request(`/api/projects/${projectId}/chapters`, { method: "POST", headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) }, body: JSON.stringify({ action: "save", revision, step: chapter, topics }) });
-        const saved = await saveResponse.json();
-        if (!saveResponse.ok || !saved.workflow) throw new Error(saved.errors?.join(" ") || saved.error || "Não foi possível salvar a página.");
-        revision = saved.workflow.revision; applyWorkflow(saved.workflow);
-      }
+      const revision = workflow.revision;
       const requestBody: Record<string, unknown> = { action, revision, step: chapter, ...extra };
       if (action === "save" || action === "validate") requestBody.topics = topics;
       if (action === "regenerate") {
@@ -160,16 +149,14 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       applyWorkflow(payload.workflow);
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
-      if (action === "optimize") trackAnalyticsEvent("literature_optimization_completed", { ...getAnalyticsWorkflowPosition("literature_topics"), app_result: "success", app_reference_count_bucket: referenceBucket });
-      else trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: referenceBucket });
-      if (action === "optimize") setShowOptimize(false);
+      trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: referenceBucket });
       setMessage(payload.message ?? null);
       if (action === "validate" || action === "back") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
       }
       return true;
     } catch (error) {
-      trackAnalyticsEvent(action === "optimize" ? "literature_optimization_failed" : "stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
+      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
       return false;
     } finally {
@@ -209,15 +196,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
   function toggleReference(topic: ChapterTopicInput, referenceId: string) {
     const exists = topic.referenceIds.includes(referenceId);
     updateTopic(topic.id, { referenceIds: exists ? topic.referenceIds.filter((id) => id !== referenceId) : [...topic.referenceIds, referenceId] });
-  }
-
-  function optimizeLiterature() {
-    const searchTerms = normalizeLiteratureSearchTerms(keywords);
-    if (searchTerms.length === 0) {
-      setErrors(["Informe uma frase, tema ou palavra-chave para buscar nova literatura."]);
-      return;
-    }
-    void submit("optimize", { keywords: searchTerms });
   }
 
   function associatedTopicTitles(referenceId: string) {
@@ -325,19 +303,6 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
 
       {errors.length > 0 ? <div className="definition-findings" role="alert"><strong>Revise antes de avançar</strong><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></div> : null}
       {message ? <p className="definition-message" role="status">{message}</p> : null}
-
-      {chapter === "literature" ? (
-        <div className="literature-optimizer">
-          <article className="literature-optimizer-card">
-            <div>
-              <p className="section-kicker">Research Starter</p>
-              <h3>Otimizar literatura</h3>
-              <p className="literature-optimizer-guidance"><strong>Quando otimizar:</strong> use esta opção se as referências estiverem genéricas, se faltarem autores ou estudos importantes, se o recorte do tema mudou ou se os tópicos não estiverem bem conectados aos objetivos. A ação busca referências adicionais no Research Starter. As fontes anteriores, os tópicos e suas associações permanecem preservados. Associe as novas fontes aos tópicos que desejar. Para reescrever um tópico, use Regenerar com IA no próprio quadro.</p>
-            </div>
-            {showOptimize ? <form onSubmit={(event) => { event.preventDefault(); optimizeLiterature(); }}><label>Nova busca de literatura<input disabled={busy || waitingForAdvisor} onChange={(event) => setKeywords(event.target.value)} placeholder="Ex.: efeito barocalorico; materiais magnetocalóricos" value={keywords} /></label><button disabled={busy || normalizeLiteratureSearchTerms(keywords).length === 0} type="submit">Buscar e adicionar referências</button></form> : <button onClick={() => setShowOptimize(true)} type="button">Otimizar literatura</button>}
-          </article>
-        </div>
-      ) : null}
 
       {chapter === "literature" && references.length > 0 ? (
         <aside className="workflow-references-panel" aria-label="Referências encontradas pelo Research Starter">

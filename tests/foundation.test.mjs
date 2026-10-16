@@ -218,7 +218,7 @@ test("registers Change 046 academic PDF format and CBL registration", async () =
     readProjectFile(".specs/roadmap.md"),
     readProjectFile(".specs/changes/046-final-pdf-format/spec.md"),
     readProjectFile(".specs/changes/046-final-pdf-format/closure-evidence.md"),
-    readProjectFile("modules/export/pdf.ts"),
+    Promise.all([readProjectFile("modules/export/pdf.ts"), readProjectFile("modules/export/final-report.ts")]).then(parts => parts.join("\n")),
     readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
     readProjectFile("public/brand/cbl-isbn-barcode.jpeg").catch(() => ""),
     readProjectFile("lib/app-version.ts"),
@@ -402,7 +402,7 @@ test("exports only the authenticated owner's saved structure as PDF or DOCX", as
   const [route, docx, pdf, workspace, finalWorkspace, citationHelper, prompt, styles] = await Promise.all([
     readProjectFile("app/api/projects/[id]/exports/[format]/route.ts"),
     readProjectFile("modules/export/docx.ts"),
-    readProjectFile("modules/export/pdf.ts"),
+    Promise.all([readProjectFile("modules/export/pdf.ts"), readProjectFile("modules/export/final-report.ts")]).then(parts => parts.join("\n")),
     readProjectFile("modules/generation/generation-workspace.tsx"),
     readProjectFile("modules/research-workflow/final-map-workspace.tsx"),
     readProjectFile("modules/research-workflow/reference-citations.ts"),
@@ -755,7 +755,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(route, /saveVersionedWorkflow/);
   assert.match(route, /validateCompleteObjectiveCoverage/);
   assert.match(workspace, /ManualReferencePanel/);
-  assert.match(workspace, /Otimizar literatura/);
+  assert.doesNotMatch(workspace, /Otimizar literatura/);
   assert.match(workspace, /OEG/);
   assert.match(workspace, /apresentação do estudo de caso/);
   assert.match(workspace, /Contexto e orientações para a IA — tópico/);
@@ -765,9 +765,7 @@ test("implements Change 012 with traceable Chapter 2 and Chapter 4 planning", as
   assert.match(workspace, /Atende parcialmente/);
   assert.match(workspace, /Grau de cobertura de/);
   assert.match(validation, /OBJECTIVE_COVERAGE_LABELS/);
-  assert.match(workspace, /literature-optimizer-card/);
-  assert.match(workspace, /Quando otimizar:/);
-  assert.match(workspace, /associações permanecem preservad/);
+  assert.doesNotMatch(workspace, /literature-optimizer-card/);
   assert.match(workspace, /Gerar tópicos iniciais com IA/);
   assert.match(workspace, /requestBody\.topics = topics/);
   assert.match(workspace, /Referências encontradas e associadas/);
@@ -805,8 +803,6 @@ test("implements Change 052 with a real Research Starter optimization and safe a
   assert.match(route, /A versão anterior foi preservada/);
   assert.match(route, /resultados parciais/);
   assert.match(route, /tópicos, referências anteriores e associações foram preservados/);
-  assert.match(workspace, /busca referências adicionais no Research Starter/);
-  assert.match(workspace, /As fontes anteriores, os tópicos e suas associações permanecem preservados/);
   assert.match(workspace, /externa\(s\) preservada\(s\)/);
   assert.match(references, /mergeReferenceArchive/);
   assert.match(evidence, /v25082026\.3/);

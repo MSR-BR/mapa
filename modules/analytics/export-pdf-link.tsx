@@ -1,6 +1,6 @@
 "use client";
 
-import type { MouseEvent, ReactNode } from "react";
+import { useRef, useState, type MouseEvent, type ReactNode } from "react";
 
 import {
   getReferenceCountBucket,
@@ -15,38 +15,50 @@ type ExportPdfLinkProps = {
   productType?: AnalyticsProductType;
   source?: AnalyticsSurface;
   children: ReactNode;
+  format?: "pdf" | "docx";
+  disabled?: boolean;
+  beforeDownload?: () => Promise<void | boolean>;
+  onFailure?: (message: string) => void;
 };
 
-function filenameFromDisposition(value: string | null) {
+function filenameFromDisposition(value: string | null, format: "pdf" | "docx") {
   const match = value?.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
-  return match?.[1] ? decodeURIComponent(match[1]) : "mapa-da-pesquisa.pdf";
+  return match?.[1] ? decodeURIComponent(match[1]) : `mapa-da-pesquisa.${format}`;
 }
 
-export function ExportPdfLink({ href, referenceCount, productType = "unknown", source = "dashboard", children }: ExportPdfLinkProps) {
+export function ExportPdfLink({ href, referenceCount, productType = "unknown", source = "dashboard", children, format = "pdf", disabled = false, beforeDownload, onFailure }: ExportPdfLinkProps) {
+  const downloading = useRef(false);
+  const [pending, setPending] = useState(false);
   async function download(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
-    trackAnalyticsEvent("export_pdf_started", {
+    if (disabled || downloading.current) return;
+    downloading.current = true;
+    setPending(true);
+    let downloadStarted = false;
+    const trackStart = () => { downloadStarted = true; if (format === "pdf") trackAnalyticsEvent("export_pdf_started", {
       app_stage: "final",
       app_macro_stage: "4",
       app_step: "final_map",
       app_product_type: productType,
       app_surface: source,
       app_reference_count_bucket: getReferenceCountBucket(referenceCount),
-    });
+    }); };
 
     try {
+      if (await beforeDownload?.() === false) return;
+      trackStart();
       const response = await fetch(href, { credentials: "same-origin" });
       if (!response.ok) throw new Error("export_failed");
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
-      anchor.download = filenameFromDisposition(response.headers.get("content-disposition"));
+      anchor.download = filenameFromDisposition(response.headers.get("content-disposition"), format);
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
       URL.revokeObjectURL(objectUrl);
-      trackAnalyticsEvent("export_pdf_completed", {
+      if (format === "pdf") trackAnalyticsEvent("export_pdf_completed", {
         app_result: "success",
         app_stage: "final",
         app_macro_stage: "4",
@@ -55,11 +67,15 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
         app_surface: source,
         app_reference_count_bucket: getReferenceCountBucket(referenceCount),
       });
-    } catch {
-      trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: "network" });
-      window.location.assign(href);
+    } catch (error) {
+      if (format === "pdf" && downloadStarted) trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: "network" });
+      if (onFailure) onFailure(error instanceof Error && error.message !== "export_failed" ? error.message : "Não foi possível baixar o relatório. Seus textos continuam salvos; tente novamente.");
+      else window.location.assign(href);
+    } finally {
+      downloading.current = false;
+      setPending(false);
     }
   }
 
-  return <a href={href} onClick={download}>{children}</a>;
+  return <a href={href} onClick={download} aria-disabled={disabled || pending} aria-busy={pending}>{pending ? "Preparando relatório…" : children}</a>;
 }

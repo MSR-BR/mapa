@@ -172,7 +172,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const busy = operation !== null;
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
-  const validateButtonLabel = "Próximo";
+  const validateButtonLabel = waitingForAdvisor ? "Aguardando validação do orientador" : isSelfDirectedProject ? "Próximo" : "Enviar para validação do orientador";
   const objectives = methodologyObjectives(workflow);
   const general = generalObjective(workflow);
   const literatureTopics = readTopics(workflow, "literature");

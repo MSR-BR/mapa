@@ -1,0 +1,19 @@
+{
+  "environment": "local synthetic fixture; no external provider",
+  "verifiedAfterBrowserInterruption": true,
+  "intakeFields": 5,
+  "inputMaxLength": 400,
+  "nativeTypingLimitVerified": true,
+  "optimizerVisible": false,
+  "studentLabel": "Enviar para validação do orientador",
+  "autonomousLabel": "Próximo",
+  "firstExportPreparesForReview": true,
+  "rewriteEditable": true,
+  "originalPreserved": true,
+  "simulatedAiCalls": 1,
+  "writesAfterEditingAndExporting": 2,
+  "mobileViewportWidth": 390,
+  "viewportOverrideReset": true,
+  "downloadEventWait": "tool wait interrupted; not used on retry",
+  "actualBinaryExports": "PDF and DOCX route assertions passed"
+}

@@ -1,3 +1,4 @@
+import { currentResearchIntakeReview } from "@/modules/projects/research-intake";
 import { hasCurrentFinalApproval } from "@/modules/research-workflow/advisor-review";
 import { NextResponse } from "next/server";
 
@@ -43,6 +44,9 @@ export async function GET(request: Request, context: { params: Promise<{ format:
     const completed = hasCurrentFinalApproval(workflow);
     if (!completed && !draft) {
       return NextResponse.json({ error: "Conclua o mapa ou exporte como rascunho identificado." }, { status: 409 });
+    }
+    if (workflow.content.initialBriefing && !currentResearchIntakeReview(workflow.content)) {
+      return NextResponse.json({ code: "briefing_review_required", error: "Abra o mapa e use Exportar PDF ou Exportar Word para preparar o comparativo das respostas iniciais." }, { status: 409 });
     }
     const input = { draft: !completed, exportedAt: new Date(), finalMap, project, revision: workflow.revision };
     const file = format === "docx" ? await createFinalMapDocxExport(input) : await createFinalMapPdfExport(input);

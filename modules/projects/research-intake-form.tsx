@@ -4,6 +4,7 @@ import { useEffect, useState, type KeyboardEvent } from "react";
 
 import {
   RESEARCH_INTAKE_FIELDS,
+  RESEARCH_INTAKE_MAX_LENGTH,
   type ResearchIntakeDraft,
 } from "./research-intake";
 import {
@@ -106,7 +107,9 @@ export function ResearchIntakeForm({ value, onChange, showResearchType = false }
             </div>
             <textarea
               id={`research-intake-${field.name}`}
-              maxLength={2_000}
+              maxLength={RESEARCH_INTAKE_MAX_LENGTH}
+              aria-describedby={`research-intake-${field.name}-count`}
+              aria-invalid={value[field.name].length > RESEARCH_INTAKE_MAX_LENGTH}
               minLength={10}
               name={field.name}
               onChange={(event) => updateField(field.name, event.target.value)}
@@ -116,6 +119,7 @@ export function ResearchIntakeForm({ value, onChange, showResearchType = false }
               rows={3}
               value={value[field.name]}
             />
+            <small id={`research-intake-${field.name}-count`}>{value[field.name].length}/{RESEARCH_INTAKE_MAX_LENGTH} caracteres{value[field.name].length > RESEARCH_INTAKE_MAX_LENGTH ? " — Este rascunho antigo foi preservado. Reduza a resposta para iniciar um novo mapa." : ""}</small>
           </section>
         ))}
       </div>

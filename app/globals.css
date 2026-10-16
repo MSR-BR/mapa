@@ -848,6 +848,11 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .final-export-panel > div:last-child { display: flex; flex-wrap: wrap; gap: 0.55rem; }
 .final-export-panel a { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; border: 1px solid rgb(255 255 255 / 78%); border-radius: 0.82rem; padding: 0.72rem 1rem; background: linear-gradient(135deg, #f5fff9, #b9d6ca); color: #0f1d18; box-shadow: 0 0.9rem 2.2rem rgb(0 0 0 / 24%); font-size: 0.88rem; font-weight: 900; text-decoration: none; transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease; }
 .final-export-panel a:hover { border-color: #ffffff; background: linear-gradient(135deg, #ffffff, #d4e9df); transform: translateY(-1px); }
+.final-intake-review { display: block; }
+.final-intake-review summary { cursor: pointer; font-weight: 750; }
+.final-intake-review .final-map-document { margin-top: 1rem; min-width: 0; }
+.final-intake-review label, .final-intake-review small { display: block; margin-top: .4rem; }
+.final-export-panel a[aria-disabled="true"] { opacity: .6; cursor: wait; }
 .final-map-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.38fr); align-items: start; gap: 1.1rem; }
 .final-map-document { display: grid; gap: 0.95rem; }
 .final-map-document section, .traceability-panel { border: 1px solid #c8d8d0; border-radius: 1rem; padding: clamp(1rem, 2vw, 1.35rem); background: var(--surface); box-shadow: 0 0.75rem 2rem rgb(20 35 29 / 5%); }

@@ -1,12 +1,13 @@
 import type { GeminiOperation } from "@/lib/observability/gemini-usage";
 import type { AiProvider } from "./contract";
 
-export type AiOperation = GeminiOperation | "review_workflow_impact";
+export type AiOperation = GeminiOperation | "review_workflow_impact" | "rewrite_initial_briefing";
 export const OUTPUT_TOKEN_BUDGETS: Record<AiOperation, number> = {
   broaden_research_query: 160, generate_development_topics: 3200, generate_general_objective: 700,
   generate_literature_topics: 3200, generate_methodology_plan: 5000, generate_problem_candidates: 4500,
   generate_research_structure: 8000, generate_specific_objectives: 2400, interpret_research_request: 500,
   merge_research_structures: 8000, regenerate_problem_statement: 700, review_final_map_coherence: 2400,
+  rewrite_initial_briefing: 2200,
   suggest_research_prompts: 500, review_workflow_impact: 2400,
 };
 export const AI_LIMITS = {

@@ -123,7 +123,7 @@ export function QuickStartForm({
       event.preventDefault();
       setClientError(showResearchType && !hasResearchProductType(intake)
         ? "Escolha o tipo de produto acadêmico antes de iniciar o mapa."
-        : "Preencha os cinco campos para formular a situação-problema.");
+        : "Preencha os cinco campos com 10 a 400 caracteres cada para formular a situação-problema.");
       return;
     }
     const entryMode: AnalyticsEntryMode = mode === "quick" ? "quick" : "advanced";

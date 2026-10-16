@@ -9,12 +9,14 @@ import {
   PageNumber,
   Packer,
   Paragraph,
-  Table,
-  TableCell,
-  TableRow,
+  ImageRun,
   TextRun,
-  WidthType,
 } from "docx";
+
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { buildFinalReport, finalMapText } from "./final-report";
+import { getResearchProductGuidance } from "@/modules/research-workflow/research-level-guidance";
 
 import type { ExportDocumentInput, FinalMapExportInput } from "./types";
 
@@ -43,23 +45,6 @@ function simpleParagraph(text: string, options: { bold?: boolean; color?: string
     children: [textRun(text, options)],
     spacing: { after: 120, line: 300 },
   });
-}
-
-function cell(text: string, width: number, bold = false) {
-  return new TableCell({
-    children: [new Paragraph({ children: [new TextRun({ bold, size: 18, text: text || "—" })], spacing: { after: 0, line: 260 } })],
-    margins: { bottom: 120, left: 120, right: 120, top: 120 },
-    width: { size: width, type: WidthType.PERCENTAGE },
-  });
-}
-
-function finalMapText(element: { approvedContent: string | null; proposedContent: string } | null | undefined) {
-  return element?.approvedContent?.trim() || element?.proposedContent.trim() || "Não informado.";
-}
-
-function referenceLabel(reference: FinalMapExportInput["finalMap"]["references"][number]) {
-  const authors = reference.authors.length > 0 ? reference.authors.join(", ") : "Autoria não informada";
-  return [authors, reference.year?.toString(), reference.doi ? `DOI: ${reference.doi}` : null].filter(Boolean).join(". ");
 }
 
 export async function createDocxExport(input: ExportDocumentInput) {
@@ -196,130 +181,72 @@ export async function createDocxExport(input: ExportDocumentInput) {
   return Packer.toBuffer(doc);
 }
 
+function imageParagraph(file: string, type: "png" | "jpg", width: number, height: number) {
+  try {
+    return new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type, data: readFileSync(path.join(process.cwd(), file)), transformation: { width: width * 4 / 3, height: height * 4 / 3 } })], spacing: { after: 240 } });
+  } catch { return new Paragraph(""); }
+}
+
+/** Explicit line breaks preserve the author's paragraphs in Word as well as PDF. */
+function literalRuns(text: string): TextRun[] {
+  return text.split("\n").map((line, index) => new TextRun({ text: line, ...(index ? { break: 1 } : {}) }));
+}
+
 export async function createFinalMapDocxExport(input: FinalMapExportInput) {
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const finalMap = input.finalMap;
-  const warnings = finalMap.findings.filter((finding) => input.draft || finding.severity !== "blocking");
-  const body: Array<Paragraph | Table> = [
-    new Paragraph({ spacing: { before: 1200 } }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ bold: true, color: GOLD, size: 20, text: "MAPA DA PROPOSTA DE PESQUISA" })],
-      spacing: { after: 300 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ bold: true, color: NAVY, size: 46, text: finalMapText(finalMap.title) })],
-      spacing: { after: 160, line: 300 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ color: MUTED, italics: true, size: 20, text: input.draft ? "Rascunho explicitamente identificado" : "Versão concluída" })],
-      spacing: { after: 680 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ color: MUTED, size: 18, text: `Workflow v2 - Revisão ${input.revision} - Exportado em ${dateLabel}` })],
-    }),
-    new Paragraph({ children: [new PageBreak()] }),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Etapa 1. Problemática da pesquisa" }),
-    simpleParagraph(finalMapText(finalMap.problemStatement)),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Etapa 2. Objetivo geral" }),
-    simpleParagraph(finalMapText(finalMap.generalObjective)),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Etapa 3. Objetivos específicos" }),
-    ...finalMap.specificObjectives.map((objective, index) => new Paragraph({
-      children: [new TextRun({ bold: true, text: `${index + 1}. ` }), new TextRun(finalMapText(objective))],
-      spacing: { after: 100, line: 300 },
-    })),
-    new Paragraph({ children: [new PageBreak()] }),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Capítulo 3. Metodologia e resultados esperados" }),
-    new Table({
-      rows: [
-        new TableRow({ children: [cell("Objetivo", 16, true), cell("Levantamento", 24, true), cell("Análise/tratamento", 26, true), cell("Resultado esperado", 34, true)] }),
-        ...finalMap.methodologyRows.map((row, index) => {
-          const specificIndex = finalMap.specificObjectives.findIndex((item) => item.id === row.objectiveId);
-          const isGeneral = row.objectiveId === finalMap.generalObjective?.id;
-          const objective = isGeneral ? finalMap.generalObjective : finalMap.specificObjectives[specificIndex];
-          const objectiveLabel = isGeneral ? "OEG" : `OE${specificIndex >= 0 ? specificIndex + 1 : index + 1}`;
-          return new TableRow({
-            children: [
-              cell(`${objectiveLabel}. ${finalMapText(objective)}`, 16),
-              cell(row.dataCollection, 24),
-              cell(row.analysisTreatment, 26),
-              cell(row.expectedResult, 34),
-            ],
-          });
-        }),
-      ],
-      width: { size: 100, type: WidthType.PERCENTAGE },
-    }),
-    new Paragraph({ children: [new PageBreak()] }),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Etapa 4. Capítulo 2 - Revisão da Literatura" }),
-    ...finalMap.literatureTopics.map((topic) => simpleParagraph(`${topic.label} ${topic.title}`)),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Etapa 5. Capítulo 4 - Desenvolvimento / Estudo de Caso / Análise e Discussão" }),
-    ...finalMap.developmentTopics.map((topic) => simpleParagraph(`${topic.label} ${topic.title}`)),
-    new Paragraph({ children: [new PageBreak()] }),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Avisos e pendências de coerência" }),
-    ...(warnings.length > 0 ? warnings.map((finding) => new Paragraph({
-      children: [
-        new TextRun({ bold: true, color: finding.severity === "blocking" ? "9B2F2A" : GOLD, text: `${finding.severity}: ` }),
-        new TextRun(finding.message),
-        ...(finding.resolution ? [new TextRun({ italics: true, text: ` Correção sugerida: ${finding.resolution}` })] : []),
-      ],
-      spacing: { after: 120, line: 300 },
-    })) : [simpleParagraph("Nenhuma pendência registrada.")]),
-    new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Referências verificáveis" }),
-    new Paragraph({
-      children: [
-        new TextRun({ color: MUTED, text: "Referências otimizadas com " }),
-        new ExternalHyperlink({
-          children: [new TextRun({ color: "176B4D", style: "Hyperlink", text: "Research Starter" })],
-          link: RESEARCH_STARTER_URL,
-        }),
-        new TextRun({ color: MUTED, text: "." }),
-      ],
-      spacing: { after: 240 },
-    }),
+  const product = getResearchProductGuidance(finalMap.workflow.content.discovery?.interpreted.researchType);
+  const link = (text: string, url: string) => new ExternalHyperlink({ link: url, children: [new TextRun({ text, color: "176B4D", style: "Hyperlink" })] });
+  const body: Paragraph[] = [
+    imageParagraph("public/brand/mapa-da-pesquisa-wordmark.png", "png", 172, 47.34),
+    new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ bold: true, color: GOLD, size: 20, text: "MAPA DA PROPOSTA DE PESQUISA" })], spacing: { before: 300, after: 300 } }),
+    new Paragraph({ style: "Title", alignment: AlignmentType.CENTER, children: [new TextRun({ bold: true, color: NAVY, size: 48, text: finalMapText(finalMap.title) })], spacing: { after: 240, line: 360 } }),
+    new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ color: MUTED, italics: true, size: 22, text: product?.label ?? input.project.academic_level ?? "Pesquisa acadêmica" })], spacing: { after: 180 } }),
+    new Paragraph({ alignment: AlignmentType.CENTER, text: input.draft ? "Rascunho explicitamente identificado" : "Versão concluída", spacing: { after: 800 } }),
+    new Paragraph({ alignment: AlignmentType.CENTER, text: `Revisão ${input.revision} - Exportado em ${dateLabel}` }),
+    new Paragraph({ alignment: AlignmentType.CENTER, children: [link("Mapa da Pesquisa · mapadapesquisa.com.br", "https://mapadapesquisa.com.br")] }),
   ];
-
-  for (const reference of finalMap.references) {
-    const children = [new TextRun({ bold: true, text: `${reference.referenceId}. ${reference.title ?? "Título não informado"}` })];
-    if (reference.url) {
-      children.push(new TextRun({ text: " — " }));
-      body.push(new Paragraph({
-        children: [...children, new ExternalHyperlink({ children: [new TextRun({ color: "176B4D", style: "Hyperlink", text: "Acessar fonte" })], link: reference.url })],
-        spacing: { after: 40 },
-      }));
-    } else {
-      body.push(new Paragraph({ children, spacing: { after: 40 } }));
+  for (const block of buildFinalReport(input)) {
+    switch (block.kind) {
+      case "page": body.push(new Paragraph({ children: [new PageBreak()], spacing: { after: 0 } })); break;
+      case "heading": body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, text: block.text })); break;
+      case "subheading": body.push(new Paragraph({ heading: HeadingLevel.HEADING_2, text: block.text })); break;
+      case "paragraph": body.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, children: literalRuns(block.text), indent: { firstLine: (block.indent ?? 0) * 20 }, spacing: { after: 140, line: 300 } })); break;
+      case "original": body.push(new Paragraph({ children: literalRuns(block.text), spacing: { after: 220, line: 300 } })); break;
+      case "link": body.push(new Paragraph({ children: [link(block.text, block.url)], spacing: { after: 180 } })); break;
+      case "reference":
+        body.push(new Paragraph({ children: [new TextRun({ bold: true, text: block.title, size: 19 })], keepNext: true, spacing: { after: 60 } }));
+        body.push(new Paragraph({ children: [new TextRun({ text: block.details, color: MUTED, size: 17 })], keepNext: Boolean(block.url), spacing: { after: block.url ? 60 : 180 } }));
+        if (block.url) body.push(new Paragraph({ children: [link(block.url, block.url)], spacing: { after: 180 } }));
+        break;
+      case "methodology":
+        body.push(new Paragraph({ children: [new TextRun({ bold: true, text: block.title, color: NAVY, size: 22 })], keepNext: true, spacing: { before: 180, after: 100 } }));
+        for (const [label, text] of [["Levantamento", block.collection], ["Análise/tratamento", block.analysis], ["Resultado esperado", block.result]]) {
+          body.push(new Paragraph({ children: [new TextRun({ bold: true, text: `${label}: ` }), ...literalRuns(text)], spacing: { after: 100, line: 280 } }));
+        }
+        break;
     }
-    body.push(new Paragraph({ children: [new TextRun({ color: MUTED, size: 18, text: referenceLabel(reference) })], spacing: { after: 140 } }));
   }
-
-  const doc = new Document({
-    sections: [{
-      children: body,
-      footers: {
-        default: new Footer({ children: [new Paragraph({
-          alignment: AlignmentType.RIGHT,
-          children: [new TextRun({ color: MUTED, size: 17, text: `${input.draft ? "Rascunho" : "Versão concluída"} - Revisar antes do uso - ${dateLabel} - Página ` }), new TextRun({ children: [PageNumber.CURRENT], color: MUTED, size: 17 })],
-        })] }),
-      },
-      properties: {
-        page: {
-          margin: { bottom: 1440, footer: 708, left: 1080, right: 1080, top: 1080 },
-          size: { height: 15840, width: 12240 },
-        },
-      },
-    }],
+  body.push(new Paragraph({ children: [new PageBreak()] }));
+  body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, text: "Registro e produção" }));
+  body.push(simpleParagraph("Este mapa foi produzido pelo aplicativo Mapa da Pesquisa para apoiar a organização, a revisão e a discussão de uma proposta de pesquisa. Acesse o aplicativo em mapadapesquisa.com.br."));
+  body.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [link("Abrir o Mapa da Pesquisa", "https://mapadapesquisa.com.br")], spacing: { after: 240 } }));
+  body.push(new Paragraph({ alignment: AlignmentType.CENTER, text: "Este mapa está registrado na Câmara Brasileira do Livro (CBL), sob o ISBN 978-65-01-44943-2.", spacing: { after: 240 } }));
+  body.push(imageParagraph("public/brand/cbl-isbn-barcode.jpeg", "jpg", 278.26, 210));
+  body.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ color: MUTED, size: 17, text: "O número e a imagem de registro foram informados pelo responsável pelo aplicativo." })] }));
+  return Packer.toBuffer(new Document({
+    creator: "Mapa da Pesquisa", title: finalMapText(finalMap.title),
+    sections: [{ children: body, properties: { page: { margin: { bottom: 1440, footer: 520, left: 1280, right: 1280, top: 1280 }, size: { height: 15840, width: 12240 } } }, footers: { default: new Footer({ children: [
+      new Paragraph({ children: [link("Mapa da Pesquisa · mapadapesquisa.com.br", "https://mapadapesquisa.com.br")], spacing: { after: 60 } }),
+      new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ color: MUTED, size: 15, text: `${input.draft ? "Rascunho" : "Versão concluída"} - ${dateLabel} - Página ` }), new TextRun({ children: [PageNumber.CURRENT], size: 15 }), new TextRun({ text: " de ", size: 15 }), new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 15 })] }),
+    ] }) } }],
     styles: {
-      default: { document: { run: { font: "Arial", size: 21 }, paragraph: { spacing: { after: 160, line: 300 } } } },
+      default: { document: { run: { font: "Arial", size: 21, color: "1C2428" }, paragraph: { spacing: { after: 140, line: 300 } } } },
       paragraphStyles: [
-        { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: { bold: true, color: NAVY, font: "Arial", size: 30 }, paragraph: { keepNext: true, outlineLevel: 0, spacing: { after: 160, before: 300 } } },
-        { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: { bold: true, color: "2B5163", font: "Arial", size: 24 }, paragraph: { keepNext: true, outlineLevel: 1, spacing: { after: 120, before: 220 } } },
+        { id: "Title", name: "Title", basedOn: "Normal", next: "Normal", quickFormat: true, run: { bold: true, color: NAVY, size: 48 } },
+        { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: { bold: true, color: NAVY, size: 34 }, paragraph: { keepNext: true, outlineLevel: 0, spacing: { after: 180, before: 200 } } },
+        { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: { bold: true, color: "2B5163", size: 25 }, paragraph: { keepNext: true, outlineLevel: 1, spacing: { after: 100, before: 180 } } },
       ],
     },
-  });
-
-  return Packer.toBuffer(doc);
+  }));
 }

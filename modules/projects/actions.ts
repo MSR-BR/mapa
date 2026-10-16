@@ -68,6 +68,9 @@ export async function createProject(
   const prompt = formData.get("prompt");
   const promptValue = typeof prompt === "string" ? prompt.trim().slice(0, 5_000) : "";
   const parsedIntake = legacyPromptMode ? null : parseResearchIntakeJson(formData.get("intakeJson"));
+  if (autoGenerate && !legacyPromptMode && formData.get("intakeJson") && !parsedIntake) {
+    return { message: "Preencha os cinco campos do Mapa Avançado com 10 a 400 caracteres cada. Seu texto foi preservado para revisão.", status: "error" };
+  }
   // Quick mode is a single natural-language prompt. It must not be expanded
   // into five identical intake answers, otherwise the saved briefing and the
   // discovery screen repeat the sentence five times.

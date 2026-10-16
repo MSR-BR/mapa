@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { doiLookupProvenanceSchema } from "./doi-reference";
 
-import { researchIntakeSchema } from "@/modules/projects/research-intake";
+import { researchIntakeSchema, researchIntakeReviewSchema } from "@/modules/projects/research-intake";
 import { researchProductTypeSchema } from "./research-level-guidance";
 
 export const RESEARCH_WORKFLOW_SCHEMA_VERSION = "2.0.0" as const;
@@ -303,6 +303,7 @@ export const researchWorkflowContentSchema = z.object({
   elements: z.array(validatedElementSchema).max(120).default([]),
   knowledgeSuggestions: z.array(knowledgeSuggestionSchema).max(20).default([]),
   initialBriefing: researchIntakeSchema.nullable().default(null),
+  initialBriefingReview: researchIntakeReviewSchema.nullable().default(null),
   methodologyClassification: methodologyClassificationSchema.nullable().default(null),
   methodologyRows: z.array(methodologyRowSchema).max(7).default([]),
   referenceArchive: z.array(discoveryReferenceSchema).default([]),
@@ -338,6 +339,7 @@ export const EMPTY_WORKFLOW_CONTENT: ResearchWorkflowContent = {
   elements: [],
   knowledgeSuggestions: [],
   initialBriefing: null,
+  initialBriefingReview: null,
   methodologyClassification: null,
   methodologyRows: [],
   referenceArchive: [],

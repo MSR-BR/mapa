@@ -1,3 +1,5 @@
+import { currentResearchIntakeReview, researchIntakeReviewTextsSchema } from "@/modules/projects/research-intake";
+import { rewriteInitialBriefing } from "@/modules/generation/rewrite-initial-briefing";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
 import { workflowForView } from "@/modules/research-workflow/workflow-navigation";
@@ -35,8 +37,9 @@ import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 export const maxDuration = 120;
 
 const requestSchema = z.object({
-  action: z.enum(["complete", "go_to", "review"]),
+  action: z.enum(["complete", "go_to", "review", "prepare_export", "save_export_review"]),
   revision: z.number().int().positive(),
+  reviewTexts: researchIntakeReviewTextsSchema.optional(),
   targetStep: z.enum(["development", "discovery", "general", "literature", "methodology", "problem", "specifics"]).optional(),
 });
 
@@ -154,11 +157,24 @@ async function saveWorkflow(
   if (!workflow || workflow.revision !== parsed.data.revision) {
     return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
   }
-  if (!isSelfDirectedProject && parsed.data.action !== "go_to" && pendingAdvisorReview(workflow.content)) {
+  if (!isSelfDirectedProject && !["go_to", "prepare_export", "save_export_review"].includes(parsed.data.action) && pendingAdvisorReview(workflow.content)) {
     return NextResponse.json({ error: "O mapa já foi validado pelo estudante e está aguardando revisão." }, { status: 409 });
   }
   if (!["completed", "reviewing_map"].includes(workflow.state)) {
     return NextResponse.json({ error: "O mapa final ainda não pode ser revisado." }, { status: 409 });
+  }
+  if (["prepare_export", "save_export_review"].includes(parsed.data.action)) {
+    // Only appendix metadata changes: never confirm/rewrite a student's academic units.
+    if (!workflow.content.initialBriefing) return NextResponse.json({ workflow: baseWorkflow });
+    const cached = currentResearchIntakeReview(workflow.content);
+    if (parsed.data.action === "prepare_export" && cached) return NextResponse.json({ workflow: baseWorkflow });
+    if (parsed.data.action === "save_export_review" && (!cached || !parsed.data.reviewTexts)) return NextResponse.json({ error: "Prepare o comparativo antes de salvar sua revisão." }, { status: 400 });
+    const review = parsed.data.action === "save_export_review"
+      ? { sourceBriefing: workflow.content.initialBriefing, texts: parsed.data.reviewTexts! }
+      : await rewriteInitialBriefing(workflow.content.initialBriefing);
+    const content = researchWorkflowContentSchema.parse({ ...baseWorkflow!.content, initialBriefingReview: review });
+    const saved = await saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state: baseWorkflow!.state, stableState: baseWorkflow!.stableState, sourceRevision: baseWorkflow!.sourceRevision, step: "final_map", action: parsed.data.action }, { reportErrors: true });
+    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa mudou durante a preparação. Atualize a página; seu texto foi preservado." }, { status: 409 });
   }
   const advisorGate = parsed.data.action === "complete"
     ? projectAdvisorGate({
