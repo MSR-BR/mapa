@@ -1,0 +1,63 @@
+Browser tab: 16, Title: "Projeto de pesquisa com IA | Mapa da Pesquisa", URL: "https://mapadapesquisa.com.br/?utm_source=codex_validation&utm_medium=qa&utm_campaign=c110_monitor_20261016".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 3-51
+~		2 container
++			3 link Description: Mapa da Pesquisa, Value: mapadapesquisa.com.br/
++			4 link Description: Meus projetos, Value: mapadapesquisa.com.br/dashboard
++		5 container Planeje seu projeto de pesquisa com IA.
++			6 text MAPA DA PESQUISA
++			7 heading Planeje seu projeto de pesquisa com IA., Value: 1, ID: landing-title
++				8 text Planeje seu projeto de pesquisa com IA.
++			9 text Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.
++			10 link Description: Começar meu projeto, Value: mapadapesquisa.com.br/mapa
++			11 link Description: Como funciona, Value: mapadapesquisa.com.br/?utm_source=codex_validation&utm_medium=qa&utm_campaign=c110_monitor_20261016#como-funciona
++			12 content list Características principais
++				13 text Acesso gratuito
++				14 text Mapa Rápido ou Avançado
++				15 text Aluno ou Orientador
++		16 container Escolha como começar seu mapa., ID: criar-mapa
++			17 text SUA IDEIA É O PONTO DE PARTIDA
++			18 heading Escolha como começar seu mapa., Value: 2, ID: start-title
++				19 text Escolha como começar seu mapa.
++			20 text Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.
++			21 container
++				22 heading Mapa Avançado, Value: 3
++					23 text Mapa Avançado
++				24 text Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.
++				25 link Description: Começar no modo Avançado →, Value: mapadapesquisa.com.br/mapa?modo=avancado
++			26 container
++				27 heading Mapa Rápido, Value: 3
++					28 text Mapa Rápido
++				29 text Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.
++				30 link Description: Começar no modo Rápido →, Value: mapadapesquisa.com.br/mapa?modo=rapido
++		31 container Conheça o Mapa da Pesquisa., ID: apresentacao
++			32 text VEJA EM AÇÃO
++			33 heading Conheça o Mapa da Pesquisa., Value: 2, ID: landing-video-title
++				34 text Conheça o Mapa da Pesquisa.
++			35 text Em pouco mais de um minuto, veja como uma ideia ganha estrutura, como a IA apoia cada decisão e como estudante e orientador avançam juntos.
++			36 content list Destaques da apresentação
++				37 text Mapa Rápido ou Mapa Avançado
++				38 text Problemática, objetivos, capítulos e metodologia
++				39 text Sugestões da IA com revisão humana
++			40 container
++				41 container Vídeo de apresentação do Mapa da Pesquisa
++					42 container
++						43 button
++						44 pop up button
++					45 slider (disabled) video time scrubber
++				46 container Velocidade de reprodução
++					47 text Velocidade
++					48 checkbox 1×, Value: 1
++					49 checkbox 1,5×, Value: 0
++					50 checkbox 2×, Value: 0
++				51 text Apresentação do Mapa da Pesquisa · 1 min 17 s
++		119 container Preferências de privacidade
++			120 text Privacidade e métricas
++			121 text Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.
++			122 checkbox (settable, integer) Description: Métricas de uso (GA4), Value: 1
++			123 checkbox (settable, integer) Description: Publicidade e medição de anúncios (opcional), Value: 0
++			124 text Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.
++			125 button Recusar todos
++			126 button Cancelar
++			127 button Salvar escolhas
+The focused UI element is 114 button Preferências de cookies

@@ -1,0 +1,170 @@
+Browser tab: 15, Title: "Automated Rules - MSR-BR - Google Ads", URL: "https://ads.google.com/aw/bulk/rules/management?ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2".
+0 AXWebArea Automated Rules - MSR-BR - Google Ads, URL: ads.google.com/aw/bulk/rules/management?ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2
+	1 container
+		2 container
+			3 container
+				4 heading 1
+					5 image
+				6 container
+					7 container a6DF86AAC-4391-4FC8-916B-A5E27A95CF09--1
+						8 container
+							9 text "What are my biggest opportunities for growth right now?"
+							10 combo box (collapsed, settable) Description: "What are my biggest opportunities for growth right now?", ID: a02EE1706-C738-4DF1-8CE2-36EEEEA901BF--0, Secondary Actions: Expand
+				11 button Appearance
+					12 text Appearance
+				13 button Refresh
+					14 text Refresh
+				15 button Help
+					16 text Help
+				17 container notificationsBellPortal
+					18 pop up button Notifications
+						19 container
+							20 text Notifications
+					21 container Description: Notifications, ID: aA1256FF7-FE74-41C6-8538-7AB396D9FE8A--3
+						22 container
+							23 container Informational notification icon
+							24 button Get 196.00% more clicks with the right spend View
+								25 text Get 196.00% more clicks with the right spend
+								26 text View
+							27 container Warning notification icon
+							28 button Protect your account from unauthorized activity View
+								29 text Protect your account from unauthorized activity
+								30 text View
+							31 button Close notifications
+				32 button Ask Advisor BETA
+					33 container
+						34 text Ask Advisor BETA
+				35 button Google account
+					36 image Google account (mario.reis.junior@gmail.com)
+			37 container
+				38 container
+					39 button Create
+					40 text Create
+					41 menu
+						42 Campaigns
+							43 text Campaigns
+						44 Goals
+							45 text Goals
+						46 Tools
+							47 text Tools
+						48 Billing
+							49 text Billing
+						50 Admin
+							51 text Admin
+					52 button Collapse
+					53 menu
+						54 Asset studio
+							55 text Asset studio
+						56 (collapsed) Planning, Secondary Actions: Expand
+							57 text Planning
+						58 App advertising hub
+							59 text App advertising hub
+						60 (collapsed) Shared library, Secondary Actions: Expand
+							61 text Shared library
+						62 YouTube creator partnerships BETA, Help: YouTube creator partnerships
+							63 text YouTube creator partnerships
+							64 text BETA
+						65 Content suitability
+							66 text Content suitability
+						67 Data manager
+							68 text Data manager
+						69 (collapsed) Troubleshooting, Secondary Actions: Expand
+							70 text Troubleshooting
+						71 (expanded) Bulk actions, Secondary Actions: Collapse
+							72 text Bulk actions
+						73 container
+							74 All bulk actions
+								75 text All bulk actions
+							76 Rules
+								77 text Rules
+							78 Scripts
+								79 text Scripts
+							80 Solutions
+								81 text Solutions
+							82 Uploads
+								83 text Uploads
+						84 (collapsed) Budgets and bidding, Secondary Actions: Expand
+							85 text Budgets and bidding
+						86 Business data
+							87 text Business data
+				88 container
+				89 heading Rules, Value: 2, ID: aD0270EC2-6446-4EFD-8BAC-4D5AF2BDBD6A--0
+					90 text Rules
+				91 pop up button (disabled, collapsed) Description: Not applicable, ID: aF4B8A492-4DF7-4A16-ADC5-D7518E55899B--2, Secondary Actions: Expand
+				92 tab group
+					93 tab (selected, settable, boolean) Description: Automated rules, Value: 1, ID: navigation.tools.bulkActions.rules.automatedRules
+					94 tab (selectable, settable, boolean) Description: Results, Value: 0, ID: navigation.tools.bulkActions.rules.results
+					95 tab (selectable, settable, boolean) Description: Version history, Value: 0, ID: navigation.tools.bulkActions.rules.versionHistory
+				96 container
+					97 container
+						98 text The history of bulk actions (edits, rules, and uploads) are now only visible based on the account you're signed into. Scripts and Solutions are still visible based on the account you're drilled into.
+						99 link Description: Learn more about bulk actions with a manager account, Value: support.google.com/google-ads/answer/9254269?hl=en_US
+					100 text You can now use Ask Advisor to create certain rules.
+					101 button Try it out
+					102 container Primary toolbelt for Automated Rules
+						103 container
+							104 pop up button Description: New Rule, ID: aD3D2B84C-13D5-4732-ABFF-B29DD662FD80--0
+							105 table
+							106 button Add filter
+						107 container
+							108 button Expand
+								109 text Expand
+							110 pop up button (collapsed) Description: More options, Secondary Actions: Expand
+								111 text More
+					112 table Automated Rules
+						113 row Select all rows Rule status Rule Description Created by Frequency Last run date Email notification Rule ID Actions
+							114 cell
+								115 checkbox Description: Select all rows, Value: 0
+							116 cell
+								117 image Rule status
+							118 cell Rule
+								119 text Rule
+							120 cell
+								121 text Description
+							122 cell Created by
+								123 text Created by
+							124 cell
+								125 text Frequency
+							126 cell Last run date
+								127 text Last run date
+							128 cell Email notification
+								129 text Email notification
+							130 cell
+								131 text Rule ID
+							132 cell
+								133 text Actions
+						134 row Select row Enabled Mapa | Pausa por custo EUR28 | C110 Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign mario.reis.junior@gmail.com Oct 11, 2026 8:16 AM Hourly Using data from all time Scheduled Oct 16, 2026 7:16 AM Only if there are changes or errors 62128225 Edit Run
+							135 cell
+								136 checkbox Description: Select row, Value: 0
+							137 cell
+								138 image Enabled
+							139 cell
+								140 text Mapa | Pausa por custo EUR28 | C110
+							141 cell
+								142 container
+									143 text Pause campaigns Campaign status: Enabled, Paused Cost >= €28.00 Selected 1 campaign
+							144 cell
+								145 container
+									146 text mario.reis.junior@gmail.com Oct 11, 2026 8:16 AM
+							147 cell
+								148 text Hourly
+								149 text Using data from all time
+							150 cell
+								151 text Scheduled
+								152 text Oct 16, 2026 7:16 AM
+							153 cell
+								154 text Only if there are changes or errors
+							155 cell
+								156 text 62128225
+							157 cell
+								158 container
+									159 button Edit
+									160 button Run
+					161 text 1 - 1 of 1
+					162 text © Google, 2026.
+		163 container default-acx-overlay-container
+			164 container dialog
+			165 container dialog
+		166 container dialog
+
+The focused UI element is 88 container

@@ -1,0 +1,83 @@
+{
+  "observed_on": "2026-10-16",
+  "collected_through_utc": "2026-10-16 11:36:02 UTC",
+  "decision": "MAINTAIN_AUTHORIZED_CPC_TEST_NO_ACTION_REQUIRED",
+  "notify": false,
+  "ads": {
+    "campaign_id": "24325133699",
+    "account_id": "3838359068",
+    "status": "ENABLED",
+    "primary_status": "LEARNING",
+    "impressions": 3,
+    "clicks": 0,
+    "cost_eur": 0,
+    "conversions": 0,
+    "new_ad_impressions": 0,
+    "daily_budget_eur": 2,
+    "cpc_ceiling_eur": 0.45,
+    "end_at": "2026-10-19T23:59:59-03:00",
+    "cpc_restore_by": "2026-10-18T21:03:00-03:00",
+    "cpc_restore_on_daily_check": "2026-10-18",
+    "enabled_approved_eligible_keywords": 6,
+    "paused_keywords": 4,
+    "negative_keywords": 17
+  },
+  "rule": {
+    "id": "62128225",
+    "enabled": true,
+    "frequency": "HOURLY",
+    "window": "ALL_TIME",
+    "cost_threshold_eur": 28,
+    "scope": "ONLY_MAPA",
+    "last_observed_execution": "2026-10-16T08:16:10-03:00",
+    "execution_status": "FINISHED_SUCCESSFULLY",
+    "changes": "NONE",
+    "duration_seconds": 6,
+    "threshold_pause_exercised": false
+  },
+  "ga4": {
+    "property": "550650234",
+    "timezone": "America/Rio_Branco",
+    "currency": "BRL",
+    "daily": [
+      {
+        "date": "2026-10-14",
+        "sessions": 7,
+        "events": 38,
+        "project_start": 0,
+        "source_sessions_sum": 7,
+        "qa_sessions": 0
+      },
+      {
+        "date": "2026-10-15",
+        "sessions": 11,
+        "events": 60,
+        "project_start": 0,
+        "source_sessions_sum": 15,
+        "qa_sessions": 1,
+        "not_set_sessions": 8,
+        "excluding_qa_and_marked_team_sessions": 11,
+        "excluding_qa_and_marked_team_events": 58
+      }
+    ],
+    "processed_oct16_available": false,
+    "paid_attribution_confirmed": false,
+    "internal_segmentation_complete": false,
+    "new_diagnostic_rows_oct15_16": 0,
+    "new_diagnostic_absence_conclusive": false
+  },
+  "product": {
+    "health": "ok",
+    "version": "v15102026.1",
+    "cta_opened_mapa": true,
+    "consent_ui": {
+      "analytics": true,
+      "ads": false,
+      "personalization": false
+    },
+    "paid_generation": false,
+    "private_project_access": false
+  },
+  "external_mutations": [],
+  "evidence": "evidence-2026-10-16/api-snapshots.json"
+}

@@ -1,0 +1,761 @@
+{
+  "observed_on": "2026-10-16",
+  "collected_through_utc": "2026-10-16 11:36:02 UTC",
+  "heartbeat_received_at": "2026-10-16T09:00:05.225Z",
+  "account": "3838359068",
+  "property": "550650234",
+  "unit_note": "HYPD returns normalized EUR amounts for cost, budget, CPC; do not divide these outputs by 1e6.",
+  "sentinel_note": "0.9001 means >90% lost impression share, not exactly 90.01%.",
+  "responses": {
+    "campaign": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "campaign__id",
+          "campaign__name",
+          "campaign__status",
+          "campaign__primary_status",
+          "campaign__start_date_time",
+          "campaign__end_date_time",
+          "campaign_budget__amount",
+          "campaign__bidding_strategy_type",
+          "campaign__target_spend__cpc_bid_ceiling",
+          "campaign__network_settings__target_google_search",
+          "campaign__network_settings__target_search_network",
+          "campaign__network_settings__target_content_network",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "campaign__id": 24325133699,
+            "campaign__name": "Mapa | Search | BR | Ativacao | Piloto",
+            "campaign__status": "ENABLED",
+            "campaign__primary_status": "LEARNING",
+            "campaign__start_date_time": "2026-10-06 13:44:02",
+            "campaign__end_date_time": "2026-10-19 23:59:59",
+            "campaign_budget__amount": 2,
+            "campaign__bidding_strategy_type": "TARGET_SPEND",
+            "campaign__target_spend__cpc_bid_ceiling": 0.45,
+            "campaign__network_settings__target_google_search": true,
+            "campaign__network_settings__target_search_network": false,
+            "campaign__network_settings__target_content_network": false,
+            "metrics__impressions": 3,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "daily": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "segments__date",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions",
+          "metrics__average_cpc",
+          "metrics__search_rank_lost_impression_share",
+          "metrics__search_budget_lost_impression_share"
+        ],
+        "rows": [
+          {
+            "segments__date": "2026-10-06",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.07692307692307693,
+            "metrics__search_budget_lost_impression_share": 0.8461538461538461
+          },
+          {
+            "segments__date": "2026-10-07",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.4782608695652174,
+            "metrics__search_budget_lost_impression_share": 0.4782608695652174
+          },
+          {
+            "segments__date": "2026-10-08",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-09",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.13636363636363635,
+            "metrics__search_budget_lost_impression_share": 0.8181818181818182
+          },
+          {
+            "segments__date": "2026-10-10",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-11",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-12",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-13",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-14",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-15",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          },
+          {
+            "segments__date": "2026-10-16",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0,
+            "metrics__average_cpc": 0,
+            "metrics__search_rank_lost_impression_share": 0.9001,
+            "metrics__search_budget_lost_impression_share": 0
+          }
+        ]
+      }
+    },
+    "ads": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "ad_group_ad__ad__id",
+          "ad_group_ad__status",
+          "ad_group_ad__primary_status",
+          "ad_group_ad__policy_summary__approval_status",
+          "ad_group_ad__policy_summary__review_status",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "ad_group_ad__ad__id": 827109934468,
+            "ad_group_ad__status": "PAUSED",
+            "ad_group_ad__primary_status": "PAUSED",
+            "ad_group_ad__policy_summary__approval_status": "APPROVED",
+            "ad_group_ad__policy_summary__review_status": "REVIEWED",
+            "metrics__impressions": 3,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "ad_group_ad__ad__id": 827659065358,
+            "ad_group_ad__status": "ENABLED",
+            "ad_group_ad__primary_status": "ELIGIBLE",
+            "ad_group_ad__policy_summary__approval_status": "APPROVED",
+            "ad_group_ad__policy_summary__review_status": "REVIEWED",
+            "metrics__impressions": 0,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "keywords": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "ad_group_criterion__keyword__text",
+          "ad_group_criterion__keyword__match_type",
+          "ad_group_criterion__status",
+          "ad_group_criterion__approval_status",
+          "ad_group_criterion__system_serving_status",
+          "ad_group_criterion__quality_info__quality_score",
+          "ad_group_criterion__quality_info__creative_quality_score",
+          "ad_group_criterion__quality_info__post_click_quality_score",
+          "ad_group_criterion__quality_info__search_predicted_ctr"
+        ],
+        "rows": [
+          {
+            "ad_group_criterion__keyword__text": "projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": 2,
+            "ad_group_criterion__quality_info__creative_quality_score": "AVERAGE",
+            "ad_group_criterion__quality_info__post_click_quality_score": "BELOW_AVERAGE",
+            "ad_group_criterion__quality_info__search_predicted_ctr": "BELOW_AVERAGE"
+          },
+          {
+            "ad_group_criterion__keyword__text": "como fazer um projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "pré projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "estrutura projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "ferramenta para tcc",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "planejar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "RARELY_SERVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "criar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "RARELY_SERVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "organizar projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "EXACT",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "RARELY_SERVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "projeto de pesquisa com ia",
+            "ad_group_criterion__keyword__match_type": "PHRASE",
+            "ad_group_criterion__status": "ENABLED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "ELIGIBLE",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          },
+          {
+            "ad_group_criterion__keyword__text": "ferramenta projeto de pesquisa",
+            "ad_group_criterion__keyword__match_type": "PHRASE",
+            "ad_group_criterion__status": "PAUSED",
+            "ad_group_criterion__approval_status": "APPROVED",
+            "ad_group_criterion__system_serving_status": "RARELY_SERVED",
+            "ad_group_criterion__quality_info__quality_score": null,
+            "ad_group_criterion__quality_info__creative_quality_score": null,
+            "ad_group_criterion__quality_info__post_click_quality_score": null,
+            "ad_group_criterion__quality_info__search_predicted_ctr": null
+          }
+        ]
+      }
+    },
+    "terms": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "search_term_view__search_term",
+          "metrics__impressions",
+          "metrics__clicks",
+          "metrics__cost",
+          "metrics__conversions"
+        ],
+        "rows": [
+          {
+            "search_term_view__search_term": "criador de tcc",
+            "metrics__impressions": 1,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          },
+          {
+            "search_term_view__search_term": "projeto de pesquisa",
+            "metrics__impressions": 2,
+            "metrics__clicks": 0,
+            "metrics__cost": 0,
+            "metrics__conversions": 0
+          }
+        ]
+      }
+    },
+    "negatives": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "campaign_criterion__keyword__text",
+          "campaign_criterion__keyword__match_type",
+          "campaign_criterion__negative"
+        ],
+        "rows": [
+          {
+            "campaign_criterion__keyword__text": "mapa astral",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "trabalho pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "trabalhos prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "tcc pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "monografia pronta",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "mapa do brasil",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "comprar monografia",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "comprar tcc",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "projetos de pesquisa prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "pré projeto pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "projeto de pesquisa pronto",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "comprar projeto",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "mapa geográfico",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "mapa geografico",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "tcc prontos",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "mapa rodoviário",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          },
+          {
+            "campaign_criterion__keyword__text": "tcc para copiar",
+            "campaign_criterion__keyword__match_type": "PHRASE",
+            "campaign_criterion__negative": true
+          }
+        ]
+      }
+    },
+    "goal": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "conversion_goal_campaign_config__campaign",
+          "conversion_goal_campaign_config__custom_conversion_goal",
+          "conversion_goal_campaign_config__goal_config_level"
+        ],
+        "rows": [
+          {
+            "conversion_goal_campaign_config__campaign": "customers/3838359068/campaigns/24325133699",
+            "conversion_goal_campaign_config__custom_conversion_goal": "customers/3838359068/customConversionGoals/6459352879",
+            "conversion_goal_campaign_config__goal_config_level": "CAMPAIGN"
+          }
+        ]
+      }
+    },
+    "goalAction": {
+      "googleAdsId": "3838359068",
+      "result": {
+        "columns": [
+          "custom_conversion_goal__id",
+          "custom_conversion_goal__name",
+          "custom_conversion_goal__conversion_actions",
+          "custom_conversion_goal__status"
+        ],
+        "rows": [
+          {
+            "custom_conversion_goal__id": 6459352879,
+            "custom_conversion_goal__name": "Mapa | Projeto iniciado",
+            "custom_conversion_goal__conversion_actions": "[\"customers/3838359068/conversionActions/7825220596\"]",
+            "custom_conversion_goal__status": "ENABLED"
+          }
+        ]
+      }
+    },
+    "gaSources": {
+      "dimensionHeaders": [
+        "date",
+        "sessionSourceMedium"
+      ],
+      "metricHeaders": [
+        {
+          "name": "sessions",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "keyEvents:project_start",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261015",
+          "sessionSourceMedium": "(not set)",
+          "sessions": "8",
+          "eventCount": "35",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "6",
+          "eventCount": "32",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261015",
+          "sessionSourceMedium": "(direct) / (none)",
+          "sessions": "4",
+          "eventCount": "17",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261014",
+          "sessionSourceMedium": "google / organic",
+          "sessions": "1",
+          "eventCount": "6",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261015",
+          "sessionSourceMedium": "codex_validation / qa",
+          "sessions": "1",
+          "eventCount": "2",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261015",
+          "sessionSourceMedium": "google / organic",
+          "sessions": "1",
+          "eventCount": "4",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261015",
+          "sessionSourceMedium": "scanned.page / referral",
+          "sessions": "1",
+          "eventCount": "2",
+          "keyEvents:project_start": "0"
+        }
+      ],
+      "rowCount": 7,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "gaTotals": {
+      "dimensionHeaders": [
+        "date"
+      ],
+      "metricHeaders": [
+        {
+          "name": "sessions",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "keyEvents:project_start",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261015",
+          "sessions": "11",
+          "eventCount": "60",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261014",
+          "sessions": "7",
+          "eventCount": "38",
+          "keyEvents:project_start": "0"
+        }
+      ],
+      "rowCount": 2,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "gaDiagnostics": {
+      "dimensionHeaders": [
+        "date",
+        "eventName",
+        "customEvent:app_stage",
+        "customEvent:app_reason_code",
+        "sessionSourceMedium"
+      ],
+      "metricHeaders": [
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261013",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "validation",
+          "sessionSourceMedium": "scanned.page / referral",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261014",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "provider_invalid_response",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventCount": "2"
+        },
+        {
+          "date": "20261012",
+          "eventName": "stage_blocked",
+          "customEvent:app_stage": "methodology",
+          "customEvent:app_reason_code": "provider_invalid_response",
+          "sessionSourceMedium": "(direct) / (none)",
+          "eventCount": "1"
+        }
+      ],
+      "rowCount": 3,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "gaExternal": {
+      "dimensionHeaders": [
+        "date"
+      ],
+      "metricHeaders": [
+        {
+          "name": "sessions",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        },
+        {
+          "name": "keyEvents:project_start",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "date": "20261015",
+          "sessions": "11",
+          "eventCount": "58",
+          "keyEvents:project_start": "0"
+        },
+        {
+          "date": "20261014",
+          "sessions": "7",
+          "eventCount": "38",
+          "keyEvents:project_start": "0"
+        }
+      ],
+      "rowCount": 2,
+      "totals": null,
+      "metadata": {
+        "currencyCode": "BRL",
+        "timeZone": "America/Rio_Branco"
+      },
+      "propertyQuota": null
+    },
+    "gaLinks": {
+      "rows": [
+        {
+          "name": "properties/550650234/googleAdsLinks/16054285529",
+          "customerId": "3838359068",
+          "adsPersonalizationEnabled": false,
+          "createTime": "2026-10-06T15:23:42.456Z",
+          "updateTime": "2026-10-06T15:23:42.456Z",
+          "creatorEmailAddress": "mario.reis.junior@gmail.com"
+        }
+      ]
+    },
+    "realtime": {
+      "dimensionHeaders": [
+        "eventName"
+      ],
+      "metricHeaders": [
+        {
+          "name": "eventCount",
+          "type": "TYPE_INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "eventName": "page_view",
+          "eventCount": "4"
+        },
+        {
+          "eventName": "session_start",
+          "eventCount": "2"
+        },
+        {
+          "eventName": "login_success",
+          "eventCount": "1"
+        },
+        {
+          "eventName": "stage_started",
+          "eventCount": "1"
+        }
+      ],
+      "rowCount": 4,
+      "totals": null,
+      "metadata": null,
+      "propertyQuota": null
+    }
+  }
+}
