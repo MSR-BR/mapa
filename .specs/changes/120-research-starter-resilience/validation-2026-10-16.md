@@ -27,4 +27,6 @@
 
 ## Limitações e publicação
 
-A busca alternativa tem cobertura menor e filtro lexical, não equivalência semântica garantida. Se ambas as fontes falharem ou não houver referências pertinentes, o erro recuperável continua necessário. Não há promessa de indisponibilidade zero. Sem alteração de banco, modelos, chaves, orçamento ou Ads. Publicação e smoke final serão registrados no CPD.
+A busca alternativa tem cobertura menor e filtro lexical, não equivalência semântica garantida. Se ambas as fontes falharem ou não houver referências pertinentes, o erro recuperável continua necessário. Não há promessa de indisponibilidade zero. Sem alteração de banco, modelos, chaves, orçamento ou Ads.
+
+Publicada em v16102026.1. O smoke real confirmou timeout das duas tentativas principais, recuperação pelo Crossref em 40.820 ms totais, seis propostas/20 referências e persistência do pedido original após recarregar. [CPD](cpd-2026-10-16.md) e [evidência](evidence/production-smoke.json).

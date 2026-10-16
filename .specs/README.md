@@ -4,7 +4,7 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v15102026.1`** (C119: recuperação da metodologia, preservação do rascunho e diagnóstico de falhas). C118 preservada. [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/119-methodology-recovery/cpd-2026-10-15.md).
+- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v16102026.1`** (C120: consulta Research Starter compatível, repetição limitada e fonte alternativa Crossref). Recuperação real com seis propostas/20 referências e texto original preservado após reabrir; C119/C118 preservadas. [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/120-research-starter-resilience/cpd-2026-10-16.md).
 - Fluxo v2 em produção; fluxo v1 preservado para projetos legados. Entrada pública em `/mapa`, modos Rápido/Avançado, Google OAuth para gerar/guardar e regras Aluno/Orientador mantidas.
 - Contexto confirmado, rascunhos e histórico C111; Gemini principal e GPT complementar/fallback limitado C112; edição por quadro e literatura aditiva C114.
 - Integrações server-side: Gemini, OpenAI, Research Starter e Supabase no projeto documentado. Auditoria C113 concluída, mas vínculo com o aviso Google não confirmado.

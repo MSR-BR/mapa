@@ -741,3 +741,13 @@ As divergências de interface e fluxo foram transformadas nas Changes 059–062.
   pertencem à C099.
 - Pó Mágico sucessor: `po_magico_v20260924.002.md`, com blueprint Digital
   Discovery & Growth v1.2.
+
+## Change 120 — Resiliência da busca bibliográfica (16/10/2026)
+
+- Versão `v16102026.1`; deployment `dpl_GZ2sYLERSVRDjcLG6Gm3z9qei8fw`. Registro completo em `.specs/changes/120-research-starter-resilience/`.
+- API Research Starter v1 aceita consulta até 180 caracteres. A normalização limita somente a consulta enviada; o briefing original permanece intacto.
+- Até duas tentativas para falhas transitórias, respeitando Retry-After/cancelamento. Busca total até 50s com reserva para Crossref; descoberta reserva tempo para gerar/salvar propostas. Não repetir 400/401/403 ou configuração ausente.
+- Crossref usa metadados públicos e DOIs, sem chave adicional ou síntese científica inventada. Cobertura reduzida identificada na interface; se não houver referências adequadas, manter erro recuperável e briefing.
+- Diagnósticos `research_starter_request_failed`, `research_starter_fallback_started/completed/failed` registram códigos, duração, tentativa, comprimento da consulta e quantidade, sem texto livre ou segredo. Timeout do principal não implica falha final se `fallback_completed` e propostas persistidas.
+- Smoke real: duas tentativas principais excederam prazo, Crossref entregou 20 referências; seis propostas persistidas e texto original exato ao reabrir. Origem QA excluída da aquisição. Não gerar pesquisa paga durante monitoramento rotineiro.
+- Rollback sem migration: deployment `dpl_3a4tcL8VHNSFPomKARi4h7y2r43u` (v15102026.1).

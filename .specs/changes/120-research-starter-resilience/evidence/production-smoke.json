@@ -1,0 +1,83 @@
+{
+  "verifiedAt": "2026-10-16T14:05:46.185Z",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "version": "v16102026.1",
+  "health": "ok",
+  "canonicalDeployment": "dpl_GZ2sYLERSVRDjcLG6Gm3z9qei8fw",
+  "candidateAnonymousResearchRequest": {
+    "status": 307,
+    "location": "/login"
+  },
+  "productionAuthenticatedSyntheticTest": {
+    "qaSource": "codex_validation",
+    "qaMedium": "qa",
+    "qaCampaign": "c120_resilience",
+    "proposals": 6,
+    "references": 20,
+    "source": "crossref",
+    "originalInputExactlyPreservedAfterReload": true,
+    "resultsPersistedAfterReload": true,
+    "notPrivateStudentData": true,
+    "apiGenerationExecuted": true
+  },
+  "events": [
+    {
+      "timestamp": "2026-10-16T14:00:34.780Z",
+      "event": "gemini_generation_completed",
+      "operation": "interpret_research_request",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "durationMs": 1774,
+      "estimatedCostUsd": 0.0007815,
+      "status": "succeeded"
+    },
+    {
+      "event": "research_starter_request_failed",
+      "timestamp": "2026-10-16T14:01:04.787Z",
+      "attempt": 1,
+      "code": "temporary-unavailable",
+      "status": null,
+      "queryLength": 121,
+      "durationMs": 30004
+    },
+    {
+      "event": "research_starter_request_failed",
+      "timestamp": "2026-10-16T14:01:14.785Z",
+      "attempt": 2,
+      "code": "temporary-unavailable",
+      "status": null,
+      "queryLength": 121,
+      "durationMs": 40002
+    },
+    {
+      "event": "research_starter_fallback_started",
+      "timestamp": "2026-10-16T14:01:14.785Z",
+      "code": "temporary-unavailable",
+      "stage": "crossref"
+    },
+    {
+      "event": "research_starter_fallback_completed",
+      "timestamp": "2026-10-16T14:01:15.603Z",
+      "stage": "crossref",
+      "durationMs": 40820,
+      "rankedPapers": 20
+    },
+    {
+      "timestamp": "2026-10-16T14:01:24.151Z",
+      "event": "gemini_generation_completed",
+      "operation": "generate_problem_candidates",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "attempt": 2,
+      "durationMs": 8543,
+      "estimatedCostUsd": 0.0092715,
+      "status": "succeeded"
+    }
+  ],
+  "limitations": [
+    "Crossref provides reduced coverage with an explicit visible warning.",
+    "Primary attempts timed out at approximately 30 and 40 seconds total; this is not proof of a permanent outage.",
+    "UI reopening and local idempotency tests passed; logs captured here cover generation, not a complete billing audit."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "version": "v16102026.1",
+  "sourceCommit": "bf5261e4743c1ea1bbf754a51beccf6c7c4eeeef",
+  "archiveSha256": "e38fd133217b382ebff9552c5db7ae3b314998da0193d5f2fa0f9087904b9a18",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "teamId": "team_jQuUBnU7RDJh0O3XASyu1WeS",
+  "deploymentId": "dpl_GZ2sYLERSVRDjcLG6Gm3z9qei8fw",
+  "deploymentUrl": "https://mapadapesquisa-mfau0jx9b-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "canonicalVerified": true,
+  "sourceProof": "Exact git archive uploaded without local environment files; staged build promoted without rebuild and canonical alias verified. releaseCommit metadata supplied to deployment.",
+  "verifiedAt": "2026-10-16T14:05:46.185Z",
+  "unitTests": 238,
+  "routeIntegrationScenarios": 8,
+  "runtimeVulnerabilities": 0,
+  "localBuild": "Webpack PASS",
+  "remoteBuild": "Default Turbopack PASS",
+  "authenticatedSyntheticGeneration": true,
+  "productionFallbackConfirmed": true,
+  "originalBriefingPreserved": true,
+  "publicEnvironmentChange": {
+    "name": "NEXT_PUBLIC_APP_VERSION",
+    "value": "v16102026.1",
+    "target": "production"
+  },
+  "rollbackDeployment": "dpl_3a4tcL8VHNSFPomKARi4h7y2r43u",
+  "monitorReleaseContextUpdated": true,
+  "preserved": [
+    "models",
+    "keys",
+    "provider budgets",
+    "Ads",
+    "TERMO",
+    "database schema",
+    "authorization"
+  ],
+  "evidence": "evidence/production-smoke.json"
+}
