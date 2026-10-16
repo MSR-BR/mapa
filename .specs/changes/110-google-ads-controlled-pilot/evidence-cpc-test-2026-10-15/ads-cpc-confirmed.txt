@@ -1,0 +1,752 @@
+Browser tab: 8, Title: "Overview - MSR-BR - Google Ads", URL: "https://ads.google.com/aw/overview?campaignId=24325133699&ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2".
+0 AXWebArea Overview - MSR-BR - Google Ads, URL: ads.google.com/aw/overview?campaignId=24325133699&ocid=6924780908&euid=1341006157&__u=7626112293&uscid=6924780908&__c=5611930892&authuser=2
+	1 container
+		2 container
+			3 container
+				4 heading 1
+					5 image
+				6 button
+				7 pop up button Mapa | Search | BR | Ativacao | Piloto Search campaign, ID: a514DEDDD-860D-425B-B192-6DB16ACB1C03--0
+					8 text Mapa | Search | BR | Ativacao | Piloto
+					9 text Search campaign
+				10 button Search
+					11 text Search
+				12 button Appearance
+					13 text Appearance
+				14 button Refresh
+					15 text Refresh
+				16 button Help
+					17 text Help
+				18 pop up button Notifications
+					19 container
+						20 text Notifications
+				21 button Ask Advisor BETA
+					22 container
+						23 text Ask Advisor BETA
+				24 button Google account
+					25 image Google account (mario.reis.junior@gmail.com)
+			26 container
+				27 pop up button Change status
+				28 text Status:
+				29 text Eligible
+				30 text Type: Search Budget:
+				31 link €2.00/day
+					32 text €2.00/day
+				33 text Optimization score:
+				34 container
+					35 link Description: 78.3%, Value: ads.google.com/aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreInfosnack&authuser=2&__u=7626112293&__c=5611930892
+				36 button (disabled) The budget simulator isn’t available because this campaign doesn’t have enough recent performance data.
+					37 text Simulate campaign changes
+				38 button Settings
+					39 text Campaign settings
+				40 container
+					41 button Create
+					42 text Create
+					43 menu
+						44 Campaigns
+							45 text Campaigns
+						46 Goals
+							47 text Goals
+						48 Tools
+							49 text Tools
+						50 Billing
+							51 text Billing
+						52 Admin
+							53 text Admin
+					54 button Collapse
+					55 menu
+						56 container
+							57 Overview
+								58 text Overview
+							59 Recommendations
+								60 text Recommendations
+							61 (collapsed) Insights and reports, Secondary Actions: Expand
+								62 text Insights and reports
+							63 (collapsed) Campaigns, Secondary Actions: Expand
+								64 text Campaigns
+							65 (collapsed) Assets, Secondary Actions: Expand
+								66 text Assets
+							67 (collapsed) Audiences, keywords, and content, Secondary Actions: Expand
+								68 text Audiences, keywords, and content
+							69 Change history
+								70 text Change history
+				71 container
+					72 heading Overview, Value: 2, ID: aC0478488-2814-4BD5-9A74-C72298250A0F--0
+						73 text Overview
+					74 container
+						75 text Last 14 days
+						76 pop up button (collapsed) Description: Oct 1 – 14, 2026 Not applicable, ID: a514DEDDD-860D-425B-B192-6DB16ACB1C03--4, Secondary Actions: Expand
+						77 button Previous
+						78 button Next
+					79 button Show last 30 days
+					80 container
+						81 container
+							82 container
+								83 tab group
+									84 tab (selected, settable, boolean) Description: Home, Value: 1
+								85 button Add custom view
+								86 button (collapsed) Description: Help for adding custom view, Secondary Actions: Expand
+							87 pop up button (collapsed) Description: Campaign options menu, ID: a06D8FC39-FF10-4476-8AB6-11EE092D1FA4--1, Secondary Actions: Expand
+							90 pop up button (collapsed) Description: Button to download the overview cards content in a selected format., Secondary Actions: Expand
+								738 text Download
+							92 pop up button (collapsed) Description: Button to submit feedback about the overview page., Secondary Actions: Expand
+								739 text Feedback
+							94 content list
+								95 heading Performance diagnostics, Value: 2
+									96 text Performance diagnostics
+								97 container  Card 1 of 0.
+									98 container
+										99 heading Campaign diagnostics, Value: 1
+											100 text Campaign diagnostics
+										101 container
+											102 pop up button Card options
+										103 button (expanded) Secondary Actions: Collapse, Your campaign hasn't generated clicks in the past week There may be issues limiting its performance that are not highlighted here. Learn more about troubleshooting campaign serving issues
+											104 container a06D8FC39-FF10-4476-8AB6-11EE092D1FA4--2
+												105 text Your campaign hasn't generated clicks in the past week
+												106 container
+													107 text There may be issues limiting its performance that are not highlighted here.
+													108 link Description: Learn more about troubleshooting campaign serving issues, Value: support.google.com/google-ads/?p=help_9208915&hl=en_US
+										109 container ID: a06D8FC39-FF10-4476-8AB6-11EE092D1FA4--4, Your campaign hasn't generated clicks in the past week There may be issues limiting its performance that are not highlighted here. Learn more about troubleshooting campaign serving issues
+											110 list Diagnostic timeline. Use left and right arrow keys to navigate. Tab to exit.
+												111 Campaign published Started on Oct 6, 2026
+													112 text Campaign published
+													113 text Started on Oct 6, 2026
+												114 Impressions First received on Oct 6, 2026
+													115 text Impressions
+													116 text First received on Oct 6, 2026
+												117 Clicks Upcoming
+													118 text Clicks
+													119 text Upcoming
+											120 button View campaign diagnostics
+												121 text View campaign diagnostics
+								122 heading Performance summary, Value: 2
+									123 text Performance summary
+								124 container  Card 1 of 0.
+									125 container
+										126 heading Time series, Value: 1
+											127 text Time series
+										128 pop up button (collapsed) Description: Choose metric 1 of 4 for the Time series card. Current metric: Clicks, Secondary Actions: Expand
+											129 container Choose metric 1 of 4 for the Time series card. Current metric: Clicks
+												130 text Clicks arrow_drop_down
+										131 button Clicks. 0. Hide this metric in the time series chart.
+											132 text 0
+										133 pop up button (collapsed) Description: Choose metric 2 of 4 for the Time series card. Current metric: Cost, Secondary Actions: Expand
+											134 container Choose metric 2 of 4 for the Time series card. Current metric: Cost
+												135 text Cost arrow_drop_down
+										136 button Cost. €0.00. Hide this metric in the time series chart.
+											137 text €0.00
+										138 pop up button (collapsed) Description: Choose metric 3 of 4 for the Time series card. Current metric: Impressions, Secondary Actions: Expand
+											139 container Choose metric 3 of 4 for the Time series card. Current metric: Impressions
+												140 text Impressions arrow_drop_down
+										141 button Impressions. 3. Hide this metric in the time series chart.
+											142 text 3
+										143 pop up button (collapsed) Description: Choose metric 4 of 4 for the Time series card. Current metric: Cost, Secondary Actions: Expand
+											144 text Cost
+										145 button Cost. €0.00. Show this metric in the time series chart and allow metric to be changed.
+											146 text €0.00
+										147 pop up button Card options
+										148 text Time series chart showing the performance of your account over time for up to 4 selected metrics. Use left and right keys to move between date points.
+								149 heading Optimize performance, Value: 2
+									150 text Optimize performance
+								151 text Your optimization score: 78.3%
+								152 progress indicator Description: active progress, Value: 78
+								153 button View all recommendations
+									154 text View all recommendations
+								155 container
+									156 container  Card 1 of 0.
+										157 container
+											158 heading Recommendation, Value: 1
+												159 text Recommendation
+											160 container
+												161 pop up button Card options
+											162 text Create a Performance Max campaign Get more conversions at a similar cost with a Performance Max campaign. It uses Google AI to show ads across Search, YouTube, Display, Discover, Gmail, and Maps to driver better results. Recommended because advertisers who adopt Performance Max (PMax) see  +27% more conversion/value uplift  at a similar cost per action/return on ad spend (CPA/ROAS) regardless of their level of Broad Match adoption
+											163 pop up button More information
+											164 button View
+									165 container  Card 1 of 0.
+										166 container
+											167 heading Recommendation, Value: 1
+												168 text Recommendation
+											169 container
+												170 pop up button Card options
+											171 text Try the new Google Ads mobile app Monitor performance and improve your account on the go Recommended because you haven't used the Google Ads mobile app recently
+											172 pop up button More information
+											173 button View
+									174 container  Card 1 of 0.
+										175 container
+											176 heading Recommendation, Value: 1
+												177 text Recommendation
+											178 container
+												179 pop up button Card options
+											180 text Add images to your ads Your ads aren't as prominent as they could be if you added images, which can improve your CTR Recommended because adding images to your ad can improve your CTR
+											181 pop up button More information
+											182 button View
+								183 heading Explore more, Value: 2
+									184 text Explore more
+								185 container  Card 1 of 0.
+									186 container
+										187 heading Recommendation, Value: 1
+											188 text Recommendation
+										189 container
+											190 pop up button Card options
+										191 text Create a Performance Max campaign Get more conversions at a similar cost with a Performance Max campaign. It uses Google AI to show ads across Search, YouTube, Display, Discover, Gmail, and Maps to driver better results. Recommended because advertisers who adopt Performance Max (PMax) see  +27% more conversion/value uplift  at a similar cost per action/return on ad spend (CPA/ROAS) regardless of their level of Broad Match adoption
+										192 pop up button More information
+										193 button View
+								194 container  Card 1 of 0.
+									195 container
+										196 heading Optimization score, Value: 1
+											197 text Optimization score
+										198 container
+											199 pop up button Card options
+										200 link Your optimization score is 78.3%.
+											201 text 78.3%
+										202 progress indicator Description: active progress, Value: 78
+										203 text Your campaign optimization score
+										204 pop up button More information
+										205 button Go to the recommendations place
+											206 text All recommendations
+								207 container  Card 1 of 0.
+									208 container
+										209 heading Demographics, Value: 1
+											210 text Demographics
+										211 pop up button (collapsed) Description: Choose a metric for the Demographics card. Current metric: Impressions, Secondary Actions: Expand
+											212 container Choose a metric for the Demographics card. Current metric: Impressions
+												213 text Impressions arrow_drop_down
+										214 container
+											215 pop up button Card options
+										216 text Summary of the demographic groups your ads are reaching by age and gender
+										217 tab group
+											218 tab (selectable, settable, boolean) Description: Gender, Value: 0
+											219 tab (selected, settable, boolean) Description: Gender & Age, Value: 1
+											220 tab (selectable, settable, boolean) Description: Age, Value: 0
+										221 table
+											222 container
+												223 row
+													224 cell
+													225 cell
+													226 cell
+													227 cell
+													228 cell
+													229 cell
+												230 row
+													231 cell
+													232 cell
+													233 cell
+													234 cell
+													235 cell
+													236 cell
+										237 container
+											238 text Based on the 67% of your impressions with known gender and age.
+											239 pop up button More information
+										240 button Demographics
+											241 text Demographics
+								242 container  Card 1 of 0.
+									243 container
+										244 heading Day & hour, Value: 1
+											245 text Day & hour
+										246 pop up button (collapsed) Description: Choose a metric for the Day & hour card. Current metric: Impressions, Secondary Actions: Expand
+											247 container Choose a metric for the Day & hour card. Current metric: Impressions
+												248 text Impressions arrow_drop_down
+										249 container
+											250 pop up button Card options
+										251 text Your performance by day of week and time of day
+										252 tab group
+											253 tab (selectable, settable, boolean) Description: Day, Value: 0
+											254 tab (selected, settable, boolean) Description: Day & Hour, Value: 1
+											255 tab (selectable, settable, boolean) Description: Hour, Value: 0
+										256 table
+											257 container
+												258 row
+													259 cell
+													260 cell
+													261 cell
+													262 cell
+													263 cell
+													264 cell
+													265 cell
+													266 cell
+													267 cell
+													268 cell
+													269 cell
+													270 cell
+													271 cell
+													272 cell
+													273 cell
+													274 cell
+													275 cell
+													276 cell
+													277 cell
+													278 cell
+													279 cell
+													280 cell
+													281 cell
+													282 cell
+												283 row
+													284 cell
+													285 cell
+													286 cell
+													287 cell
+													288 cell
+													289 cell
+													290 cell
+													291 cell
+													292 cell
+													293 cell
+													294 cell
+													295 cell
+													296 cell
+													297 cell
+													298 cell
+													299 cell
+													300 cell
+													301 cell
+													302 cell
+													303 cell
+													304 cell
+													305 cell
+													306 cell
+													307 cell
+												308 row
+													309 cell
+													310 cell
+													311 cell
+													312 cell
+													313 cell
+													314 cell
+													315 cell
+													316 cell
+													317 cell
+													318 cell
+													319 cell
+													320 cell
+													321 cell
+													322 cell
+													323 cell
+													324 cell
+													325 cell
+													326 cell
+													327 cell
+													328 cell
+													329 cell
+													330 cell
+													331 cell
+													332 cell
+												333 row
+													334 cell
+													335 cell
+													336 cell
+													337 cell
+													338 cell
+													339 cell
+													340 cell
+													341 cell
+													342 cell
+													343 cell
+													344 cell
+													345 cell
+													346 cell
+													347 cell
+													348 cell
+													349 cell
+													350 cell
+													351 cell
+													352 cell
+													353 cell
+													354 cell
+													355 cell
+													356 cell
+													357 cell
+												358 row
+													359 cell
+													360 cell
+													361 cell
+													362 cell
+													363 cell
+													364 cell
+													365 cell
+													366 cell
+													367 cell
+													368 cell
+													369 cell
+													370 cell
+													371 cell
+													372 cell
+													373 cell
+													374 cell
+													375 cell
+													376 cell
+													377 cell
+													378 cell
+													379 cell
+													380 cell
+													381 cell
+													382 cell
+												383 row
+													384 cell
+													385 cell
+													386 cell
+													387 cell
+													388 cell
+													389 cell
+													390 cell
+													391 cell
+													392 cell
+													393 cell
+													394 cell
+													395 cell
+													396 cell
+													397 cell
+													398 cell
+													399 cell
+													400 cell
+													401 cell
+													402 cell
+													403 cell
+													404 cell
+													405 cell
+													406 cell
+													407 cell
+												408 row
+													409 cell
+													410 cell
+													411 cell
+													412 cell
+													413 cell
+													414 cell
+													415 cell
+													416 cell
+													417 cell
+													418 cell
+													419 cell
+													420 cell
+													421 cell
+													422 cell
+													423 cell
+													424 cell
+													425 cell
+													426 cell
+													427 cell
+													428 cell
+													429 cell
+													430 cell
+													431 cell
+													432 cell
+										433 button Go to the ad schedule table
+											434 text Ad schedule
+								435 container  Card 1 of 0.
+									436 container
+										437 heading Devices, Value: 1
+											438 text Devices
+										439 container
+											440 pop up button Card options
+										441 text Ad performance across devices
+										442 table Segmented data. Use arrow keys to navigate between cells.
+											443 row
+												444 cell Cost
+													445 text No data
+											446 row
+												447 cell
+												448 cell
+												449 cell
+											450 row
+												451 cell
+													452 text 100.0%
+												453 cell
+													454 text 0.0%
+												455 cell
+													456 text 0.0%
+											457 row
+												458 cell Clicks
+													459 text No data
+										460 pop up button (collapsed) Description: Choose metric 1 of 3 for the Devices card. Current metric: Cost, Secondary Actions: Expand
+											461 container Choose metric 1 of 3 for the Devices card. Current metric: Cost
+												462 text Cost arrow_drop_down
+										463 pop up button (collapsed) Description: Choose metric 2 of 3 for the Devices card. Current metric: Impressions, Secondary Actions: Expand
+											464 container Choose metric 2 of 3 for the Devices card. Current metric: Impressions
+												465 text Impressions arrow_drop_down
+										466 pop up button (collapsed) Description: Choose metric 3 of 3 for the Devices card. Current metric: Clicks, Secondary Actions: Expand
+											467 container Choose metric 3 of 3 for the Devices card. Current metric: Clicks
+												468 text Clicks arrow_drop_down
+										469 text Bid adjustments
+										470 button Mobile phones: —
+										471 button Computers: —
+										472 button Tablets: —
+										473 button Go to the devices table
+											474 text Devices
+								475 container  Card 1 of 0.
+									476 container
+										477 pop up button Searches
+											478 heading Searches, Value: 1
+												479 text Searches
+										480 text Sort by:
+										481 pop up button (collapsed) Description: Choose a metric for the Searches card. Current metric: Impressions, Secondary Actions: Expand
+											482 container Choose a metric for the Searches card. Current metric: Impressions
+												483 text Impressions arrow_drop_down
+										484 container
+											485 pop up button Card options
+										486 text Top searches and words within searches where people saw your ads
+										487 tab group
+											488 tab (selected, settable, boolean) Description: Searches, Value: 1
+											489 tab (selectable, settable, boolean) Description: Words, Value: 0
+										490 list projeto de pesquisa,criador de tcc
+											491 projeto de pesquisa
+											492 criador de tcc
+										493 button Navigate to the Searches table
+											494 text All searches
+										495 text 1  /  1
+								496 container  Card 1 of 0.
+									497 container
+										498 heading Most-shown ads, Value: 1
+											499 text Most-shown ads
+										500 container
+											501 pop up button Card options
+										502 content list Use left/right keys to move between ads, E to edit an ad, C to copy and enter to navigate to the ad url.
+											503 link Found in ad group Planejamento Academico with status active 
+												504 text Planejamento Academico
+											505 container
+												506 container
+													507 text Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa
+												508 container
+													509 text Ad mapadapesquisa.com.br / pesquisa / projeto
+												510 text Transforme sua ideia em um projeto estruturado. IA para apoiar, você para decidir. Organize problemática, objetivos e metodologia. Comece seu mapa com acesso gratuito.
+												511 text Aluno e Orientador · Rápido ou Avançado · Acesso gratuito · Revisão humana
+											512 text Ad
+											513 text Paused
+											514 container
+												515 text Status
+												516 text Paused
+											517 text Impressions
+											518 text 3
+											519 container (collapsed) Description: Choose metric 1 of 2 for the Most-shown ads card. Current metric: Clicks, Secondary Actions: Expand
+												520 container Choose metric 1 of 2 for the Most-shown ads card. Current metric: Clicks
+													521 text Clicks arrow_drop_down
+											522 text 0
+											523 container (collapsed) Description: Choose metric 2 of 2 for the Most-shown ads card. Current metric: CTR, Secondary Actions: Expand
+												524 container Choose metric 2 of 2 for the Most-shown ads card. Current metric: CTR
+													525 text CTR arrow_drop_down
+											526 text 0.00%
+											527 text Mapa da Pesquisa | Seu Projeto Ganha Estrutura | Organize Sua Pesquisa
+										528 button Go to the ads table
+											529 text All ads
+										530 button Go to the assets table
+											531 text All assets
+										532 text 1  /  2
+								533 container  Card 1 of 0.
+									534 container
+										535 heading Locations, Value: 1
+											536 text Locations
+										537 pop up button (collapsed) Description: Choose a metric for the Locations card. Current metric: Impressions, Secondary Actions: Expand
+											538 container Choose a metric for the Locations card. Current metric: Impressions
+												539 text Impressions arrow_drop_down
+										540 container
+											541 pop up button Card options
+										542 text Geographic location of people who interacted with your ads
+										543 container Targeting 1 locations and excluding 0locations. Targeted locations were: Targeting Brazil. Excluded locationswere: .
+											544 text Targeting
+											545 text Brazil
+										546 container
+											547 content list Performance by location, sorted alphabetically. Use up/down arrow keys to view each location and left/right to move by 10 at a time.
+												548 container Brazil had 0 Impressions
+												549 container Federal District had 0 Impressions
+												550 container State of Acre had 0 Impressions
+												551 container State of Alagoas had 0 Impressions
+												552 container State of Amapa had 0 Impressions
+												553 container State of Amazonas had 0 Impressions
+												554 container State of Bahia had 0 Impressions
+												555 container State of Ceara had 2 Impressions
+												556 container State of Espirito Santo had 0 Impressions
+												557 container State of Goias had 0 Impressions
+												558 container State of Maranhao had 1 Impressions
+												559 container State of Mato Grosso had 0 Impressions
+												560 container State of Mato Grosso do Sul had 0 Impressions
+												561 container State of Minas Gerais had 0 Impressions
+												562 container State of Para had 0 Impressions
+												563 container State of Paraiba had 0 Impressions
+												564 container State of Parana had 0 Impressions
+												565 container State of Pernambuco had 0 Impressions
+												566 container State of Piaui had 0 Impressions
+												567 container State of Rio Grande do Norte had 0 Impressions
+												568 container State of Rio Grande do Sul had 0 Impressions
+												569 container State of Rio de Janeiro had 0 Impressions
+												570 container State of Rondonia had 0 Impressions
+												571 container State of Roraima had 0 Impressions
+												572 container State of Santa Catarina had 0 Impressions
+												573 container State of Sao Paulo had 0 Impressions
+												574 container State of Sergipe had 0 Impressions
+												575 container State of Tocantins had 0 Impressions
+											576 image Targeting Brazil
+										577 button Navigate to the targeted locations table
+											578 text Targeted locations
+										579 button Navigate to the excluded locations table
+											580 text Excluded locations
+								581 container  Card 1 of 0.
+									582 container
+										583 heading Keywords, Value: 1
+											584 text Keywords
+										585 link Add a keyword
+											586 text Add keyword
+										587 container
+											588 pop up button Card options
+										589 container Keywords sorted by Cost, in high to low order. Use arrow keys to select, E to edit budget, enter to navigate to an overview page for that keyword
+											590 text Summary of how your keywords are performing
+											591 text Keywords sorted by Cost, in high to low order. Use arrow keys to select, E to edit budget, enter to navigate to an overview page for that keyword
+											592 container
+												593 text [projeto de pesquisa]
+												594 text [como fazer um projeto de pesquisa]
+												595 text [pré projeto de pesquisa]
+												596 text [estrutura projeto de pesquisa]
+												597 text [ferramenta para tcc]
+											598 pop up button (collapsed) Description: Choose metric 1 of 3 for the Keywords card. Current metric: Cost, Secondary Actions: Expand
+												599 container Choose metric 1 of 3 for the Keywords card. Current metric: Cost
+													600 text Cost arrow_drop_down
+											601 container
+												602 text €0.00
+												603 text €0.00
+												604 text €0.00
+												605 text €0.00
+												606 text €0.00
+											607 pop up button (collapsed) Description: Choose metric 2 of 3 for the Keywords card. Current metric: Clicks, Secondary Actions: Expand
+												608 container Choose metric 2 of 3 for the Keywords card. Current metric: Clicks
+													609 text Clicks arrow_drop_down
+											610 container
+												611 text 0
+												612 text 0
+												613 text 0
+												614 text 0
+												615 text 0
+											616 pop up button (collapsed) Description: Choose metric 3 of 3 for the Keywords card. Current metric: CTR, Secondary Actions: Expand
+												617 container Choose metric 3 of 3 for the Keywords card. Current metric: CTR
+													618 text CTR arrow_drop_down
+											619 container
+												620 text 0.00%
+												621 text 0.00%
+												622 text 0.00%
+												623 text 0.00%
+												624 text 0.00%
+										625 button Go to the keywords table
+											626 text Keywords
+										627 button Go to the negative keywords table
+											628 text Negative keywords
+										629 text 1  /  2
+						630 link Description: Reporting is not real-time., Value: support.google.com/google-ads/?p=help_2544985&hl=en_US
+						631 text Time zone for all dates and times: (GMT-03:00) Brasilia Standard Time.
+						632 link Description: Learn more about changing your Google Ads account settings, Value: support.google.com/google-ads/?p=help_9842104&hl=en_US
+						633 text Some inventory may be provided through third party intermediaries.
+						634 text You'll see Media Rating Council (MRC) accreditation noted in the column header's hover text for accredited metrics.
+						635 text © Google, 2026.
+		636 container default-acx-overlay-container
+			637 container Campaign settings
+				641 container
+					642 button Close
+					643 text Campaign settings
+					648 container stack-8a938b75-be2f-423a-9fbf-764ef22de2f3-remote-slidealog-content-0
+						649 text Status:
+						650 text Eligible
+						651 text Type: Search Optimization score:
+						652 container
+							653 link Description: 78.3%, Value: ads.google.com/aw/recommendations?campaignId=24325133699&ocid=6924780908&src=OptimizationScoreEditPanel&authuser=2&__u=7626112293&__c=5611930892
+						654 container
+							655 container
+								656 heading Campaign name, Value: 2
+									657 button (collapsed) Campaign name, Secondary Actions: Expand
+								658 heading Campaign status, Value: 2
+									659 button (collapsed) Campaign status, Secondary Actions: Expand
+								660 heading Networks, Value: 2
+									661 button (collapsed) Networks, Secondary Actions: Expand
+								662 text Budget and bidding optimization
+								663 container
+									729 text Your Search campaign is optimized to drive
+									730 button Mapa | Projeto iniciado
+										731 text Mapa | Projeto iniciado
+									740 text .  Your bidding strategy is 
+									733 button Maximize clicks
+										734 text Maximize clicks
+									741 text .  Your budget is 
+									736 button €2.00 a day
+										737 text €2.00 a day
+									742 text . 
+								674 heading Budget, Value: 2
+									675 button (collapsed) Budget, Secondary Actions: Expand
+								676 heading Conversion goals, Value: 2
+									677 button (collapsed) Conversion goals, Secondary Actions: Expand
+										678 text Campaign-specific: Mapa | Projeto iniciado
+								743 container aD1CA3D68-7A67-4D0C-B555-156C64304BC4--25
+									744 button (expanded) Bidding panel, Secondary Actions: Collapse
+										745 container Bidding panel
+									746 heading Bidding, Value: 2
+										747 text Bidding
+									748 container
+										749 container aD1CA3D68-7A67-4D0C-B555-156C64304BC4--43
+											750 text What do you want to focus on?
+											751 pop up button Learn more about choosing a metric to focus on for your campaign
+											752 combo box (collapsed) Value: Clicks, ID: a53424772-5E12-4DC1-8969-3F1724B8A47F--4, Secondary Actions: Expand, What do you want to focus on? Learn more about choosing a metric to focus on for your campaign Clicks Maximize conversions is recommended for your campaign Clicks
+												753 text Clicks
+											754 container
+												755 text Maximize conversions  is recommended for your campaign
+										756 container
+											757 checkbox Set a maximum cost per click bid limit, Value: 1
+												758 text Set a maximum cost per click bid limit
+											759 container Maximum CPC bid limit
+												760 heading Maximum CPC bid limit, Value: 5, ID: aD1CA3D68-7A67-4D0C-B555-156C64304BC4--48
+													761 text Maximum CPC bid limit
+												762 pop up button Learn more about setting an optional maximum cpc bid limit
+												763 container
+													764 text €
+													765 text field (settable) 0.45
+										766 container Warning
+										767 container
+											768 text You’ve chosen to focus on  clicks  using the  Maximize clicks  bid strategy, but your account tracks conversions. You could get more conversions by choosing to focus on conversions
+										769 button Description: Or, select a bid strategy directly (not recommended), ID: guided-non-preferred-switch
+									770 button Cancel
+									771 button Save
+								681 heading Customer acquisition, Value: 2
+									682 button (collapsed) Customer acquisition, Secondary Actions: Expand
+										683 text Bid equally for new and existing customers
+								684 heading Value rules, Value: 2
+									685 button (collapsed) Value rules, Secondary Actions: Expand
+								686 heading Promotion mode, Value: 2
+									687 button (collapsed) Promotion mode, Secondary Actions: Expand
+										688 text Off
+								689 text AI Max for Search campaigns
+								690 container
+									691 text Get the best AI-powered performance on Google Search Advertisers that activate AI Max in Search Campaigns will typically see 14% more conversions or conversion value at a similar CPA / ROAS Engage more customers and boost performance. Easily expand your keywords with broad match technology and let Google AI match content from your landing pages and assets to help you show up on more relevant searches. New ad group settings help you guide which customers you reach. Tailor your ads and keep them fresh. Use Google AI to serve the most relevant ad copy and landing pages to each customer based on their unique interest and intent. Take charge and understand how the newest and best Google AI is working for you. You'll get new actionable insights in search term reports that show how AI Max improves performance.
+									692 pop up button Learn more about AI Max
+									693 switch Description: Optimize your campaign with AI Max, Value: 0
+									694 text Optimize your campaign with AI Max
+								695 container
+									696 text Loading name Loading summary
+								697 container
+									698 text Loading name Loading summary
+								699 text Other settings
+								700 container
+									701 text Loading name Loading summary
+								702 container
+									703 text Loading name Loading summary
+								704 container
+									705 text Loading name Loading summary
+								706 container
+									707 text Loading name Loading summary
+								708 container
+									709 text Loading name Loading summary
+								710 container
+									711 text Loading name Loading summary
+								712 container
+									713 text Loading name Loading summary
+								714 container
+									715 text Loading name Loading summary
+								716 container
+									717 text Loading name Loading summary
+								718 container
+									719 text Loading name Loading summary
+								720 container
+									721 text Loading name Loading summary
+								722 container
+									723 text Loading name Loading summary
+								724 container
+									725 text Loading name Loading summary
+			638 container dialog
+		645 container dialog
+		726 container base-root-overlay-container-CM_EDITING
+			727 container dialog
+			728 container dialog
+
+The focused UI element is 744 button (expanded) Bidding panel, Secondary Actions: Collapse

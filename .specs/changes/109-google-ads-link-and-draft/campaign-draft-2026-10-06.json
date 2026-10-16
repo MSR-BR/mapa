@@ -259,7 +259,8 @@
         ],
         "original_six_keywords": "NO_HISTORICAL_METRICS"
       },
-      "pilot_bidding_decision": "Retain EUR0.30 CPC cap as a conservative test hypothesis: within historical low/high top-of-page ranges for two added exact keywords. No guarantee of delivery, actual CPC or conversions. Do not increase automatically."
+      "pilot_bidding_decision": "Explicitly authorized on October 15: temporary EUR0.45 ceiling for up to 72h. Restore EUR0.30 on October 18; conservative latest deadline 21:03 BRT. No automatic renewal. See latest_cpc_test.",
+      "cpc_limit_current_eur": 0.45
     },
     "ad_groups": [
       {
@@ -489,7 +490,7 @@
     ],
     "scheduled_start_date": "2026-10-06",
     "scheduled_end_date": "2026-10-19",
-    "schedule_note": "Explicit extension authorized October 11: seven additional calendar dates, October 13–19 inclusive. EUR2/day and EUR0.30 CPC unchanged; accumulated cost pause threshold EUR28. No extension beyond October 19 without new authorization.",
+    "schedule_note": "Extension authorized October 11 through October 19 inclusive, EUR2/day, accumulated cost pause threshold EUR28. October 15 separately authorized temporary CPC EUR0.45; rollback by October 18 21:03 BRT. No campaign extension beyond October 19.",
     "asset_isolation": {
       "account_sitelink_associations": "PAUSED_AFTER_COPY_TO_PREEXISTING_CAMPAIGNS",
       "preserved_campaigns": [
@@ -586,7 +587,10 @@
     "optimization_first_eligible_observed_at": "2026-10-12T06:03:09-03:00",
     "optimization_review_after": "2026-10-15T06:03:09-03:00",
     "last_heartbeat_received_at": "2026-10-13T09:01:35.699Z",
-    "schedule_timezone_note": "Stored RRULE preserved. This heartbeat arrived around 09:00 UTC (06:00 BRT); historical daily_time_local is not a verified scheduler timezone."
+    "schedule_timezone_note": "Stored RRULE preserved. This heartbeat arrived around 09:00 UTC (06:00 BRT); historical daily_time_local is not a verified scheduler timezone.",
+    "cpc_test_rollback_automation_id": "mapa-concluir-teste-cpc-de-72-horas",
+    "cpc_test_rollback_by": "2026-10-18T21:03:00-03:00",
+    "cpc_test_daily_guard": "Restore EUR0.30 during October 18 daily check, if still EUR0.45; never reactivate. Remove redundant rollback automation after verified restoration."
   },
   "activated_at_approx": "2026-10-06T13:46:00-03:00",
   "monitoring_open_items": [
@@ -620,7 +624,7 @@
     "all_time_clicks": 0,
     "all_time_cost_eur": 0,
     "paid_conversions": 0,
-    "decision": "KEEP_ENABLED_WITH_EXISTING_LIMITS_PROPOSE_CPC_TEST",
+    "decision": "CPC_TEST_AUTHORIZED_APPLIED_MONITOR_WITH_UNCHANGED_BUDGET_END_AND_COST_THRESHOLD",
     "keyword_quality_diagnostic": {
       "keyword": "projeto de pesquisa",
       "score": 2,
@@ -636,11 +640,12 @@
     "threshold_pause_verified": false,
     "attribution_reconciled": false,
     "product_diagnostics_followup_required": true,
-    "human_action_required": true,
-    "human_action_scope": "Only to approve the separate CPC test; current authorized pilot continues.",
+    "human_action_required": false,
+    "human_action_scope": "No additional approval needed for the active CPC test. Product blocker cause remains unconfirmed; monitor and investigate recurrence.",
     "post_72h_review_complete": true,
     "cpc_proposal": "../110-google-ads-controlled-pilot/cpc-test-proposal-2026-10-15.md",
-    "cpc_proposal_applied": false
+    "cpc_proposal_applied": true,
+    "execution_evidence": "../110-google-ads-controlled-pilot/cpc-test-execution-2026-10-15.md"
   },
   "latest_extension": {
     "authorized_on": "2026-10-11",
@@ -707,5 +712,16 @@
       "review_completed_at": "2026-10-15T06:06:15-03:00",
       "new_ad_impressions": 0
     }
+  },
+  "latest_cpc_test": {
+    "status": "AUTHORIZED_APPLIED_MONITORING",
+    "authorized_on": "2026-10-15",
+    "applied_approx_brt": "2026-10-15 21:03-21:04",
+    "current_cpc_eur": 0.45,
+    "previous_cpc_eur": 0.3,
+    "revert_by": "2026-10-18T21:03:00-03:00",
+    "revert_earlier_on_daily_check": true,
+    "evidence": "../110-google-ads-controlled-pilot/cpc-test-execution-2026-10-15.md",
+    "snapshot": "../110-google-ads-controlled-pilot/cpc-test-execution-2026-10-15.json"
   }
 }

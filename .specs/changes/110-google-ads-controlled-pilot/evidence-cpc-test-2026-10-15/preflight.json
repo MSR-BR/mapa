@@ -1,0 +1,59 @@
+{
+  "content": [],
+  "structuredContent": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "campaign__name",
+        "campaign__status",
+        "campaign__primary_status",
+        "campaign__start_date_time",
+        "campaign__end_date_time",
+        "campaign_budget__amount",
+        "campaign__target_spend__cpc_bid_ceiling",
+        "campaign__network_settings__target_search_network",
+        "campaign__network_settings__target_content_network",
+        "metrics__impressions",
+        "metrics__clicks",
+        "metrics__cost",
+        "metrics__conversions"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24027143907,
+          "campaign__name": "TERMO - Search - BR - PT",
+          "campaign__status": "ENABLED",
+          "campaign__primary_status": "ELIGIBLE",
+          "campaign__start_date_time": "2026-07-14 19:00:16",
+          "campaign__end_date_time": null,
+          "campaign_budget__amount": 2,
+          "campaign__target_spend__cpc_bid_ceiling": null,
+          "campaign__network_settings__target_search_network": true,
+          "campaign__network_settings__target_content_network": false,
+          "metrics__impressions": 11022,
+          "metrics__clicks": 255,
+          "metrics__cost": 19.44,
+          "metrics__conversions": 16
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign__name": "Mapa | Search | BR | Ativacao | Piloto",
+          "campaign__status": "ENABLED",
+          "campaign__primary_status": "ELIGIBLE",
+          "campaign__start_date_time": "2026-10-06 13:44:02",
+          "campaign__end_date_time": "2026-10-19 23:59:59",
+          "campaign_budget__amount": 2,
+          "campaign__target_spend__cpc_bid_ceiling": 0.3,
+          "campaign__network_settings__target_search_network": false,
+          "campaign__network_settings__target_content_network": false,
+          "metrics__impressions": 3,
+          "metrics__clicks": 0,
+          "metrics__cost": 0,
+          "metrics__conversions": 0
+        }
+      ]
+    }
+  },
+  "isError": false
+}

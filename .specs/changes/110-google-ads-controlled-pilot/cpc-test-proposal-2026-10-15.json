@@ -1,5 +1,5 @@
 {
-  "status": "PROPOSED_NOT_AUTHORIZED_NOT_APPLIED",
+  "status": "AUTHORIZED_APPLIED",
   "prepared_at": "2026-10-15T09:12:53.481689+00:00",
   "campaign_id": "24325133699",
   "hypothesis": "Auction rank prevents serving. A bounded increase in the CPC ceiling may improve participation; quality remains a competing explanation.",
@@ -9,7 +9,7 @@
     "to": 0.45,
     "relative_change_percent": 50
   },
-  "duration": "72 hours from explicit approval and verified application, never beyond 2026-10-19T23:59:59-03:00",
+  "duration": "Up to 72 hours from verified application; conservative deadline 2026-10-18T21:03:00-03:00, with earlier rollback during October 18 daily check. Never extends campaign end.",
   "unchanged": {
     "average_daily_budget_eur": 2,
     "cumulative_pause_threshold_eur": 28,
@@ -24,8 +24,13 @@
   },
   "review": "Compare impressions, eligible queries, clicks, actual CPC, cost, and paid project_start. No causal/statistical claim from sparse data; no automatic renewal.",
   "stop": "Pause only Mapa if cumulative cost >= EUR28, authorized end, proven measurement failure or quality/privacy violation. Existing hourly rule is not a strict instantaneous spending cap.",
-  "rollback": "Return ceiling to EUR0.30 after 72 hours if campaign is still within authorization; never reactivate a paused campaign. Further changes need authorization.",
-  "application_preflight": "Re-read spend, status, rule, authorization, campaign dates and landing before application. Await explicit user approval; this proposal is not permission.",
+  "rollback": "Restore EUR0.30 on October 18 daily check if still EUR0.45; dedicated rollback automation also configured. Never reactivate. Requires Codex execution/access.",
+  "application_preflight": "Completed before application. Campaign enabled, baseline cost EUR0, landing inspected, end date and cost rule verified. See execution evidence.",
   "rationale": "EUR0.45 is a conservative 50% single-variable step chosen as an experiment, not a forecast or an observed required first-page bid. Current API bid estimates unavailable.",
-  "evidence": "monitor-2026-10-15.md"
+  "evidence": "monitor-2026-10-15.md",
+  "authorization": {
+    "on": "2026-10-15",
+    "user_message": "sim, pode avancar com suas sugestoes",
+    "execution": "cpc-test-execution-2026-10-15.json"
+  }
 }

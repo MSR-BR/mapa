@@ -1,0 +1,140 @@
+{
+  "content": [],
+  "structuredContent": {
+    "dimensionHeaders": [
+      "date",
+      "eventName",
+      "customEvent:app_stage",
+      "customEvent:app_reason_code",
+      "sessionSourceMedium"
+    ],
+    "metricHeaders": [
+      {
+        "name": "eventCount",
+        "type": "TYPE_INTEGER"
+      },
+      {
+        "name": "totalUsers",
+        "type": "TYPE_INTEGER"
+      }
+    ],
+    "rows": [
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "51",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261008",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "literature",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "16",
+        "totalUsers": "2"
+      },
+      {
+        "date": "20261006",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "literature",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "11",
+        "totalUsers": "3"
+      },
+      {
+        "date": "20261010",
+        "eventName": "generation_failed",
+        "customEvent:app_stage": "discovery",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "6",
+        "totalUsers": "2"
+      },
+      {
+        "date": "20261010",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "literature",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "4",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261013",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "2",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261014",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "2",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261007",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "literature",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "1",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261010",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_stage": "final",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "export_pdf_failed",
+        "customEvent:app_stage": "final",
+        "customEvent:app_reason_code": "network",
+        "sessionSourceMedium": "accounts.google.com / referral",
+        "eventCount": "1",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261011",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "validation",
+        "sessionSourceMedium": "scanned.page / referral",
+        "eventCount": "1",
+        "totalUsers": "1"
+      },
+      {
+        "date": "20261012",
+        "eventName": "stage_blocked",
+        "customEvent:app_stage": "methodology",
+        "customEvent:app_reason_code": "provider_invalid_response",
+        "sessionSourceMedium": "(direct) / (none)",
+        "eventCount": "1",
+        "totalUsers": "1"
+      }
+    ],
+    "rowCount": 12,
+    "totals": null,
+    "metadata": {
+      "currencyCode": "BRL",
+      "timeZone": "America/Rio_Branco"
+    },
+    "propertyQuota": null
+  },
+  "isError": false
+}

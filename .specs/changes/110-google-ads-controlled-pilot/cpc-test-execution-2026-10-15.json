@@ -1,0 +1,93 @@
+{
+  "status": "AUTHORIZED_APPLIED_MONITORING",
+  "recorded_on": "2026-10-15",
+  "authorization": {
+    "user_message": "sim, pode avancar com suas sugestoes",
+    "scope": "CPC test up to 72h; investigate workflow blockers; prepare tagged distribution links"
+  },
+  "account_id": "3838359068",
+  "campaign_id": "24325133699",
+  "campaign_name": "Mapa | Search | BR | Ativacao | Piloto",
+  "change": {
+    "field": "campaign.target_spend.cpc_bid_ceiling_micros",
+    "from": 300000,
+    "to": 450000,
+    "currency": "EUR",
+    "applied_between": [
+      "2026-10-15T21:03:00-03:00",
+      "2026-10-15T21:04:59-03:00"
+    ],
+    "exact_application_second_known": false,
+    "verification": [
+      "Saved via Google Ads UI; reopened Bidding confirms 0.45",
+      "Independent GAQL readback confirms 450000"
+    ]
+  },
+  "baseline": {
+    "date_range": "2026-10-06/2026-10-15",
+    "timezone": "America/Sao_Paulo",
+    "impressions": 3,
+    "clicks": 0,
+    "cost_eur": 0,
+    "conversions": 0,
+    "partial_day": true
+  },
+  "guardrails": {
+    "average_daily_budget_eur": 2,
+    "cumulative_pause_threshold_eur": 28,
+    "pause_rule_id": "62128225",
+    "pause_rule_enabled": true,
+    "pause_rule_frequency": "HOURLY",
+    "pause_rule_data_window": "ALL_TIME",
+    "pause_rule_threshold_branch_verified": false,
+    "instantaneous_hard_cap": false,
+    "end_at": "2026-10-19T23:59:59-03:00",
+    "search_partners": false,
+    "display": false,
+    "termo_campaign_id": "24027143907",
+    "termo_modified": false,
+    "goal_action_id": "7825220596",
+    "keywords_ads_negatives_goal_modified": false
+  },
+  "rollback": {
+    "to_cpc_eur": 0.3,
+    "conservative_deadline": "2026-10-18T21:03:00-03:00",
+    "daily_guard": "On October 18 daily check, restore 0.30 if still 0.45. This may end the test earlier than 72h.",
+    "daily_automation_id": "mapa-concluir-ads-e-acompanhar-piloto",
+    "specific_automation_id": "mapa-concluir-teste-cpc-de-72-horas",
+    "specific_rrule": "RRULE:FREQ=WEEKLY;BYDAY=SU;BYHOUR=20;BYMINUTE=0;BYSECOND=0;COUNT=1",
+    "automation_saved_state_verified": true,
+    "mechanism": "Codex heartbeat, not native Ads timed rollback; requires execution/access",
+    "never_reactivate": true,
+    "automatic_extension": false
+  },
+  "evaluation": {
+    "metrics": [
+      "impressions",
+      "clicks",
+      "actual CPC",
+      "cost",
+      "search terms",
+      "paid project_start"
+    ],
+    "caution": "Sparse sample and sequential test cannot establish causality or significance. No paid conversion baseline."
+  },
+  "product_review": "product-review-2026-10-15.md",
+  "distribution_links": "distribution-links-2026-10-15.md",
+  "evidence": {
+    "preflight": "evidence-cpc-test-2026-10-15/preflight.json",
+    "after": "evidence-cpc-test-2026-10-15/after.json",
+    "screenshot": "evidence-cpc-test-2026-10-15/mapa-cpc-045-confirmed.png",
+    "ui": "evidence-cpc-test-2026-10-15/ads-cpc-confirmed.txt",
+    "rule": "evidence-cpc-test-2026-10-15/cost-rule-confirmed.txt",
+    "errors": "evidence-cpc-test-2026-10-15/errors-by-date.json"
+  },
+  "application_changes": {
+    "source_code": false,
+    "deploy": false,
+    "environment": false,
+    "paid_ai_calls": false,
+    "private_project_contents_read": false,
+    "distribution_messages_sent": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "createdAt": "2026-10-15",
+  "purpose": "Prospective channel measurement; does not reclassify historical traffic",
+  "links": [
+    {
+      "channel": "UFF",
+      "source": "uff",
+      "medium": "referral",
+      "content": "institucional",
+      "campaign": "divulgacao_202610",
+      "url": "https://mapadapesquisa.com.br/mapa?utm_source=uff&utm_medium=referral&utm_campaign=divulgacao_202610&utm_content=institucional"
+    },
+    {
+      "channel": "WhatsApp",
+      "source": "whatsapp",
+      "medium": "social",
+      "content": "mensagem",
+      "campaign": "divulgacao_202610",
+      "url": "https://mapadapesquisa.com.br/mapa?utm_source=whatsapp&utm_medium=social&utm_campaign=divulgacao_202610&utm_content=mensagem"
+    },
+    {
+      "channel": "QR do marcador",
+      "source": "marcador",
+      "medium": "qr",
+      "content": "frente",
+      "campaign": "divulgacao_202610",
+      "url": "https://mapadapesquisa.com.br/mapa?utm_source=marcador&utm_medium=qr&utm_campaign=divulgacao_202610&utm_content=frente"
+    },
+    {
+      "channel": "Equipe — uso interno",
+      "source": "mapa_team",
+      "medium": "internal",
+      "content": "equipe",
+      "campaign": "divulgacao_202610",
+      "url": "https://mapadapesquisa.com.br/mapa?utm_source=mapa_team&utm_medium=internal&utm_campaign=divulgacao_202610&utm_content=equipe"
+    }
+  ],
+  "excludeFromExternalEvaluation": [
+    "codex_validation / qa",
+    "mapa_team / internal"
+  ],
+  "limits": [
+    "Only visits with metrics consent are collected.",
+    "Team must enter through its dedicated link; existing sessions and untagged team visits may remain in external-looking traffic.",
+    "Do not sum users by source/day. Link clicks, sessions, project_start and unique projects are different measures.",
+    "Existing printed QR codes are unchanged; use the QR target for a new QR or editable redirect.",
+    "No emails or messages were sent, and no public dissemination occurred."
+  ]
+}

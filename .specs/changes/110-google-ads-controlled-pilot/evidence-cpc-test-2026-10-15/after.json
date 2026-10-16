@@ -1,0 +1,44 @@
+{
+  "content": [],
+  "structuredContent": {
+    "googleAdsId": "3838359068",
+    "result": {
+      "columns": [
+        "campaign__id",
+        "campaign__name",
+        "campaign__status",
+        "campaign__primary_status",
+        "campaign__end_date_time",
+        "campaign_budget__amount",
+        "campaign__target_spend__cpc_bid_ceiling",
+        "campaign__network_settings__target_search_network",
+        "campaign__network_settings__target_content_network"
+      ],
+      "rows": [
+        {
+          "campaign__id": 24027143907,
+          "campaign__name": "TERMO - Search - BR - PT",
+          "campaign__status": "ENABLED",
+          "campaign__primary_status": "ELIGIBLE",
+          "campaign__end_date_time": null,
+          "campaign_budget__amount": 2,
+          "campaign__target_spend__cpc_bid_ceiling": null,
+          "campaign__network_settings__target_search_network": true,
+          "campaign__network_settings__target_content_network": false
+        },
+        {
+          "campaign__id": 24325133699,
+          "campaign__name": "Mapa | Search | BR | Ativacao | Piloto",
+          "campaign__status": "ENABLED",
+          "campaign__primary_status": "ELIGIBLE",
+          "campaign__end_date_time": "2026-10-19 23:59:59",
+          "campaign_budget__amount": 2,
+          "campaign__target_spend__cpc_bid_ceiling": 0.45,
+          "campaign__network_settings__target_search_network": false,
+          "campaign__network_settings__target_content_network": false
+        }
+      ]
+    }
+  },
+  "isError": false
+}
