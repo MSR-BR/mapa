@@ -36,3 +36,7 @@ Evidências: [desktop](evidence/comparativo-desktop.png), [celular](evidence/com
 ## Limites
 
 Sem nova chamada paga a Gemini/GPT, alteração de conteúdo privado, chave, modelo, banco, Ads ou TERMO. A qualidade semântica de uma resposta futura depende da revisão do autor; a implementação valida formato e tamanho, mantém original e permite edição. Exportações antigas em disco não mudam: baixar novamente para obter o Word completo e o comparativo.
+
+## Ajuste do candidato remoto
+
+O primeiro build Turbopack remoto passou, mas avisou que o caminho genérico das imagens do Word incluía o projeto inteiro no tracing. O candidato não foi promovido. O caminho foi restringido a `public/brand` e aos dois nomes permitidos, sem alterar imagens ou conteúdo. Tipos, rotas reais, exportações, duas imagens incorporadas e paridade foram revalidados. Uma nova revisão do candidato será publicada; a tag inicial é preservada sem reescrever histórico.

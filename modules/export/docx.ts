@@ -181,9 +181,9 @@ export async function createDocxExport(input: ExportDocumentInput) {
   return Packer.toBuffer(doc);
 }
 
-function imageParagraph(file: string, type: "png" | "jpg", width: number, height: number) {
+function imageParagraph(file: "mapa-da-pesquisa-wordmark.png" | "cbl-isbn-barcode.jpeg", type: "png" | "jpg", width: number, height: number) {
   try {
-    return new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type, data: readFileSync(path.join(process.cwd(), file)), transformation: { width: width * 4 / 3, height: height * 4 / 3 } })], spacing: { after: 240 } });
+    return new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ type, data: readFileSync(path.join(process.cwd(), "public", "brand", file)), transformation: { width: width * 4 / 3, height: height * 4 / 3 } })], spacing: { after: 240 } });
   } catch { return new Paragraph(""); }
 }
 
@@ -198,7 +198,7 @@ export async function createFinalMapDocxExport(input: FinalMapExportInput) {
   const product = getResearchProductGuidance(finalMap.workflow.content.discovery?.interpreted.researchType);
   const link = (text: string, url: string) => new ExternalHyperlink({ link: url, children: [new TextRun({ text, color: "176B4D", style: "Hyperlink" })] });
   const body: Paragraph[] = [
-    imageParagraph("public/brand/mapa-da-pesquisa-wordmark.png", "png", 172, 47.34),
+    imageParagraph("mapa-da-pesquisa-wordmark.png", "png", 172, 47.34),
     new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ bold: true, color: GOLD, size: 20, text: "MAPA DA PROPOSTA DE PESQUISA" })], spacing: { before: 300, after: 300 } }),
     new Paragraph({ style: "Title", alignment: AlignmentType.CENTER, children: [new TextRun({ bold: true, color: NAVY, size: 48, text: finalMapText(finalMap.title) })], spacing: { after: 240, line: 360 } }),
     new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ color: MUTED, italics: true, size: 22, text: product?.label ?? input.project.academic_level ?? "Pesquisa acadêmica" })], spacing: { after: 180 } }),
@@ -232,7 +232,7 @@ export async function createFinalMapDocxExport(input: FinalMapExportInput) {
   body.push(simpleParagraph("Este mapa foi produzido pelo aplicativo Mapa da Pesquisa para apoiar a organização, a revisão e a discussão de uma proposta de pesquisa. Acesse o aplicativo em mapadapesquisa.com.br."));
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [link("Abrir o Mapa da Pesquisa", "https://mapadapesquisa.com.br")], spacing: { after: 240 } }));
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, text: "Este mapa está registrado na Câmara Brasileira do Livro (CBL), sob o ISBN 978-65-01-44943-2.", spacing: { after: 240 } }));
-  body.push(imageParagraph("public/brand/cbl-isbn-barcode.jpeg", "jpg", 278.26, 210));
+  body.push(imageParagraph("cbl-isbn-barcode.jpeg", "jpg", 278.26, 210));
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ color: MUTED, size: 17, text: "O número e a imagem de registro foram informados pelo responsável pelo aplicativo." })] }));
   return Packer.toBuffer(new Document({
     creator: "Mapa da Pesquisa", title: finalMapText(finalMap.title),
