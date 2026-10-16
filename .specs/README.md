@@ -4,11 +4,11 @@ Este diretório é a fonte de verdade para o planejamento e a execução do prod
 
 ## Estado atual
 
-- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v13102026.1`** (C118: limites da IA, velocidades do vídeo e respostas originais no PDF). [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/118-generation-limits-video-original-briefing/cpd-2026-10-13.md).
+- Aplicação publicada em `https://mapadapesquisa.com.br`, versão **`v15102026.1`** (C119: recuperação da metodologia, preservação do rascunho e diagnóstico de falhas). C118 preservada. [Estado detalhado](project-state.md), [roadmap](roadmap.md) e [CPD mais recente](changes/119-methodology-recovery/cpd-2026-10-15.md).
 - Fluxo v2 em produção; fluxo v1 preservado para projetos legados. Entrada pública em `/mapa`, modos Rápido/Avançado, Google OAuth para gerar/guardar e regras Aluno/Orientador mantidas.
 - Contexto confirmado, rascunhos e histórico C111; Gemini principal e GPT complementar/fallback limitado C112; edição por quadro e literatura aditiva C114.
 - Integrações server-side: Gemini, OpenAI, Research Starter e Supabase no projeto documentado. Auditoria C113 concluída, mas vínculo com o aviso Google não confirmado.
-- Piloto Ads C110 prorrogado por autorização até 19/10: €2/dia, CPC máximo €0,30, limiar acumulado de pausa €28. Otimização de anúncio/palavras e landing aplicada em 11/10; conjunto aprovado/elegível desde a primeira observação em 12/10; monitor de 13/10 com 3 impressões, zero cliques/custo/conversões. Medição C108/C097, atribuição paga e avaliação de resultado continuam abertas.
+- Piloto Ads C110 autorizado até 19/10: €2/dia, limiar acumulado de pausa €28. Teste CPC €0,45 aplicado em 15/10, por até 72h, com retorno a €0,30 até 18/10 21:03 BRT e proteção antecipada no monitor diário. [Execução](changes/110-google-ads-controlled-pilot/cpc-test-execution-2026-10-15.md). Linha inicial: 3 impressões, zero cliques/custo/conversões; efeito do teste ainda não comprovado. Medição C108/C097, atribuição paga e avaliação de resultado continuam abertas.
 
 ## Ordem de leitura
 

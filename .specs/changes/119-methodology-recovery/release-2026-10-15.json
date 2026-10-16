@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "e9bac2320eb5845c7ee2483d83ccc58165bb33c6",
+  "version": "v15102026.1",
+  "archiveSha256": "0507831308f6f1b2d8d3653d7a15cf2898d51329576d6ea6c7e216ea1a6e067a",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "deploymentId": "dpl_3a4tcL8VHNSFPomKARi4h7y2r43u",
+  "deploymentUrl": "https://mapadapesquisa-klo368gda-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "canonicalVerified": true,
+  "sourceProof": "Exact git archive uploaded; CLI inspect does not expose sourceCommit metadata. Same staged deployment promoted without rebuild and verified at canonical domain.",
+  "verifiedAt": "2026-10-16T01:10:56.180247+00:00",
+  "unitTests": 226,
+  "runtimeVulnerabilities": 0,
+  "knownDevelopmentHighFindings": 5,
+  "gate": "PASS_WITH_ACCEPTED_RISK",
+  "localBuild": "Webpack PASS",
+  "remoteBuild": "Default Turbopack PASS",
+  "anonymousMethodologyRouteStatus": 401,
+  "malformedRequestStatus": 400,
+  "errorLogsInQueriedWindow": 0,
+  "errorLogWindowMinutes": 15,
+  "paidApiCalls": false,
+  "historicalEventRootCause": "not confirmed",
+  "validation": "Real local UI/routes with synthetic external services; public production health/version/auth-denial checks. No authenticated paid generation.",
+  "publicEnvironmentChange": {
+    "name": "NEXT_PUBLIC_APP_VERSION",
+    "value": "v15102026.1",
+    "target": "production"
+  },
+  "rollbackDeployment": "dpl_B8kvePR8p3Qj44JqyXyX5Su8j8po",
+  "monitorReleaseContextUpdated": true,
+  "preserved": [
+    "models",
+    "keys",
+    "provider budgets",
+    "Ads",
+    "TERMO",
+    "database schema",
+    "authorization"
+  ]
+}

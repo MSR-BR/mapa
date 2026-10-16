@@ -1,0 +1,28 @@
+{
+  "verifiedAt": "2026-10-16T01:10:56.180247+00:00",
+  "health": {
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "service": "mapa-da-pesquisa",
+    "status": "ok",
+    "version": "v15102026.1"
+  },
+  "anonymousMethodology": {
+    "status": 401,
+    "body": {
+      "code": "authentication_required",
+      "error": "Autenticação necessária."
+    }
+  },
+  "malformedMethodology": {
+    "status": 400,
+    "body": {
+      "error": "Operação inválida."
+    }
+  }
+}

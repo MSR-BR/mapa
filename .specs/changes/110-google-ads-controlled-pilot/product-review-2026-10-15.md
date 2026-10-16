@@ -40,3 +40,8 @@ A navegação da home para /mapa não conserva a query original nesse link. Por 
 ## Pendência e próximo passo
 
 Acompanhar recorrência por etapa/origem. Se persistir, distinguir o status HTTP e o tipo de falha com diagnóstico sanitizado, reproduzir o caso e então corrigir a causa. Nunca registrar textos da pesquisa, chaves, identificadores pessoais ou respostas integrais do provedor. Os dois eventos de 14/10 permanecem **não resolvidos por evidência**; não declarar correção apenas porque os testes passaram.
+
+
+## Continuação autorizada — C119
+
+Após este diagnóstico inicial, o responsável autorizou investigação, correção e CPD. A C119 reproduziu e corrigiu dois defeitos de recuperação/salvamento, publicou v15102026.1 e distinguiu os tipos de falha. A relação causal com os eventos de 14/10 continua não confirmada. Ver [CPD C119](../119-methodology-recovery/cpd-2026-10-15.md); as conclusões acima descrevem a investigação inicial, anterior a essa correção.
