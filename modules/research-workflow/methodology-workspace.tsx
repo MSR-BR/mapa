@@ -1,4 +1,5 @@
 "use client";
+import { readWorkflowPayload, workflowClientFailure, workflowResponseFailure, WorkflowRequestError, type WorkflowFailureCode } from "./request-failure";
 import { FIELD_LIMITS, classificationListMaxLength, classificationListText, parseClassificationList } from "@/modules/research-workflow/field-limits";
 
 import { saveThenCompleteStep } from "./complete-step-client";
@@ -166,6 +167,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   const [regenerationRequests, updateRequest] = useRegenerationRequests(projectId);
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [failureCode, setFailureCode] = useState<WorkflowFailureCode | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [openHelp, setOpenHelp] = useState<MethodologyHelpTopic | null>(null);
   const busy = operation !== null;
@@ -229,6 +231,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
   }, [activeRole]);
 
   function applyWorkflow(received: ResearchWorkflow) {
+    setFailureCode(null);
     const next = received.navigation ? received : workflowForView(received, "methodology_matrix");
     setWorkflow(next);
     if (!received.navigation && changed) return;
@@ -310,6 +313,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       return false;
     }
     setOperation(action);
+    setFailureCode(null);
     setMessage(null);
     setErrors([]);
     const analyticsPosition = getAnalyticsWorkflowPosition("methodology_matrix");
@@ -329,23 +333,29 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
-      const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
-      if (payload.workflow) applyWorkflow(payload.workflow);
-      if (response.status === 422) {
-        trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
-        setErrors(payload.errors ?? [payload.error ?? "Revise a matriz metodológica."]);
-        return;
+      const payload = await readWorkflowPayload<{ code?: string; error?: string; errors?: string[]; message?: string; warning?: string; workflow?: ResearchWorkflow }>(response);
+      if (!payload || typeof payload !== "object") throw new WorkflowRequestError("response_invalid");
+      if (!response.ok) {
+        const failure = workflowResponseFailure(response.status, payload.code);
+        setFailureCode(failure.code);
+        trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: response.status < 500 ? "blocked" : "failed", app_reason_code: failure.reason });
+        if (response.status === 422) setErrors(payload.errors ?? [payload.error ?? "Revise a matriz metodológica."]);
+        else setMessage(payload.error || "Não foi possível atualizar a metodologia. Suas edições continuam nesta tela.");
+        return false;
       }
-      if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar a metodologia.");
+      if (!payload.workflow) throw new WorkflowRequestError("response_invalid");
+      applyWorkflow(payload.workflow);
       setMessage(payload.message ?? null);
       trackAnalyticsEvent(action === "validate" ? "stage_completed" : "stage_saved", { ...analyticsPosition, app_result: "success", app_role: activeRole, app_reference_count_bucket: getReferenceCountBucket(references.length) });
-      if (action === "validate" || action === "back") {
+      if ((action === "validate" || action === "back") && payload.warning !== "title_sync_failed") {
         router.replace(workflowNavigationUrl(projectId, payload.workflow), { scroll: false });
       }
       return true;
     } catch (error) {
-      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
-      setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a metodologia.");
+      const failure = workflowClientFailure(error);
+      setFailureCode(failure.code);
+      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: failure.code === "cancelled" ? "cancelled" : "failed", app_reason_code: failure.reason });
+      setMessage(failure.message);
       return false;
     } finally {
       setOperation(null);
@@ -452,7 +462,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
           <div><span>Classificação</span><p>{workflow.content.methodologyClassification?.nature} · {workflow.content.methodologyClassification?.approach} · {workflow.content.methodologyClassification?.objectives.join(", ")}</p></div>
           <div><span>Linhas metodológicas</span><ol>{workflow.content.methodologyRows.map((row) => <li key={row.id}>{row.expectedResult}</li>)}</ol></div>
         </div>
-        <p className="proposal-next-step">Próxima etapa: página final única e rastreabilidade na Change 014.</p>
+        {message ? <p className="definition-message" role="status">{message}</p> : null}
+        <button type="button" className="definition-button primary" onClick={() => router.replace(workflowNavigationUrl(projectId, workflow), { scroll: false })}>Continuar para encerramento</button>
       </section>
     );
   }
@@ -470,7 +481,9 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       ) : null}
 
       <WorkflowProgress ref={progressRef} current={4} currentStep="methodology_matrix" disabled={busy} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} onSave={() => submit("save")} />
+      <div id="methodology-context" tabIndex={-1}>
       <WorkflowHistory workflow={workflow} step={"methodology_matrix"} hasUnsavedChanges={changed} onWorkflow={applyWorkflow} />
+      </div>
 
       <div className="definition-heading">
         <div>
@@ -577,6 +590,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         </div>
       ) : <div className="methodology-findings methodology-findings-clear" role="status"><strong>Coerência atualizada</strong><span>Nenhum aviso foi detectado nos dados atuais.</span></div>}
       {message ? <p className="definition-message" role="status">{message}</p> : null}
+      {failureCode === "context_stale" ? <button type="button" className="definition-button secondary" onClick={() => goToField("methodology-context")}>Revisar contexto do projeto</button> : null}
       <p className="proposal-next-step">Depois de validar esta etapa, a página final exibirá o painel <strong>Encerramento do projeto</strong>, onde você poderá revisar a coerência e encerrar o mapa.</p>
 
       <div className="definition-actions">

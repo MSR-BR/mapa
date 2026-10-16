@@ -1,3 +1,7 @@
+import { APP_VERSION } from "@/lib/app-version";
+import { AiError, classifyAiFailure } from "@/modules/ai/failure";
+import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
+import { startRequest, logOperationalEvent, logOperationalFailure, type RequestContext } from "@/lib/observability/request-context";
 import { methodologyDraftInputSchema, methodologyIssues, mergeMethodologyCompletion } from "@/modules/research-workflow/methodology-assistance";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
@@ -341,7 +345,7 @@ function approveMethodology(
   });
 }
 
-async function handlePost(request: Request, routeContext: { params: Promise<{ id: string }> }) {
+async function handlePost(request: Request, routeContext: { params: Promise<{ id: string }> }, diagnostic: RequestContext) {
   const { id } = await routeContext.params;
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) return NextResponse.json({ error: "Operação inválida." }, { status: 400 });
@@ -363,17 +367,38 @@ async function saveWorkflow(
   sourceRevision: number,
   supabase: AuthorizedProjectContext["supabase"],
 ) {
-  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction });
+  return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction }, { reportErrors: true });
 }
   if (!workflow || workflow.revision !== parsed.data.revision) {
-    return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
+    return NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
   const { action } = parsed.data;
   if (!isSelfDirectedProject && action !== "back" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
+    return NextResponse.json({ code: "advisor_pending", error: new WorkflowRequestError("advisor_pending").message }, { status: 409 });
   }
   if (!canNavigateToWorkflowTarget(workflow, "methodology_matrix")) {
-    return NextResponse.json({ error: "A metodologia ainda não está disponível." }, { status: 409 });
+    return NextResponse.json({ code: "prerequisite_required", error: new WorkflowRequestError("prerequisite_required").message }, { status: 409 });
+  }
+  if (action === "back") {
+    return NextResponse.json({ workflow: workflowForView(baseWorkflow!, "development_topics") });
+  }
+  // Drafts remain writable while an upstream step is being reviewed. They are
+  // not academic confirmation and cannot bypass the advisor/context gates.
+  if (action === "save") {
+    let plan: MethodologyPlanInput;
+    try { plan = planFromRequest(parsed.data); }
+    catch (error) {
+      if (error instanceof MethodologyInputError) return NextResponse.json({ code: "validation", error: error.message, errors: error.errors }, { status: 422 });
+      throw error;
+    }
+    const content = replaceMethodology(reconcileTopicLinks(workflow.content), plan, workflow.sourceRevision, "user");
+    const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
+    if (!saved) throw new WorkflowRequestError("revision_conflict");
+    return NextResponse.json({ message: "Rascunho metodológico salvo.", workflow: saved });
+  }
+  const draft = baseWorkflow!.content.stepDrafts.methodology_matrix;
+  if (action === "validate" && draft && draft.baseRevision !== baseWorkflow!.sourceRevision) {
+    throw new WorkflowRequestError("context_stale");
   }
   const advisorGate = action === "validate"
     ? projectAdvisorGate({
@@ -388,15 +413,11 @@ async function saveWorkflow(
     );
   }
   const context = validateContext(workflow);
-  if (!context) return NextResponse.json({ error: "Objetivos e capítulos precisam estar validados." }, { status: 409 });
+  if (!context) throw new WorkflowRequestError("prerequisite_required");
   const approvedProblem = context.problem.approvedContent!;
   const approvedGeneral = context.general.approvedContent!;
   const allowedObjectiveIds = new Set(context.specifics.map((item) => item.id));
   const allowedTopicIds = new Set([...context.literature, ...context.development].map((topic) => topic.id));
-
-  if (action === "back") {
-    return NextResponse.json({ workflow: workflowForView(baseWorkflow!, "development_topics") });
-  }
 
   const objectiveLabels = [...context.specifics.map((item, index) => ({ id: item.id, label: `OE${index + 1}` })), { id: context.general.id, label: "OEG" }];
   const existingPlan = planFromContent(workflow.content);
@@ -404,7 +425,7 @@ async function saveWorkflow(
     const content = reconcileTopicLinks(workflow.content);
     if (content === workflow.content) return NextResponse.json({ workflow });
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   let plan: MethodologyPlanInput;
@@ -479,10 +500,14 @@ async function saveWorkflow(
     if (error instanceof MethodologyInputError) {
       return NextResponse.json({ error: error.message, errors: error.errors }, { status: 422 });
     }
-    return NextResponse.json({ error: error instanceof Error ? error.message : "A matriz metodológica está incompleta." }, { status: 400 });
+    if (action === "initialize" || action === "regenerate") {
+      const ai = classifyAiFailure(error);
+      throw new WorkflowRequestError(ai === "cancelled" ? "cancelled" : ai === "timeout" ? "provider_timeout" : ai === "invalid_output" ? "provider_invalid_response" : "provider_unavailable");
+    }
+    throw new WorkflowRequestError("invalid_workflow");
   }
 
-  if (action !== "save") {
+  {
     const issues = methodologyIssues(plan, objectiveLabels, allowedTopicIds);
     if (issues.length > 0) return NextResponse.json({ error: "Complete os campos indicados ou use Completar campos com IA.", errors: issues.map((issue) => issue.message), issues }, { status: 422 });
   }
@@ -499,7 +524,7 @@ async function saveWorkflow(
   };
   let content = replaceMethodology(reconciledWorkflowContent, plan, workflow.sourceRevision, action === "initialize" || action === "regenerate" ? "ai" : "user");
 
-  if (action === "save" || action === "initialize" || action === "regenerate") {
+  if (action === "initialize" || action === "regenerate") {
     const { warnings } = validateMethodologyPlan(plan, {
       allowedObjectiveIds,
       allowedTopicIds,
@@ -512,8 +537,8 @@ async function saveWorkflow(
       coherenceFindings: validationFindings(content, [], warnings),
     });
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-    const message = action === "save" ? "Rascunho metodológico salvo." : action === "regenerate" ? "Nova sugestão metodológica criada." : "Sugestão preenchida. Revise os campos e use Próximo para continuar.";
-    return saved ? NextResponse.json({ message, workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    const message = action === "regenerate" ? "Nova sugestão metodológica criada." : "Sugestão preenchida. Revise os campos e use Próximo para continuar.";
+    return saved ? NextResponse.json({ message, workflow: saved }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   const { errors, warnings } = validateMethodologyPlan(plan, {
@@ -559,17 +584,18 @@ async function saveWorkflow(
     sourceRevision,
     supabase,
   );
-  if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+  if (!saved) return NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
 
+  let titleSyncWarning = false;
   const finalTitle = element(content, "research_title")?.approvedContent;
   if (finalTitle) {
-    const { error } = await supabase
-      .from("projects")
-      .update({ title: finalTitle, updated_at: new Date().toISOString() })
-      .eq("id", id)
-      .eq("owner_id", userId)
-      .eq("workflow_version", 2);
-    if (error) return NextResponse.json({ error: "A metodologia foi validada, mas o título do projeto não foi atualizado.", workflow: saved }, { status: 500 });
+    try {
+      const { error } = await supabase.from("projects")
+        .update({ title: finalTitle, updated_at: new Date().toISOString() })
+        .eq("id", id).eq("owner_id", userId).eq("workflow_version", 2);
+      titleSyncWarning = Boolean(error);
+    } catch { titleSyncWarning = true; }
+    if (titleSyncWarning) logOperationalFailure("methodology_title_sync_failed", diagnostic, { stage: "methodology", errorCode: "persistence_failed", httpStatus: 200 });
   }
 
   const submittedReview = shouldWaitForAdvisor ? pendingAdvisorReview(content) : null;
@@ -584,7 +610,33 @@ async function saveWorkflow(
     });
   }
 
-  return NextResponse.json({ message: shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando revisão." : "Metodologia validada.", workflow: saved });
+  return NextResponse.json({
+    message: titleSyncWarning
+      ? "Metodologia validada e salva. O título na biblioteca não foi sincronizado; o título final permanece salvo no mapa."
+      : shouldWaitForAdvisor ? "Metodologia validada pelo estudante. Aguardando revisão." : "Metodologia validada.",
+    ...(titleSyncWarning ? { warning: "title_sync_failed" } : {}), workflow: saved,
+  });
 }
 
-export const POST = withAiProgress(handlePost);
+// Only fixed codes/statuses are logged: no project IDs, text, provider bodies or secrets.
+async function diagnosedPost(request: Request, context: { params: Promise<{ id: string }> }) {
+  const diagnostic = startRequest(request);
+  const raw = await request.clone().json().catch(() => null);
+  const action = requestSchema.shape.action.safeParse(raw?.action);
+  let response: Response;
+  try { response = await handlePost(request, context, diagnostic); }
+  catch (error) {
+    const ai = classifyAiFailure(error);
+    const failure = error instanceof WorkflowRequestError ? error
+      : error instanceof AiError
+        ? new WorkflowRequestError(ai === "cancelled" ? "cancelled" : ai === "timeout" ? "provider_timeout" : ai === "invalid_output" ? "provider_invalid_response" : "provider_unavailable")
+        : new WorkflowRequestError("unknown");
+    response = NextResponse.json({ code: failure.code, error: failure.message }, { status: failure.status });
+  }
+  const body = await response.clone().json().catch(() => ({}));
+  const knownCode = typeof body.code === "string" && /^[a-z_]{1,50}$/.test(body.code) ? body.code : response.status === 422 ? "validation" : "unknown";
+  const fields = { appVersion: APP_VERSION, stage: "methodology", status: action.success ? action.data : "invalid", httpStatus: response.status, ...(response.ok ? {} : { errorCode: knownCode }) };
+  (response.status >= 500 ? logOperationalFailure : logOperationalEvent)("methodology_request", diagnostic, fields);
+  return response;
+}
+export const POST = withAiProgress(diagnosedPost);

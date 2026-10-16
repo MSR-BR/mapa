@@ -1,4 +1,5 @@
 import "server-only";
+import { WorkflowRequestError } from "./request-failure";
 import { assertOperationActive, emitProgress } from "@/modules/ai/operation";
 import { reviewWorkflowProposal } from "@/modules/ai/review";
 import { prepareWorkflowEdit, type WorkflowEdit } from "./workflow-edit";
@@ -11,9 +12,12 @@ import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
 import { applyWorkflowUnit } from "./versioned-context";
 import { workflowForView, workflowNavigationPosition } from "./workflow-navigation";
 
-export async function saveVersionedWorkflow(supabase: SupabaseClient<Database>, edit: WorkflowEdit) {
+export async function saveVersionedWorkflow(supabase: SupabaseClient<Database>, edit: WorkflowEdit, options: { reportErrors?: boolean } = {}) {
   let next;
-  try { next = prepareWorkflowEdit(edit); } catch { return null; }
+  try { next = prepareWorkflowEdit(edit); } catch {
+    if (options.reportErrors) throw new WorkflowRequestError("invalid_workflow");
+    return null;
+  }
   const { base } = edit;
   if (next.unchanged) return workflowForView(base, edit.step);
   const review = await reviewWorkflowProposal(edit);
@@ -31,7 +35,10 @@ export async function saveVersionedWorkflow(supabase: SupabaseClient<Database>, 
     updated_at: new Date().toISOString(),
   }).eq("project_id", base.projectId).eq("owner_id", base.ownerId).eq("revision", base.revision)
     .select("updated_at").maybeSingle();
-  if (error) return null;
+  if (error) {
+    if (options.reportErrors) throw new WorkflowRequestError("persistence_failed");
+    return null;
+  }
   if (!data) {
     // A late generation may be retained as a proposal of its old context. Never
     // replace a newer proposal, academic content, drafts or a pending submission.

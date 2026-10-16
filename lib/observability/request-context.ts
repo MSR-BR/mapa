@@ -3,6 +3,7 @@ const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._:-]{1,100}$/;
 const SAFE_ERROR_CODE_PATTERN = /^[a-zA-Z0-9._:-]{1,80}$/;
 const SAFE_LOG_FIELDS = new Set([
   "attachmentCount",
+  "appVersion",
   "attempt",
   "code",
   "durationMs",

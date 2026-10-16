@@ -18,6 +18,18 @@ if (process.env.MAPA_REVIEW_SCENARIO === 'c117') {
    rows:[...base.content.methodologyRows,{...base.content.methodologyRows[0],id:'00000000-0000-4000-8000-000000000090',objectiveId:general.id}].map(row=>({...row,studentJustification:null}))};
  };
 }
+// C119 exercises real components/routes with synthetic failures and no paid calls.
+if (['c119-context', 'c119-title'].includes(process.env.MAPA_REVIEW_SCENARIO)) {
+ const general=state.workflow.content.elements.find(e=>e.type==='general_objective');
+ state.workflow.state=state.workflow.stableState='validating_methodology';
+ state.workflow.content.activeStep='methodology_matrix';
+ state.workflow.content.methodologyRows.push({...state.workflow.content.methodologyRows[0],id:'00000000-0000-4000-8000-000000000090',objectiveId:general.id});
+ if(process.env.MAPA_REVIEW_SCENARIO==='c119-context') state.workflow.content.stepDrafts.methodology_matrix={baseRevision:state.workflow.sourceRevision-1,savedAt:state.workflow.updatedAt,unit:api.workflowUnit(state.workflow.content,'methodology_matrix')};
+ if(process.env.MAPA_REVIEW_SCENARIO==='c119-title') {
+  const from=state.supabase.from;
+  state.supabase.from=table=>table==='projects'?{update:()=>({eq(){return this;},then(resolve){return Promise.resolve({error:{code:'08006'}}).then(resolve);}})}:from(table);
+ }
+}
 const browserCode=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`
  import {PresentationVideo} from './modules/landing/presentation-video';
  import {PublicStartForm} from './modules/projects/public-start-form';
@@ -62,5 +74,5 @@ const server=createServer(async(req,res)=>{try{
  }
  res.setHeader('Content-Type','text/html; charset=utf-8');res.end('<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style><main class="workspace-shell proposal-workspace-shell"><h1>Projeto sintético C114 — ambiente local</h1><div id="root"></div></main><script src="/bundle.js"></script></html>');
 }catch(error){res.writeHead(500,{'Content-Type':'application/json'}).end(JSON.stringify({error:error.message}));}});
-await new Promise(resolve=>server.listen(3114,'127.0.0.1',resolve));
-console.log('C114 review fixture ready at http://127.0.0.1:3114 (synthetic data and providers only)');
+await new Promise(resolve=>server.listen(Number(process.env.MAPA_REVIEW_PORT)||3114,'127.0.0.1',resolve));
+console.log(`Workflow review fixture ready at http://127.0.0.1:${Number(process.env.MAPA_REVIEW_PORT)||3114} (synthetic data and providers only)`);

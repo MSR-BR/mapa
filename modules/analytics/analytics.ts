@@ -28,7 +28,8 @@ export type AnalyticsResult = "started" | "success" | "failed" | "blocked" | "re
 export type AnalyticsReasonCode =
   | "auth_required" | "validation" | "consent_required" | "provider_timeout" | "provider_unavailable"
   | "provider_invalid_response" | "rate_limited" | "network" | "advisor_pending" | "advisor_correction"
-  | "duplicate_action" | "unknown";
+  | "duplicate_action" | "revision_conflict" | "context_stale" | "prerequisite_required" | "persistence_failed"
+  | "permission_denied" | "cancelled" | "response_invalid" | "unknown";
 export type AnalyticsReferenceBucket = "0" | "1_5" | "6_20" | "21_plus" | "unknown";
 export type AnalyticsHasAdvisor = "yes" | "no" | "unknown";
 export type AnalyticsMacroStage = "1" | "2" | "3" | "4" | "unknown";
@@ -152,7 +153,7 @@ const ENUMS: Record<keyof AnalyticsEventParams, readonly string[]> = {
   app_product_type: ["tcc", "monograph", "dissertation", "thesis", "article", "other", "unknown"],
   app_stage: ["discovery", "problem", "definition", "literature", "methodology", "final", "unknown"],
   app_result: ["started", "success", "failed", "blocked", "retry", "cancelled", "accepted", "rejected"],
-  app_reason_code: ["auth_required", "validation", "consent_required", "provider_timeout", "provider_unavailable", "provider_invalid_response", "rate_limited", "network", "advisor_pending", "advisor_correction", "duplicate_action", "unknown"],
+  app_reason_code: ["auth_required", "validation", "consent_required", "provider_timeout", "provider_unavailable", "provider_invalid_response", "rate_limited", "network", "advisor_pending", "advisor_correction", "duplicate_action", "revision_conflict", "context_stale", "prerequisite_required", "persistence_failed", "permission_denied", "cancelled", "response_invalid", "unknown"],
   app_reference_count_bucket: ["0", "1_5", "6_20", "21_plus", "unknown"],
   app_has_advisor: ["yes", "no", "unknown"],
   app_macro_stage: ["1", "2", "3", "4", "unknown"],

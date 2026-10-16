@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
 import { progressLabel, type AiProgressEvent } from "./contract";
 import { readProgressResponse } from "./progress-client";
 
@@ -19,10 +20,10 @@ export function useAiProgress() {
       const result = await readProgressResponse(response, (next) => {
         if (active.current === current && !current.controller.signal.aborted) setEvent(next);
       });
-      if (active.current !== current || current.controller.signal.aborted) throw new Error("Solicitação cancelada. Confira a versão salva antes de tentar novamente.");
+      if (active.current !== current || current.controller.signal.aborted) throw new WorkflowRequestError("cancelled");
       return result;
     } catch (error) {
-      if (current.controller.signal.aborted) throw new Error("Solicitação cancelada. Confira a versão salva antes de tentar novamente.");
+      if (current.controller.signal.aborted) throw new WorkflowRequestError("cancelled");
       throw error;
     } finally { if (active.current === current) { active.current = null; requestAnimationFrame(() => { if (trigger?.isConnected) trigger.focus({ preventScroll: true }); }); } }
   }
