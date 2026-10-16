@@ -1,0 +1,59 @@
+{
+  "version": "v16102026.2",
+  "sourceCommit": "ac44539588a72f73bbe16311a1ebd9884d3d91da",
+  "functionalCommit": "8aaf09d4c187242e4019f8df68dd2a16bc5de7a8",
+  "sourceTag": "v16102026.2-r1",
+  "archiveSha256": "061f11cb7605c0f2b81acf0d45954d1c1f7f6152bd591cad4207eb577ca6092c",
+  "projectId": "prj_uz62Dh56BHDeHozBfrAACFFZ5mUS",
+  "teamId": "team_jQuUBnU7RDJh0O3XASyu1WeS",
+  "deploymentId": "dpl_J4ZA34BQ1JQeBqatrrJu7PJzFcfY",
+  "deploymentUrl": "https://mapadapesquisa-qddmzpyz5-msr-brs-projects.vercel.app",
+  "canonicalUrl": "https://mapadapesquisa.com.br",
+  "state": "READY",
+  "canonicalVerified": true,
+  "sourceProof": "Exact git archive, releaseCommit metadata read back, staged production promoted without rebuild; canonical alias matches deployment.",
+  "verifiedAt": "2026-10-16T17:16:33.101728+00:00",
+  "unitTests": 241,
+  "routeIntegration": "Actual routes with simulated providers and persistence passed",
+  "runtimeVulnerabilities": 0,
+  "devHighVulnerabilities": 5,
+  "gate": "PASS_WITH_ACCEPTED_RISK",
+  "localBuild": "Webpack PASS; targeted types/export/route checks repeated after asset-path fix",
+  "remoteBuild": "Default Turbopack PASS, no whole-project tracing warning on corrected candidate",
+  "paidAiSmoke": false,
+  "privateProjectMutation": false,
+  "originalPreserved": true,
+  "sharedPdfDocxContentVerified": true,
+  "publicEnvironmentChange": {
+    "name": "NEXT_PUBLIC_APP_VERSION",
+    "value": "v16102026.2",
+    "target": "production"
+  },
+  "rollbackDeployment": "dpl_GZ2sYLERSVRDjcLG6Gm3z9qei8fw",
+  "unpromotedCandidate": "dpl_Htgon3kivKWcF5TQV5Fu1k5LSZ6A",
+  "preserved": [
+    "PDF academic body",
+    "historical original answers",
+    "keys",
+    "models",
+    "provider budgets",
+    "Ads",
+    "TERMO",
+    "database schema",
+    "authorization",
+    "advisor approval gates"
+  ],
+  "postDeployErrorScan": {
+    "deploymentScoped": true,
+    "window": "30m",
+    "result": "No logs found",
+    "limitation": "Immediate release smoke only; not proof of future provider availability"
+  },
+  "productionIntakeMaxLengths": [
+    400,
+    400,
+    400,
+    400,
+    400
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "verifiedAt": "2026-10-16T17:16:33.101728+00:00",
+  "checks": [
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "checks": {
+          "openai": "configured",
+          "gemini": "configured",
+          "resend": "configured",
+          "researchStarter": "configured",
+          "supabase": "configured"
+        },
+        "service": "mapa-da-pesquisa",
+        "status": "ok",
+        "version": "v16102026.2"
+      }
+    },
+    {
+      "path": "/api/projects/00000000-0000-4000-8000-000000000002/exports/docx",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "path": "/api/projects/00000000-0000-4000-8000-000000000002/final-map",
+      "method": "POST",
+      "status": 403
+    }
+  ]
+}

@@ -21,4 +21,4 @@ Sem alteração de Ads, chaves ou modelos. O PDF atual é a referência de conte
 - Word é editável e compartilha integralmente o conteúdo acadêmico do PDF. Paginação e quebras podem variar conforme o editor. O PDF preexistente, antes do apêndice, foi comparado e preservado.
 - A geração inicial do comparativo acrescenta uma operação limitada de IA ao primeiro uso. Orçamentos, modelos, chaves e fallback já configurados são preservados. A validação desta change usa somente dados sintéticos e provedores simulados.
 
-Implementação e validação local concluídas; publicação candidata v16102026.2. Ver [validação](validation-2026-10-16.md).
+Implementação, validação e CPD concluídos; publicada v16102026.2. Ver [validação](validation-2026-10-16.md) e [CPD](cpd-2026-10-16.md).

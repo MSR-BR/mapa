@@ -10,7 +10,9 @@ As Changes 001 a 006 estão concluídas. O MVP possui autenticação, projetos e
 
 Produção: <https://mapadapesquisa.com.br>
 
-Versão atual **`v11102026.1`**: landing alinhada à campanha de pesquisa, com chamada direta para `/mapa`. Otimização C110 aplicada no Google Ads: novo anúncio aprovado, seis palavras habilitadas (duas novas ainda em revisão), quatro pausadas e 17 negativas preservadas. €2/dia, CPC máximo €0,30, término em 19/10 e limiar acumulado de pausa €28. [CPD e evidências](.specs/changes/110-google-ads-controlled-pilot/cpd-2026-10-11.md).
+Versão atual **`v16102026.2`**: Word com conteúdo integral do PDF; apêndice Avançado com texto original e reformulação revisável por campo; novos campos iniciais limitados a 400 caracteres. Originais históricos preservados, validação por perfil identificada e opção Otimizar literatura retirada. [CPD e evidências](.specs/changes/121-complete-exports-intake-review/cpd-2026-10-16.md).
+
+O piloto Google Ads segue separado, sem alteração pela C121. Consulte o [estado atual](.specs/project-state.md) e a [C110](.specs/changes/110-google-ads-controlled-pilot/) para os limites e acompanhamentos autorizados.
 
 Atualização C117 (`v08102026.4`): objetivos e metodologia com preenchimento de lacunas pela IA, rascunhos parciais preservados e orientação clara para avançar. [Validação e limites da release](.specs/changes/117-guided-methodology/cpd-2026-10-08.md).
 

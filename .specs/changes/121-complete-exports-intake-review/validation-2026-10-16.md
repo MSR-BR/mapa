@@ -6,7 +6,7 @@
 - `npm run test:exports`: rotas reais com serviços sintéticos. Preparação única, salvamento da edição, downloads PDF/DOCX sem nova IA, cabeçalhos privados, validação de limite, falha segura do provedor, conflito concorrente, autorização, estado, aprovação/rascunho e modo Rápido aprovados.
 - `npm run test:methodology`: regressões C117/C119 aprovadas.
 - Tipos, lint, auditoria de segurança, grants explícitos e `git diff --check` aprovados. Lint mantém um aviso preexistente de variável sem uso em `tests/foundation.test.mjs`; zero erros. Segurança: PASS_WITH_ACCEPTED_RISK, com limitações já registradas de rate limiting distribuído/antivírus/checagens remotas. Dependências de produção: zero vulnerabilidades; nenhuma dependência adicionada. O audit completo mantém cinco alertas high dev-only na cadeia braces/micromatch/ESLint, já aceitos nas C118/C119. O ajuste automático sugerido rebaixaria eslint-config-next e fica fora desta change; risco residual preexistente mantido pelo responsável do projeto.
-- Build local Webpack aprovado. O build padrão Turbopack local encontrou restrição de listener/EPERM e acesso à fonte externa; sem alteração de configuração para contornar a sandbox. O build remoto padrão será verificado na publicação.
+- Build local Webpack aprovado. O build padrão Turbopack local encontrou restrição de listener/EPERM e acesso à fonte externa; sem alteração de configuração para contornar a sandbox. O build remoto padrão foi aprovado na publicação.
 
 ## Conteúdo e renderização dos relatórios
 
@@ -39,4 +39,8 @@ Sem nova chamada paga a Gemini/GPT, alteração de conteúdo privado, chave, mod
 
 ## Ajuste do candidato remoto
 
-O primeiro build Turbopack remoto passou, mas avisou que o caminho genérico das imagens do Word incluía o projeto inteiro no tracing. O candidato não foi promovido. O caminho foi restringido a `public/brand` e aos dois nomes permitidos, sem alterar imagens ou conteúdo. Tipos, rotas reais, exportações, duas imagens incorporadas e paridade foram revalidados. Uma nova revisão do candidato será publicada; a tag inicial é preservada sem reescrever histórico.
+O primeiro build Turbopack remoto passou, mas avisou que o caminho genérico das imagens do Word incluía o projeto inteiro no tracing. O candidato não foi promovido. O caminho foi restringido a `public/brand` e aos dois nomes permitidos, sem alterar imagens ou conteúdo. Tipos, rotas reais, exportações, duas imagens incorporadas e paridade foram revalidados. A revisão corrigida foi publicada sem esse aviso; a tag inicial foi preservada sem reescrever histórico.
+
+## Produção
+
+Candidato corrigido READY, commit/alias canônico conferidos e promovido sem rebuild. Health 200/ok/v16102026.2; exportação anônima 401 e mutação cross-site 403. Interface canônica conferiu os cinco limites de 400 e a versão. Sem geração paga ou alteração de projeto privado. [CPD](cpd-2026-10-16.md).
