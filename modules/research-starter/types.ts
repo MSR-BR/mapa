@@ -27,6 +27,7 @@ export type ResearchStarterReference = {
 
 export type ResearchStarterSuccess = {
   ok: true;
+  retrievalProvider?: "research_starter" | "crossref";
   reportId: string;
   runId: string;
   generatedAt: string;

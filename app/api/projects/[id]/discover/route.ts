@@ -111,10 +111,10 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       : error instanceof ResearchStarterClientError && error.code === "not-configured"
         ? "research-starter-config"
         : error instanceof ResearchStarterClientError
-          ? error.code === "unauthorized" ? "research-starter-unauthorized" : "research-starter-unavailable"
+          ? error.code === "unauthorized" ? "research-starter-unauthorized" : error.code === "invalid-request" ? "research-starter-invalid-request" : "research-starter-unavailable"
           : "unexpected";
     const stage = error instanceof DiscoveryError ? error.stage : "literature";
-    const retryable = error instanceof DiscoveryError ? error.retryable : true;
+    const retryable = error instanceof DiscoveryError || error instanceof ResearchStarterClientError ? error.retryable : true;
     logSanitizedOperationalFailure("proposal_discovery_failed", requestContext, error, {
       errorCode,
       projectId: id,
@@ -135,6 +135,8 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
           ? "O Research Starter não está configurado neste ambiente."
           : errorCode === "research-starter-unauthorized"
             ? "A integração com o Research Starter recusou a credencial configurada. A equipe precisa atualizar essa integração antes de uma nova tentativa."
+          : errorCode === "research-starter-invalid-request"
+            ? "A integração bibliográfica recusou a consulta. Seu pedido continua salvo; a equipe precisa verificar o formato da busca."
           : errorCode === "research-starter-unavailable"
             ? "O Research Starter está temporariamente indisponível. Tente novamente em instantes."
             : errorCode === "gemini-quota-exhausted"

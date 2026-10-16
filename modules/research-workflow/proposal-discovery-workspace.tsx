@@ -163,6 +163,10 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
         ) : null}
       </div>
 
+      {discovery?.references.some(reference => reference.source === "crossref") ? (
+        <p className="proposal-original-prompt" role="status">Usamos o Crossref como fonte alternativa. A cobertura bibliográfica é reduzida; confira a adequação das referências antes de utilizá-las no trabalho.</p>
+      ) : null}
+
       {message ? (
         <div className="proposal-error" role="alert">
           <div>

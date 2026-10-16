@@ -1,4 +1,5 @@
 import type { ResearchStarterSuccess } from "@/modules/research-starter/types";
+import { boundedResearchQuery } from "@/modules/research-starter/request";
 
 const STOPWORDS = new Set([
   "a",
@@ -59,7 +60,7 @@ export function normalizeLiteratureSearchTerms(input: string | string[]) {
 }
 
 export function buildOptimizedResearchQuery(terms: string[]) {
-  return clean(terms.join(" "), 240);
+  return boundedResearchQuery(terms.join(" "));
 }
 
 export function buildOptimizedDiscoveryKeywords(

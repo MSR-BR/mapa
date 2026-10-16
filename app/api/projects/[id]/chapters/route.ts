@@ -240,7 +240,7 @@ async function saveWorkflow(
         report = await fetchResearchStarterReport({ includeMarkdown: false, maxReferences: 20, maxTopPapers: 10, publicationInterval: { kind: "last-10-years" }, topic });
       }
       if (report.references.length === 0) return NextResponse.json({ error: "Nenhuma referência verificável foi encontrada. A versão anterior foi preservada; revise as palavras-chave e tente novamente." }, { status: 422 });
-      const newReferences = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => discoveryReferenceSchema.parse({ authors: authors.slice(0, 8), doi, referenceId, title, url, year }));
+      const newReferences = report.references.slice(0, 20).map(({ authors, doi, referenceId, title, url, year }) => discoveryReferenceSchema.parse({ authors: authors.slice(0, 8), doi, referenceId, title, url, year, source: report.retrievalProvider === "crossref" ? "crossref" : "research_starter" }));
       // Adding literature never regenerates topics or replaces their links.
       const archivedReferences = mergeReferenceArchive(baseWorkflow!.content.referenceArchive, [...context.discovery.references, ...newReferences]);
       const priorIds = new Set([...baseWorkflow!.content.referenceArchive, ...context.discovery.references].map((reference) => reference.referenceId));
@@ -248,7 +248,7 @@ async function saveWorkflow(
       const content = researchWorkflowContentSchema.parse({ ...baseWorkflow!.content, referenceArchive: archivedReferences });
       const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
       if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba. As referências anteriores foram preservadas; recarregue e tente novamente." }, { status: 409 });
-      const partialNotice = report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes." : "";
+      const partialNotice = report.retrievalProvider === "crossref" ? " Usamos metadados do Crossref como alternativa; a cobertura é reduzida e precisa de revisão acadêmica." : report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes." : "";
       return NextResponse.json({ message: `${added} nova(s) referência(s) adicionada(s). Os tópicos, referências anteriores e associações foram preservados.${partialNotice}`, workflow: saved });
     } catch (error) {
       if (error instanceof ResearchStarterClientError) {

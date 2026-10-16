@@ -18,10 +18,10 @@ export function assertOperationActive() {
   if (state?.signal.aborted) throw new AiError("cancelled");
   if (state && Date.now() >= state.deadline) throw new AiError("timeout");
 }
-export function emitProgress(phase: AiProgressEvent["phase"], provider: AiProvider | null = null) {
+export function emitProgress(phase: AiProgressEvent["phase"], provider: AiProvider | null = null, literatureSource?: AiProgressEvent["literatureSource"]) {
   const operation = aiOperation.getStore();
   if (!operation) return;
-  operation.emit({ operationId: operation.id, sequence: ++operation.sequence, phase, provider,
+  operation.emit({ operationId: operation.id, sequence: ++operation.sequence, phase, provider, ...(literatureSource ? { literatureSource } : {}),
     state: phase === "completed" ? "succeeded" : phase === "failed" ? "failed" : "running" });
 }
 export function claimAttempt(operation: AiOperation, micros: number) {

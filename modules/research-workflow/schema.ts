@@ -208,7 +208,7 @@ export const discoveryReferenceSchema = z.object({
   journal: z.string().trim().max(240).nullable().default(null),
   metadataLookup: doiLookupProvenanceSchema.optional(),
   referenceId: z.string().trim().min(1).max(120),
-  source: z.enum(["manual", "research_starter"]).default("research_starter"),
+  source: z.enum(["manual", "research_starter", "crossref"]).default("research_starter"),
   title: z.string().trim().min(1).max(500).nullable(),
   url: z.string().url().max(1_000).nullable(),
   volumeIssuePages: z.string().trim().max(240).nullable().default(null),

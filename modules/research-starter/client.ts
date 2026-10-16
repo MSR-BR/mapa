@@ -1,34 +1,28 @@
 import "server-only";
+import { setTimeout as delay } from "node:timers/promises";
 import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
-
 import { logOperationalEvent } from "@/lib/observability/request-context";
-import type { ResearchStarterRequest, ResearchStarterResponse, ResearchStarterSuccess } from "./types";
+import { readBoundedJson } from "@/modules/research-workflow/doi-lookup";
+import { fetchCrossrefReport } from "./crossref";
+import { researchStarterRequestSchema } from "./request";
+import { researchStarterResponseSchema } from "./response";
+import type { ResearchStarterRequest, ResearchStarterSuccess } from "./types";
 
 const RESEARCH_STARTER_ENDPOINT = "https://researchstarter.vercel.app/api/v1/reports";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_ATTEMPTS = 2;
+const TOTAL_SEARCH_MS = 50_000;
+const FALLBACK_RESERVE_MS = 10_000;
 
 function readResearchStarterApiKey() {
   return process.env.RESEARCH_STARTER_MAPA_API_KEY?.trim();
 }
-
-export type ResearchStarterClientErrorCode =
-  | "not-configured"
-  | "invalid-response"
-  | "unauthorized"
-  | "invalid-request"
-  | "temporary-unavailable"
-  | "request-failed";
-
+export type ResearchStarterClientErrorCode = "not-configured" | "invalid-response" | "unauthorized" | "invalid-request" | "temporary-unavailable" | "request-failed";
 export class ResearchStarterClientError extends Error {
   readonly code: ResearchStarterClientErrorCode;
   readonly status: number | null;
   readonly retryable: boolean;
-
-  constructor(
-    message: string,
-    options: { code: ResearchStarterClientErrorCode; status?: number | null; retryable?: boolean },
-  ) {
+  constructor(message: string, options: { code: ResearchStarterClientErrorCode; status?: number | null; retryable?: boolean }) {
     super(message);
     this.name = "ResearchStarterClientError";
     this.code = options.code;
@@ -36,99 +30,95 @@ export class ResearchStarterClientError extends Error {
     this.retryable = options.retryable ?? false;
   }
 }
-
-function isResponse(value: unknown): value is ResearchStarterResponse {
-  if (!value || typeof value !== "object" || !("ok" in value)) return false;
-  const candidate = value as Partial<ResearchStarterResponse>;
-  if (candidate.ok === false) return "code" in candidate && Array.isArray(candidate.errors);
-  return candidate.ok === true
-    && "summary" in candidate
-    && Array.isArray(candidate.references)
-    && Array.isArray(candidate.warnings)
-    && Array.isArray(candidate.keyFindings);
+const unavailable = () => new ResearchStarterClientError("A busca bibliográfica está temporariamente indisponível. Seu pedido foi preservado; tente novamente.", { code: "temporary-unavailable", retryable: true });
+function retryableStatus(status: number) { return status === 408 || status === 429 || status >= 500; }
+function requestSignal(deadline: number) {
+  const operation = aiOperation.getStore();
+  return AbortSignal.any([AbortSignal.timeout(Math.max(1, Math.ceil(deadline - Date.now()))), ...(operation ? [operation.signal] : [])]);
+}
+export function retryAfterMs(value: string | null, now = Date.now()) {
+  if (!value) return 0;
+  const seconds = Number(value);
+  const ms = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(value) - now;
+  return Number.isFinite(ms) ? Math.max(0, ms) : 0;
 }
 
 export async function fetchResearchStarterReport(
   input: ResearchStarterRequest,
-  options: { maxAttempts?: number; requestId?: string; timeoutMs?: number } = {},
+  options: { maxAttempts?: number; requestId?: string; timeoutMs?: number; deadline?: number } = {},
 ): Promise<ResearchStarterSuccess> {
+  assertOperationActive();
+  const parsed = researchStarterRequestSchema.safeParse(input);
+  if (!parsed.success) throw new ResearchStarterClientError("A consulta bibliográfica precisa ser ajustada.", { code: "invalid-request" });
+  const request = parsed.data;
   const apiKey = readResearchStarterApiKey();
-  if (!apiKey) {
-    throw new ResearchStarterClientError("Research Starter não está configurado.", {
-      code: "not-configured",
-    });
-  }
-
+  if (!apiKey) throw new ResearchStarterClientError("Research Starter não está configurado.", { code: "not-configured" });
+  const started = Date.now();
+  const deadline = Math.min(started + TOTAL_SEARCH_MS, options.deadline ?? Infinity, aiOperation.getStore()?.deadline ?? Infinity);
+  if (deadline - started < 1000) throw unavailable();
+  const primaryDeadline = deadline - Math.min(FALLBACK_RESERVE_MS, (deadline - started) / 3);
   const maxAttempts = Math.max(1, Math.min(options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS, 2));
-  const timeoutMs = Math.max(5_000, Math.min(options.timeoutMs ?? DEFAULT_TIMEOUT_MS, 45_000));
-  const requestId = options.requestId ?? "research-starter";
-  let lastError: unknown = null;
+  const timeoutMs = Math.max(1, Math.min(options.timeoutMs ?? DEFAULT_TIMEOUT_MS, 45_000));
+  const requestId = options.requestId ?? aiOperation.getStore()?.id ?? crypto.randomUUID();
+  let lastError: ResearchStarterClientError = unavailable();
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+  for (let attempt = 1; attempt <= maxAttempts && Date.now() < primaryDeadline; attempt++) {
+    let retryDelay = 350 * attempt;
     try {
       assertOperationActive();
       emitProgress("researching");
       const response = await fetch(RESEARCH_STARTER_ENDPOINT, {
-        body: JSON.stringify(input),
-        cache: "no-store",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), ...(aiOperation.getStore() ? [aiOperation.getStore()!.signal] : [])]),
+        body: JSON.stringify(request), cache: "no-store", redirect: "error",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        method: "POST", signal: requestSignal(Math.min(primaryDeadline, Date.now() + timeoutMs)),
       });
-
-      let payload: unknown;
-      try {
-        payload = await response.json();
-      } catch {
-        throw new ResearchStarterClientError("O Research Starter devolveu uma resposta inválida.", {
-          code: "invalid-response",
-          status: response.status,
-          retryable: response.status >= 500 || response.status === 408,
-        });
+      retryDelay = Math.max(retryDelay, retryAfterMs(response.headers.get("retry-after")));
+      // Classify status before parsing: gateways may return HTML for 401/429/503.
+      if (response.status === 401 || response.status === 403 || response.status === 400) {
+        await response.body?.cancel();
+        throw new ResearchStarterClientError("A integração bibliográfica recusou a consulta.", { code: response.status === 400 ? "invalid-request" : "unauthorized", status: response.status });
       }
-
-      if (!isResponse(payload)) {
-        logOperationalEvent("research_starter_invalid_response", { requestId }, { attempt, status: response.status });
-        throw new ResearchStarterClientError("Resposta inválida do Research Starter.", {
-          code: "invalid-response",
-          status: response.status,
-          retryable: response.status >= 500 || response.status === 408,
-        });
+      if (!response.ok) {
+        await response.body?.cancel();
+        throw new ResearchStarterClientError("O serviço bibliográfico não respondeu adequadamente.", { code: retryableStatus(response.status) ? "temporary-unavailable" : "request-failed", status: response.status, retryable: retryableStatus(response.status) });
       }
-      if (!response.ok || !payload.ok) {
-        const code = payload.ok ? `http-${response.status}` : payload.code;
-        logOperationalEvent("research_starter_request_failed", { requestId }, { attempt, code, status: response.status });
-        const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
-        throw new ResearchStarterClientError(`Research Starter indisponível (${code}).`, {
-          code: payload.ok
-            ? retryable ? "temporary-unavailable" : "request-failed"
-            : payload.code === "unauthorized"
-              ? "unauthorized"
-              : payload.code === "invalid-request"
-                ? "invalid-request"
-                : retryable ? "temporary-unavailable" : "request-failed",
-          status: response.status,
-          retryable,
-        });
+      let raw: unknown;
+      try { raw = await readBoundedJson(response, 2_000_000); }
+      catch { throw new ResearchStarterClientError("Resposta inválida do Research Starter.", { code: "invalid-response", status: response.status, retryable: true }); }
+      const payload = researchStarterResponseSchema.safeParse(raw);
+      if (!payload.success) throw new ResearchStarterClientError("Resposta inválida do Research Starter.", { code: "invalid-response", status: response.status, retryable: true });
+      if (!payload.data.ok) {
+        const code = payload.data.code;
+        const permanent = code === "unauthorized" || code === "invalid-request" || code === "api-not-configured";
+        throw new ResearchStarterClientError("O serviço bibliográfico não concluiu a consulta.", { code: code === "unauthorized" ? "unauthorized" : code === "invalid-request" ? "invalid-request" : code === "api-not-configured" ? "not-configured" : "temporary-unavailable", status: response.status, retryable: !permanent });
       }
-      return payload;
-    } catch (error) {
+      if (payload.data.status === "failed" || payload.data.confidenceLevel === "unavailable") throw unavailable();
       assertOperationActive();
-      lastError = error;
-      const retryable = error instanceof ResearchStarterClientError
-        ? error.retryable
-        : error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
-      if (!retryable || attempt >= maxAttempts) break;
-      await new Promise((resolve) => setTimeout(resolve, 350 * attempt));
+      logOperationalEvent("research_starter_completed", { requestId }, { attempt, durationMs: Date.now() - started, queryLength: request.topic.length, rankedPapers: payload.data.references.length, stage: "research_starter" });
+      return { ...payload.data, retrievalProvider: "research_starter" };
+    } catch (error) {
+      assertOperationActive(); // Cancellation/deadline never starts another provider.
+      if (!(error instanceof ResearchStarterClientError) && !(error instanceof TypeError) && !(error instanceof Error && ["AbortError", "TimeoutError"].includes(error.name))) throw error;
+      lastError = error instanceof ResearchStarterClientError ? error : unavailable();
+      logOperationalEvent("research_starter_request_failed", { requestId }, { attempt, code: lastError.code, status: lastError.status, queryLength: request.topic.length, durationMs: Date.now() - started });
+      if (!lastError.retryable) throw lastError;
+      if (attempt >= maxAttempts || Date.now() + retryDelay + 1000 >= primaryDeadline) break;
+      try { await delay(retryDelay, undefined, { signal: requestSignal(primaryDeadline) }); }
+      catch { assertOperationActive(); break; }
     }
   }
-
-  if (lastError instanceof ResearchStarterClientError) throw lastError;
-  throw new ResearchStarterClientError("Não foi possível conectar ao Research Starter.", {
-    code: "temporary-unavailable",
-    retryable: true,
-  });
+  assertOperationActive();
+  if (Date.now() >= deadline) throw lastError;
+  logOperationalEvent("research_starter_fallback_started", { requestId }, { code: lastError.code, stage: "crossref" });
+  emitProgress("researching", null, "crossref");
+  try {
+    const fallback = await fetchCrossrefReport(request, requestSignal(deadline));
+    assertOperationActive();
+    logOperationalEvent("research_starter_fallback_completed", { requestId }, { stage: "crossref", durationMs: Date.now() - started, rankedPapers: fallback.references.length });
+    return fallback;
+  } catch {
+    assertOperationActive();
+    logOperationalEvent("research_starter_fallback_failed", { requestId }, { stage: "crossref", durationMs: Date.now() - started, code: "temporary-unavailable" });
+    throw unavailable();
+  }
 }

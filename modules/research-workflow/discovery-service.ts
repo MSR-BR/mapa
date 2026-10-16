@@ -1,5 +1,7 @@
 import "server-only";
 import { AiError } from "@/modules/ai/failure";
+import { aiOperation } from "@/modules/ai/operation";
+import { boundedResearchQuery } from "@/modules/research-starter/request";
 
 import {
   broadenResearchQuery,
@@ -17,6 +19,7 @@ import { proposalDiscoverySchema, type DiscoveryReference, type InterpretedDisco
 import type { ResearchIntake } from "@/modules/projects/research-intake";
 
 const DISCOVERY_DEADLINE_MS = 105_000;
+const PROPOSALS_RESERVE_MS = 35_000;
 
 function classifyGeminiError(error: unknown, stage: "interpreting" | "literature" | "proposals") {
   if (error instanceof AiError) throw error;
@@ -104,7 +107,7 @@ function normalizeReferences(report: ResearchStarterSuccess): DiscoveryReference
       doi,
       journal: venue,
       referenceId: referenceId.slice(0, 120),
-      source: "research_starter" as const,
+      source: report.retrievalProvider === "crossref" ? "crossref" as const : "research_starter" as const,
       title,
       url: safeUrl(reference.url),
       volumeIssuePages: null,
@@ -123,7 +126,7 @@ function reportWithReferences(report: ResearchStarterSuccess, references: Discov
       openAccessStatus: "unknown",
       paperId: reference.referenceId,
       referenceId: reference.referenceId,
-      sources: [],
+      sources: [reference.source],
       title: reference.title,
       url: reference.url,
       venue: reference.journal,
@@ -137,19 +140,20 @@ async function fetchVerifiedLiterature(
   interpreted: InterpretedDiscovery,
   deadline: number,
 ) {
-  let activeInterpretation = interpreted;
+  let activeInterpretation = { ...interpreted, researchQuery: boundedResearchQuery(interpreted.researchQuery) };
   const search = (topic: string, interval: "last-5-years" | "last-10-years") => fetchResearchStarterReport({
     includeMarkdown: false,
     maxReferences: 20,
     maxTopPapers: 10,
     publicationInterval: { kind: interval },
     topic,
-  }, { maxAttempts: 2, timeoutMs: remainingTime(deadline) });
+  }, { maxAttempts: 2, timeoutMs: remainingTime(deadline), deadline });
 
   let report: ResearchStarterSuccess;
   try {
     report = await search(activeInterpretation.researchQuery, "last-5-years");
   } catch (error) {
+    if (error instanceof AiError) throw error;
     if (error instanceof ResearchStarterClientError && error.code === "not-configured") {
       throw new DiscoveryError("O Research Starter não está configurado neste ambiente.", {
         code: "research-starter-config",
@@ -203,6 +207,7 @@ async function fetchVerifiedLiterature(
 }
 
 export async function discoverResearchProposals(project: Project, initialBriefing: ResearchIntake | null = null) {
+  const deadline = Math.min(Date.now() + DISCOVERY_DEADLINE_MS, aiOperation.getStore()?.deadline ?? Infinity);
   const originalPrompt = compactOriginalPrompt(project.problem_statement?.trim() || project.theme?.trim() || project.title.trim());
   if (originalPrompt.length < 8) {
     throw new DiscoveryError("O briefing da pesquisa é muito curto para formar propostas.", {
@@ -221,7 +226,7 @@ export async function discoverResearchProposals(project: Project, initialBriefin
   const { interpreted, report, references } = await fetchVerifiedLiterature(
     project,
     initialInterpretation,
-    Date.now() + DISCOVERY_DEADLINE_MS,
+    deadline - PROPOSALS_RESERVE_MS,
   );
   let candidates;
   try {

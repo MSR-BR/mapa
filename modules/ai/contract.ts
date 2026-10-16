@@ -6,6 +6,7 @@ export type AiRole = "generator" | "reviewer";
 export const progressEventSchema = z.object({
   operationId: z.string().uuid(), sequence: z.number().int().nonnegative(),
   phase: z.enum(["preparing", "generating", "reviewing", "fallback", "researching", "validating", "saving", "completed", "failed"]),
+  literatureSource: z.enum(["research_starter", "crossref"]).optional(),
   provider: providerSchema.nullable(), state: z.enum(["running", "succeeded", "failed"]),
 });
 export type AiProgressEvent = z.infer<typeof progressEventSchema>;
@@ -17,7 +18,7 @@ export function progressLabel(event: AiProgressEvent | null) {
     case "generating": return `Gerando sugestões com ${name}…`;
     case "reviewing": return `Revisando a coerência com ${name}…`;
     case "fallback": return `Continuando com ${name}…`;
-    case "researching": return "Consultando literatura no Research Starter…";
+    case "researching": return event.literatureSource === "crossref" ? "Consultando referências na fonte alternativa Crossref…" : "Consultando literatura no Research Starter…";
     case "validating": return "Conferindo o conteúdo e as referências…";
     case "saving": return "Salvando suas alterações…";
     case "completed": return "Solicitação concluída.";

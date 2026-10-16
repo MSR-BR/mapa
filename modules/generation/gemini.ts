@@ -1,5 +1,6 @@
 import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
 import "server-only";
+import { boundedResearchQuery, RESEARCH_QUERY_MAX_LENGTH } from "@/modules/research-starter/request";
 
 import { z } from "zod";
 
@@ -51,7 +52,7 @@ const interpretedResearchRequestSchema = z.object({
   knowledgeArea: z.string().trim().min(2).max(100),
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(10),
-  researchQuery: z.string().trim().min(8).max(240),
+  researchQuery: z.string().trim().min(8).max(RESEARCH_QUERY_MAX_LENGTH),
   researchType: researchProductTypeSchema.nullable().default(null),
   researchGuidance: z.string().trim().max(8_000).nullable().default(null),
   title: z.string().trim().min(3).max(80),
@@ -261,7 +262,7 @@ export async function broadenResearchQuery(
     ].join("\n"),
   });
 
-  return broaderResearchQuerySchema.parse(output).searchTerms.join(" ").trim();
+  return boundedResearchQuery(broaderResearchQuerySchema.parse(output).searchTerms.join(" "));
 }
 
 export async function interpretResearchRequest(
@@ -273,7 +274,7 @@ export async function interpretResearchRequest(
   const prompt = [
     "Interprete o pedido de pesquisa sem inventar informações.",
     "Produza um título curto e acadêmico, com no máximo 80 caracteres.",
-    "Produza a consulta temática para busca bibliográfica em inglês, com no máximo 240 caracteres.",
+    `Produza a consulta temática para busca bibliográfica em inglês, com no máximo ${RESEARCH_QUERY_MAX_LENGTH} caracteres.`,
     "Mantenha título e área do conhecimento no idioma do pedido; somente researchQuery deve estar em inglês.",
     "A consulta deve conter apenas o objeto de estudo, relações centrais, população ou contexto relevante.",
     "Remova instruções operacionais como 'preciso', 'crie', 'faça', 'estrutura', 'monografia', 'tese' ou pedidos sobre formato.",
@@ -312,7 +313,7 @@ export async function interpretResearchRequest(
     knowledgeArea: output.knowledgeArea.trim(),
     knowledgeAreaProposed: output.knowledgeAreaProposed,
     keywords: [...new Set(output.keywords.map((keyword) => keyword.trim()).filter(Boolean))].slice(0, 10),
-    researchQuery: output.researchQuery.trim(),
+    researchQuery: boundedResearchQuery(output.researchQuery),
     researchType,
     researchGuidance,
     title: output.title.trim(),
