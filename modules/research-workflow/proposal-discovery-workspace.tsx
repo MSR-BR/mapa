@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from "react";
 
 import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
 import { WorkflowProgress } from "./workflow-progress";
-import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
+import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent, type AnalyticsReasonCode } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
+import { discoveryClientFailure, discoveryResponseReason } from "./discovery-failure";
+import { readWorkflowPayload } from "./request-failure";
 import type { ResearchWorkflow } from "./schema";
 
 type Props = {
@@ -19,6 +21,13 @@ type Props = {
 
 type Operation = "discovering" | "selecting" | null;
 
+const STAGE_LABELS: Record<string, string> = {
+  interpreting: "interpretação do briefing",
+  literature: "busca bibliográfica",
+  proposals: "formação dos cards",
+  saving: "salvamento das propostas",
+};
+
 export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkflow, originalPrompt, projectId }: Props) {
   const aiProgress = useAiProgress();
   const { activeRole, roleVersion } = useActiveProfile();
@@ -28,6 +37,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   const [message, setMessage] = useState<string | null>(null);
   const [errorStage, setErrorStage] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [errorReason, setErrorReason] = useState<AnalyticsReasonCode | null>(null);
   const [briefingPreserved, setBriefingPreserved] = useState(false);
   const autoTriggered = useRef(false);
   const discovery = workflow.content.discovery;
@@ -36,18 +46,22 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
   );
   const busy = operation !== null;
 
+  // Keyed by the stored report, not the object: choosing a card replaces the object but is not a new view.
+  const discoveryReportId = discovery?.reportId ?? null;
+  const referenceCount = discovery?.references.length ?? null;
   useEffect(() => {
     setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: autoDiscover ? "resume" : "dashboard", ...getAnalyticsWorkflowPosition("discovery") });
-    if (discovery) {
-      trackAnalyticsEvent("proposal_viewed", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_reference_count_bucket: getReferenceCountBucket(discovery.references.length) });
+    if (referenceCount !== null) {
+      trackAnalyticsEvent("proposal_viewed", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_reference_count_bucket: getReferenceCountBucket(referenceCount) });
     }
-  }, [activeRole, autoDiscover, discovery]);
+  }, [activeRole, autoDiscover, discoveryReportId, referenceCount]);
 
   async function discover() {
     setOperation("discovering");
     setMessage(null);
     setErrorStage(null);
     setErrorCode(null);
+    setErrorReason(null);
     trackAnalyticsEvent("generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: "started" });
     try {
       const response = await aiProgress.request(`/api/projects/${projectId}/discover`, {
@@ -55,12 +69,16 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
         method: "POST",
         signal: AbortSignal.timeout(110_000),
       });
-      const payload = await response.json() as { error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow };
+      const payload = await readWorkflowPayload<{ code?: string; error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow }>(response);
       if (!response.ok || !payload.workflow) {
+        const reason = discoveryResponseReason(response.status, payload);
         setErrorStage(payload.stage ?? null);
         setErrorCode(payload.errorCode ?? null);
+        setErrorReason(reason);
         setBriefingPreserved(payload.preservedBriefing ?? true);
-        throw new Error(payload.error || "Não foi possível buscar propostas.");
+        trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "failed", app_reason_code: reason });
+        setMessage(payload.error || "Não foi possível buscar propostas.");
+        return;
       }
       setWorkflow(payload.workflow);
       setBriefingPreserved(false);
@@ -68,10 +86,11 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
       const references = payload.workflow.content.discovery?.references.length ?? 0;
       trackAnalyticsEvent("generation_completed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "success", app_reference_count_bucket: getReferenceCountBucket(references) });
     } catch (error) {
-      trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "failed", app_reason_code: error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response" });
-      setMessage(error instanceof DOMException && error.name === "TimeoutError"
-        ? "A busca demorou mais que o esperado. Tente novamente; seu briefing foi preservado."
-        : error instanceof Error ? error.message : "Não foi possível buscar propostas.");
+      const failure = discoveryClientFailure(error);
+      setErrorReason(failure.reason);
+      setBriefingPreserved(true);
+      trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: failure.cancelled ? "cancelled" : "failed", app_reason_code: failure.reason });
+      setMessage(failure.message);
     } finally {
       setOperation(null);
     }
@@ -172,10 +191,10 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
           <div>
             <strong>{errorCode === "research-starter-unauthorized" ? "A integração bibliográfica precisa ser atualizada" : "Não foi possível concluir a descoberta"}</strong>
             <span>{message}</span>
-            {errorStage ? <small>Etapa: {errorStage === "literature" ? "busca bibliográfica" : errorStage === "proposals" ? "formação dos cards" : "interpretação do briefing"}.</small> : null}
+            {errorStage && errorStage in STAGE_LABELS ? <small>Etapa: {STAGE_LABELS[errorStage]}.</small> : null}
             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
           </div>
-      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: "provider_invalid_response" }); void discover(); }} type="button">Tentar novamente</button>
+      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: errorReason ?? "unknown" }); void discover(); }} type="button">Tentar novamente</button>
         </div>
       ) : null}
 

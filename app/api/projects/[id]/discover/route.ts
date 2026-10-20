@@ -15,7 +15,8 @@ import {
   type ResearchWorkflow,
 } from "@/modules/research-workflow/schema";
 import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
-import { DiscoveryError } from "@/modules/research-workflow/discovery-errors";
+import { DiscoveryError, type DiscoveryStage } from "@/modules/research-workflow/discovery-errors";
+import { isStaleDiscoveryClaim } from "@/modules/research-workflow/discovery-failure";
 import { ResearchStarterClientError } from "@/modules/research-starter/client";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -47,10 +48,13 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
   if (workflow.content.discovery && workflow.state !== "failed") {
     return NextResponse.json({ workflow }, { headers: { "Cache-Control": "private, no-store" } });
   }
-  if (workflow.state === "discovering") {
+  // A request that was killed or abandoned before its failure handler ran leaves
+  // the claim in "discovering" for good; only an expired claim may be taken over.
+  const staleClaim = workflow.state === "discovering" && isStaleDiscoveryClaim(workflow.updatedAt);
+  if (workflow.state === "discovering" && !staleClaim) {
     return NextResponse.json({ error: "A descoberta já está em andamento." }, { status: 409 });
   }
-  if (workflow.state !== "draft_prompt" && workflow.state !== "failed") {
+  if (workflow.state !== "draft_prompt" && workflow.state !== "failed" && !staleClaim) {
     return NextResponse.json({ error: "A descoberta não pode ser iniciada nesta etapa." }, { status: 409 });
   }
 
@@ -62,7 +66,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
     .eq("project_id", id)
     .eq("owner_id", userId)
     .eq("revision", workflow.revision)
-    .in("state", ["draft_prompt", "failed"])
+    .in("state", staleClaim ? ["discovering"] : ["draft_prompt", "failed"])
     .select("project_id")
     .maybeSingle();
 
@@ -70,8 +74,10 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
     return NextResponse.json({ error: "A descoberta já foi iniciada em outra sessão." }, { status: 409 });
   }
 
+  let unclassifiedStage: DiscoveryStage | null = null;
   try {
     const discovery = await discoverResearchProposals(project, workflow.content.initialBriefing);
+    unclassifiedStage = "saving";
     assertOperationActive();
     emitProgress("saving");
     const completedAt = new Date().toISOString();
@@ -113,12 +119,14 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
         : error instanceof ResearchStarterClientError
           ? error.code === "unauthorized" ? "research-starter-unauthorized" : error.code === "invalid-request" ? "research-starter-invalid-request" : "research-starter-unavailable"
           : "unexpected";
-    const stage = error instanceof DiscoveryError ? error.stage : "literature";
+    const stage = error instanceof DiscoveryError
+      ? error.stage
+      : error instanceof ResearchStarterClientError ? "literature" : unclassifiedStage;
     const retryable = error instanceof DiscoveryError || error instanceof ResearchStarterClientError ? error.retryable : true;
     logSanitizedOperationalFailure("proposal_discovery_failed", requestContext, error, {
       errorCode,
       projectId: id,
-      stage,
+      stage: stage ?? "unknown",
     });
     await supabase
       .from("research_workflows")

@@ -16,6 +16,7 @@ import {
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { buildFinalReport, finalMapText } from "./final-report";
+import { stripXmlInvalidControls } from "./xml-safe";
 import { getResearchProductGuidance } from "@/modules/research-workflow/research-level-guidance";
 
 import type { ExportDocumentInput, FinalMapExportInput } from "./types";
@@ -47,7 +48,8 @@ function simpleParagraph(text: string, options: { bold?: boolean; color?: string
   });
 }
 
-export async function createDocxExport(input: ExportDocumentInput) {
+export async function createDocxExport(rawInput: ExportDocumentInput) {
+  const input = stripXmlInvalidControls(rawInput);
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const metadata = [
     metadataParagraph("Tema", input.project.theme),
@@ -192,7 +194,8 @@ function literalRuns(text: string): TextRun[] {
   return text.split("\n").map((line, index) => new TextRun({ text: line, ...(index ? { break: 1 } : {}) }));
 }
 
-export async function createFinalMapDocxExport(input: FinalMapExportInput) {
+export async function createFinalMapDocxExport(rawInput: FinalMapExportInput) {
+  const input = stripXmlInvalidControls(rawInput);
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
   const finalMap = input.finalMap;
   const product = getResearchProductGuidance(finalMap.workflow.content.discovery?.interpreted.researchType);

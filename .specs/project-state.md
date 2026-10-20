@@ -1,5 +1,32 @@
 # Estado do projeto
 
+## C122 — revisão Codex da Ordem 1, 20/10/2026
+
+- Revisados os nove arquivos de implementação/testes do Claude, sem alterar sua lógica. Reproduzida a reserva expirada: HEAD retorna 409, C122 retorna 200; reserva recente e concorrência protegidas. 247 testes e suítes direcionadas aprovados. [Revisão completa](changes/122-discovery-recovery-and-docx-safety/review-codex-2026-10-20.md).
+- Commit local autorizado pela Ordem 1; pacote de publicação registra o SHA resultante. Sem push/deploy, chamadas pagas, alteração de ambiente ou Ads/GA4/Supabase remoto. Auditoria e handoffs preservados fora do stage automático.
+- `PUBLICATION_STATE: APPROVAL_PENDING`; gate `BLOCKED`: Turbopack bloqueado por porta no sandbox (Webpack passa), SEC-03 alto ainda não reproduzido/resolvido e identificação pública da versão futura pendente. Cinco alertas high dev-only preexistentes confirmados; zero de produção. Versão `v20102026.1` apenas proposta, não aplicada.
+- Ordens 2–5 não iniciadas. Não confundir a aprovação local dos testes com correção dos erros históricos ou validação de produção.
+- Pó Mágico `v20261020.002`, local/remoto `81e3cbef9fc2b5b29074297490351f681ed16b47`, reconfirmado em 20/10; checkpoints resume/phase/delivery; delta adotado: separar commit local, gate técnico e autorização do candidato exato. Modelo Codex/GPT-6, variante/esforço não expostos; sem subagentes.
+
+## Auditoria independente Claude Code — 20/10/2026 (resultado)
+
+- Relatório: [AUDITORIA_MAPA_APP_GA4_ADS.md](audits/claude-20261020/AUDITORIA_MAPA_APP_GA4_ADS.md); parecer `NEEDS_REVIEW`. Diff local revisável em `audits/claude-20261020/local-fixes.patch` (sem commit, push, deploy, migração ou ação em Ads/GA4; HEAD continua `f096d9f`). Aberta como [C122](changes/122-discovery-recovery-and-docx-safety/spec.md) (implementada localmente, `LOCAL_PREVIEW_READY`, não publicada).
+- Correções locais: claim "discovering" retomável após 150 s (DSC-01), classificação real das falhas de descoberta no GA4 (DSC-02), `proposal_viewed` sem duplicidade e DOCX sem caracteres de controle (EX-04). `npm run check` e os `test:*` passaram (247 testes). A causa das falhas de descoberta de 17–18/10 continua **não comprovada**.
+- Pendentes principais: SEC-03 (Aluno forja `state`/revisões por INSERT/DELETE), SEC-01, custo de IA sem limite durável, SEC-07 (PGRST303 e erros ignorados), EX-01..03, atribuição UTM. App **não** pronto para novo tráfego pago.
+- `PO_MAGICO_VERSION_USED`: `v20261020.002`; `PO_MAGICO_CHECKPOINT`: phase, delivery; `PO_MAGICO_DELTA_ADOPTED`: no. Modelo: Claude Sonnet 5.5, esforço baixo, 4 subagentes somente leitura; tokens/custo não medidos.
+
+## Handoff para auditoria independente — 20/10/2026
+
+- Por solicitação do responsável, foi preparado o [roteiro para Claude Code](handoffs/2026-10-20-claude-audit/PROJECT_HANDOFF.md): auditar aplicativo, GA4 e Ads, entregar relatório `.md` e, quando cabível, corrigir defeitos locais comprovados com testes. Nenhuma nova auditoria funcional, correção, publicação ou alteração de Ads foi executada na preparação.
+- Base Git da preparação: `f096d9f027e1bbe3fc62fe4fcecf87c76cb1d6de`, branch `codex/change-003-004`, limpa antes dos dois arquivos documentais desta entrega. As referências antigas de campanha em execução abaixo são históricas: a evidência de 20/10 confirma `ENDED`, CPC restaurado a €0,30 e monitor pausado; nove impressões, zero cliques/gasto/conversões no período 06–19/10. Fonte: pasta persistente `monitoramento-ads/2026-10-20` indicada no handoff.
+- `PO_MAGICO_SOURCE`: checkout local `../po-magico`, remoto `git@github.com:MSR-BR/po-magico.git`.
+- `PO_MAGICO_VERSION_USED`: `v20261020.002`; `PO_MAGICO_LAST_CHECKED`: `2026-10-20`; HEAD local/remoto conferido `81e3cbef9fc2b5b29074297490351f681ed16b47`.
+- `PO_MAGICO_CHECKPOINT`: start, classification, delivery; `PO_MAGICO_DELTA_ADOPTED`: handoff autossuficiente da seção 17, evidências datadas, separação entre auditoria/correção local/publicação e reconciliação de estados antigos. REPORT apoiado por APP, AI SYSTEM, DATA ANALYSIS e SECURITY AND RESILIENCE; classificação S3 preservada.
+- Limite do registro central: Mapa não consta no `projects/catalog.json` consultado; raiz física confirmada pelo workspace e Git, sem alterar o arquivo do Pó Mágico.
+- Modelo utilizado na preparação: Codex, GPT-6; variante e esforço não expostos. Custos/tokens não medidos. Nenhuma delegação. Publicação fora do escopo. Próximo passo: Claude executar o roteiro e devolver o relatório; correções locais opcionais ficam revisáveis, sem autorização nova de gasto ou reativação de Ads.
+- Validação documental: `git diff --check` aprovado; 11 referências de Changes existentes, nove seções e blocos Markdown balanceados; fontes de 20/10 presentes. Arquivos salvos localmente, sem commit/push/deploy nesta entrega.
+- `PO_MAGICO_LESSON_CANDIDATE`: reconciliar estados operacionais guardados fora do repositório antes de transferir uma auditoria; nenhuma evolução do arquivo central foi executada.
+
 ## Blueprint
 
 - Primário: APP v2.7.
