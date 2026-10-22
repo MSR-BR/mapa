@@ -1,17 +1,19 @@
 # Estado do projeto
 
-## Publicação consolidada C122–C128 — 22/10/2026
+## Publicação consolidada C122–C128 — concluída em 22/10/2026
 
-- Código aa781d0 commitado/enviado, versão v22102026.1. Build local/remoto e
-  smoke público do candidato aprovados; legendas/transcrição do vídeo real.
-- Deployment dpl_8Tff91nwcPxs4vyCc6Ex9293TJPR READY sem promover domínio.
-  CP concluído; CPD ainda não: acesso à conta Supabase do Mapa pendente.
-- Login GitHub/2FA concluído, mas conta autenticada não tem o projeto. Não foram
-  aplicadas migrations, alteradas chaves/Ads/GA4, nem executadas chamadas pagas.
-- Apenas NEXT_PUBLIC_APP_VERSION Production foi atualizado. Flag de perfil true.
-- [Registro exato e continuidade](handoffs/2026-10-22-release/RELEASE.md).
-- Checkpoint release, Pó Mágico v20261020.002, Codex/GPT-6. Autorização de CPD
-  persiste; não pedir aprovação novamente apenas para retomar este candidato.
+- **v22102026.1 publicada**, commit funcional aa781d042ed125fee8f4bb49d2fa67702b3a2a02,
+  deployment dpl_8Tff91nwcPxs4vyCc6Ex9293TJPR promovido ao domínio principal.
+- Quatro migrations C125/C127 aplicadas no Mapa; ledger 25/25, hashes de SQL e
+  seis funções conferidos. US$5/mês preservados. Snapshot anterior restrito salvo.
+- Build local/remoto, testes do candidato e smoke público aprovados; recusa
+  anônima de sugestões/lembretes HTTP401, sem IA paga nem e-mail real.
+- Gates e limitações: PASS_WITH_ACCEPTED_RISK. Free sem backup gerenciado;
+  snapshot é de definições. Testes multiusuário/concorrência são locais. GA-05/09
+  continuam separados; Ads/GA4/TERMO/credenciais não foram alterados.
+- [Registro final e evidências](handoffs/2026-10-22-release/RELEASE.md).
+- Pó Mágico v20261020.002, delivery/closure, Codex/GPT-6. Estados de bloqueio e
+  “sem commit/deploy” abaixo são históricos e superados para este candidato.
 
 ## Revisão final de prontidão C122–C128 — 22/10/2026
 

@@ -1,0 +1,96 @@
+{
+  "bucket": {
+    "public": false,
+    "file_size_limit": 5242880,
+    "allowed_mime_types": [
+      "image/png",
+      "image/jpeg",
+      "image/webp"
+    ]
+  },
+  "budget": 5000000,
+  "guards": [
+    "guard_workflow_owner_reviews_trigger",
+    "guard_project_advisor_identity_trigger"
+  ],
+  "applied": [
+    {
+      "name": "c125_workflow_owner_guard",
+      "version": "20261022183455",
+      "source_md5": "7237236876b7ff7f74e142b494f6db42"
+    },
+    {
+      "name": "c125_verified_google_advisor",
+      "version": "20261022183456",
+      "source_md5": "6f219acafaafc13317946d072f0635e1"
+    },
+    {
+      "name": "c125_bug_report_intake_guard",
+      "version": "20261022183508",
+      "source_md5": "b8da6ee1b9a058a9892fb4996bf760ea"
+    },
+    {
+      "name": "c127_advisor_reminder_guard",
+      "version": "20261022213449",
+      "source_md5": "ca78ced6207ce33b6dc47af986626571"
+    }
+  ],
+  "function_bodies": [
+    {
+      "name": "claim_pending_advisor_projects",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "509fc2553a5ee25c76b3b1784cdf538b"
+    },
+    {
+      "name": "enforce_student_advisor_workflow_progress",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "f077fca1e5060581302fb54ea4ee2dfa"
+    },
+    {
+      "name": "guard_project_advisor_identity",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "67cb8ad00cce47002fbdf15604289665"
+    },
+    {
+      "name": "guard_workflow_owner_reviews",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "b9265a66bc4a2ff4c635fd57f6cbadd8"
+    },
+    {
+      "name": "reserve_advisor_reminder",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "efbf881eec3d2c166ae85b7ba42d704d"
+    },
+    {
+      "name": "set_project_advisor",
+      "config": [
+        "search_path=\"\""
+      ],
+      "body_md5": "11c613efd5ed5e1122b94f05f2734aeb"
+    }
+  ],
+  "migration_count": 25,
+  "reminder_execute": {
+    "anon": false,
+    "service_role": false,
+    "authenticated": true
+  },
+  "bug_intake_allowed": true,
+  "reminder_no_session": {
+    "code": "auth_required",
+    "allowed": false
+  },
+  "workflow_delete_denied": true,
+  "bug_admin_columns_denied": true,
+  "reminder_counters_private": true
+}

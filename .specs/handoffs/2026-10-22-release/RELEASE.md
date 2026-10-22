@@ -1,5 +1,8 @@
 # Publicação consolidada C122–C128 — 22/10/2026
 
+**Estado final: PUBLICADO.** A conclusão abaixo supera os estados intermediários
+de preparação e bloqueio de acesso registrados neste documento.
+
 Autorização humana: “execute o que precise e depois cpd limpo”. Substitui a
 restrição anterior de não fazer commit/deploy para este conjunto. Ads permanece
 encerrado; não há autorização de reativação ou novo gasto. Nenhuma chamada paga.
@@ -92,3 +95,71 @@ backup/recuperação, vínculos agregados e monthly_limit_micros=5000000; promov
 este deployment compatível e aplicar as quatro migrations revisadas, verificar,
 registrar CPD e tag. Caso o código precise mudar, gerar novo candidato verificado.
 GA-05/GA-09 e atribuição paga não são declarados validados nem autorizam novo Ads.
+
+## Conclusão após acesso correto — 22/10/2026
+
+PUBLICATION_STATE: PUBLISHED. RELEASE_GATE: PASS_WITH_ACCEPTED_RISK.
+
+O responsável concluiu o login na conta que contém mapa-da-pesquisa,
+ref aeaweherkrqmlqnxsmib, AI Agent MSR-BR's Org. Preflight remoto confirmou
+21 migrations até C112, nenhuma das quatro candidatas aplicada; limite global
+5000000 micros (US$5/mês) e zero vínculos de orientador incompatíveis na consulta
+agregada de e-mail confirmado/identidade Google correspondente. Nenhum endereço,
+texto acadêmico, chave ou valor de credencial foi extraído.
+
+As três funções substituídas coincidiram, normalizando comentários/espaços,
+com as últimas definições do repositório (C087/C111). ACLs, policies, triggers,
+colunas e bucket foram capturados antes da mudança no artefato local restrito:
+`/Users/marioreis/.codex/visualizations/2026/10/06/01a10eda-341c-76b1-a181-beefcd7013ef/release-2026-10-22/schema-before.json`.
+O plano Free não disponibiliza backups gerenciados: esse snapshot permite preparar
+compensação de definições, não é backup completo de dados/PITR. As quatro migrations
+são transacionais e não apagam mapas, textos, históricos nem anexos. Recuperação
+preferida é correção à frente; eventual compensação que reabra falhas exige revisão
+separada. Não foi comprada retenção ou feito dump de conteúdo privado.
+
+Deployment existente dpl_8Tff91nwcPxs4vyCc6Ex9293TJPR promovido pela CLI oficial,
+com confirmação de sucesso. https://mapadapesquisa.com.br/api/health respondeu
+HTTP200, status ok e **v22102026.1**. A promoção antecedeu as migrations; durante
+a janela a nova rota de lembretes falhava fechada até a RPC existir. O health
+confirma configuração/versão, não disponibilidade dos provedores de IA.
+
+Migrations aplicadas individualmente, em ordem, pelo SQL Editor autenticado:
+
+1. 20261022183455_c125_workflow_owner_guard
+2. 20261022183456_c125_verified_google_advisor
+3. 20261022183508_c125_bug_report_intake_guard
+4. 20261022213449_c127_advisor_reminder_guard
+
+Cada transação incluiu o registro correspondente no ledger, com o SQL original
+inteiro em statements[1], sem modificar o arquivo aprovado. Texto colado conferido
+integralmente antes de cada execução; cada resultado retornou a versão esperada.
+O ledger final tem 25 migrations. MD5 dos quatro SQLs armazenados e dos corpos das
+seis funções em produção coincidem byte a byte com os arquivos do commit funcional;
+SHA256 dos arquivos/payloads registrados em evidence/migration-manifest.json.
+
+Pós-verificação: dois triggers habilitados; DELETE direto de workflow negado;
+INSERT de campos administrativos de relatos negado, campos de intake permitidos;
+bucket privado, 5 MiB e apenas PNG/JPEG/WebP. RPC de lembretes executável somente
+por authenticated entre os papéis de API; tabelas de contadores privadas/RLS e
+sem privilégios de anon/authenticated/service_role. RPC sem sessão retorna
+allowed=false/auth_required antes de reservar ou escrever. Teto de IA permanece US$5.
+
+Smoke canônico: home, /mapa, health e VTT HTTP200; 19 cues, transcrição e CTA
+presentes; prompt-suggestions e rota de lembretes sem login HTTP401. Navegador
+confirmou versão pública e transcrição expansível. Evidências JSON em evidence/.
+Não houve nova geração paga, envio real de e-mail ou teste com conteúdo de alunos.
+Os testes sintéticos de múltiplos usuários/concorrência/exportação são os locais
+já registrados e vinculados ao mesmo código; não se afirma repetição integral
+em produção nem teste real de transporte de e-mail ou upload Storage.
+
+Ads, GA4, TERMO, chaves e configurações Auth permaneceram intocados. GA-05/GA-09
+continuam verificações administrativas separadas; não declarar medição paga
+validada ou autorizar tráfego por causa desta publicação. Sem cota diária de IA
+por decisão humana; continua o risco de um usuário consumir o orçamento global.
+
+Commit funcional publicado: aa781d042ed125fee8f4bb49d2fa67702b3a2a02.
+Registro de fechamento e evidências enviados na mesma branch, sem force-push
+ou alteração de main. Tag v22102026.1 identifica o commit funcional. A limpeza
+final do Git é conferida após o commit documental e push, sem apagar arquivos.
+Pó Mágico v20261020.002, checkpoint delivery/closure, delta: acesso resolvido,
+preflight/promoção/migrations/smoke concluídos; Codex/GPT-6, sem subagentes.

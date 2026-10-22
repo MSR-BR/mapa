@@ -1,0 +1,11 @@
+{
+  "path": "/api/projects/00000000-0000-4000-8000-000000000000/advisor-review/remind",
+  "method": "POST",
+  "status": 401,
+  "body": {
+    "code": "authentication_required",
+    "error": "Autenticação necessária."
+  },
+  "authenticated": false,
+  "email_sent": false
+}
