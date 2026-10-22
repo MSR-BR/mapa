@@ -54,3 +54,41 @@ e executar com a permissão local necessária, o build completo passou.
 
 A verificação de whitespace exclui patches/logs históricos e a licença original:
 esses artefatos preservam os bytes de origem. Código novo sem whitespace inválido.
+
+## Resultado da execução
+
+Commit funcional **aa781d042ed125fee8f4bb49d2fa67702b3a2a02**, enviado para
+origin/codex/change-003-004. C122 incluída no histórico enviado. Nenhum force-push
+ou alteração de main. Candidato exportado de git archive sem .env/segredos;
+.specs excluída do upload, fontes e adaptador de dependências incluídos.
+
+Configuração pública NEXT_PUBLIC_APP_VERSION de Production atualizada para
+v22102026.1. Nenhuma chave ou outra configuração foi modificada.
+
+Deployment **dpl_8Tff91nwcPxs4vyCc6Ex9293TJPR**, produção com `--skip-domain`,
+**READY**, sem promover o domínio. URL:
+https://mapadapesquisa-otqp0af10-msr-brs-projects.vercel.app
+Build remoto aprovado. Health ok/v22102026.1; home e /mapa HTTP200; legenda
+HTTP200 com 19 cues; transcrição/link /mapa presentes; sugestões sem login
+HTTP401 com mensagem orientativa. Sem geração paga, e-mail ou gravação de mapa.
+
+**PUBLICATION_STATE: STAGED_NOT_PROMOTED. CP e árvore limpa concluídos; D final
+pendente do acesso ao banco. Não declarar CPD concluído.** O 2FA GitHub foi
+concluído pelo responsável; a sessão MSR-BR autenticada lista cinco outros projetos,
+mas não o Mapa. A organização Vercel mostra zero projetos Supabase e o projeto
+não está conectado ao Storage Vercel. O identificador público configurado na
+produção foi reconfirmado: aeaweherkrqmlqnxsmib. Seu endpoint Auth responde
+HTTP401 sem chave (esperado), o que não substitui acesso administrativo/consulta.
+Solicitado ao responsável entrar na conta Supabase que contém o Mapa. Não criar
+outro banco, trocar URL/chaves, conceder permissões ou promover sem preflight.
+
+A revisão automática rejeitou a tentativa de adiar a verificação 2FA GitHub;
+ela não foi contornada. Foi aberto o fluxo normal e o responsável o concluiu.
+O conector/CLI com a conta atual seguem sem o projeto Mapa. Nenhuma das quatro
+migrations remotas foi aplicada. Ads/GA4/Supabase remoto não foram alterados.
+
+Próximo passo já autorizado: com o acesso correto, conferir ledger, definições,
+backup/recuperação, vínculos agregados e monthly_limit_micros=5000000; promover
+este deployment compatível e aplicar as quatro migrations revisadas, verificar,
+registrar CPD e tag. Caso o código precise mudar, gerar novo candidato verificado.
+GA-05/GA-09 e atribuição paga não são declarados validados nem autorizam novo Ads.

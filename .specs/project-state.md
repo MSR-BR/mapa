@@ -1,12 +1,17 @@
 # Estado do projeto
 
-## Publicação consolidada autorizada — 22/10/2026
+## Publicação consolidada C122–C128 — 22/10/2026
 
-- Autorização humana de CPD para C122–C128; preparando v22102026.1.
-- Legendas/transcrição do vídeo real incluídas. Vercel acessível por CLI; flag
-  de perfil true. Verificação 2FA do painel Supabase depende do responsável.
-- [Registro de execução](handoffs/2026-10-22-release/RELEASE.md).
-- Checkpoint resume/release, Pó Mágico v20261020.002, Codex/GPT-6.
+- Código aa781d0 commitado/enviado, versão v22102026.1. Build local/remoto e
+  smoke público do candidato aprovados; legendas/transcrição do vídeo real.
+- Deployment dpl_8Tff91nwcPxs4vyCc6Ex9293TJPR READY sem promover domínio.
+  CP concluído; CPD ainda não: acesso à conta Supabase do Mapa pendente.
+- Login GitHub/2FA concluído, mas conta autenticada não tem o projeto. Não foram
+  aplicadas migrations, alteradas chaves/Ads/GA4, nem executadas chamadas pagas.
+- Apenas NEXT_PUBLIC_APP_VERSION Production foi atualizado. Flag de perfil true.
+- [Registro exato e continuidade](handoffs/2026-10-22-release/RELEASE.md).
+- Checkpoint release, Pó Mágico v20261020.002, Codex/GPT-6. Autorização de CPD
+  persiste; não pedir aprovação novamente apenas para retomar este candidato.
 
 ## Revisão final de prontidão C122–C128 — 22/10/2026
 

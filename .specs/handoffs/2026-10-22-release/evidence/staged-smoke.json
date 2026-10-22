@@ -1,0 +1,29 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "video_track": true,
+    "transcript": true,
+    "mapa_link": true
+  },
+  {
+    "path": "/mapa",
+    "status": 200,
+    "title": true,
+    "version": true
+  },
+  {
+    "path": "/media/mapa-da-pesquisa-apresentacao.pt-BR.vtt",
+    "status": 200,
+    "captions": true,
+    "cues": 19
+  },
+  {
+    "path": "/api/prompt-suggestions",
+    "status": 401,
+    "body": {
+      "code": "authentication_required",
+      "error": "Entre no Mapa com sua conta Google para receber sugestões de IA. Você pode continuar escrevendo sua ideia."
+    }
+  }
+]

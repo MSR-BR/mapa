@@ -508,7 +508,7 @@
     },
     {
       "path": "modules/landing/mapa-metadata.ts",
-      "sha256": "c8aaf51c2349f80042e6cd43f2a52f39e55fcf5ea5e89739b6bb4b7cea96befe"
+      "sha256": "01cc8102e1cb7b4f90381dca6d1da8f73309d0a8bfb5625196b59d5bbae8eae9"
     },
     {
       "path": "modules/landing/presentation-transcript.ts",
@@ -1618,5 +1618,6 @@
       "path": "vercel.json",
       "sha256": "462e1171e5c71cd2cdfd9a5582ec6f05a7b73383297edac1ae7fd200338e4a6c"
     }
-  ]
+  ],
+  "releaseCommit": "aa781d042ed125fee8f4bb49d2fa67702b3a2a02"
 }
