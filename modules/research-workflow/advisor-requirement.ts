@@ -1,7 +1,7 @@
 export const STUDENT_ADVISOR_REQUIRED_CODE = "student_advisor_required";
 
 export const STUDENT_ADVISOR_REQUIRED_MESSAGE =
-  "Informe o e-mail do orientador antes de validar. No perfil Aluno, a etapa só avança depois da revisão e aprovação do orientador.";
+  "Cadastre o e-mail do orientador no painel de orientação do projeto antes de usar Próximo. Você pode salvar o rascunho. No perfil Aluno, o avanço depende da revisão e aprovação do orientador.";
 
 type AdvisorRequirementInput = {
   advisorEmail: string | null | undefined;

@@ -1,4 +1,5 @@
 "use client";
+import { WorkflowHttpError, workflowClientFailure } from "@/modules/research-workflow/request-failure";
 
 import { useRef, useState, type MouseEvent, type ReactNode } from "react";
 
@@ -48,7 +49,11 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
       if (await beforeDownload?.() === false) return;
       trackStart();
       const response = await fetch(href, { credentials: "same-origin" });
-      if (!response.ok) throw new Error("export_failed");
+      if (!response.ok) {
+        // An HTML error page still has a useful HTTP status; never label it as a network error.
+        const payload = await response.json().catch(() => null) as { errorCode?: string; code?: string } | null;
+        throw new WorkflowHttpError(response.status, payload?.errorCode ?? payload?.code);
+      }
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
@@ -68,7 +73,7 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
         app_reference_count_bucket: getReferenceCountBucket(referenceCount),
       });
     } catch (error) {
-      if (format === "pdf" && downloadStarted) trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: "network" });
+      if (format === "pdf" && downloadStarted) trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: workflowClientFailure(error).reason });
       if (onFailure) onFailure(error instanceof Error && error.message !== "export_failed" ? error.message : "Não foi possível baixar o relatório. Seus textos continuam salvos; tente novamente.");
       else window.location.assign(href);
     } finally {

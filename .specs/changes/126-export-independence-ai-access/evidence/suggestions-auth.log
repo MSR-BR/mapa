@@ -1,0 +1,2 @@
+{"event":"prompt_suggestions_failed","requestId":"27c73c7f-9f76-44c5-94cf-66eea15436ca","timestamp":"2026-10-22T19:22:08.342Z","queryLength":38,"errorCode":"budget"}
+C126 suggestions PASS: anonymous/invalid claims denied before provider; app login succeeds; budget unavailable is explicit; no real API.

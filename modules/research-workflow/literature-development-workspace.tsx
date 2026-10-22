@@ -1,4 +1,6 @@
 "use client";
+import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
+
 import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
 
 import { useRegenerationRequests } from "./use-regeneration-requests";
@@ -139,13 +141,14 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
-      const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
+      const payload = await readWorkflowPayload<{ error?: string; errorCode?: string; code?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow }>(response);
       if (response.status === 422) {
         trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
         setErrors(payload.errors ?? [payload.error ?? "Revise esta etapa."]);
         return;
       }
-      if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
+      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
+      if (!payload.workflow) throw new WorkflowRequestError("response_invalid");
       applyWorkflow(payload.workflow);
       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
@@ -156,7 +159,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
       }
       return true;
     } catch (error) {
-      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
+      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: workflowClientFailure(error).reason });
       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
       return false;
     } finally {

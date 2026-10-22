@@ -30,6 +30,8 @@ function reset({ageMs, failSave = false}) {
   s.db = {from:table=>new Query(table)};
 }
 class Query {
+  retry(enabled){if(enabled)throw Error("Unexpected SDK retry");return this;}
+  abortSignal(){return this;}
   constructor(table){this.table=table;this.filters=[];}
   select(){return this;} eq(k,v){this.filters.push([k,v]);return this;} is(){return this;} in(k,v){this.states=v;return this;} update(v){this.value=v;return this;}
   async maybeSingle(){if(this.table==='projects')return {data:s.project,error:null};return this.execute();}
@@ -81,9 +83,9 @@ try {
   reset({ageMs:60 * 60_000,failSave:true});
   const failed = await call();
   results.saveFailure = {status:failed.status,stage:failed.payload.stage,state:s.workflow.state,preservedBriefing:failed.payload.preservedBriefing};
-  assert.equal(failed.status,502);
-  assert.equal(failed.payload.stage,'saving');
-  assert.equal(s.workflow.state,'failed');
+  assert.equal(failed.status,500);
+  assert.equal(failed.payload.code,'persistence_failed');
+  assert.equal(s.workflow.state,'discovering'); // ambiguous save must not be overwritten by cleanup
   console.log(JSON.stringify({status:'passed',externalCalls:0,paidCalls:0,...results}));
 } catch (error) {
   console.log(JSON.stringify({status:'failed',...results,message:error.message.split('\n')[0]}));

@@ -1,3 +1,4 @@
+import { loadOrThrow } from "@/lib/supabase/data-api";
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -11,14 +12,14 @@ export async function loadGenerationStatus(
   ownerId: string,
   projectId: string,
 ): Promise<GenerationSnapshot["job"]> {
-  const { data: job } = await supabase
+  const { data: job } = await loadOrThrow((signal) => supabase
     .from("generation_jobs")
     .select("id, status, error_code, updated_at")
     .eq("project_id", projectId)
     .eq("owner_id", ownerId)
     .order("created_at", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
 
   return job ? {
     errorCode: job.error_code,
@@ -34,12 +35,12 @@ export async function loadGenerationSnapshot(
   projectId: string,
 ): Promise<GenerationSnapshot> {
   const [{ data: stored }, job] = await Promise.all([
-    supabase
+    loadOrThrow((signal) => supabase
       .from("research_structures")
       .select("content, references_data, revision")
       .eq("project_id", projectId)
       .eq("owner_id", ownerId)
-      .maybeSingle(),
+      .retry(false).abortSignal(signal).maybeSingle()),
     loadGenerationStatus(supabase, ownerId, projectId),
   ]);
 

@@ -186,7 +186,7 @@ export function QuickStartForm({
           </button>
           {mode === "quick" ? (
             <div className="public-mode-content" id="dashboard-quick-research-mode">
-              <ResearchPromptInput id="dashboard-quick-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
+              <ResearchPromptInput aiSuggestionsEnabled id="dashboard-quick-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
               <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
             </div>
           ) : null}

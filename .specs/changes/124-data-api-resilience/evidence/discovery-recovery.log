@@ -1,0 +1,4 @@
+{"event":"research_starter_completed","requestId":"cb4399ef-f8f9-4aef-8b81-22750563e87c","timestamp":"2026-10-20T21:36:47.687Z","attempt":1,"durationMs":28,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"event":"research_starter_completed","requestId":"13e3c608-124e-4470-92c2-029f4912beef","timestamp":"2026-10-20T21:36:47.702Z","attempt":1,"durationMs":0,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"event":"research_starter_completed","requestId":"d0602b5f-d19e-4dd7-af8c-6c664eb50ee9","timestamp":"2026-10-20T21:36:47.705Z","attempt":1,"durationMs":0,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"status":"passed","externalCalls":0,"paidCalls":0,"staleClaim":{"status":200,"state":"choosing_problem"},"freshClaim":{"status":409,"writes":0},"concurrentTakeover":{"statuses":[200,409],"writes":2},"saveFailure":{"status":500,"state":"discovering"}}

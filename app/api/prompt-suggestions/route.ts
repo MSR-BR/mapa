@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+import { AiError } from "@/modules/ai/failure";
 import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
@@ -12,6 +14,11 @@ export const maxDuration = 30;
 
 async function handlePost(request: Request) {
   const requestContext = startRequest(request);
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || typeof data?.claims?.sub !== "string" || data.claims.is_anonymous === true) {
+    return NextResponse.json({ code: "authentication_required", error: "Entre no Mapa com sua conta Google para receber sugestões de IA. Você pode continuar escrevendo sua ideia." }, { status: 401, headers: { "Cache-Control": "private, no-store" } });
+  }
   const rate = checkRateLimit(getRequestClientKey(request, "prompt-suggestions"), 15, 60_000);
   if (!rate.allowed) {
     return NextResponse.json(
@@ -42,8 +49,8 @@ async function handlePost(request: Request) {
       queryLength: prompt.length,
     });
     return NextResponse.json(
-      { error: "Não foi possível preparar sugestões agora." },
-      { status: 502 },
+      { code: error instanceof AiError ? error.code : "suggestions_unavailable", error: error instanceof AiError && error.code === "budget" ? "As sugestões de IA estão indisponíveis porque o limite global de uso foi atingido. Continue escrevendo ou use as sugestões locais." : "Não foi possível preparar sugestões agora. Você pode continuar escrevendo sua ideia." },
+      { status: error instanceof AiError && error.code === "budget" ? 503 : 502, headers: { "Cache-Control": "private, no-store" } },
     );
   }
 }

@@ -4,6 +4,10 @@ insert into auth.users (id, email) values
   ('33333333-3333-4333-8333-333333333333', 'other-advisor@example.invalid'),
   ('44444444-4444-4444-8444-444444444444', 'no-profile@example.invalid');
 
+update auth.users set email_confirmed_at = now();
+insert into auth.identities (user_id, provider, identity_data)
+select id, 'google', jsonb_build_object('email', email) from auth.users;
+
 insert into public.user_profiles (user_id, active_role) values
   ('11111111-1111-4111-8111-111111111111', 'student'),
   ('22222222-2222-4222-8222-222222222222', 'advisor'),

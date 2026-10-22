@@ -11,6 +11,7 @@ type PromptSuggestion = {
 
 type ResearchPromptInputProps = {
   id: string;
+  aiSuggestionsEnabled?: boolean;
   onChange: (value: string) => void;
   onEnter: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   onSuggestionSelect?: (value: string) => void;
@@ -59,11 +60,13 @@ function normalizeSuggestionText(value: string) {
 
 export function ResearchPromptInput({
   id,
+  aiSuggestionsEnabled = false,
   onChange,
   onEnter,
   onSuggestionSelect,
   value,
 }: ResearchPromptInputProps) {
+  const [suggestionMessage, setSuggestionMessage] = useState<string | null>(null);
   const [progress, setProgress] = useState<AiProgressEvent | null>(null);
   const [suggestions, setSuggestions] = useState<PromptSuggestion[]>([]);
   const [suggestionsForPrompt, setSuggestionsForPrompt] = useState("");
@@ -80,7 +83,7 @@ export function ResearchPromptInput({
 
   useEffect(() => {
     const prompt = value.trim();
-    if (prompt.length < AI_SUGGESTION_LENGTH) return;
+    if (!aiSuggestionsEnabled || prompt.length < AI_SUGGESTION_LENGTH) return;
 
     const controller = new AbortController();
     const timeout = window.setTimeout(async () => {
@@ -88,6 +91,7 @@ export function ResearchPromptInput({
       lastRequestedPrompt.current = prompt;
       setLoadingPrompt(prompt);
       setProgress(null);
+      setSuggestionMessage(null);
 
       try {
         const rawResponse = await fetch("/api/prompt-suggestions", {
@@ -97,7 +101,12 @@ export function ResearchPromptInput({
           signal: controller.signal,
         });
         const response = await readProgressResponse(rawResponse, (event) => { if (!controller.signal.aborted) setProgress(event); });
-        if (!response.ok) throw new Error("suggestion-request-failed");
+        if (!response.ok) {
+          setSuggestionMessage(response.status === 401
+            ? "Entre no Mapa para usar sugestões de IA. As sugestões abaixo são locais; você pode continuar escrevendo."
+            : "Sugestões de IA indisponíveis agora. As sugestões abaixo são locais; você pode continuar escrevendo.");
+          throw new Error("suggestion-request-failed");
+        }
         const payload = await response.json() as { suggestions?: PromptSuggestion[] };
         setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions.slice(0, 3) : []);
         setSuggestionsForPrompt(prompt);
@@ -105,6 +114,7 @@ export function ResearchPromptInput({
         if (!(error instanceof DOMException && error.name === "AbortError")) {
           setSuggestions([]);
           setSuggestionsForPrompt(prompt);
+          setSuggestionMessage((current) => current ?? "Sugestões de IA indisponíveis agora. Você pode continuar escrevendo ou usar as sugestões locais.");
         }
       } finally {
         if (!controller.signal.aborted) setLoadingPrompt("");
@@ -115,13 +125,13 @@ export function ResearchPromptInput({
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, [value]);
+  }, [aiSuggestionsEnabled, value]);
 
   return (
     <>
       <textarea
         autoComplete="off"
-        autoFocus
+        aria-label="Tema ou palavras-chave da pesquisa"
         id={id}
         maxLength={5_000}
         name="prompt"
@@ -138,6 +148,7 @@ export function ResearchPromptInput({
             Sugestões para consolidar o mapa
             {loading ? <small>{progressLabel(progress)}</small> : null}
           </p>
+          {!aiSuggestionsEnabled ? <p>Entre no Mapa para receber sugestões de IA. Estas sugestões são locais e você pode editar livremente.</p> : suggestionMessage ? <p role="status">{suggestionMessage}</p> : null}
           <div className="prompt-suggestion-list">
             {visibleSuggestions.map((suggestion, index) => (
               <button

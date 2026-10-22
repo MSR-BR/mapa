@@ -5,9 +5,9 @@ if docker container inspect "$container_name" >/dev/null 2>&1; then echo "Verifi
 cleanup() { docker stop "$container_name" >/dev/null 2>&1 || true; }
 trap cleanup EXIT INT TERM
 node --import tsx scripts/seed-versioned-workflow.ts
-docker run --detach --rm --name "$container_name" --env POSTGRES_PASSWORD=mapa_c111_local_check --volume "$PWD:/workspace:ro" --volume "$PWD/scripts/verify-explicit-grants-stub.sql:/docker-entrypoint-initdb.d/000_stub.sql:ro" postgres:17-alpine >/dev/null
+docker run --detach --rm --network none --name "$container_name" --env POSTGRES_PASSWORD=mapa_c111_local_check --volume "$PWD/supabase/migrations:/workspace/supabase/migrations:ro" --volume "$PWD/scripts:/workspace/scripts:ro" --volume "$PWD/tmp:/workspace/tmp:ro" --volume "$PWD/scripts/verify-explicit-grants-stub.sql:/docker-entrypoint-initdb.d/000_stub.sql:ro" postgres:17-alpine >/dev/null
 attempt=0
-until docker exec "$container_name" pg_isready --username postgres >/dev/null 2>&1; do
+until docker exec "$container_name" pg_isready --host 127.0.0.1 --username postgres >/dev/null 2>&1; do
   attempt=$((attempt+1)); if [ "$attempt" -ge 30 ]; then exit 1; fi; sleep 1
 done
 apply_sql() { docker exec "$container_name" psql --username postgres --set ON_ERROR_STOP=1 --file "/workspace/$1" >/dev/null; }

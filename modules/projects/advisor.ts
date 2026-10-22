@@ -1,3 +1,4 @@
+import { loadOrThrow } from "@/lib/supabase/data-api";
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -17,12 +18,12 @@ export async function loadProjectAdvisorEmail(
   ownerId: string,
   projectId: string,
 ) {
-  const { data } = await supabase
+  const { data } = await loadOrThrow((signal) => supabase
     .from("projects")
     .select("advisor_email")
     .eq("id", projectId)
     .eq("owner_id", ownerId)
     .is("deleted_at", null)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
   return normalizeAdvisorEmail(data?.advisor_email);
 }

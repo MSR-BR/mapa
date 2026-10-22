@@ -19,7 +19,11 @@ export async function readProgressResponse(response: Response, onProgress: (even
     } else if (data.type === "result") {
       if (data.operationId !== operationId || !Number.isInteger(data.sequence) || data.sequence <= sequence || data.status < 200 || data.status > 599) return;
       sequence = data.sequence;
-      result = Response.json(data.body, { status: data.status });
+      result = Response.json(data.body, {
+        status: data.status,
+        headers: typeof data.retryAfter === "string" && /^\d{1,5}$/.test(data.retryAfter)
+          ? { "Retry-After": data.retryAfter } : {},
+      });
     }
   };
   try {

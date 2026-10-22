@@ -1,0 +1,24 @@
+Testing generation/429
+Testing generation/503
+Testing generation/503-unknown
+Testing generation/422
+Testing generation/offline
+Testing generation/invalid
+Testing literature/429
+Testing literature/503
+Testing literature/503-unknown
+Testing literature/422
+Testing literature/offline
+Testing literature/invalid
+Testing export/429
+Testing export/503
+Testing export/503-unknown
+Testing export/422
+Testing export/offline
+Testing integration/429
+Testing integration/503
+Testing integration/503-unknown
+Testing integration/422
+Testing integration/offline
+Testing integration/invalid
+PASS: 31 synthetic browser scenarios; all remote requests intercepted.

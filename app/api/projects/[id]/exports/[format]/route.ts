@@ -1,4 +1,4 @@
-import { currentResearchIntakeReview } from "@/modules/projects/research-intake";
+import { withDataApiErrors, loadOrThrow } from "@/lib/supabase/data-api";
 import { hasCurrentFinalApproval } from "@/modules/research-workflow/advisor-review";
 import { NextResponse } from "next/server";
 
@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export async function GET(request: Request, context: { params: Promise<{ format: string; id: string }> }) {
+async function handleGET(request: Request, context: { params: Promise<{ format: string; id: string }> }) {
   const { format, id } = await context.params;
   if (!UUID.test(id) || (format !== "docx" && format !== "pdf")) return NextResponse.json({ error: "Exportação inválida." }, { status: 400 });
   const { searchParams } = new URL(request.url);
@@ -25,13 +25,13 @@ export async function GET(request: Request, context: { params: Promise<{ format:
   if (!access.ok) return access.response;
   const { supabase, userId } = access.value;
 
-  const { data: project } = await supabase
+  const { data: project } = await loadOrThrow((signal) => supabase
     .from("projects")
     .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
     .eq("id", id)
     .eq("owner_id", userId)
     .is("deleted_at", null)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
   if (!project) return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
 
   if (project.workflow_version === 2) {
@@ -44,9 +44,6 @@ export async function GET(request: Request, context: { params: Promise<{ format:
     const completed = hasCurrentFinalApproval(workflow);
     if (!completed && !draft) {
       return NextResponse.json({ error: "Conclua o mapa ou exporte como rascunho identificado." }, { status: 409 });
-    }
-    if (workflow.content.initialBriefing && !currentResearchIntakeReview(workflow.content)) {
-      return NextResponse.json({ code: "briefing_review_required", error: "Abra o mapa e use Exportar PDF ou Exportar Word para preparar o comparativo das respostas iniciais." }, { status: 409 });
     }
     const input = { draft: !completed, exportedAt: new Date(), finalMap, project, revision: workflow.revision };
     const file = format === "docx" ? await createFinalMapDocxExport(input) : await createFinalMapPdfExport(input);
@@ -80,3 +77,5 @@ export async function GET(request: Request, context: { params: Promise<{ format:
     },
   });
 }
+
+export const GET = withDataApiErrors(handleGET);

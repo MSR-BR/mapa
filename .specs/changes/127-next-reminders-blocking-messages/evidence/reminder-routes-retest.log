@@ -1,0 +1,1 @@
+C127 reminder routes PASS: authorization, canonical recipient, atomic reservation boundary, cooldown, limits, missing migration, malformed responses, failures, no repeat or external email.

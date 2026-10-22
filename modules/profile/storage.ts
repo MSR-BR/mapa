@@ -1,3 +1,4 @@
+import { checkDataResult } from "@/lib/supabase/data-api";
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -40,13 +41,13 @@ export async function loadUserProfile(
   supabase: SupabaseClient<Database>,
   userId: string,
 ): Promise<UserProfile> {
-  const [{ data, error: profileError }, { data: consent, error: consentError }] = await retryFutureJwtRead(() => Promise.all([
+  const [{ data, error: profileError }, { data: consent, error: consentError }] = await retryFutureJwtRead((signal) => Promise.all([
     supabase
       .from("user_profiles")
       .select("active_role,role_changed_at,role_version")
       .eq("user_id", userId)
-      .maybeSingle(),
-    supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId),
+      .retry(false).abortSignal(signal).maybeSingle(),
+    supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId).retry(false).abortSignal(signal),
   ]));
 
   if (profileError || consentError) {
@@ -73,5 +74,5 @@ export async function loadUserProfile(
 }
 
 export async function claimPendingAdvisorProjects(supabase: SupabaseClient<Database>) {
-  await supabase.rpc("claim_pending_advisor_projects");
+  checkDataResult(await supabase.rpc("claim_pending_advisor_projects"));
 }

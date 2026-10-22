@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { hasPublicCampaignAttribution } from "../modules/analytics/campaign-attribution";
+import { CAMPAIGN_STORAGE_KEY, rememberPublicCampaign, campaignFromUrl, isSafeCampaignValue, hasPublicCampaignAttribution } from "../modules/analytics/campaign-attribution";
 
 import {
   ANALYTICS_CONSENT_KEY,
@@ -24,8 +24,9 @@ function installWindow(consent: string | null) {
   const localStorage = {
     getItem: (key: string) => storage.get(key) ?? null,
     setItem: (key: string, value: string) => { storage.set(key, value); },
+    removeItem: (key: string) => { storage.delete(key); },
   };
-  const windowValue = { localStorage, location: { href: "https://mapadapesquisa.com.br/" }, gtag: (...args: unknown[]) => calls.push(args) };
+  const windowValue = { localStorage, sessionStorage: localStorage, location: { href: "https://mapadapesquisa.com.br/" }, gtag: (...args: unknown[]) => calls.push(args) };
   Object.defineProperty(globalThis, "window", { configurable: true, value: windowValue });
   Object.defineProperty(globalThis, "document", { configurable: true, value: { referrer: "" } });
   return calls;
@@ -185,4 +186,48 @@ test("workflow analytics separates four macro stages from internal steps", () =>
   assert.deepEqual(getAnalyticsWorkflowPosition("final_map"), {
     app_macro_stage: "4", app_stage: "final", app_step: "final_map",
   });
+});
+
+
+test("campaign values round trip punctuation; duplicate, private and encoded email values are rejected", () => {
+  const params = new URLSearchParams({ utm_source: "newsletter.uff", utm_campaign: "turma 50%", utm_term: "projeto de pesquisa", utm_id: "2026.10", email: "private@example.com" });
+  const url = new URL(safeAnalyticsPageLocation(`https://mapadapesquisa.com.br/?${params}`));
+  assert.equal(url.searchParams.get("utm_campaign"), "turma 50%");
+  assert.equal(url.searchParams.get("utm_source"), "newsletter.uff");
+  assert.equal(url.searchParams.get("utm_term"), "projeto de pesquisa");
+  assert.equal(url.searchParams.get("utm_id"), "2026.10");
+  assert.equal(url.searchParams.has("email"), false);
+  assert.deepEqual(campaignFromUrl("https://mapadapesquisa.com.br/?utm_source=a&utm_source=b&utm_medium=email"), { utm_medium: "email" });
+  for (const value of ["a@b.com", "a%40b.com", "a%2540b.com", "a%0Ab", "https://example.com", " "]) assert.equal(isSafeCampaignValue(value), false);
+  assert.deepEqual(campaignFromUrl("https://mapadapesquisa.com.br/login?utm_source=private"), {});
+});
+
+test("sanitized campaign survives public navigation and login until the first consented page view", () => {
+  installWindow(null);
+  const target = window as Window & { gtag?: (...args: unknown[]) => void; dataLayer?: unknown[][] };
+  delete target.gtag;
+  rememberPublicCampaign("https://mapadapesquisa.com.br/?utm_source=uff.news&utm_campaign=turma+50%25&utm_term=projeto+pesquisa&utm_id=2026.10&next=secret&email=private%40example.com");
+  rememberPublicCampaign("https://mapadapesquisa.com.br/mapa");
+  assert.deepEqual(JSON.parse(window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY)!), { utm_source: "uff.news", utm_campaign: "turma 50%", utm_term: "projeto pesquisa", utm_id: "2026.10" });
+  assert.equal(initializeAnalyticsTag("G-TEST", false), false);
+  assert.equal(target.dataLayer, undefined);
+  window.location.href = "https://mapadapesquisa.com.br/login?next=secret";
+  window.localStorage.setItem(ANALYTICS_CONSENT_KEY, "accepted");
+  assert.equal(initializeAnalyticsTag("G-TEST", false), true);
+  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", { page_location: "https://private.invalid/secret" });
+  const first = target.dataLayer!.at(-1)![2] as Record<string, string>;
+  const location = new URL(first.page_location);
+  assert.equal(location.pathname, "/login");
+  assert.equal(location.searchParams.get("utm_source"), "uff.news");
+  assert.equal(location.searchParams.get("utm_campaign"), "turma 50%");
+  assert.equal(JSON.stringify(target.dataLayer).includes("secret"), false);
+  assert.equal(window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY), null);
+  window.location.href = "https://mapadapesquisa.com.br/dashboard/projects/123e4567-e89b-12d3-a456-426614174000?email=private";
+  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {});
+  assert.equal((target.dataLayer!.at(-1)![2] as Record<string, string>).page_location, "https://mapadapesquisa.com.br/dashboard/projects/project");
+  const length = target.dataLayer!.length;
+  window.localStorage.setItem(ANALYTICS_CONSENT_KEY, "rejected");
+  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {});
+  assert.equal(trackAnalyticsEvent("project_start"), false);
+  assert.equal(target.dataLayer!.length, length);
 });

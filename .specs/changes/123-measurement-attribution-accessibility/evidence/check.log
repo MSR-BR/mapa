@@ -1,0 +1,1730 @@
+
+> mapa-da-pesquisa@0.1.0 check
+> npm run lint && npm run typecheck && npm run supabase:verify-explicit-grants && npm run test && npm run exports:verify && npm run build
+
+
+> mapa-da-pesquisa@0.1.0 lint
+> eslint . --ignore-pattern .next
+
+
+/Users/marioreis/Library/CloudStorage/Dropbox/Mac (6)/Documents/Developer/mapa/tests/foundation.test.mjs
+  887:47  warning  'methodology' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (0 errors, 1 warning)
+
+
+> mapa-da-pesquisa@0.1.0 typecheck
+> tsc --noEmit
+
+
+> mapa-da-pesquisa@0.1.0 supabase:verify-explicit-grants
+> node scripts/verify-explicit-grants.mjs
+
+{
+  "errors": [],
+  "summary": {
+    "functions": 17,
+    "migrations": 21,
+    "sequences": 0,
+    "tables": 11,
+    "views": 0
+  },
+  "status": "pass"
+}
+
+> mapa-da-pesquisa@0.1.0 test
+> node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/measurement-accessibility.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai
+
+TAP version 13
+# Subtest: validates the versioned and idempotent mode-switch request
+ok 1 - validates the versioned and idempotent mode-switch request
+  ---
+  duration_ms: 0.832416
+  type: 'test'
+  ...
+# Subtest: short-circuits only an exact no-op and leaves stale retries to the RPC
+ok 2 - short-circuits only an exact no-op and leaves stale retries to the RPC
+  ---
+  duration_ms: 0.101167
+  type: 'test'
+  ...
+# Subtest: accepts only a well-formed RPC result for the requested role
+ok 3 - accepts only a well-formed RPC result for the requested role
+  ---
+  duration_ms: 0.135541
+  type: 'test'
+  ...
+# Subtest: maps database failures without leaking provider details
+ok 4 - maps database failures without leaking provider details
+  ---
+  duration_ms: 0.083875
+  type: 'test'
+  ...
+# Subtest: keeps settings, action, consent and cross-tab refresh server authoritative
+ok 5 - keeps settings, action, consent and cross-tab refresh server authoritative
+  ---
+  duration_ms: 1.108792
+  type: 'test'
+  ...
+# Subtest: profile records and actor requirements fail closed
+ok 6 - profile records and actor requirements fail closed
+  ---
+  duration_ms: 0.662417
+  type: 'test'
+  ...
+# Subtest: owner authoring requires the matching active mode
+ok 7 - owner authoring requires the matching active mode
+  ---
+  duration_ms: 0.1565
+  type: 'test'
+  ...
+# Subtest: supervision, review and reminders obey the actor matrix
+ok 8 - supervision, review and reminders obey the actor matrix
+  ---
+  duration_ms: 0.099084
+  type: 'test'
+  ...
+# Subtest: every academic endpoint uses centralized authorization
+ok 9 - every academic endpoint uses centralized authorization
+  ---
+  duration_ms: 1.188875
+  type: 'test'
+  ...
+# Subtest: identity, errors, consent and feature flag stay server authoritative
+ok 10 - identity, errors, consent and feature flag stay server authoritative
+  ---
+  duration_ms: 0.605166
+  type: 'test'
+  ...
+# Subtest: analytics does not send events before consent
+ok 11 - analytics does not send events before consent
+  ---
+  duration_ms: 0.487041
+  type: 'test'
+  ...
+# Subtest: analytics sends only enumerated parameters and never free text
+ok 12 - analytics sends only enumerated parameters and never free text
+  ---
+  duration_ms: 0.273834
+  type: 'test'
+  ...
+# Subtest: analytics accepts Google as the only social provider
+ok 13 - analytics accepts Google as the only social provider
+  ---
+  duration_ms: 0.166625
+  type: 'test'
+  ...
+# Subtest: ads preference alone cannot send analytics events
+ok 14 - ads preference alone cannot send analytics events
+  ---
+  duration_ms: 0.056584
+  type: 'test'
+  ...
+# Subtest: only a sent event returns success for conversion deduplication
+ok 15 - only a sent event returns success for conversion deduplication
+  ---
+  duration_ms: 0.068125
+  type: 'test'
+  ...
+# Subtest: page URLs strip project IDs and private parameters but preserve safe public campaign attribution
+ok 16 - page URLs strip project IDs and private parameters but preserve safe public campaign attribution
+  ---
+  duration_ms: 0.198125
+  type: 'test'
+  ...
+# Subtest: authenticated campaign entries stay public using the same values admitted to measurement
+ok 17 - authenticated campaign entries stay public using the same values admitted to measurement
+  ---
+  duration_ms: 0.19625
+  type: 'test'
+  ...
+# Subtest: Consent Mode v2 grants only separately chosen advertising signals
+ok 18 - Consent Mode v2 grants only separately chosen advertising signals
+  ---
+  duration_ms: 0.3135
+  type: 'test'
+  ...
+# Subtest: every custom event strips private document context, not only page_view
+ok 19 - every custom event strips private document context, not only page_view
+  ---
+  duration_ms: 0.274333
+  type: 'test'
+  ...
+# Subtest: tag bootstrap queues safe configuration and consent before any script can collect
+ok 20 - tag bootstrap queues safe configuration and consent before any script can collect
+  ---
+  duration_ms: 1.026375
+  type: 'test'
+  ...
+# Subtest: referrer privacy preserves origin attribution but removes user-specific paths and queries
+ok 21 - referrer privacy preserves origin attribution but removes user-specific paths and queries
+  ---
+  duration_ms: 0.158791
+  type: 'test'
+  ...
+# Subtest: bootstrap cannot load measurement after a metrics refusal
+ok 22 - bootstrap cannot load measurement after a metrics refusal
+  ---
+  duration_ms: 0.049958
+  type: 'test'
+  ...
+# Subtest: project completion counts only the persisted transition, not an advisor-pending 200
+ok 23 - project completion counts only the persisted transition, not an advisor-pending 200
+  ---
+  duration_ms: 0.038625
+  type: 'test'
+  ...
+# Subtest: reference buckets are stable and bounded
+ok 24 - reference buckets are stable and bounded
+  ---
+  duration_ms: 0.041209
+  type: 'test'
+  ...
+# Subtest: workflow analytics separates four macro stages from internal steps
+ok 25 - workflow analytics separates four macro stages from internal steps
+  ---
+  duration_ms: 0.103334
+  type: 'test'
+  ...
+# Subtest: campaign values round trip punctuation; duplicate, private and encoded email values are rejected
+ok 26 - campaign values round trip punctuation; duplicate, private and encoded email values are rejected
+  ---
+  duration_ms: 0.170166
+  type: 'test'
+  ...
+# Subtest: sanitized campaign survives public navigation and login until the first consented page view
+ok 27 - sanitized campaign survives public navigation and login until the first consented page view
+  ---
+  duration_ms: 1.954833
+  type: 'test'
+  ...
+# Subtest: implements a private, rate-limited bug report intake
+ok 28 - implements a private, rate-limited bug report intake
+  ---
+  duration_ms: 13.169417
+  type: 'test'
+  ...
+# Subtest: provides an authenticated admin triage surface
+ok 29 - provides an authenticated admin triage surface
+  ---
+  duration_ms: 1.805625
+  type: 'test'
+  ...
+# Subtest: card regeneration changes exactly one selected objective, retaining notes, references and confirmed context
+ok 30 - card regeneration changes exactly one selected objective, retaining notes, references and confirmed context
+  ---
+  duration_ms: 10.391416
+  type: 'test'
+  ...
+# Subtest: card scope rejects IDs outside the selected step and unrelated body shapes
+ok 31 - card scope rejects IDs outside the selected step and unrelated body shapes
+  ---
+  duration_ms: 2.730125
+  type: 'test'
+  ...
+# Subtest: regenerating a topic preserves every reference and objective association
+ok 32 - regenerating a topic preserves every reference and objective association
+  ---
+  duration_ms: 0.887834
+  type: 'test'
+  ...
+# Subtest: methodology row regeneration preserves classification, other rows and all links
+ok 33 - methodology row regeneration preserves classification, other rows and all links
+  ---
+  duration_ms: 1.411791
+  type: 'test'
+  ...
+# Subtest: client persists unsaved page before AI and passes the returned revision
+ok 34 - client persists unsaved page before AI and passes the returned revision
+  ---
+  duration_ms: 59.238583
+  type: 'test'
+  ...
+# Subtest: client never calls AI after save rejection and retains the saved page on AI failure
+ok 35 - client never calls AI after save rejection and retains the saved page on AI failure
+  ---
+  duration_ms: 1.095916
+  type: 'test'
+  ...
+# Subtest: chapter drafts accept fewer than three topics, while advance explains the exact requirement
+ok 36 - chapter drafts accept fewer than three topics, while advance explains the exact requirement
+  ---
+  duration_ms: 0.351667
+  type: 'test'
+  ...
+# Subtest: additional references are deduplicated without replacing manual metadata
+ok 37 - additional references are deduplicated without replacing manual metadata
+  ---
+  duration_ms: 0.398959
+  type: 'test'
+  ...
+# Subtest: public Mapa entry keeps only safe campaign attribution, never prompt or arbitrary query
+ok 38 - public Mapa entry keeps only safe campaign attribution, never prompt or arbitrary query
+  ---
+  duration_ms: 0.479875
+  type: 'test'
+  ...
+# Subtest: only an expired discovery claim may be taken over
+ok 39 - only an expired discovery claim may be taken over
+  ---
+  duration_ms: 3.447333
+  type: 'test'
+  ...
+# Subtest: authentication, authorization and concurrency failures are not reported as provider failures
+ok 40 - authentication, authorization and concurrency failures are not reported as provider failures
+  ---
+  duration_ms: 0.220375
+  type: 'test'
+  ...
+# Subtest: only error codes declared by the discover route are reported as provider outcomes
+ok 41 - only error codes declared by the discover route are reported as provider outcomes
+  ---
+  duration_ms: 0.200167
+  type: 'test'
+  ...
+# Subtest: thrown failures keep a fixed Portuguese message and a truthful reason
+ok 42 - thrown failures keep a fixed Portuguese message and a truthful reason
+  ---
+  duration_ms: 0.882291
+  type: 'test'
+  ...
+# Subtest: stripXmlInvalidControls removes only characters XML 1.0 forbids
+ok 43 - stripXmlInvalidControls removes only characters XML 1.0 forbids
+  ---
+  duration_ms: 0.632084
+  type: 'test'
+  ...
+# Subtest: Word report stays well-formed when pasted text carries control characters
+ok 44 - Word report stays well-formed when pasted text carries control characters
+  ---
+  duration_ms: 265.061458
+  type: 'test'
+  ...
+# Subtest: keeps the branded foundation and locale in the App Router
+ok 45 - keeps the branded foundation and locale in the App Router
+  ---
+  duration_ms: 17.934916
+  type: 'test'
+  ...
+# Subtest: requests login only after the public central execution
+ok 46 - requests login only after the public central execution
+  ---
+  duration_ms: 4.309375
+  type: 'test'
+  ...
+# Subtest: suggests AI refinements while the research request is being written
+ok 47 - suggests AI refinements while the research request is being written
+  ---
+  duration_ms: 0.997667
+  type: 'test'
+  ...
+# Subtest: makes proposal discovery resilient to Research Starter and Gemini deviations
+ok 48 - makes proposal discovery resilient to Research Starter and Gemini deviations
+  ---
+  duration_ms: 1.777333
+  type: 'test'
+  ...
+# Subtest: keeps quick prompts compact and does not repeat them as five intake answers
+ok 49 - keeps quick prompts compact and does not repeat them as five intake answers
+  ---
+  duration_ms: 1.389667
+  type: 'test'
+  ...
+# Subtest: registers Change 044 production pipeline verification
+ok 50 - registers Change 044 production pipeline verification
+  ---
+  duration_ms: 1.693459
+  type: 'test'
+  ...
+# Subtest: registers Change 045 observability and maintenance controls
+ok 51 - registers Change 045 observability and maintenance controls
+  ---
+  duration_ms: 1.043375
+  type: 'test'
+  ...
+# Subtest: registers Change 046 academic PDF format and CBL registration
+ok 52 - registers Change 046 academic PDF format and CBL registration
+  ---
+  duration_ms: 2.398459
+  type: 'test'
+  ...
+# Subtest: uses the structured situation-problem intake and product-depth guidance
+ok 53 - uses the structured situation-problem intake and product-depth guidance
+  ---
+  duration_ms: 4.231125
+  type: 'test'
+  ...
+# Subtest: completes Change 004 with a versioned canonical schema and anti-hallucination prompt
+ok 54 - completes Change 004 with a versioned canonical schema and anti-hallucination prompt
+  ---
+  duration_ms: 1.232958
+  type: 'test'
+  ...
+# Subtest: implements the additive Change 009 workflow foundation
+ok 55 - implements the additive Change 009 workflow foundation
+  ---
+  duration_ms: 2.447041
+  type: 'test'
+  ...
+# Subtest: implements an idempotent and owner-scoped generation pipeline
+ok 56 - implements an idempotent and owner-scoped generation pipeline
+  ---
+  duration_ms: 2.696542
+  type: 'test'
+  ...
+# Subtest: recovers the Gemini 3 pipeline and preserves AI-generated final titles
+ok 57 - recovers the Gemini 3 pipeline and preserves AI-generated final titles
+  ---
+  duration_ms: 18.379958
+  type: 'test'
+  ...
+# Subtest: observes all Gemini operations without deprecated sampling controls
+ok 58 - observes all Gemini operations without deprecated sampling controls
+  ---
+  duration_ms: 2.135375
+  type: 'test'
+  ...
+# Subtest: provides persistent editing with loss protection and retry
+ok 59 - provides persistent editing with loss protection and retry
+  ---
+  duration_ms: 0.693167
+  type: 'test'
+  ...
+# Subtest: exports only the authenticated owner's saved structure as PDF or DOCX
+ok 60 - exports only the authenticated owner's saved structure as PDF or DOCX
+  ---
+  duration_ms: 2.369875
+  type: 'test'
+  ...
+# Subtest: keeps the Research Starter key server-side and follows its v1 contract
+ok 61 - keeps the Research Starter key server-side and follows its v1 contract
+  ---
+  duration_ms: 0.941791
+  type: 'test'
+  ...
+# Subtest: defines an uncached health endpoint
+ok 62 - defines an uncached health endpoint
+  ---
+  duration_ms: 0.972333
+  type: 'test'
+  ...
+# Subtest: uses the standard Next.js runtime expected by Vercel
+ok 63 - uses the standard Next.js runtime expected by Vercel
+  ---
+  duration_ms: 2.513792
+  type: 'test'
+  ...
+# Subtest: pins Supabase to the Mapa project and requires a publishable key
+ok 64 - pins Supabase to the Mapa project and requires a publishable key
+  ---
+  duration_ms: 0.478667
+  type: 'test'
+  ...
+# Subtest: defines an owner-scoped projects schema with RLS
+ok 65 - defines an owner-scoped projects schema with RLS
+  ---
+  duration_ms: 1.294042
+  type: 'test'
+  ...
+# Subtest: protects the dashboard and retires password routes
+ok 66 - protects the dashboard and retires password routes
+  ---
+  duration_ms: 1.215291
+  type: 'test'
+  ...
+# Subtest: sanitizes auth callback destinations
+ok 67 - sanitizes auth callback destinations
+  ---
+  duration_ms: 0.394417
+  type: 'test'
+  ...
+# Subtest: documents the canonical authentication callback required in production
+ok 68 - documents the canonical authentication callback required in production
+  ---
+  duration_ms: 0.89375
+  type: 'test'
+  ...
+# Subtest: derives project ownership from verified claims
+ok 69 - derives project ownership from verified claims
+  ---
+  duration_ms: 0.54675
+  type: 'test'
+  ...
+# Subtest: implements duplicate and confirmed soft-delete operations
+ok 70 - implements duplicate and confirmed soft-delete operations
+  ---
+  duration_ms: 0.628667
+  type: 'test'
+  ...
+# Subtest: validates project fields against database limits
+ok 71 - validates project fields against database limits
+  ---
+  duration_ms: 1.076625
+  type: 'test'
+  ...
+# Subtest: implements the approved hybrid dashboard with prompt-first proposal discovery
+ok 72 - implements the approved hybrid dashboard with prompt-first proposal discovery
+  ---
+  duration_ms: 1.02525
+  type: 'test'
+  ...
+# Subtest: implements Change 010 with one persisted discovery and six selectable proposals
+ok 73 - implements Change 010 with one persisted discovery and six selectable proposals
+  ---
+  duration_ms: 0.968916
+  type: 'test'
+  ...
+# Subtest: implements Change 011 with editable and versioned problem and objectives
+ok 74 - implements Change 011 with editable and versioned problem and objectives
+  ---
+  duration_ms: 4.737208
+  type: 'test'
+  ...
+# Subtest: implements Change 012 with traceable Chapter 2 and Chapter 4 planning
+ok 75 - implements Change 012 with traceable Chapter 2 and Chapter 4 planning
+  ---
+  duration_ms: 0.793
+  type: 'test'
+  ...
+# Subtest: implements Change 052 with a real Research Starter optimization and safe archive
+ok 76 - implements Change 052 with a real Research Starter optimization and safe archive
+  ---
+  duration_ms: 0.452916
+  type: 'test'
+  ...
+# Subtest: reconciles stale topic links before presenting association counts
+ok 77 - reconciles stale topic links before presenting association counts
+  ---
+  duration_ms: 0.658958
+  type: 'test'
+  ...
+# Subtest: preserves downstream work when returning without editing an upstream step
+ok 78 - preserves downstream work when returning without editing an upstream step
+  ---
+  duration_ms: 0.913958
+  type: 'test'
+  ...
+# Subtest: keeps academic coherence advisory instead of blocking stage progression
+ok 79 - keeps academic coherence advisory instead of blocking stage progression
+  ---
+  duration_ms: 4.909166
+  type: 'test'
+  ...
+# Subtest: distinguishes macro stages from substeps across the research workflow
+ok 80 - distinguishes macro stages from substeps across the research workflow
+  ---
+  duration_ms: 1.723083
+  type: 'test'
+  ...
+# Subtest: implements Change 073 with revision-safe back navigation and methodology recovery
+ok 81 - implements Change 073 with revision-safe back navigation and methodology recovery
+  ---
+  duration_ms: 1.499958
+  type: 'test'
+  ...
+# Subtest: keeps methodology controls responsive and reference-aware
+ok 82 - keeps methodology controls responsive and reference-aware
+  ---
+  duration_ms: 1.396083
+  type: 'test'
+  ...
+# Subtest: supports anchored project actions and owner-scoped AI integration
+ok 83 - supports anchored project actions and owner-scoped AI integration
+  ---
+  duration_ms: 2.270708
+  type: 'test'
+  ...
+# Subtest: adds advisor-student validation gates for every v2 step
+ok 84 - adds advisor-student validation gates for every v2 step
+  ---
+  duration_ms: 2.519583
+  type: 'test'
+  ...
+# Subtest: supports student/advisor profile modes and deferred advisor linking
+ok 85 - supports student/advisor profile modes and deferred advisor linking
+  ---
+  duration_ms: 2.275542
+  type: 'test'
+  ...
+# Subtest: keeps explicit profile identity separate from role-specific controls
+ok 86 - keeps explicit profile identity separate from role-specific controls
+  ---
+  duration_ms: 0.062125
+  type: 'test'
+  ...
+# Subtest: uses the approved dark silver authentication shell
+ok 87 - uses the approved dark silver authentication shell
+  ---
+  duration_ms: 2.957542
+  type: 'test'
+  ...
+# Subtest: keeps authenticated Supabase usage within the free-plan budget
+ok 88 - keeps authenticated Supabase usage within the free-plan budget
+  ---
+  duration_ms: 1.210208
+  type: 'test'
+  ...
+# Subtest: provides a two-user authenticated RLS verification without admin keys
+ok 89 - provides a two-user authenticated RLS verification without admin keys
+  ---
+  duration_ms: 0.878625
+  type: 'test'
+  ...
+# Subtest: keeps the advisor-student E2E verifier compatible with versioned role switching
+ok 90 - keeps the advisor-student E2E verifier compatible with versioned role switching
+  ---
+  duration_ms: 1.721625
+  type: 'test'
+  ...
+# Subtest: validates the migration locally without a paid Supabase branch
+ok 91 - validates the migration locally without a paid Supabase branch
+  ---
+  duration_ms: 0.596417
+  type: 'test'
+  ...
+# Subtest: keeps methodology coherence live and makes project closure discoverable
+ok 92 - keeps methodology coherence live and makes project closure discoverable
+  ---
+  duration_ms: 0.762792
+  type: 'test'
+  ...
+# Subtest: registers Change 074 production acceptance and cross-account isolation
+ok 93 - registers Change 074 production acceptance and cross-account isolation
+  ---
+  duration_ms: 1.667125
+  type: 'test'
+  ...
+# Subtest: registers Change 075 production operational stability
+ok 94 - registers Change 075 production operational stability
+  ---
+  duration_ms: 2.288542
+  type: 'test'
+  ...
+# Subtest: registers Change 076 explicit profiles and contextual controls
+ok 95 - registers Change 076 explicit profiles and contextual controls
+  ---
+  duration_ms: 5.580875
+  type: 'test'
+  ...
+# Subtest: registers Change 077 concise profile menu
+ok 96 - registers Change 077 concise profile menu
+  ---
+  duration_ms: 1.196666
+  type: 'test'
+  ...
+# Subtest: registers Change 078 reproducible social promo package
+ok 97 - registers Change 078 reproducible social promo package
+  ---
+  duration_ms: 4.912834
+  type: 'test'
+  ...
+# Subtest: registers Change 079 premium promo while preserving version 1
+ok 98 - registers Change 079 premium promo while preserving version 1
+  ---
+  duration_ms: 8.684458
+  type: 'test'
+  ...
+# Subtest: keeps discovery and video on the canonical root with a dedicated public start page
+ok 99 - keeps discovery and video on the canonical root with a dedicated public start page
+  ---
+  duration_ms: 7.310667
+  type: 'test'
+  ...
+# Subtest: prepares the versioned account-mode database foundation without exposing the switch
+ok 100 - prepares the versioned account-mode database foundation without exposing the switch
+  ---
+  duration_ms: 6.53175
+  type: 'test'
+  ...
+# Subtest: retries only a transient future-issued JWT rejection
+ok 101 - retries only a transient future-issued JWT rejection
+  ---
+  duration_ms: 0.6215
+  type: 'test'
+  ...
+# Subtest: does not retry other authentication or permission failures
+ok 102 - does not retry other authentication or permission failures
+  ---
+  duration_ms: 0.074167
+  type: 'test'
+  ...
+# Subtest: fails closed after bounded retries if the JWT remains future-issued
+ok 103 - fails closed after bounded retries if the JWT remains future-issued
+  ---
+  duration_ms: 0.084917
+  type: 'test'
+  ...
+# Subtest: C118: editable text boundaries accept the limit and reject limit+1
+ok 104 - C118: editable text boundaries accept the limit and reject limit+1
+  ---
+  duration_ms: 1.2805
+  type: 'test'
+  ...
+# Subtest: C118: generated lists fit the rendered box and round-trip commas without dropping items
+ok 105 - C118: generated lists fit the rendered box and round-trip commas without dropping items
+  ---
+  duration_ms: 8.118875
+  type: 'test'
+  ...
+# Subtest: C118: oversized card result cannot mutate the saved workflow; legacy draft can be recovered
+ok 106 - C118: oversized card result cannot mutate the saved workflow; legacy draft can be recovered
+  ---
+  duration_ms: 1.434291
+  type: 'test'
+  ...
+# Subtest: C118: original advanced answers survive input parsing and workflow reload verbatim
+ok 107 - C118: original advanced answers survive input parsing and workflow reload verbatim
+  ---
+  duration_ms: 10.208083
+  type: 'test'
+  ...
+# Subtest: login only pairs one submitted attempt with SIGNED_IN; existing/refreshed sessions do not count
+ok 108 - login only pairs one submitted attempt with SIGNED_IN; existing/refreshed sessions do not count
+  ---
+  duration_ms: 1.873292
+  type: 'test'
+  ...
+# Subtest: denied consent and expired attempts cannot produce login success
+ok 109 - denied consent and expired attempts cannot produce login success
+  ---
+  duration_ms: 0.161875
+  type: 'test'
+  ...
+# Subtest: mapa metadata is self-contained because Next shallowly replaces OpenGraph
+ok 110 - mapa metadata is self-contained because Next shallowly replaces OpenGraph
+  ---
+  duration_ms: 0.650625
+  type: 'test'
+  ...
+# Subtest: partial methodology drafts save but show exact actionable requirements for advancing
+ok 111 - partial methodology drafts save but show exact actionable requirements for advancing
+  ---
+  duration_ms: 15.01425
+  type: 'test'
+  ...
+# Subtest: AI completion fills gaps without replacing author text, notes, row IDs or ordering
+ok 112 - AI completion fills gaps without replacing author text, notes, row IDs or ordering
+  ---
+  duration_ms: 1.564625
+  type: 'test'
+  ...
+# Subtest: concise filled cells and optional context do not prevent advancing
+ok 113 - concise filled cells and optional context do not prevent advancing
+  ---
+  duration_ms: 0.861667
+  type: 'test'
+  ...
+# Subtest: client saves edits before completion and uses the new revision; provider failure retains the save
+ok 114 - client saves edits before completion and uses the new revision; provider failure retains the save
+  ---
+  duration_ms: 38.989708
+  type: 'test'
+  ...
+# Subtest: client does not call AI after a draft save conflict
+ok 115 - client does not call AI after a draft save conflict
+  ---
+  duration_ms: 0.289583
+  type: 'test'
+  ...
+# Subtest: releases the switch RPC without reopening direct profile updates
+ok 116 - releases the switch RPC without reopening direct profile updates
+  ---
+  duration_ms: 0.41975
+  type: 'test'
+  ...
+# Subtest: binds own project access to the active mode and immutable authorship
+ok 117 - binds own project access to the active mode and immutable authorship
+  ---
+  duration_ms: 0.364542
+  type: 'test'
+  ...
+# Subtest: keeps project insert returning compatible with mode-aware selection
+ok 118 - keeps project insert returning compatible with mode-aware selection
+  ---
+  duration_ms: 0.102292
+  type: 'test'
+  ...
+# Subtest: authorizes child rows through the parent and separates linked review access
+ok 119 - authorizes child rows through the parent and separates linked review access
+  ---
+  duration_ms: 0.356875
+  type: 'test'
+  ...
+# Subtest: hardens supervision functions and the review trigger
+ok 120 - hardens supervision functions and the review trigger
+  ---
+  duration_ms: 0.325667
+  type: 'test'
+  ...
+# Subtest: ships an isolated direct-client policy matrix
+ok 121 - ships an isolated direct-client policy matrix
+  ---
+  duration_ms: 0.767417
+  type: 'test'
+  ...
+# {"event":"health_check_completed","requestId":"health-test-1","timestamp":"2026-10-20T20:50:06.565Z","durationMs":0,"status":"ok"}
+# Subtest: correlation IDs are safe, propagated and generated when necessary
+ok 122 - correlation IDs are safe, propagated and generated when necessary
+  ---
+  duration_ms: 9.104334
+  type: 'test'
+  ...
+# Subtest: provider health exposes only configuration state
+ok 123 - provider health exposes only configuration state
+  ---
+  duration_ms: 0.556833
+  type: 'test'
+  ...
+# Subtest: health endpoint returns a sanitized versioned diagnostic
+ok 124 - health endpoint returns a sanitized versioned diagnostic
+  ---
+  duration_ms: 3.123375
+  type: 'test'
+  ...
+# Subtest: operational logger emits JSON without arbitrary message fields
+ok 125 - operational logger emits JSON without arbitrary message fields
+  ---
+  duration_ms: 0.194416
+  type: 'test'
+  ...
+# Subtest: operational failures normalize provider metadata without leaking messages
+ok 126 - operational failures normalize provider metadata without leaking messages
+  ---
+  duration_ms: 0.236959
+  type: 'test'
+  ...
+# Subtest: Gemini observer records usage without logging generated content
+ok 127 - Gemini observer records usage without logging generated content
+  ---
+  duration_ms: 0.253916
+  type: 'test'
+  ...
+# Subtest: Gemini observer classifies failures without logging provider messages
+ok 128 - Gemini observer classifies failures without logging provider messages
+  ---
+  duration_ms: 0.312583
+  type: 'test'
+  ...
+# Subtest: Gemini operation inventory is unique and complete
+ok 129 - Gemini operation inventory is unique and complete
+  ---
+  duration_ms: 0.040791
+  type: 'test'
+  ...
+# Subtest: notificação de envio ao orientador contém ação, link e reply-to do estudante
+ok 130 - notificação de envio ao orientador contém ação, link e reply-to do estudante
+  ---
+  duration_ms: 16.71375
+  type: 'test'
+  ...
+# Subtest: sem destinatário ou chave, notificação é ignorada sem chamar o Resend
+ok 131 - sem destinatário ou chave, notificação é ignorada sem chamar o Resend
+  ---
+  duration_ms: 0.088625
+  type: 'test'
+  ...
+# Subtest: one-time instructions are scoped to the active stage and not mixed into saved notes
+ok 132 - one-time instructions are scoped to the active stage and not mixed into saved notes
+  ---
+  duration_ms: 3.228875
+  type: 'test'
+  ...
+# Subtest: stale, repeated or oversized guidance is rejected before AI generation
+ok 133 - stale, repeated or oversized guidance is rejected before AI generation
+  ---
+  duration_ms: 1.238292
+  type: 'test'
+  ...
+# Subtest: accepts the empty versioned workflow foundation
+ok 134 - accepts the empty versioned workflow foundation
+  ---
+  duration_ms: 2.393625
+  type: 'test'
+  ...
+# Subtest: rejects unversioned or structurally invalid workflow content
+ok 135 - rejects unversioned or structurally invalid workflow content
+  ---
+  duration_ms: 0.385041
+  type: 'test'
+  ...
+# Subtest: allows only explicit workflow transitions
+ok 136 - allows only explicit workflow transitions
+  ---
+  duration_ms: 0.199292
+  type: 'test'
+  ...
+# Subtest: recovers a failed workflow from its last stable state
+ok 137 - recovers a failed workflow from its last stable state
+  ---
+  duration_ms: 0.046291
+  type: 'test'
+  ...
+# Subtest: invalidates all and only descendants of an edited origin
+ok 138 - invalidates all and only descendants of an edited origin
+  ---
+  duration_ms: 0.157375
+  type: 'test'
+  ...
+# Subtest: distinguishes AI suggestions, user edits and system invalidation
+ok 139 - distinguishes AI suggestions, user edits and system invalidation
+  ---
+  duration_ms: 0.046208
+  type: 'test'
+  ...
+# Subtest: requires one exact proposal followed by five distinct alternatives
+ok 140 - requires one exact proposal followed by five distinct alternatives
+  ---
+  duration_ms: 2.004875
+  type: 'test'
+  ...
+# Subtest: requires each problem to be one explicit research question
+ok 141 - requires each problem to be one explicit research question
+  ---
+  duration_ms: 0.203
+  type: 'test'
+  ...
+# Subtest: validates a single research problem with the approved opening
+ok 142 - validates a single research problem with the approved opening
+  ---
+  duration_ms: 0.353333
+  type: 'test'
+  ...
+# Subtest: requires one infinitive general objective aligned with the problem
+ok 143 - requires one infinitive general objective aligned with the problem
+  ---
+  duration_ms: 0.548958
+  type: 'test'
+  ...
+# Subtest: accepts three to six stable specific objectives and detects redundancy
+ok 144 - accepts three to six stable specific objectives and detects redundancy
+  ---
+  duration_ms: 0.494791
+  type: 'test'
+  ...
+# Subtest: validates chapter limits, distinct titles and verified links
+ok 145 - validates chapter limits, distinct titles and verified links
+  ---
+  duration_ms: 0.854959
+  type: 'test'
+  ...
+# Subtest: accepts a single phrase for literature optimization searches
+ok 146 - accepts a single phrase for literature optimization searches
+  ---
+  duration_ms: 0.649084
+  type: 'test'
+  ...
+# Subtest: preserves manual references while archiving the previous Research Starter run
+ok 147 - preserves manual references while archiving the previous Research Starter run
+  ---
+  duration_ms: 0.08875
+  type: 'test'
+  ...
+# Subtest: blocks premature results and requires a justified final Chapter 4 topic
+ok 148 - blocks premature results and requires a justified final Chapter 4 topic
+  ---
+  duration_ms: 0.133917
+  type: 'test'
+  ...
+# Subtest: allows a case-study introduction and OEG coverage in Chapter 4
+ok 149 - allows a case-study introduction and OEG coverage in Chapter 4
+  ---
+  duration_ms: 0.089833
+  type: 'test'
+  ...
+# Subtest: reports objective coverage states and blocks uncovered objectives
+ok 150 - reports objective coverage states and blocks uncovered objectives
+  ---
+  duration_ms: 0.168417
+  type: 'test'
+  ...
+# Subtest: validates methodology matrix coverage and expected-result wording
+ok 151 - validates methodology matrix coverage and expected-result wording
+  ---
+  duration_ms: 1.488791
+  type: 'test'
+  ...
+# Subtest: requires and accepts an OEG synthesis row in methodology when requested
+ok 152 - requires and accepts an OEG synthesis row in methodology when requested
+  ---
+  duration_ms: 0.351042
+  type: 'test'
+  ...
+# Subtest: reconciles invalid AI methodology links with every real objective
+ok 153 - reconciles invalid AI methodology links with every real objective
+  ---
+  duration_ms: 0.189667
+  type: 'test'
+  ...
+# Subtest: allows existing positions without granting an uncreated future step
+ok 154 - allows existing positions without granting an uncreated future step
+  ---
+  duration_ms: 0.362208
+  type: 'test'
+  ...
+# Subtest: warns about uncertain methodology compatibility without blocking
+ok 155 - warns about uncertain methodology compatibility without blocking
+  ---
+  duration_ms: 0.117791
+  type: 'test'
+  ...
+# Subtest: reconciles stale topic associations without removing existing topics
+ok 156 - reconciles stale topic associations without removing existing topics
+  ---
+  duration_ms: 3.158375
+  type: 'test'
+  ...
+# Subtest: builds a final map with traceability and completion gate
+ok 157 - builds a final map with traceability and completion gate
+  ---
+  duration_ms: 2.179958
+  type: 'test'
+  ...
+# Subtest: keeps final map warnings in the persisted summary for later exports
+ok 158 - keeps final map warnings in the persisted summary for later exports
+  ---
+  duration_ms: 0.805708
+  type: 'test'
+  ...
+# Subtest: blocks final map completion when a reference was not verified by Research Starter
+ok 159 - blocks final map completion when a reference was not verified by Research Starter
+  ---
+  duration_ms: 0.713375
+  type: 'test'
+  ...
+# Subtest: blocks final map completion when methodology rows do not cover every objective
+ok 160 - blocks final map completion when methodology rows do not cover every objective
+  ---
+  duration_ms: 2.18775
+  type: 'test'
+  ...
+# Subtest: clones v2 workflow content with independent IDs and traceability
+ok 161 - clones v2 workflow content with independent IDs and traceability
+  ---
+  duration_ms: 0.682375
+  type: 'test'
+  ...
+# Subtest: summarizes v2 dashboard cards without exposing the raw prompt as title
+ok 162 - summarizes v2 dashboard cards without exposing the raw prompt as title
+  ---
+  duration_ms: 1.077417
+  type: 'test'
+  ...
+# Subtest: supports server-side rollout control for v2 creation
+ok 163 - supports server-side rollout control for v2 creation
+  ---
+  duration_ms: 0.082333
+  type: 'test'
+  ...
+# Subtest: creates a PDF export for the v2 final map preset
+ok 164 - creates a PDF export for the v2 final map preset
+  ---
+  duration_ms: 80.008625
+  type: 'test'
+  ...
+# Subtest: registers the S3 security profile and a remote-aware release gate
+ok 165 - registers the S3 security profile and a remote-aware release gate
+  ---
+  duration_ms: 9.681791
+  type: 'test'
+  ...
+# Subtest: keeps public abuse, webhook and private upload controls explicit
+ok 166 - keeps public abuse, webhook and private upload controls explicit
+  ---
+  duration_ms: 3.346583
+  type: 'test'
+  ...
+# Subtest: routes sensitive runtime events through centralized sanitized loggers
+ok 167 - routes sensitive runtime events through centralized sanitized loggers
+  ---
+  duration_ms: 4.642583
+  type: 'test'
+  ...
+# Subtest: social auth accepts Google and rejects every other provider
+ok 168 - social auth accepts Google and rejects every other provider
+  ---
+  duration_ms: 0.3445
+  type: 'test'
+  ...
+# Subtest: Google auth flag fails closed
+ok 169 - Google auth flag fails closed
+  ---
+  duration_ms: 0.066708
+  type: 'test'
+  ...
+# Subtest: auth destinations remain internal
+ok 170 - auth destinations remain internal
+  ---
+  duration_ms: 0.15175
+  type: 'test'
+  ...
+# Subtest: callback and login errors expose only Google or generic access
+ok 171 - callback and login errors expose only Google or generic access
+  ---
+  duration_ms: 0.061375
+  type: 'test'
+  ...
+# Subtest: enforces the strict student/advisor project matrix
+ok 172 - enforces the strict student/advisor project matrix
+  ---
+  duration_ms: 0.652709
+  type: 'test'
+  ...
+# Subtest: separates own projects from linked review projects in the dashboard
+ok 173 - separates own projects from linked review projects in the dashboard
+  ---
+  duration_ms: 0.192667
+  type: 'test'
+  ...
+# Subtest: authorizes direct URLs before loading project content
+ok 174 - authorizes direct URLs before loading project content
+  ---
+  duration_ms: 0.121
+  type: 'test'
+  ...
+# Subtest: keeps advisor-owned projects autonomous and removes student-only controls
+ok 175 - keeps advisor-owned projects autonomous and removes student-only controls
+  ---
+  duration_ms: 0.851125
+  type: 'test'
+  ...
+# Subtest: sends the profile version on every role-sensitive mutation surface
+ok 176 - sends the profile version on every role-sensitive mutation surface
+  ---
+  duration_ms: 1.966792
+  type: 'test'
+  ...
+# Subtest: records real role context and a PII-free mode-change event
+ok 177 - records real role context and a PII-free mode-change event
+  ---
+  duration_ms: 0.546334
+  type: 'test'
+  ...
+# Subtest: requires an advisor only for student-authored progression
+ok 178 - requires an advisor only for student-authored progression
+  ---
+  duration_ms: 0.607833
+  type: 'test'
+  ...
+# Subtest: blocks the first student decision in the interface until an advisor is saved
+ok 179 - blocks the first student decision in the interface until an advisor is saved
+  ---
+  duration_ms: 0.623167
+  type: 'test'
+  ...
+# Subtest: enforces the advisor gate in every progression API
+ok 180 - enforces the advisor gate in every progression API
+  ---
+  duration_ms: 0.249084
+  type: 'test'
+  ...
+# Subtest: ships a database trigger and isolated PostgreSQL proof against direct progress
+ok 181 - ships a database trigger and isolated PostgreSQL proof against direct progress
+  ---
+  duration_ms: 0.751
+  type: 'test'
+  ...
+# Subtest: keeps every owned Supabase object aligned with the explicit access manifest
+ok 182 - keeps every owned Supabase object aligned with the explicit access manifest
+  ---
+  duration_ms: 16.193209
+  type: 'test'
+  ...
+# Subtest: fails when a future migration adds an undeclared exposed object
+ok 183 - fails when a future migration adds an undeclared exposed object
+  ---
+  duration_ms: 11.258834
+  type: 'test'
+  ...
+# Subtest: fails when a future migration broadens a protected table grant
+ok 184 - fails when a future migration broadens a protected table grant
+  ---
+  duration_ms: 6.688292
+  type: 'test'
+  ...
+# Subtest: fails when legacy default privileges are not explicitly removed
+ok 185 - fails when legacy default privileges are not explicitly removed
+  ---
+  duration_ms: 9.643125
+  type: 'test'
+  ...
+# Subtest: forwards the refreshed cookie while preserving other Proxy request headers
+ok 186 - forwards the refreshed cookie while preserving other Proxy request headers
+  ---
+  duration_ms: 1.773875
+  type: 'test'
+  ...
+# Subtest: removes a stale forwarded cookie when the refreshed request has none
+ok 187 - removes a stale forwarded cookie when the refreshed request has none
+  ---
+  duration_ms: 0.103875
+  type: 'test'
+  ...
+# Subtest: propagates Supabase no-cache headers with a refreshed response cookie
+ok 188 - propagates Supabase no-cache headers with a refreshed response cookie
+  ---
+  duration_ms: 0.140084
+  type: 'test'
+  ...
+# Subtest: C111: all 49 navigation pairs preserve the canonical state, history, IDs and approvals
+ok 189 - C111: all 49 navigation pairs preserve the canonical state, history, IDs and approvals
+  ---
+  duration_ms: 6.0155
+  type: 'test'
+  ...
+# Subtest: C111: a saved draft survives parsing while the canonical context and later work stay intact
+ok 190 - C111: a saved draft survives parsing while the canonical context and later work stay intact
+  ---
+  duration_ms: 4.433333
+  type: 'test'
+  ...
+# Subtest: C111: unchanged saves do not create academic revisions
+ok 191 - C111: unchanged saves do not create academic revisions
+  ---
+  duration_ms: 0.731542
+  type: 'test'
+  ...
+# Subtest: C111: confirming an earlier edit preserves downstream text and historical approvals, flagging review
+ok 192 - C111: confirming an earlier edit preserves downstream text and historical approvals, flagging review
+  ---
+  duration_ms: 1.87675
+  type: 'test'
+  ...
+# Subtest: C111: regenerated content is an independent proposal and cannot replace a saved draft
+ok 193 - C111: regenerated content is an independent proposal and cannot replace a saved draft
+  ---
+  duration_ms: 0.820333
+  type: 'test'
+  ...
+# Subtest: C111: unit restoration includes methodological data, notes, links and references
+ok 194 - C111: unit restoration includes methodological data, notes, links and references
+  ---
+  duration_ms: 1.02325
+  type: 'test'
+  ...
+# Subtest: C111: legacy arrays beyond 300 versions parse without truncation
+ok 195 - C111: legacy arrays beyond 300 versions parse without truncation
+  ---
+  duration_ms: 8.717417
+  type: 'test'
+  ...
+# Subtest: C111: pending advisor submission rejects a new confirmation
+ok 196 - C111: pending advisor submission rejects a new confirmation
+  ---
+  duration_ms: 0.761583
+  type: 'test'
+  ...
+# Subtest: C111: duplication creates independent IDs and no inherited approval or history
+ok 197 - C111: duplication creates independent IDs and no inherited approval or history
+  ---
+  duration_ms: 1.189625
+  type: 'test'
+  ...
+# Subtest: C111: accepting an identical proposal clears the proposal and creates a recoverable draft
+ok 198 - C111: accepting an identical proposal clears the proposal and creates a recoverable draft
+  ---
+  duration_ms: 0.823208
+  type: 'test'
+  ...
+# Subtest: network, cancellation and malformed payloads are not reported as invalid AI output
+ok 199 - network, cancellation and malformed payloads are not reported as invalid AI output
+  ---
+  duration_ms: 8.738625
+  type: 'test'
+  ...
+# Subtest: HTTP and declared codes distinguish blockers without inventing a provider error
+ok 200 - HTTP and declared codes distinguish blockers without inventing a provider error
+  ---
+  duration_ms: 0.14325
+  type: 'test'
+  ...
+# Subtest: truncated/invalid streams preserve a transport reason; valid result keeps conflict code
+ok 201 - truncated/invalid streams preserve a transport reason; valid result keeps conflict code
+  ---
+  duration_ms: 3.040834
+  type: 'test'
+  ...
+# Subtest: HTTP errors survive HTML/empty error bodies, while invalid successful payloads are response_invalid
+ok 202 - HTTP errors survive HTML/empty error bodies, while invalid successful payloads are response_invalid
+  ---
+  duration_ms: 1.25525
+  type: 'test'
+  ...
+1..202
+# tests 202
+# suites 0
+# pass 202
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 838.293792
+
+> mapa-da-pesquisa@0.1.0 test:doi
+> node --conditions=react-server --import tsx --test tests/doi-reference.test.ts
+
+TAP version 13
+# Subtest: normalizes DOI, prefix and resolver URL without corrupting suffix identity
+ok 1 - normalizes DOI, prefix and resolver URL without corrupting suffix identity
+  ---
+  duration_ms: 0.65775
+  type: 'test'
+  ...
+# Subtest: maps Crossref metadata to editable fields and strips markup
+ok 2 - maps Crossref metadata to editable fields and strips markup
+  ---
+  duration_ms: 2.264291
+  type: 'test'
+  ...
+# Subtest: partial Crossref record keeps unknown metadata blank
+ok 3 - partial Crossref record keeps unknown metadata blank
+  ---
+  duration_ms: 0.199459
+  type: 'test'
+  ...
+# Subtest: DataCite supports personal and organizational creators without inventing a journal
+ok 4 - DataCite supports personal and organizational creators without inventing a journal
+  ---
+  duration_ms: 0.100459
+  type: 'test'
+  ...
+# Subtest: rejects a provider response for a different DOI
+ok 5 - rejects a provider response for a different DOI
+  ---
+  duration_ms: 0.166167
+  type: 'test'
+  ...
+# Subtest: reports bounded metadata and preserves more than eight authors
+ok 6 - reports bounded metadata and preserves more than eight authors
+  ---
+  duration_ms: 0.528833
+  type: 'test'
+  ...
+# Subtest: autofill preserves existing and concurrently edited fields
+ok 7 - autofill preserves existing and concurrently edited fields
+  ---
+  duration_ms: 0.154
+  type: 'test'
+  ...
+# Subtest: uses fixed provider hosts, no redirects, and falls back to DataCite
+ok 8 - uses fixed provider hosts, no redirects, and falls back to DataCite
+  ---
+  duration_ms: 9.605416
+  type: 'test'
+  ...
+# Subtest: distinguishes not found from provider outage and allows retry
+ok 9 - distinguishes not found from provider outage and allows retry
+  ---
+  duration_ms: 0.734709
+  type: 'test'
+  ...
+# Subtest: caches public metadata, coalesces requests, expires and returns independent copies
+ok 10 - caches public metadata, coalesces requests, expires and returns independent copies
+  ---
+  duration_ms: 1.320333
+  type: 'test'
+  ...
+# Subtest: invalid input never causes a network request
+ok 11 - invalid input never causes a network request
+  ---
+  duration_ms: 0.1375
+  type: 'test'
+  ...
+# Subtest: oversized and malformed upstream responses fail safely
+ok 12 - oversized and malformed upstream responses fail safely
+  ---
+  duration_ms: 1.045625
+  type: 'test'
+  ...
+# Subtest: bounds request bodies by bytes, including streams without content-length
+ok 13 - bounds request bodies by bytes, including streams without content-length
+  ---
+  duration_ms: 0.953208
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 136.30875
+
+> mapa-da-pesquisa@0.1.0 test:ai
+> node --conditions=react-server --import tsx --test tests/collaborative-ai.test.ts tests/card-regeneration-prompt.test.ts tests/guided-methodology-generation.test.ts tests/research-starter.test.ts tests/intake-report.test.ts
+
+TAP version 13
+# Subtest: card prompt combines the current draft, explicit instruction and confirmed project context
+ok 1 - card prompt combines the current draft, explicit instruction and confirmed project context
+  ---
+  duration_ms: 5.77775
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-20T20:50:07.780Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"38f70735-a56d-4ec2-b4b8-1b696dc7cf4b","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":2,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"rate_limited"}
+# {"timestamp":"2026-10-20T20:50:07.783Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"38f70735-a56d-4ec2-b4b8-1b696dc7cf4b","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"rate_limited"}
+# {"timestamp":"2026-10-20T20:50:07.784Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"322a72d8-f194-464f-b895-6ca17d9bd001","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"unavailable"}
+# {"timestamp":"2026-10-20T20:50:07.785Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"322a72d8-f194-464f-b895-6ca17d9bd001","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"unavailable"}
+# {"timestamp":"2026-10-20T20:50:07.785Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"8ae8794e-29b2-4085-9b7a-5cd431586eda","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"timeout"}
+# {"timestamp":"2026-10-20T20:50:07.786Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"8ae8794e-29b2-4085-9b7a-5cd431586eda","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"timeout"}
+# {"timestamp":"2026-10-20T20:50:07.787Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"c67683dd-6668-4786-9a24-c35d4da5e8a2","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"auth"}
+# {"timestamp":"2026-10-20T20:50:07.787Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"0c5c9d86-4864-49b1-8efa-9f625f251f6a","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"auth"}
+# {"timestamp":"2026-10-20T20:50:07.787Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"1b1cde47-f7f5-444d-bcaf-09d097dc4d57","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"configuration"}
+# {"timestamp":"2026-10-20T20:50:07.788Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"b216e224-dc0c-4db3-b99d-af7643d73552","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"refusal"}
+# {"timestamp":"2026-10-20T20:50:07.788Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"d87b306e-a9ea-4977-9f77-ff306915183e","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"budget"}
+# {"timestamp":"2026-10-20T20:50:07.788Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"f534f4f4-7e7e-46e3-b365-9c0132d08740","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"provider_quota"}
+# {"timestamp":"2026-10-20T20:50:07.788Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"f39ca2c3-d519-4c09-99a1-82e022e34649","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"f39ca2c3-d519-4c09-99a1-82e022e34649","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"c3ba6088-957c-4ae3-86a8-77f1b4caa717","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"cancelled"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"generate_general_objective","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"generate_specific_objectives","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":3,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"generate_specific_objectives","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":4,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"review_workflow_impact","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":5,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.789Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"03f8ddc5-c6eb-4d20-825a-ba1eda1d07fb","operation":"review_workflow_impact","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":6,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.790Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"b46b2fe3-b660-42a5-a2c5-5b44614e79ba","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.822Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"c883ae4b-21c8-442e-9364-04a4b9c83113","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":24,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"refusal"}
+# {"timestamp":"2026-10-20T20:50:07.822Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"9ba445a2-ff27-4985-896c-90ae9b3254ba","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.822Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"f41d94fc-abb2-44d3-a236-7556dc788055","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.845Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"eec6867e-1765-4ae7-9162-bac1d345579a","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":5,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-20T20:50:07.850Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"10964ccd-3ea0-4291-84f7-cefc5b4265be","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":5,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# Gemini validado: modelo=gemini-3.6-flash; saída estruturada compatível com o schema 1.0.0.
+# Gemini validado: modelo=gemini-3.8-flash; saída estruturada compatível com o schema 1.0.0.
+# Gemini validado: modelo=gemini-2.5-flash; saída estruturada compatível com o schema 1.0.0.
+# {"timestamp":"2026-10-20T20:50:07.865Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"0d4aa968-cbc6-440a-b596-5ab273202182","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"rate_limited"}
+# {"timestamp":"2026-10-20T20:50:07.865Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"0d4aa968-cbc6-440a-b596-5ab273202182","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"rate_limited"}
+# {"timestamp":"2026-10-20T20:50:07.866Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"489b5ff2-f64e-40c1-86ea-f7b6da76e2ea","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"unavailable"}
+# {"timestamp":"2026-10-20T20:50:07.866Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"489b5ff2-f64e-40c1-86ea-f7b6da76e2ea","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"unavailable"}
+# {"timestamp":"2026-10-20T20:50:07.877Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"f5767fb0-5bb0-4d7c-a866-576c53b47e23","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":3,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.877Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"f5767fb0-5bb0-4d7c-a866-576c53b47e23","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.878Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"aaacb74a-8a4c-422e-a105-7b2b55db6166","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.879Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"aaacb74a-8a4c-422e-a105-7b2b55db6166","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.880Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"1817ee7b-f1d7-4261-973b-b042f2e745ed","operation":"generate_methodology_plan","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.880Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"1817ee7b-f1d7-4261-973b-b042f2e745ed","operation":"generate_methodology_plan","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.881Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"722e310a-f99d-4d24-a485-f25f6ee44b5d","operation":"generate_methodology_plan","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0000375,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-20T20:50:07.881Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"722e310a-f99d-4d24-a485-f25f6ee44b5d","operation":"generate_methodology_plan","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.0002625,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# Subtest: C112: transient errors switch provider once, preserving operation and actual progress
+ok 2 - C112: transient errors switch provider once, preserving operation and actual progress
+  ---
+  duration_ms: 9.299459
+  type: 'test'
+  ...
+# Subtest: C112: auth, refusal, quota and application budget cannot trigger alternate spending
+ok 3 - C112: auth, refusal, quota and application budget cannot trigger alternate spending
+  ---
+  duration_ms: 1.712375
+  type: 'test'
+  ...
+# Subtest: C112: malformed output and foreign reference IDs get only one repair, no unvalidated result
+ok 4 - C112: malformed output and foreign reference IDs get only one repair, no unvalidated result
+  ---
+  duration_ms: 0.399959
+  type: 'test'
+  ...
+# Subtest: C112: cancellation after provider completion rejects late content before persistence
+ok 5 - C112: cancellation after provider completion rejects late content before persistence
+  ---
+  duration_ms: 0.2555
+  type: 'test'
+  ...
+# Subtest: C112: global attempt limit includes different operations and reviewer calls
+ok 6 - C112: global attempt limit includes different operations and reviewer calls
+  ---
+  duration_ms: 0.727584
+  type: 'test'
+  ...
+# Subtest: C112: rollback flag retains Gemini and performs zero OpenAI calls
+ok 7 - C112: rollback flag retains Gemini and performs zero OpenAI calls
+  ---
+  duration_ms: 0.171917
+  type: 'test'
+  ...
+# Subtest: C112: observations omit content/secrets and report unknown usage as null
+ok 8 - C112: observations omit content/secrets and report unknown usage as null
+  ---
+  duration_ms: 0.337708
+  type: 'test'
+  ...
+# Subtest: C112: streamed result waits for confirmed save and retains HTTP authorization failures
+ok 9 - C112: streamed result waits for confirmed save and retains HTTP authorization failures
+  ---
+  duration_ms: 6.285875
+  type: 'test'
+  ...
+# Subtest: C112: disconnect and alien/out-of-order events cannot report false success
+ok 10 - C112: disconnect and alien/out-of-order events cannot report false success
+  ---
+  duration_ms: 0.661584
+  type: 'test'
+  ...
+# Subtest: C112: real OpenAI adapter recognizes completed refusal without attempting Gemini
+ok 11 - C112: real OpenAI adapter recognizes completed refusal without attempting Gemini
+  ---
+  duration_ms: 24.460042
+  type: 'test'
+  ...
+# Subtest: C112: failure classification does not inspect or expose arbitrary error messages
+ok 12 - C112: failure classification does not inspect or expose arbitrary error messages
+  ---
+  duration_ms: 0.134542
+  type: 'test'
+  ...
+# Subtest: C112: global cost reservation stops a call before any provider is invoked
+ok 13 - C112: global cost reservation stops a call before any provider is invoked
+  ---
+  duration_ms: 0.197125
+  type: 'test'
+  ...
+# Subtest: C112: two concurrent operations keep progress and context isolated
+ok 14 - C112: two concurrent operations keep progress and context isolated
+  ---
+  duration_ms: 0.263125
+  type: 'test'
+  ...
+# Subtest: C112: reviewer failure and disabled flag preserve the generated proposal; save calls no reviewer
+ok 15 - C112: reviewer failure and disabled flag preserve the generated proposal; save calls no reviewer
+  ---
+  duration_ms: 17.3445
+  type: 'test'
+  ...
+# Subtest: C112: both real SDK adapters parse the same domain contract and keep provider options separate
+ok 16 - C112: both real SDK adapters parse the same domain contract and keep provider options separate
+  ---
+  duration_ms: 10.4965
+  type: 'test'
+  ...
+# Subtest: C113: verification script serializes compatible controls without a network call
+ok 17 - C113: verification script serializes compatible controls without a network call
+  ---
+  duration_ms: 5.451625
+  type: 'test'
+  ...
+# Subtest: C113: unsupported model overrides fail before transport or additional spending
+ok 18 - C113: unsupported model overrides fail before transport or additional spending
+  ---
+  duration_ms: 0.126375
+  type: 'test'
+  ...
+# Subtest: C113: real Gemini adapter treats parameter HTTP 400 as configuration without retry or fallback
+ok 19 - C113: real Gemini adapter treats parameter HTTP 400 as configuration without retry or fallback
+  ---
+  duration_ms: 8.363083
+  type: 'test'
+  ...
+# Subtest: C113: real SDK transport retains one fallback for Gemini HTTP 429/503
+ok 20 - C113: real SDK transport retains one fallback for Gemini HTTP 429/503
+  ---
+  duration_ms: 1.978958
+  type: 'test'
+  ...
+# Subtest: C118: real Gemini adapter repairs oversized problem output once, before accepting it
+ok 21 - C118: real Gemini adapter repairs oversized problem output once, before accepting it
+  ---
+  duration_ms: 12.386166
+  type: 'test'
+  ...
+# Subtest: C118: nested/nullable text constraints reach both providers and only valid card output is returned
+ok 22 - C118: nested/nullable text constraints reach both providers and only valid card output is returned
+  ---
+  duration_ms: 2.105875
+  type: 'test'
+  ...
+# Subtest: methodology generation supplies a complete editable proposal, real links and stable existing row IDs
+ok 23 - methodology generation supplies a complete editable proposal, real links and stable existing row IDs
+  ---
+  duration_ms: 6.708458
+  type: 'test'
+  ...
+# Subtest: new advanced intake accepts 400, rejects 401 on the server, and preserves legacy 2000 characters
+ok 24 - new advanced intake accepts 400, rejects 401 on the server, and preserves legacy 2000 characters
+  ---
+  duration_ms: 5.882916
+  type: 'test'
+  ...
+# Subtest: appendix rewrite preserves original spacing, isolates source text, validates every generated limit and caches exact source
+ok 25 - appendix rewrite preserves original spacing, isolates source text, validates every generated limit and caches exact source
+  ---
+  duration_ms: 1.092667
+  type: 'test'
+  ...
+# Subtest: shared report includes complete chapters and five literal original/reformulated pairs only for advanced mode
+ok 26 - shared report includes complete chapters and five literal original/reformulated pairs only for advanced mode
+  ---
+  duration_ms: 5.068625
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"71af9696-8971-4a08-8ff0-badd5a6ae418","timestamp":"2026-10-20T20:50:07.559Z","attempt":1,"durationMs":20,"queryLength":166,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"925ae3f0-ce57-4796-a552-ead9ba8692e1","timestamp":"2026-10-20T20:50:07.561Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# Subtest: C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+ok 27 - C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+  ---
+  duration_ms: 22.052875
+  type: 'test'
+  ...
+# Subtest: C120: validates request before any network call, including reversed dates
+ok 28 - C120: validates request before any network call, including reversed dates
+  ---
+  duration_ms: 1.02975
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"925ae3f0-ce57-4796-a552-ead9ba8692e1","timestamp":"2026-10-20T20:50:07.914Z","attempt":2,"durationMs":353,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"bb91cbdd-73e4-4eab-900f-d6f119f3d4fa","timestamp":"2026-10-20T20:50:07.915Z","attempt":1,"code":"temporary-unavailable","status":429,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"bb91cbdd-73e4-4eab-900f-d6f119f3d4fa","timestamp":"2026-10-20T20:50:07.915Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"bb91cbdd-73e4-4eab-900f-d6f119f3d4fa","timestamp":"2026-10-20T20:50:07.916Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"6ba4e4a9-7160-4dcb-9348-7adb2e7ac201","timestamp":"2026-10-20T20:50:07.916Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"6ba4e4a9-7160-4dcb-9348-7adb2e7ac201","timestamp":"2026-10-20T20:50:07.917Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"6ba4e4a9-7160-4dcb-9348-7adb2e7ac201","timestamp":"2026-10-20T20:50:07.917Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"ae8d4bfa-5543-4575-a6d5-0d738671d9f9","timestamp":"2026-10-20T20:50:07.917Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"ae8d4bfa-5543-4575-a6d5-0d738671d9f9","timestamp":"2026-10-20T20:50:07.917Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"ae8d4bfa-5543-4575-a6d5-0d738671d9f9","timestamp":"2026-10-20T20:50:07.917Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"311fb1f3-f841-4c24-bb69-000ac92f65e2","timestamp":"2026-10-20T20:50:07.918Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"311fb1f3-f841-4c24-bb69-000ac92f65e2","timestamp":"2026-10-20T20:50:07.918Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"311fb1f3-f841-4c24-bb69-000ac92f65e2","timestamp":"2026-10-20T20:50:07.918Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"627c54d0-3be2-42c1-9db4-62f99ce234a6","timestamp":"2026-10-20T20:50:07.919Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"627c54d0-3be2-42c1-9db4-62f99ce234a6","timestamp":"2026-10-20T20:50:07.919Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"627c54d0-3be2-42c1-9db4-62f99ce234a6","timestamp":"2026-10-20T20:50:07.919Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"cbbf638f-67d8-4e90-9c41-6b913a665e34","timestamp":"2026-10-20T20:50:07.920Z","attempt":1,"code":"invalid-request","status":400,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_request_failed","requestId":"4258b7e5-0d06-4e93-9865-e55f2543298b","timestamp":"2026-10-20T20:50:07.920Z","attempt":1,"code":"unauthorized","status":401,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"597b53b9-0a0e-4a71-b91a-8274dd6f14e1","timestamp":"2026-10-20T20:50:07.920Z","attempt":1,"code":"unauthorized","status":403,"queryLength":26,"durationMs":0}
+# Subtest: C120: retries a connection failure and recovers on the primary without fallback
+ok 29 - C120: retries a connection failure and recovers on the primary without fallback
+  ---
+  duration_ms: 353.582292
+  type: 'test'
+  ...
+# Subtest: C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+ok 30 - C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+  ---
+  duration_ms: 1.596416
+  type: 'test'
+  ...
+# Subtest: C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+ok 31 - C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+  ---
+  duration_ms: 3.107
+  type: 'test'
+  ...
+# Subtest: C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+ok 32 - C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+  ---
+  duration_ms: 0.429125
+  type: 'test'
+  ...
+# {"event":"research_starter_request_failed","requestId":"e828a5f4-e1ee-43a7-9b96-a71e4b9ad378","timestamp":"2026-10-20T20:50:07.933Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":13}
+# {"event":"research_starter_fallback_started","requestId":"e828a5f4-e1ee-43a7-9b96-a71e4b9ad378","timestamp":"2026-10-20T20:50:07.933Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"e828a5f4-e1ee-43a7-9b96-a71e4b9ad378","timestamp":"2026-10-20T20:50:07.933Z","stage":"crossref","durationMs":13,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"155be8e0-80f4-411b-9ad3-955f4fa03457","timestamp":"2026-10-20T20:50:07.934Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"155be8e0-80f4-411b-9ad3-955f4fa03457","timestamp":"2026-10-20T20:50:07.934Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_failed","requestId":"155be8e0-80f4-411b-9ad3-955f4fa03457","timestamp":"2026-10-20T20:50:07.934Z","stage":"crossref","durationMs":0,"code":"temporary-unavailable"}
+# {"event":"research_starter_request_failed","requestId":"9306647c-dd8a-472a-a750-527e412b46f1","timestamp":"2026-10-20T20:50:07.935Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"9306647c-dd8a-472a-a750-527e412b46f1","timestamp":"2026-10-20T20:50:07.935Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"9306647c-dd8a-472a-a750-527e412b46f1","timestamp":"2026-10-20T20:50:07.935Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# Subtest: C120: primary timeout leaves time for the alternate source
+ok 33 - C120: primary timeout leaves time for the alternate source
+  ---
+  duration_ms: 13.059417
+  type: 'test'
+  ...
+# Subtest: C120: cancellation suppresses retries and fallback, and rejects late results
+ok 34 - C120: cancellation suppresses retries and fallback, and rejects late results
+  ---
+  duration_ms: 0.68225
+  type: 'test'
+  ...
+# Subtest: C120: both services failing gives a recoverable sanitized error and no fake report
+ok 35 - C120: both services failing gives a recoverable sanitized error and no fake report
+  ---
+  duration_ms: 0.234417
+  type: 'test'
+  ...
+# Subtest: C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+ok 36 - C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+  ---
+  duration_ms: 0.722875
+  type: 'test'
+  ...
+# Subtest: C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+ok 37 - C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+  ---
+  duration_ms: 0.082875
+  type: 'test'
+  ...
+# Subtest: C120: progress truthfully identifies Crossref without breaking the existing researching phase
+ok 38 - C120: progress truthfully identifies Crossref without breaking the existing researching phase
+  ---
+  duration_ms: 0.388875
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 601.351292
+
+> mapa-da-pesquisa@0.1.0 exports:verify
+> node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts
+
+{"docxBytes":10976,"outputDirectory":"/Users/marioreis/Library/CloudStorage/Dropbox/Mac (6)/Documents/Developer/mapa/tmp/exports","pdfBytes":14481}
+{"variant":"advanced","pdfBytes":428996,"docxBytes":309442}
+{"variant":"advanced-draft","pdfBytes":431053,"docxBytes":309813}
+{"variant":"quick","pdfBytes":422250,"docxBytes":308462}
+
+> mapa-da-pesquisa@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 63ms
+
+  Creating an optimized production build ...
+
+-----
+FATAL: An unexpected Turbopack error occurred. A panic log has been written to /var/folders/hm/q79h9c595l58tkvjr63kmcsr0000gn/T/next-panic-df2d3f32f433a5bf357c783cad47628f.log.
+
+To help make Turbopack better, report this error by clicking here: https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29&body=Turbopack%20version%3A%20%60b0fad0d4%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0A%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A%0ACaused%20by%3A%0A-%20creating%20new%20process%0A-%20binding%20to%20a%20port%0A-%20Operation%20not%20permitted%20%28os%20error%201%29%0A%0ADebug%20info%3A%0A-%20Execution%20of%20get_all_written_entrypoints_with_issues_operation%20failed%0A-%20Execution%20of%20EntrypointsOperation%3A%3Anew%20failed%0A-%20Execution%20of%20all_entrypoints_write_to_disk_operation%20failed%0A-%20Execution%20of%20output_assets_operation%20failed%0A-%20Execution%20of%20%3CMiddlewareEndpoint%20as%20Endpoint%3E%3A%3Aoutput%20failed%0A-%20Execution%20of%20MiddlewareEndpoint%3A%3Aoutput_assets%20failed%0A-%20Execution%20of%20MiddlewareEndpoint%3A%3Anode_chunk%20failed%0A-%20Execution%20of%20%2A%3CNodeJsChunkingContext%20as%20ChunkingContext%3E%3A%3Aentry_chunk_group%20failed%0A-%20Execution%20of%20Project%3A%3Aserver_chunking_context%20failed%0A-%20Execution%20of%20%2Aget_server_chunking_context%20failed%0A-%20Execution%20of%20Project%3A%3Amodule_ids%20failed%0A-%20Execution%20of%20whole_app_module_graph_operation%20failed%0A-%20Execution%20of%20%2AProject%3A%3Aget_all_additional_entries%20failed%0A-%20Execution%20of%20ModuleGraph%3A%3Afrom_graphs%20failed%0A-%20Execution%20of%20ModuleGraph%3A%3Afrom_graphs_inner%20failed%0A-%20Execution%20of%20SingleModuleGraph%3A%3Anew_with_entries%20failed%0A-%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A-%20Execution%20of%20primary_chunkable_referenced_modules%20failed%0A-%20Execution%20of%20%3CCssModule%20as%20Module%3E%3A%3Areferences%20failed%0A-%20Execution%20of%20parse_css%20failed%0A-%20Execution%20of%20%3CPostCssTransformedAsset%20as%20Asset%3E%3A%3Acontent%20failed%0A-%20Execution%20of%20PostCssTransformedAsset%3A%3Aprocess%20failed%0A-%20Execution%20of%20evaluate_webpack_loader%20failed%0A-%20creating%20new%20process%0A-%20binding%20to%20a%20port%0A-%20Operation%20not%20permitted%20%28os%20error%201%29%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+
+> Build error occurred
+Error [TurbopackInternalError]: [project]/app/globals.css [app-client] (css)
+
+Caused by:
+- creating new process
+- binding to a port
+- Operation not permitted (os error 1)
+
+Debug info:
+- Execution of get_all_written_entrypoints_with_issues_operation failed
+- Execution of EntrypointsOperation::new failed
+- Execution of all_entrypoints_write_to_disk_operation failed
+- Execution of output_assets_operation failed
+- Execution of <MiddlewareEndpoint as Endpoint>::output failed
+- Execution of MiddlewareEndpoint::output_assets failed
+- Execution of MiddlewareEndpoint::node_chunk failed
+- Execution of *<NodeJsChunkingContext as ChunkingContext>::entry_chunk_group failed
+- Execution of Project::server_chunking_context failed
+- Execution of *get_server_chunking_context failed
+- Execution of Project::module_ids failed
+- Execution of whole_app_module_graph_operation failed
+- Execution of *Project::get_all_additional_entries failed
+- Execution of ModuleGraph::from_graphs failed
+- Execution of ModuleGraph::from_graphs_inner failed
+- Execution of SingleModuleGraph::new_with_entries failed
+- [project]/app/globals.css [app-client] (css)
+- Execution of primary_chunkable_referenced_modules failed
+- Execution of <CssModule as Module>::references failed
+- Execution of parse_css failed
+- Execution of <PostCssTransformedAsset as Asset>::content failed
+- Execution of PostCssTransformedAsset::process failed
+- Execution of evaluate_webpack_loader failed
+- creating new process
+- binding to a port
+- Operation not permitted (os error 1)
+    at <unknown> (TurbopackInternalError: [project]/app/globals.css [app-client] (css)) {
+  type: 'TurbopackInternalError',
+  location: undefined
+}

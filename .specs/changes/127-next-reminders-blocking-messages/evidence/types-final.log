@@ -1,0 +1,4 @@
+
+> mapa-da-pesquisa@0.1.0 typecheck
+> tsc --noEmit
+

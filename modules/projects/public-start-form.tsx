@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeInputSchema, type ResearchIntakeDraft } from "./research-intake";
 import { ResearchIntakeForm } from "./research-intake-form";
 import { ResearchPromptInput } from "./research-prompt-input";
-import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
+import { setAnalyticsContext, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
 
 export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
 export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
@@ -100,7 +100,6 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
       setError("Não foi possível guardar o rascunho neste navegador. Verifique as permissões de armazenamento e tente novamente.");
       return;
     }
-    if (!authenticated) trackAnalyticsEvent("login_started", { app_surface: "home" });
     setContinuing(true);
     router.push(authenticated ? "/dashboard?resume=1" : "/login?next=%2Fdashboard%3Fresume%3D1");
   }
@@ -153,7 +152,7 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick", 
           </button>
           {mode === "quick" ? (
             <div className="public-mode-content" id="quick-research-mode">
-              <ResearchPromptInput id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
+              <ResearchPromptInput aiSuggestionsEnabled={authenticated} id="quick-research-prompt" onChange={setQuickPrompt} onEnter={handleQuickEnter} onSuggestionSelect={handleQuickSuggestionSelect} value={quickPrompt} />
               <p className="public-mode-hint">A IA organiza o roteiro inicial e você poderá revisar as propostas nos cards seguintes.</p>
             </div>
           ) : null}

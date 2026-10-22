@@ -1,0 +1,6 @@
+
+> mapa-da-pesquisa@0.1.0 test:exports
+> node scripts/verify-intake-report-routes.mjs
+
+C121 routes: original/academic data and approvals preserved; cached rewrite; editable review; limits; provider failure; concurrent writes; authorization; state gate; quick mode. Synthetic services only.
+C121 actual export routes: PDF/DOCX attachments, private/no-store, stable cached content, no download AI or write, approval/draft and authorization gates passed.

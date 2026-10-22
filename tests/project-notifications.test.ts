@@ -72,3 +72,31 @@ test("sem destinatário ou chave, notificação é ignorada sem chamar o Resend"
     else process.env.RESEND_API_KEY = previousKey;
   }
 });
+
+test("reminder has bounded transport, stable idempotency and no free-form subject/comment", async () => {
+  const prior = process.env.RESEND_API_KEY, previousFetch = globalThis.fetch, priorUrl = process.env.NEXT_PUBLIC_APP_URL;
+  process.env.RESEND_API_KEY = "synthetic";
+  process.env.NEXT_PUBLIC_APP_URL = "https://mapa.invalid";
+  const input = { actorEmail: null, idempotencyKey: "review-reminder-fixed", kind: "review_reminder" as const, projectId: "00000000-0000-4000-8000-000000000001", projectTitle: "UNTRUSTED TITLE", comment: "UNTRUSTED COMMENT", recipientEmail: "test@example.invalid", stepLabel: "Problemática" };
+  let called=0;
+  globalThis.fetch = async (_url, init) => {
+    called++;
+    assert.ok(init?.signal instanceof AbortSignal);
+    assert.equal(new Headers(init?.headers).get("Idempotency-Key"), "review-reminder-fixed");
+    const payload=JSON.parse(String(init?.body));
+    assert.doesNotMatch(payload.subject,/UNTRUSTED/);
+    assert.doesNotMatch(payload.html,/UNTRUSTED COMMENT/);
+    return new Response(null,{status:200});
+  };
+  try {
+    assert.equal((await sendProjectNotification(input)).status,"sent");
+    assert.equal(called,1);
+    globalThis.fetch=async()=>{called++;throw new DOMException("synthetic","TimeoutError");};
+    assert.equal((await sendProjectNotification(input)).status,"failed");
+    assert.equal(called,2); // no automatic retry after uncertain delivery
+  } finally {
+    globalThis.fetch=previousFetch;
+    if(prior===undefined)delete process.env.RESEND_API_KEY;else process.env.RESEND_API_KEY=prior;
+    if(priorUrl===undefined)delete process.env.NEXT_PUBLIC_APP_URL;else process.env.NEXT_PUBLIC_APP_URL=priorUrl;
+  }
+});

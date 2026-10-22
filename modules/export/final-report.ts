@@ -181,10 +181,11 @@ export function buildFinalReport(input: FinalMapExportInput): ReportBlock[] {
   if (briefing) {
     page();
     heading( "APÊNDICE — RESPOSTAS INICIAIS DO MAPA AVANÇADO");
-    paragraph( "Cada quadro conserva o texto original do autor e apresenta uma reformulação do Mapa da Pesquisa para revisão. A reformulação organiza a redação; não substitui o original nem constitui validação do orientador.");
+    paragraph( "Cada quadro conserva o texto original do autor. Quando disponível, apresenta também a reformulação do Mapa da Pesquisa para revisão. A reformulação organiza a redação; não substitui o original nem constitui validação do orientador.");
     const initialProduct = getResearchProductGuidance(briefing.researchType);
     if (initialProduct) paragraph( `Produto acadêmico escolhido: ${initialProduct.label}.`);
     const review = currentResearchIntakeReview(finalMap.workflow.content);
+    if (!review) paragraph("Exportação sem reformulação dos textos iniciais. Nenhuma chamada de IA é necessária para baixar este relatório.");
     for (const [index, field] of RESEARCH_INTAKE_FIELDS.entries()) {
 
       subheading( `${index + 1}. ${field.label}`);

@@ -27,3 +27,35 @@ test("truncated/invalid streams preserve a transport reason; valid result keeps 
   const response=await readProgressResponse(streamResponse(lines),()=>{});
   assert.equal(response.status,409);assert.equal((await response.json()).code,"context_stale");
 });
+
+
+test("HTTP errors survive HTML/empty error bodies, while invalid successful payloads are response_invalid", async () => {
+  for (const [status, reason] of [[429, "rate_limited"], [422, "validation"], [503, "unknown"]] as const) {
+    await assert.rejects(() => readWorkflowPayload(new Response("<html>synthetic</html>", { status })), (error: unknown) => workflowClientFailure(error).reason === reason);
+  }
+  for (const payload of [null, [], "unexpected"]) {
+    await assert.rejects(() => readWorkflowPayload(Response.json(payload)), (error: unknown) => workflowClientFailure(error).reason === "response_invalid");
+  }
+});
+
+test("known blockers explain a concrete next step without exposing server content", async () => {
+  const { WorkflowHttpError } = await import("../modules/research-workflow/request-failure");
+  const cases = [
+    ["student_advisor_required", /Cadastre o e-mail do orientador/, "prerequisite_required"],
+    ["advisor_pending", /aguardando a revisão do orientador/, "advisor_pending"],
+    ["active_step_required", /menu superior/, "prerequisite_required"],
+    ["literature_required", /Revisão da literatura/, "prerequisite_required"],
+    ["revision_conflict", /edições continuam nesta tela/, "revision_conflict"],
+    ["profile_mode_stale", /perfil mudou em outra aba/, "permission_denied"],
+  ] as const;
+  for (const [code, message, reason] of cases) {
+    const failure = new WorkflowHttpError(409, code);
+    assert.match(failure.message, message);
+    assert.equal(failure.reason, reason);
+  }
+  for (const [status, message] of [[401,/entre novamente/],[403,/permissão/],[429,/Aguarde/],[503,/temporariamente indisponível/],[409,/estado do projeto mudou/]] as const) {
+    const failure = new WorkflowHttpError(status, "PRIVATE DATABASE ERROR");
+    assert.match(failure.message, message);
+    assert.doesNotMatch(failure.message, /PRIVATE/);
+  }
+});

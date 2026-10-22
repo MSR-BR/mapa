@@ -38,7 +38,7 @@ test("fails closed after bounded retries if the JWT remains future-issued", asyn
     async () => { calls++; return [{ error: futureJwt }]; },
     async (milliseconds) => { waits.push(milliseconds); },
   );
-  assert.equal(calls, 4);
-  assert.deepEqual(waits, [500, 1500, 3000]);
+  assert.equal(calls, 3);
+  assert.deepEqual(waits, [500, 1500]);
   assert.deepEqual(result[0].error, futureJwt);
 });

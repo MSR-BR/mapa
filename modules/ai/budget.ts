@@ -2,9 +2,9 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { AiError } from "./failure";
 
-// This counter reserves the worst-case cost before each additional provider call.
+// This counter reserves the worst-case cost before every provider call.
 // Reservations are never refunded: a timeout may already have incurred cost.
-export async function reserveAdditionalAiBudget(micros: number) {
+export async function reserveAiBudget(micros: number) {
   const secret = process.env.MAPA_AI_BUDGET_SECRET;
   if (!secret) throw new AiError("configuration");
   const supabase = await createClient();

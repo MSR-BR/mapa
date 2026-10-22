@@ -1,6 +1,6 @@
 "use client";
 
-import { isSafeCampaignValue, PUBLIC_CAMPAIGN_KEYS } from "./campaign-attribution";
+import { clearPendingCampaign, readPendingCampaign, isSafeCampaignValue, PUBLIC_CAMPAIGN_KEYS } from "./campaign-attribution";
 
 /**
  * The analytics contract is deliberately small. Values are allow-listed
@@ -121,12 +121,26 @@ export function initializeAnalyticsTag(measurementId: string, adsConsent: boolea
   const target = window as AnalyticsWindow;
   if (!target.gtag) {
     target.dataLayer = target.dataLayer || [];
+    const pendingCampaign = readPendingCampaign();
+    let firstPageView = true;
+    const attributedContext = () => {
+      const context = safeAnalyticsPageContext(window.location.href, document.referrer);
+      // The path is already redacted. Only the nine sanitized campaign values can be restored.
+      const location = new URL(context.page_location);
+      for (const [key, value] of Object.entries(pendingCampaign)) location.searchParams.set(key, value);
+      return { ...context, page_location: location.toString() };
+    };
     target.gtag = function (...args: unknown[]) {
       // gtag.js expects the standard Arguments queue, not ordinary event arrays.
       // eslint-disable-next-line prefer-rest-params -- Required by the Google tag queue protocol.
       const command = arguments;
       if (command[0] === "event") {
-        command[2] = { ...(args[2] as Record<string, unknown> | undefined), ...safeAnalyticsPageContext(window.location.href, document.referrer) };
+        try { if (window.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "accepted") return; } catch { return; }
+        command[2] = { ...(args[2] as Record<string, unknown> | undefined), ...(firstPageView ? attributedContext() : safeAnalyticsPageContext(window.location.href, document.referrer)) };
+        if (command[1] === "page_view" && firstPageView) {
+          firstPageView = false;
+          clearPendingCampaign();
+        }
       }
       target.dataLayer!.push(command);
     };
@@ -137,7 +151,7 @@ export function initializeAnalyticsTag(measurementId: string, adsConsent: boolea
     target.gtag("js", new Date());
     target.gtag("config", measurementId, {
       send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
-      ...safeAnalyticsPageContext(window.location.href, document.referrer),
+      ...attributedContext(),
     });
   } else {
     target.gtag("consent", "update", consentModeV2(adsConsent));

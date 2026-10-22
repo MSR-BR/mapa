@@ -1,0 +1,15 @@
+{
+  "checked": 108,
+  "mismatches": [],
+  "export_assets": [
+    "../../../../../../../../assets/fonts/dejavu/DejaVuSans-Bold.ttf",
+    "../../../../../../../../assets/fonts/dejavu/DejaVuSans-Oblique.ttf",
+    "../../../../../../../../assets/fonts/dejavu/DejaVuSans.ttf",
+    "../../../../../../../../public/brand/cbl-isbn-barcode.jpeg",
+    "../../../../../../../../public/brand/mapa-da-pesquisa-app-icon.png",
+    "../../../../../../../../public/brand/mapa-da-pesquisa-mark.png",
+    "../../../../../../../../public/brand/mapa-da-pesquisa-social-card.png",
+    "../../../../../../../../public/brand/mapa-da-pesquisa-wordmark.png",
+    "../../../../../../../../public/brand/uff-logo.png"
+  ]
+}

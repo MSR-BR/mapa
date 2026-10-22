@@ -1,0 +1,37 @@
+{
+  "added": [
+    "node_modules/glob",
+    "node_modules/glob/node_modules/balanced-match",
+    "node_modules/glob/node_modules/brace-expansion",
+    "node_modules/glob/node_modules/minimatch",
+    "node_modules/minipass",
+    "node_modules/path-scurry",
+    "node_modules/path-scurry/node_modules/lru-cache",
+    "tools/next-root-glob"
+  ],
+  "removed": [
+    "node_modules/@nodelib/fs.scandir",
+    "node_modules/@nodelib/fs.stat",
+    "node_modules/@nodelib/fs.walk",
+    "node_modules/braces",
+    "node_modules/fast-glob/node_modules/glob-parent",
+    "node_modules/fastq",
+    "node_modules/fill-range",
+    "node_modules/is-number",
+    "node_modules/merge2",
+    "node_modules/micromatch",
+    "node_modules/picomatch",
+    "node_modules/queue-microtask",
+    "node_modules/reusify",
+    "node_modules/run-parallel",
+    "node_modules/to-regex-range"
+  ],
+  "version_changes": [
+    {
+      "path": "node_modules/fast-glob",
+      "before": "3.3.1",
+      "after": null,
+      "link": true
+    }
+  ]
+}

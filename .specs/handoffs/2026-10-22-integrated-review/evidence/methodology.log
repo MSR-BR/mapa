@@ -1,0 +1,41 @@
+
+> mapa-da-pesquisa@0.1.0 test:methodology
+> node scripts/verify-guided-methodology-routes.mjs && node scripts/verify-methodology-recovery-routes.mjs
+
+{"event":"methodology_request","requestId":"6ed9c784-402c-4432-a768-4212b8658294","timestamp":"2026-10-22T19:54:55.072Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"dcd17a96-24b0-41e7-b798-b5adf19b8f0c","timestamp":"2026-10-22T19:54:55.075Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":422,"errorCode":"validation"}
+{"event":"methodology_request","requestId":"4e1f5a2e-1d78-42e4-a433-ca5cf3325130","timestamp":"2026-10-22T19:54:55.085Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":200}
+{"event":"methodology_request","requestId":"ba423fb4-5101-462f-a535-f1dd91ff4709","timestamp":"2026-10-22T19:54:55.086Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":200}
+{"event":"methodology_request","requestId":"16187390-c9fd-47db-87ce-be2239e0b2fb","timestamp":"2026-10-22T19:54:55.090Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_request","requestId":"0dde50b8-8500-49cd-a4cc-da8a56da3280","timestamp":"2026-10-22T19:54:55.091Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"24002a5a-b0f6-4929-bed9-2b2426c9aee7","timestamp":"2026-10-22T19:54:55.094Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"b5f279a9-e5d5-44d5-ae56-428f840dd329","timestamp":"2026-10-22T19:54:55.096Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":503,"errorCode":"provider_unavailable"}
+{"event":"methodology_request","requestId":"fbffc8d3-5679-43fc-bf97-8a92e319192d","timestamp":"2026-10-22T19:54:55.097Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":409,"errorCode":"revision_conflict"}
+{"event":"methodology_request","requestId":"4c39da47-b19c-4286-97f0-714c536a5f99","timestamp":"2026-10-22T19:54:55.097Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":403,"errorCode":"unknown"}
+{"event":"methodology_request","requestId":"b8d0270c-642a-4260-8d23-fd4422cd22be","timestamp":"2026-10-22T19:54:55.099Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":409,"errorCode":"revision_conflict"}
+{"event":"methodology_request","requestId":"32d015da-5536-4800-9117-79c60f25014f","timestamp":"2026-10-22T19:54:55.110Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":409,"errorCode":"student_advisor_required"}
+{"event":"methodology_request","requestId":"e765c847-e92a-4edd-804b-e7894c19bb2e","timestamp":"2026-10-22T19:54:55.113Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_request","requestId":"5e093b86-5104-459d-be17-7635c976077e","timestamp":"2026-10-22T19:54:55.113Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":409,"errorCode":"advisor_pending"}
+C117: 14 route scenarios passed: partial save, precise errors, completion, preservation, idempotence, advance, isolated regeneration, failure, revision conflict, denial, late write conflict, objectives recovery, student advisor requirement and pending approval. Synthetic services only.
+{"event":"methodology_request","requestId":"36993be1-56f3-44e7-bf3d-4a38cb3e8759","timestamp":"2026-10-22T19:54:55.369Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"79e05dec-8232-4963-b239-76363ebda3c1","timestamp":"2026-10-22T19:54:55.371Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":409,"errorCode":"context_stale"}
+{"event":"methodology_request","requestId":"7c24fca2-3b66-4449-ab40-d63e55d8d1b8","timestamp":"2026-10-22T19:54:55.376Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"c627e99e-42c7-4488-8a47-bc75ebc77a1b","timestamp":"2026-10-22T19:54:55.384Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_request","requestId":"ce4987ff-038a-4286-878c-8225f8c5a72f","timestamp":"2026-10-22T19:54:55.386Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"9f3f5d48-dfb5-4a84-a9ca-9efb502e7cb6","timestamp":"2026-10-22T19:54:55.387Z","appVersion":"v16102026.2","stage":"methodology","status":"back","httpStatus":200}
+{"event":"methodology_request","requestId":"99700328-681e-4765-b5b2-94d74b8fa67f","timestamp":"2026-10-22T19:54:55.387Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":409,"errorCode":"prerequisite_required"}
+{"event":"methodology_request","requestId":"f43c0812-c2dc-4f6d-9348-9029708980bf","timestamp":"2026-10-22T19:54:55.388Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":409,"errorCode":"revision_conflict"}
+{"event":"methodology_request","requestId":"1c033c21-ec6f-4e29-8af8-5d6b348d6f0a","timestamp":"2026-10-22T19:54:55.390Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":503,"errorCode":"persistence_failed"}
+{"event":"methodology_title_sync_failed","requestId":"4ce3afa2-147f-4dc5-a526-66c55422c1a0","timestamp":"2026-10-22T19:54:55.392Z","stage":"methodology","errorCode":"persistence_failed","httpStatus":200}
+{"event":"methodology_request","requestId":"4ce3afa2-147f-4dc5-a526-66c55422c1a0","timestamp":"2026-10-22T19:54:55.392Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_title_sync_failed","requestId":"c6c163ab-5d23-44a4-83d3-059ed1a756a4","timestamp":"2026-10-22T19:54:55.394Z","stage":"methodology","errorCode":"persistence_failed","httpStatus":200}
+{"event":"methodology_request","requestId":"c6c163ab-5d23-44a4-83d3-059ed1a756a4","timestamp":"2026-10-22T19:54:55.395Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_title_sync_failed","requestId":"b900bcbb-f811-4e28-8436-dad811e102d9","timestamp":"2026-10-22T19:54:55.397Z","stage":"methodology","errorCode":"persistence_failed","httpStatus":200}
+{"event":"methodology_request","requestId":"b900bcbb-f811-4e28-8436-dad811e102d9","timestamp":"2026-10-22T19:54:55.398Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":200}
+{"event":"methodology_request","requestId":"0c2b704f-9da3-430a-a886-47e7b00d510a","timestamp":"2026-10-22T19:54:55.399Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":409,"errorCode":"student_advisor_required"}
+{"event":"methodology_request","requestId":"ca21efa2-767c-4065-b414-ed09d96826b2","timestamp":"2026-10-22T19:54:55.399Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":403,"errorCode":"unknown"}
+{"event":"methodology_request","requestId":"50748896-3db6-4c49-8aa7-dcb4e81aacc3","timestamp":"2026-10-22T19:54:55.400Z","appVersion":"v16102026.2","stage":"methodology","status":"save","httpStatus":200}
+{"event":"methodology_request","requestId":"389f09fa-75d1-4eb4-af9a-77076346eb21","timestamp":"2026-10-22T19:54:55.404Z","appVersion":"v16102026.2","stage":"methodology","status":"initialize","httpStatus":503,"errorCode":"provider_unavailable"}
+C119: context recovery, explicit acknowledgment, draft/back with stale prerequisites, revision/database distinction, post-save title failures, student approval and AI failure preservation passed. Synthetic services only.
+{"event":"methodology_request","requestId":"2203f34b-5728-430b-aae8-7ca51f89d1dd","timestamp":"2026-10-22T19:54:55.405Z","appVersion":"v16102026.2","stage":"methodology","status":"validate","httpStatus":503,"errorCode":"persistence_failed"}
+C124: advisor PGRST303 retains 503/Retry-After through methodology diagnostics.

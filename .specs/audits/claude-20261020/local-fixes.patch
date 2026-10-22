@@ -1,0 +1,523 @@
+diff --git a/app/api/projects/[id]/discover/route.ts b/app/api/projects/[id]/discover/route.ts
+index d6df369..21e9f3e 100644
+--- a/app/api/projects/[id]/discover/route.ts
++++ b/app/api/projects/[id]/discover/route.ts
+@@ -15,7 +15,8 @@ import {
+   type ResearchWorkflow,
+ } from "@/modules/research-workflow/schema";
+ import { loadResearchWorkflow } from "@/modules/research-workflow/storage";
+-import { DiscoveryError } from "@/modules/research-workflow/discovery-errors";
++import { DiscoveryError, type DiscoveryStage } from "@/modules/research-workflow/discovery-errors";
++import { isStaleDiscoveryClaim } from "@/modules/research-workflow/discovery-failure";
+ import { ResearchStarterClientError } from "@/modules/research-starter/client";
+ 
+ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+@@ -47,10 +48,13 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
+   if (workflow.content.discovery && workflow.state !== "failed") {
+     return NextResponse.json({ workflow }, { headers: { "Cache-Control": "private, no-store" } });
+   }
+-  if (workflow.state === "discovering") {
++  // A request that was killed or abandoned before its failure handler ran leaves
++  // the claim in "discovering" for good; only an expired claim may be taken over.
++  const staleClaim = workflow.state === "discovering" && isStaleDiscoveryClaim(workflow.updatedAt);
++  if (workflow.state === "discovering" && !staleClaim) {
+     return NextResponse.json({ error: "A descoberta já está em andamento." }, { status: 409 });
+   }
+-  if (workflow.state !== "draft_prompt" && workflow.state !== "failed") {
++  if (workflow.state !== "draft_prompt" && workflow.state !== "failed" && !staleClaim) {
+     return NextResponse.json({ error: "A descoberta não pode ser iniciada nesta etapa." }, { status: 409 });
+   }
+ 
+@@ -62,7 +66,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
+     .eq("project_id", id)
+     .eq("owner_id", userId)
+     .eq("revision", workflow.revision)
+-    .in("state", ["draft_prompt", "failed"])
++    .in("state", staleClaim ? ["discovering"] : ["draft_prompt", "failed"])
+     .select("project_id")
+     .maybeSingle();
+ 
+@@ -70,8 +74,10 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
+     return NextResponse.json({ error: "A descoberta já foi iniciada em outra sessão." }, { status: 409 });
+   }
+ 
++  let unclassifiedStage: DiscoveryStage | null = null;
+   try {
+     const discovery = await discoverResearchProposals(project, workflow.content.initialBriefing);
++    unclassifiedStage = "saving";
+     assertOperationActive();
+     emitProgress("saving");
+     const completedAt = new Date().toISOString();
+@@ -113,12 +119,14 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
+         : error instanceof ResearchStarterClientError
+           ? error.code === "unauthorized" ? "research-starter-unauthorized" : error.code === "invalid-request" ? "research-starter-invalid-request" : "research-starter-unavailable"
+           : "unexpected";
+-    const stage = error instanceof DiscoveryError ? error.stage : "literature";
++    const stage = error instanceof DiscoveryError
++      ? error.stage
++      : error instanceof ResearchStarterClientError ? "literature" : unclassifiedStage;
+     const retryable = error instanceof DiscoveryError || error instanceof ResearchStarterClientError ? error.retryable : true;
+     logSanitizedOperationalFailure("proposal_discovery_failed", requestContext, error, {
+       errorCode,
+       projectId: id,
+-      stage,
++      stage: stage ?? "unknown",
+     });
+     await supabase
+       .from("research_workflows")
+diff --git a/modules/export/docx.ts b/modules/export/docx.ts
+index d17e462..02683d4 100644
+--- a/modules/export/docx.ts
++++ b/modules/export/docx.ts
+@@ -16,6 +16,7 @@ import {
+ import { readFileSync } from "node:fs";
+ import path from "node:path";
+ import { buildFinalReport, finalMapText } from "./final-report";
++import { stripXmlInvalidControls } from "./xml-safe";
+ import { getResearchProductGuidance } from "@/modules/research-workflow/research-level-guidance";
+ 
+ import type { ExportDocumentInput, FinalMapExportInput } from "./types";
+@@ -47,7 +48,8 @@ function simpleParagraph(text: string, options: { bold?: boolean; color?: string
+   });
+ }
+ 
+-export async function createDocxExport(input: ExportDocumentInput) {
++export async function createDocxExport(rawInput: ExportDocumentInput) {
++  const input = stripXmlInvalidControls(rawInput);
+   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
+   const metadata = [
+     metadataParagraph("Tema", input.project.theme),
+@@ -192,7 +194,8 @@ function literalRuns(text: string): TextRun[] {
+   return text.split("\n").map((line, index) => new TextRun({ text: line, ...(index ? { break: 1 } : {}) }));
+ }
+ 
+-export async function createFinalMapDocxExport(input: FinalMapExportInput) {
++export async function createFinalMapDocxExport(rawInput: FinalMapExportInput) {
++  const input = stripXmlInvalidControls(rawInput);
+   const dateLabel = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(input.exportedAt);
+   const finalMap = input.finalMap;
+   const product = getResearchProductGuidance(finalMap.workflow.content.discovery?.interpreted.researchType);
+diff --git a/modules/research-workflow/proposal-discovery-workspace.tsx b/modules/research-workflow/proposal-discovery-workspace.tsx
+index 09c73dd..4301650 100644
+--- a/modules/research-workflow/proposal-discovery-workspace.tsx
++++ b/modules/research-workflow/proposal-discovery-workspace.tsx
+@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from "react";
+ 
+ import { ResearchActivityIcon } from "@/modules/generation/research-activity-icon";
+ import { WorkflowProgress } from "./workflow-progress";
+-import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
++import { getAnalyticsWorkflowPosition, getReferenceCountBucket, setAnalyticsContext, trackAnalyticsEvent, type AnalyticsReasonCode } from "@/modules/analytics/analytics";
+ import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
++import { discoveryClientFailure, discoveryResponseReason } from "./discovery-failure";
++import { readWorkflowPayload } from "./request-failure";
+ import type { ResearchWorkflow } from "./schema";
+ 
+ type Props = {
+@@ -19,6 +21,13 @@ type Props = {
+ 
+ type Operation = "discovering" | "selecting" | null;
+ 
++const STAGE_LABELS: Record<string, string> = {
++  interpreting: "interpretação do briefing",
++  literature: "busca bibliográfica",
++  proposals: "formação dos cards",
++  saving: "salvamento das propostas",
++};
++
+ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkflow, originalPrompt, projectId }: Props) {
+   const aiProgress = useAiProgress();
+   const { activeRole, roleVersion } = useActiveProfile();
+@@ -28,6 +37,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+   const [message, setMessage] = useState<string | null>(null);
+   const [errorStage, setErrorStage] = useState<string | null>(null);
+   const [errorCode, setErrorCode] = useState<string | null>(null);
++  const [errorReason, setErrorReason] = useState<AnalyticsReasonCode | null>(null);
+   const [briefingPreserved, setBriefingPreserved] = useState(false);
+   const autoTriggered = useRef(false);
+   const discovery = workflow.content.discovery;
+@@ -36,18 +46,22 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+   );
+   const busy = operation !== null;
+ 
++  // Keyed by the stored report, not the object: choosing a card replaces the object but is not a new view.
++  const discoveryReportId = discovery?.reportId ?? null;
++  const referenceCount = discovery?.references.length ?? null;
+   useEffect(() => {
+     setAnalyticsContext({ app_auth_state: "authenticated", app_role: activeRole, app_surface: autoDiscover ? "resume" : "dashboard", ...getAnalyticsWorkflowPosition("discovery") });
+-    if (discovery) {
+-      trackAnalyticsEvent("proposal_viewed", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_reference_count_bucket: getReferenceCountBucket(discovery.references.length) });
++    if (referenceCount !== null) {
++      trackAnalyticsEvent("proposal_viewed", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_reference_count_bucket: getReferenceCountBucket(referenceCount) });
+     }
+-  }, [activeRole, autoDiscover, discovery]);
++  }, [activeRole, autoDiscover, discoveryReportId, referenceCount]);
+ 
+   async function discover() {
+     setOperation("discovering");
+     setMessage(null);
+     setErrorStage(null);
+     setErrorCode(null);
++    setErrorReason(null);
+     trackAnalyticsEvent("generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: "started" });
+     try {
+       const response = await aiProgress.request(`/api/projects/${projectId}/discover`, {
+@@ -55,12 +69,16 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+         method: "POST",
+         signal: AbortSignal.timeout(110_000),
+       });
+-      const payload = await response.json() as { error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow };
++      const payload = await readWorkflowPayload<{ code?: string; error?: string; errorCode?: string; preservedBriefing?: boolean; stage?: string; workflow?: ResearchWorkflow }>(response);
+       if (!response.ok || !payload.workflow) {
++        const reason = discoveryResponseReason(response.status, payload);
+         setErrorStage(payload.stage ?? null);
+         setErrorCode(payload.errorCode ?? null);
++        setErrorReason(reason);
+         setBriefingPreserved(payload.preservedBriefing ?? true);
+-        throw new Error(payload.error || "Não foi possível buscar propostas.");
++        trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "failed", app_reason_code: reason });
++        setMessage(payload.error || "Não foi possível buscar propostas.");
++        return;
+       }
+       setWorkflow(payload.workflow);
+       setBriefingPreserved(false);
+@@ -68,10 +86,11 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+       const references = payload.workflow.content.discovery?.references.length ?? 0;
+       trackAnalyticsEvent("generation_completed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "success", app_reference_count_bucket: getReferenceCountBucket(references) });
+     } catch (error) {
+-      trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "failed", app_reason_code: error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response" });
+-      setMessage(error instanceof DOMException && error.name === "TimeoutError"
+-        ? "A busca demorou mais que o esperado. Tente novamente; seu briefing foi preservado."
+-        : error instanceof Error ? error.message : "Não foi possível buscar propostas.");
++      const failure = discoveryClientFailure(error);
++      setErrorReason(failure.reason);
++      setBriefingPreserved(true);
++      trackAnalyticsEvent("generation_failed", { ...getAnalyticsWorkflowPosition("discovery"), app_result: failure.cancelled ? "cancelled" : "failed", app_reason_code: failure.reason });
++      setMessage(failure.message);
+     } finally {
+       setOperation(null);
+     }
+@@ -172,10 +191,10 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+           <div>
+             <strong>{errorCode === "research-starter-unauthorized" ? "A integração bibliográfica precisa ser atualizada" : "Não foi possível concluir a descoberta"}</strong>
+             <span>{message}</span>
+-            {errorStage ? <small>Etapa: {errorStage === "literature" ? "busca bibliográfica" : errorStage === "proposals" ? "formação dos cards" : "interpretação do briefing"}.</small> : null}
++            {errorStage && errorStage in STAGE_LABELS ? <small>Etapa: {STAGE_LABELS[errorStage]}.</small> : null}
+             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
+           </div>
+-      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: "provider_invalid_response" }); void discover(); }} type="button">Tentar novamente</button>
++      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: errorReason ?? "unknown" }); void discover(); }} type="button">Tentar novamente</button>
+         </div>
+       ) : null}
+ 
+diff --git a/package.json b/package.json
+index 61b666f..ab0fc3c 100644
+--- a/package.json
++++ b/package.json
+@@ -33,7 +33,7 @@
+     "exports:verify": "node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts",
+     "security:audit": "node scripts/audit-security.mjs",
+     "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
+-    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts && npm run test:doi && npm run test:ai",
++    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai",
+     "test:doi": "node --conditions=react-server --import tsx --test tests/doi-reference.test.ts",
+     "lint": "eslint . --ignore-pattern .next",
+     "typecheck": "tsc --noEmit",
+@@ -44,7 +44,7 @@
+     "test:cards": "node scripts/verify-card-regeneration-routes.mjs",
+     "test:limits": "node scripts/verify-generation-limits-routes.mjs",
+     "test:methodology": "node scripts/verify-guided-methodology-routes.mjs && node scripts/verify-methodology-recovery-routes.mjs",
+-    "test:research-starter": "node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs",
++    "test:research-starter": "node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs && node scripts/verify-discovery-claim-recovery.mjs",
+     "test:exports": "node scripts/verify-intake-report-routes.mjs"
+   },
+   "dependencies": {
+diff --git a/modules/research-workflow/discovery-failure.ts b/modules/research-workflow/discovery-failure.ts
+new file mode 100644
+index 0000000..486f47f
+--- /dev/null
++++ b/modules/research-workflow/discovery-failure.ts
+@@ -0,0 +1,55 @@
++import type { AnalyticsReasonCode } from "@/modules/analytics/analytics";
++
++import { workflowClientFailure, workflowResponseFailure } from "./request-failure";
++
++/** A discovery claim older than the route's maxDuration (120 s) plus margin cannot still be running. */
++export const DISCOVERY_CLAIM_TTL_MS = 150_000;
++
++export function isStaleDiscoveryClaim(updatedAt: string, now: number = Date.now()) {
++  const claimedAt = Date.parse(updatedAt);
++  return Number.isFinite(claimedAt) && now - claimedAt > DISCOVERY_CLAIM_TTL_MS;
++}
++
++const SERVER_REASONS: Readonly<Record<string, AnalyticsReasonCode>> = {
++  "briefing-too-short": "validation",
++  "research-starter-empty": "provider_invalid_response",
++  "unverified-references": "provider_invalid_response",
++  "proposal-shape-invalid": "provider_invalid_response",
++  "research-starter-config": "provider_unavailable",
++  "research-starter-unauthorized": "provider_unavailable",
++  "research-starter-invalid-request": "provider_unavailable",
++  "research-starter-unavailable": "provider_unavailable",
++  "gemini-quota-exhausted": "provider_unavailable",
++  "gemini-unavailable": "provider_unavailable",
++};
++
++/**
++ * Reason code for a non-OK discovery response. Only a code the discover route
++ * declared as a provider outcome is reported as one; authentication,
++ * authorization, concurrency and unrecognised failures are not blamed on a provider.
++ */
++export function discoveryResponseReason(
++  status: number,
++  payload: { code?: unknown; errorCode?: unknown },
++): AnalyticsReasonCode {
++  if (typeof payload.errorCode === "string" && Object.hasOwn(SERVER_REASONS, payload.errorCode)) {
++    return SERVER_REASONS[payload.errorCode];
++  }
++  if (payload.code === "profile_consent_required") return "consent_required";
++  if (payload.code === "profile_mode_stale") return "revision_conflict";
++  if (status === 409) return "duplicate_action";
++  return workflowResponseFailure(status, null).reason;
++}
++
++/** A thrown failure never exposes its raw message (for example "Failed to fetch"); the user sees a fixed Portuguese text. */
++export function discoveryClientFailure(error: unknown): { cancelled: boolean; message: string; reason: AnalyticsReasonCode } {
++  if (error instanceof DOMException && error.name === "TimeoutError") {
++    return {
++      cancelled: false,
++      message: "A busca demorou mais que o esperado. Tente novamente; seu briefing foi preservado.",
++      reason: "provider_timeout",
++    };
++  }
++  const failure = workflowClientFailure(error);
++  return { cancelled: failure.code === "cancelled", message: failure.message, reason: failure.reason };
++}
+diff --git a/modules/export/xml-safe.ts b/modules/export/xml-safe.ts
+new file mode 100644
+index 0000000..00225ab
+--- /dev/null
++++ b/modules/export/xml-safe.ts
+@@ -0,0 +1,12 @@
++// Characters Word's XML parser rejects (everything below U+0020 except tab, LF and CR).
++const XML_INVALID_CONTROLS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
++
++/** Copy of `value` without XML-invalid control characters; visible text and line breaks are untouched. */
++export function stripXmlInvalidControls<T>(value: T): T {
++  if (typeof value === "string") return value.replace(XML_INVALID_CONTROLS, "") as T;
++  if (Array.isArray(value)) return value.map(stripXmlInvalidControls) as T;
++  if (value !== null && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype) {
++    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, stripXmlInvalidControls(item)])) as T;
++  }
++  return value;
++}
+diff --git a/scripts/verify-discovery-claim-recovery.mjs b/scripts/verify-discovery-claim-recovery.mjs
+new file mode 100644
+index 0000000..58e5284
+--- /dev/null
++++ b/scripts/verify-discovery-claim-recovery.mjs
+@@ -0,0 +1,94 @@
++// Route -> synthetic persistence: a discovery claim abandoned in "discovering" must be recoverable.
++// All external traffic is intercepted. No user data, credentials or paid calls.
++// DISCOVER_ROUTE_SOURCE may point at another copy of the route (used to reproduce the pre-fix behaviour).
++import assert from 'node:assert/strict';
++import { build } from 'esbuild';
++import { mkdir } from 'node:fs/promises';
++await mkdir('tmp', {recursive:true});
++const routeSource = process.env.DISCOVER_ROUTE_SOURCE ?? './app/api/projects/[id]/discover/route';
++const stubs = {
++  'server-only': '',
++  '@/modules/projects/auth': `export async function authorizeProjectRoute(){const s=globalThis.c122;return {ok:true,value:{userId:s.workflow.ownerId,supabase:s.db}};}`,
++  '@/modules/research-workflow/storage': `export const loadResearchWorkflow=async()=>structuredClone(globalThis.c122.workflow);`,
++  '@/modules/generation/gemini': `
++    export async function interpretResearchRequest(){return {...globalThis.c122.interpreted,researchQuery:'graphene lithium batteries'};}
++    export const broadenResearchQuery=async()=> 'graphene lithium batteries';
++    export async function generateProblemCandidates(original,interpreted,report){return globalThis.c122.candidates.map(c=>({...c,referenceIds:[report.references[0].referenceId]}));}`,
++};
++await build({stdin:{resolveDir:process.cwd(),contents:`export {POST} from '${routeSource}';export {versionedWorkflowFixture} from './tests/fixtures/versioned-workflow';export {crossrefReport} from './modules/research-starter/crossref';export {readProgressResponse} from './modules/ai/progress-client';`,loader:'ts'},outfile:'tmp/c122-discovery-harness.mjs',bundle:true,platform:'node',format:'esm',packages:'external',plugins:[{name:'synthetic-boundaries',setup(b){b.onResolve({filter:/^next\/server$/},()=>({path:'next/server.js',external:true}));b.onResolve({filter:/.*/},a=>Object.hasOwn(stubs,a.path)?{path:a.path,namespace:'c122'}:undefined);b.onLoad({filter:/.*/,namespace:'c122'},a=>({contents:stubs[a.path],resolveDir:process.cwd()}));}}]});
++const api = await import('../tmp/c122-discovery-harness.mjs');
++const template = api.versionedWorkflowFixture();
++const catalogue = {status:'ok',message:{items:[{DOI:'10.1234/fixture-only',title:['Graphene lithium batteries'],author:[],published:{'date-parts':[[2025]]}}]}};
++const s = globalThis.c122 = {};
++const originalFetch = globalThis.fetch;
++const oldKey = process.env.RESEARCH_STARTER_MAPA_API_KEY;
++process.env.RESEARCH_STARTER_MAPA_API_KEY = 'synthetic-only';
++function reset({ageMs, failSave = false}) {
++  Object.assign(s,{failSave,writes:0,workflow:structuredClone(template),interpreted:template.content.discovery.interpreted,candidates:template.content.discovery.candidates,project:{id:template.projectId,owner_id:template.ownerId,workflow_version:2,title:'Fixture C122',problem_statement:'Pedido original sintético preservado integralmente, sem truncamento.'}});
++  s.workflow.state = 'discovering'; s.workflow.stableState = 'draft_prompt'; s.workflow.content.discovery = null;
++  s.workflow.updatedAt = new Date(Date.now() - ageMs).toISOString();
++  s.db = {from:table=>new Query(table)};
++}
++class Query {
++  constructor(table){this.table=table;this.filters=[];}
++  select(){return this;} eq(k,v){this.filters.push([k,v]);return this;} is(){return this;} in(k,v){this.states=v;return this;} update(v){this.value=v;return this;}
++  async maybeSingle(){if(this.table==='projects')return {data:s.project,error:null};return this.execute();}
++  execute(){
++    if(!this.value)return {data:null,error:null};
++    if(s.failSave&&this.value.state==='choosing_problem')return {data:null,error:{message:'synthetic save failure'}};
++    const revision=this.filters.find(([k])=>k==='revision')?.[1];
++    if(revision!==s.workflow.revision||(this.states&&!this.states.includes(s.workflow.state)))return {data:null,error:null};
++    s.writes++;const v=this.value;
++    s.workflow={...s.workflow,revision:v.revision,state:v.state,stableState:v.stable_state??s.workflow.stableState,content:v.content??s.workflow.content,updatedAt:v.updated_at};
++    return {data:{project_id:s.workflow.projectId,updated_at:v.updated_at},error:null};
++  }
++  then(resolve,reject){return Promise.resolve(this.execute()).then(resolve,reject);}
++}
++globalThis.fetch = async (url, init) => {
++  if (String(url).includes('researchstarter.vercel.app')) {
++    const request = JSON.parse(init.body);
++    return Response.json({...api.crossrefReport(catalogue, request), status:'completed'});
++  }
++  assert.equal(new URL(String(url)).hostname, 'api.crossref.org');
++  return Response.json(catalogue);
++};
++const call = async () => {
++  const response = await api.readProgressResponse(await api.POST(new Request(`http://localhost/api/projects/${s.workflow.projectId}/discover`,{method:'POST',headers:{accept:'application/x-ndjson'}}),{params:Promise.resolve({id:s.workflow.projectId})}),()=>{});
++  return {status:response.status,payload:await response.json()};
++};
++const results = {};
++try {
++  reset({ageMs:60 * 60_000});
++  const stale = await call();
++  results.staleClaim = {status:stale.status,state:s.workflow.state};
++  assert.equal(stale.status,200,JSON.stringify(stale.payload));
++  assert.equal(s.workflow.state,'choosing_problem');
++  assert.equal(s.workflow.content.discovery.candidates.length,6);
++
++  reset({ageMs:5_000});
++  const fresh = await call();
++  results.freshClaim = {status:fresh.status,writes:s.writes};
++  assert.equal(fresh.status,409);
++  assert.equal(s.writes,0);
++  assert.equal(s.workflow.state,'discovering');
++
++  reset({ageMs:60 * 60_000});
++  const [a,b] = await Promise.all([call(),call()]);
++  results.concurrentTakeover = {statuses:[a.status,b.status].sort(),writes:s.writes};
++  assert.deepEqual([a.status,b.status].sort(),[200,409]);
++  assert.equal(s.writes,2);
++
++  reset({ageMs:60 * 60_000,failSave:true});
++  const failed = await call();
++  results.saveFailure = {status:failed.status,stage:failed.payload.stage,state:s.workflow.state,preservedBriefing:failed.payload.preservedBriefing};
++  assert.equal(failed.status,502);
++  assert.equal(failed.payload.stage,'saving');
++  assert.equal(s.workflow.state,'failed');
++  console.log(JSON.stringify({status:'passed',externalCalls:0,paidCalls:0,...results}));
++} catch (error) {
++  console.log(JSON.stringify({status:'failed',...results,message:error.message.split('\n')[0]}));
++  process.exitCode = 1;
++} finally {
++  globalThis.fetch = originalFetch; delete globalThis.c122;
++  if (oldKey === undefined) delete process.env.RESEARCH_STARTER_MAPA_API_KEY; else process.env.RESEARCH_STARTER_MAPA_API_KEY = oldKey;
++}
+diff --git a/tests/discovery-failure.test.ts b/tests/discovery-failure.test.ts
+new file mode 100644
+index 0000000..b15c427
+--- /dev/null
++++ b/tests/discovery-failure.test.ts
+@@ -0,0 +1,66 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import {
++  DISCOVERY_CLAIM_TTL_MS,
++  discoveryClientFailure,
++  discoveryResponseReason,
++  isStaleDiscoveryClaim,
++} from "../modules/research-workflow/discovery-failure";
++import { WorkflowRequestError } from "../modules/research-workflow/request-failure";
++
++test("only an expired discovery claim may be taken over", () => {
++  const now = Date.parse("2026-10-20T12:00:00.000Z");
++  const at = (ageMs: number) => new Date(now - ageMs).toISOString();
++  assert.equal(isStaleDiscoveryClaim(at(5_000), now), false);
++  assert.equal(isStaleDiscoveryClaim(at(DISCOVERY_CLAIM_TTL_MS), now), false);
++  assert.equal(isStaleDiscoveryClaim(at(DISCOVERY_CLAIM_TTL_MS + 1), now), true);
++  assert.equal(isStaleDiscoveryClaim("not-a-date", now), false);
++  assert.ok(DISCOVERY_CLAIM_TTL_MS > 120_000, "must outlast the route's maxDuration");
++});
++
++test("authentication, authorization and concurrency failures are not reported as provider failures", () => {
++  assert.equal(discoveryResponseReason(401, { code: "authentication_required" }), "auth_required");
++  assert.equal(discoveryResponseReason(403, { code: "profile_required" }), "permission_denied");
++  assert.equal(discoveryResponseReason(403, { code: "profile_consent_required" }), "consent_required");
++  assert.equal(discoveryResponseReason(409, { code: "profile_mode_stale" }), "revision_conflict");
++  assert.equal(discoveryResponseReason(409, {}), "duplicate_action");
++  assert.equal(discoveryResponseReason(503, { code: "profile_unavailable" }), "unknown");
++  assert.equal(discoveryResponseReason(404, {}), "unknown");
++  assert.equal(discoveryResponseReason(502, {}), "unknown");
++  assert.equal(discoveryResponseReason(429, {}), "rate_limited");
++});
++
++test("only error codes declared by the discover route are reported as provider outcomes", () => {
++  assert.equal(discoveryResponseReason(422, { errorCode: "briefing-too-short" }), "validation");
++  for (const errorCode of ["research-starter-unavailable", "research-starter-unauthorized", "research-starter-config", "gemini-unavailable", "gemini-quota-exhausted"]) {
++    assert.equal(discoveryResponseReason(503, { errorCode }), "provider_unavailable", errorCode);
++  }
++  for (const errorCode of ["proposal-shape-invalid", "unverified-references", "research-starter-empty"]) {
++    assert.equal(discoveryResponseReason(502, { errorCode }), "provider_invalid_response", errorCode);
++  }
++  assert.equal(discoveryResponseReason(502, { errorCode: "unexpected" }), "unknown");
++  assert.equal(discoveryResponseReason(502, { errorCode: "PRIVATE" }), "unknown");
++});
++
++test("thrown failures keep a fixed Portuguese message and a truthful reason", () => {
++  const network = discoveryClientFailure(new TypeError("Failed to fetch https://private.example/path"));
++  assert.equal(network.reason, "network");
++  assert.equal(network.cancelled, false);
++  assert.equal(/Failed to fetch|private/i.test(network.message), false);
++
++  const syntax = discoveryClientFailure(new SyntaxError("Unexpected token '<', \"<html>\" is not valid JSON"));
++  assert.equal(syntax.reason, "unknown");
++  assert.equal(syntax.message.includes("Unexpected token"), false);
++
++  const cancelled = discoveryClientFailure(new WorkflowRequestError("cancelled"));
++  assert.deepEqual([cancelled.cancelled, cancelled.reason], [true, "cancelled"]);
++  assert.equal(discoveryClientFailure(new DOMException("aborted", "AbortError")).cancelled, true);
++
++  const invalid = discoveryClientFailure(new WorkflowRequestError("response_invalid"));
++  assert.equal(invalid.reason, "response_invalid");
++
++  const timeout = discoveryClientFailure(new DOMException("timeout", "TimeoutError"));
++  assert.deepEqual([timeout.cancelled, timeout.reason], [false, "provider_timeout"]);
++  assert.match(timeout.message, /briefing foi preservado/);
++});
+diff --git a/tests/docx-xml-safety.test.ts b/tests/docx-xml-safety.test.ts
+new file mode 100644
+index 0000000..bf6c449
+--- /dev/null
++++ b/tests/docx-xml-safety.test.ts
+@@ -0,0 +1,33 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import JSZip from "jszip";
++
++import { createFinalMapDocxExport } from "../modules/export/docx";
++import { stripXmlInvalidControls } from "../modules/export/xml-safe";
++import type { FinalMapExportInput } from "../modules/export/types";
++import { buildFinalMap } from "../modules/research-workflow/final-map";
++import { versionedWorkflowFixture } from "./fixtures/versioned-workflow";
++
++const INVALID_IN_XML = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/;
++
++test("stripXmlInvalidControls removes only characters XML 1.0 forbids", () => {
++  const value = { a: "um\u000Bdois\u0007\ttrês\nquatro\r\ncinco", b: ["x\u000C", 3, null], when: new Date(0) };
++  const clean = stripXmlInvalidControls(value);
++  assert.equal(clean.a, "umdois\ttrês\nquatro\r\ncinco");
++  assert.deepEqual(clean.b, ["x", 3, null]);
++  assert.equal(clean.when, value.when);
++  assert.equal(value.a.includes("\u000B"), true, "input must not be mutated");
++});
++
++test("Word report stays well-formed when pasted text carries control characters", async () => {
++  const workflow = versionedWorkflowFixture();
++  const input: FinalMapExportInput = {
++    exportedAt: new Date("2026-10-20T12:00:00Z"), revision: workflow.revision, draft: false, finalMap: buildFinalMap(workflow),
++    project: { title: "Projeto\u000B sintético", theme: "Tema\u000C sintético", problem_statement: "Como investigar?", keywords: ["a"], knowledge_area: "Educação", academic_level: "masters" },
++  };
++  input.finalMap.title = { ...(input.finalMap.title ?? { proposedContent: "" }), approvedContent: "Título\u0007 com controle" } as typeof input.finalMap.title;
++  const zip = await JSZip.loadAsync(await createFinalMapDocxExport(input));
++  const xml = await zip.file("word/document.xml")!.async("string");
++  assert.equal(INVALID_IN_XML.test(xml), false);
++  assert.match(xml, /Título com controle/);
++});

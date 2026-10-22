@@ -1,4 +1,6 @@
 "use client";
+import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
+
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
@@ -84,8 +86,9 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error ?? "Não foi possível gerar a estrutura.");
+      const payload = await readWorkflowPayload<GenerationSnapshot & { errorCode?: string; code?: string }>(response);
+      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
+      if (!payload.structure || !Array.isArray(payload.references)) throw new WorkflowRequestError("response_invalid");
       const next = payload as GenerationSnapshot;
       setSnapshot(next);
       setDraft(next.structure);
@@ -94,10 +97,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
       const referenceBucket = getReferenceCountBucket(next.references.length);
       trackAnalyticsEvent(operation === "literature" ? "literature_optimization_completed" : "generation_completed", { app_result: "success", app_reference_count_bucket: referenceBucket, app_stage: operation === "literature" ? "literature" : "unknown" });
     } catch (error) {
-      const reasonCode = error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response";
+      const reasonCode = workflowClientFailure(error).reason;
       trackAnalyticsEvent(operation === "literature" ? "literature_optimization_failed" : "generation_failed", { app_result: "failed", app_reason_code: reasonCode, app_stage: operation === "literature" ? "literature" : "unknown" });
       setMessage(error instanceof Error ? error.message : "Não foi possível gerar a estrutura.");
-      await refresh();
+      try { await refresh(); } catch { /* Keep the original failure if the status refresh is also offline. */ }
     } finally {
       setBusy(false);
       router.refresh();

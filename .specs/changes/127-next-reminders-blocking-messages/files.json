@@ -1,0 +1,243 @@
+{
+  "change": "C127",
+  "date": "2026-10-22",
+  "head": "7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c",
+  "scope": "Incremental sobre o estado local anterior à C127, preservando alterações C123–C126. Não é diff exclusivo contra HEAD.",
+  "publication": "NOT_REQUESTED",
+  "source_files": [
+    {
+      "path": "app/api/projects/[id]/advisor-review/remind/route.ts",
+      "before_sha256": "3d811d3c5f786734e66e4767380aeff92a0b9e266bf5a82a25d3bda256aa12a8",
+      "sha256": "ea15901bc29d2b5eae88e451f0b12de7dfa3e8c2498c71f26f16bc66005b031a"
+    },
+    {
+      "path": "app/api/projects/[id]/chapters/route.ts",
+      "before_sha256": "2a6d2f2d7ce2412bb79d6ac7a0a89d4049d8f9c133421390fcbb86d8ae583ff0",
+      "sha256": "f4755595cf7386501c96da31476572afae0453e880241b8b334a91b4e4972115"
+    },
+    {
+      "path": "app/api/projects/[id]/definition/route.ts",
+      "before_sha256": "efedcddbbdd25df1a64746ff1f7043486bb779757b55a3b73d004523665cc09f",
+      "sha256": "b79ba7e67f690174c7dd0a158d3652704e49265ead12372c56392090ee0b6f3b"
+    },
+    {
+      "path": "app/api/projects/[id]/final-map/route.ts",
+      "before_sha256": "ddc7770c731a103716b7da4b5de15481f400d08710c1c1db8789e9af03a873e5",
+      "sha256": "c8821f20802b518ec8c718079016f3575cff10052525765b148ca8150bb4a807"
+    },
+    {
+      "path": "lib/email/project-notifications.ts",
+      "before_sha256": "be968a09959d8cd2afe0c9bf30c1d7b9ee5f84422d45c1bc001fda2facf5dc5e",
+      "sha256": "c81dfc3239a4f23b5e92dbfee06ff13a2a8fd9e9a6306d499bfd8e8a4558058b"
+    },
+    {
+      "path": "lib/supabase/database.types.ts",
+      "before_sha256": "9278590a8dd6b44791ae573bb16b8f38c92992b8c136ed2020caa24e1f8b06a7",
+      "sha256": "b3e90ea2d4581998a7e0509ae653d7c427e638bcb2d2dedd11fcbaa02036a878"
+    },
+    {
+      "path": "modules/research-workflow/advisor-requirement.ts",
+      "before_sha256": "e6f2b46b4241ba7e348c1718b1a1cb9abc89b8d127f1210964d391fb0dacc3d6",
+      "sha256": "e2da035a0da04e54b3080336a9c373e40ac3b3e2d1658e6ccfcfafa9ed5c2833"
+    },
+    {
+      "path": "modules/research-workflow/request-failure.ts",
+      "before_sha256": "9798dbba05bccd5764ba6695a91fffd9c280bfa08006f0e584e3d73a9ed0ee1b",
+      "sha256": "6680db5550d930682c700815595d1e46b07ee5d70dc203489f80df60ffcc4f42"
+    },
+    {
+      "path": "package-lock.json",
+      "before_sha256": "db5b85b07745318bdd9130f9fadcb1226e91a12755db9cac914351758e992f82",
+      "sha256": "8255e7f0df276faff7d9c6947c99730221dc9647fb33436ac91042c9677a548c"
+    },
+    {
+      "path": "package.json",
+      "before_sha256": "c8a294c0b207a6c26d5cd8beb3e6a03cac0de678f660c68b40dbe062caeb2c19",
+      "sha256": "73306aabcdc397a1aaf421f2df7a99dbe3cc93eb0dab404d20ca05cb63ec0bf4"
+    },
+    {
+      "path": "scripts/verify-blocking-messages.mjs",
+      "before_sha256": null,
+      "sha256": "93b4b2c3d6185e205279158090075d3ce5aa2b01535e4ba9a2e9cb7df55fef6f"
+    },
+    {
+      "path": "scripts/verify-explicit-grants-local.sh",
+      "before_sha256": "152c5cbc53d90b6528cca2ff3072363336cb1f4abeec39b9d532eef12474ec31",
+      "sha256": "8476daf9151b7864549b097828d5dd6eb885eb81ad2d1318bc9693be345d59f8"
+    },
+    {
+      "path": "scripts/verify-explicit-grants.sql",
+      "before_sha256": "d7a33df52bd6cb9f4786b27ef25e3f1d902ae4b0e85e518bac5c9ca94be3aa00",
+      "sha256": "4450bc7b6ff89e73fbe132c25c1ee0f120873a227da9fd2a27267a4dcacae720"
+    },
+    {
+      "path": "scripts/verify-measurement-browser.mjs",
+      "before_sha256": "1e0a4766709d3b71462c2cc550b9a134921665b3c595d33f0554530c771c0bb9",
+      "sha256": "c8455b20aa9d550c12d25a9f834f123f3561fd5c5864364ec6874176430d1081"
+    },
+    {
+      "path": "scripts/verify-reminder-local.py",
+      "before_sha256": null,
+      "sha256": "6e4e50750fc4605a92895e252d3560df7b0e0f1236f99796eb5cde43e19d7e72"
+    },
+    {
+      "path": "scripts/verify-reminder-local.sql",
+      "before_sha256": null,
+      "sha256": "950175adb24cd1bb310500c94a7811ae34ad49dc252b691c4db8dfcbcf80e23c"
+    },
+    {
+      "path": "scripts/verify-reminder-routes.mjs",
+      "before_sha256": null,
+      "sha256": "4588c9d6c3fe025d42fa558b987d85527d261d03d3932b655f28767727d5e5b4"
+    },
+    {
+      "path": "scripts/verify-reminder-seed.sql",
+      "before_sha256": null,
+      "sha256": "0d04a0564c5dccd324626c8141eb9913148bb5e0b9a2802c34cfe7e3e12efa40"
+    },
+    {
+      "path": "supabase/explicit-access-manifest.json",
+      "before_sha256": "069e716f7049c02bf7e0f2bcff8f67592e6a190f8c1b216ff56876c26de9f8bd",
+      "sha256": "8b71041e0e46467a25d1e4fa500eccf395246df8df1c88ccabd383cc6a68c26a"
+    },
+    {
+      "path": "supabase/migrations/20261022213449_c127_advisor_reminder_guard.sql",
+      "before_sha256": null,
+      "sha256": "9fb8395c14a1c30cca6329bf713b8643d585c1d29cec62b047bb5e3af8eecf4f"
+    },
+    {
+      "path": "tests/foundation.test.mjs",
+      "before_sha256": "688d3f3031c05360bff7a05907d2db72475fb9540b526b77a83a09fce8c59ef7",
+      "sha256": "551ce53f045064ab287bdd17d16ad511e3f8746ded64345bdac1a10750d38aea"
+    },
+    {
+      "path": "tests/project-notifications.test.ts",
+      "before_sha256": "0a1b53cfddc30ea9526faecb74e7b2804f3c89a4571d46adfc0bf577e9fdb103",
+      "sha256": "7f62ad831e56597ec63dd47f0cee8a11cc4c333bb40ac095640febfd2e21dd74"
+    },
+    {
+      "path": "tests/supabase-explicit-grants.test.ts",
+      "before_sha256": "a049d4c0d87ffdadfd5b4eb8a43038a157f0a32e8d9e37f21422decbecd6ff1f",
+      "sha256": "1af77a56b02c7a4c847a513a998debff2eca49dd7faea24c33baaed6adb9f21b"
+    },
+    {
+      "path": "tests/workflow-request-failure.test.ts",
+      "before_sha256": "ced015593fb2511a61b43766b5f04408bcebe39b1461021f8b16d53387b58f75",
+      "sha256": "7044cbfe58668758fa744b2786b1b6a9099fde4d408500c0021e1de8f29b414e"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/application-plan.md",
+      "sha256": "275b58179f24b52764c735acb9f91f2b92569545d9933e6663cdf1fcd7a332f5"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/audit-final.json",
+      "sha256": "b0668bf93984a7ee548647d7dede4b4842233ef5f382955cf64fef0a4a2a5ed9"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/audit-production.json",
+      "sha256": "c1988ae8c03dd038b818fb2b7b8277fcf67e46346c12ee283df80c1091382765"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/blocking-routes.log",
+      "sha256": "0e3fb7a72df042f25d64971291f419544e33d0c3b0957e22eea8ac9fce60ca5c"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/build-webpack.log",
+      "sha256": "3f3bf7669da61a6cf5385c2caa8ba9a04ef8ef090ed67cd53e26b9a2c93f701f"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/c125-regression.log",
+      "sha256": "7b1c4e306d52a7959a94766ad488776c1d38ddf1e2b55c81b9d870a9c6601a64"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/cards.log",
+      "sha256": "e33ab6b1ea9e4e5a11bee1369107957f599f7105b5dd97c0d444266eedc6297e"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/dependency-install.log",
+      "sha256": "5a27e08884fbc0bb59641bd32217d684b10ad0633d409235cceb3e09e3286675"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/dependency-note.txt",
+      "sha256": "fbb2cc1cc33ee6262af3b6b7d2df2f2df2f99813153acb1fdb0150219c42345a"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/discovery.log",
+      "sha256": "52eac7513cdec33dd55c83d262b08de56b80afb2de8b19ca81a7128a0689aa51"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/export-parity.log",
+      "sha256": "9f5cc8cb786e5308f84e75f43d6da00b002573b63de41c37585663c8bbca84dc"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/exports-routes.log",
+      "sha256": "4c4b5ab422b160427e3a8c0705551e738d1cff26079f69e7e3cebbb9c2480291"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/limits.log",
+      "sha256": "61b695fa5ea887330a428147a50017546ec431bade2d4d7288cce788cfd48462"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/lint-final.log",
+      "sha256": "eda94c67db4cf1affe729473987d943d1a240c19e818b3dcd859cb062fe2b750"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/measurement-browser.log",
+      "sha256": "58e781267939f319a6b625d7c18f1b5e1b30f46d291e8f07cbf1fc464275f803"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/methodology.log",
+      "sha256": "ca39419e2a65b5eeb108faa1797fdf510222de1dd7ec207ca9f8b0c3fb52a3d9"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/reminder-routes-retest.log",
+      "sha256": "e17fdd6685894822d607f20114c4c2453f85583b3888e864e0eb5a0319933c35"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/reminder-sql-final.log",
+      "sha256": "b45c87b06aa2117747ad07ca7ab0aabaccb2c524153f13b44ce88a76dbcb818e"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/security-fast.log",
+      "sha256": "105643c78ee1576d5ebe6e97ea21ed26037e4b13972ca4377431d7624b949d06"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/security-static.log",
+      "sha256": "f917eb2e0c2928dc4b2a9d53f2f200194e36ed165df3b70d41cc28655b5b448b"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/sql-gate.log",
+      "sha256": "d70bf346cf6a2683c16213ec36d3696c49b724f7af7b315b811035f07ab733dc"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/tests-final.log",
+      "sha256": "8de4d55b086d2cc6ceaa58f04c81205d8087e4c7b0c76a504ee2b715a219f7ca"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/evidence/types-final.log",
+      "sha256": "d317b89140653aaaca296aac615f5b675379285d1b90f5b375afe66424212774"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/local-changes.patch",
+      "sha256": "0f1c36fbd6d50924ad9c9a9f92b5ad4dac62b4d702752acda85e9429d15e4abc"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/spec.md",
+      "sha256": "c1f08ac90ac8d74ce6f2a7f063ce69481d2db31c3be6b0766b1596d5fdfac28c"
+    },
+    {
+      "path": ".specs/changes/127-next-reminders-blocking-messages/validation-2026-10-22.md",
+      "sha256": "f9b446afb8d84440862be7ec540cf99bcf25597ce1b4377626cc6d4c8f57d019"
+    },
+    {
+      "path": ".specs/project-state.md",
+      "sha256": "1c6abc4ead78d0b2caacf855c57909e6a709d68731f78455c9e648b2a59013b2"
+    },
+    {
+      "path": ".specs/roadmap.md",
+      "sha256": "a58532d0c258d4e3e2a2926377fb533c5363a1df36034e6ee295cf29405cd39b"
+    }
+  ]
+}

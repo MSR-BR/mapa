@@ -3,7 +3,15 @@ create schema auth;
 create table auth.users (
   id uuid primary key,
   email text,
+  email_confirmed_at timestamptz,
   created_at timestamptz not null default now()
+);
+
+create table auth.identities (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
+  provider text not null,
+  identity_data jsonb not null
 );
 
 create or replace function auth.uid()
@@ -60,7 +68,9 @@ create schema storage;
 create table storage.buckets (
   id text primary key,
   name text not null,
-  public boolean not null default false
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
 );
 
 create table storage.objects (

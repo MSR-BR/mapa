@@ -1,0 +1,135 @@
+
+> mapa-da-pesquisa@0.1.0 test:research-starter
+> node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs && node scripts/verify-discovery-claim-recovery.mjs
+
+TAP version 13
+# {"event":"research_starter_completed","requestId":"2988a6d6-75cf-42b9-a53f-c6d8bddb6cbc","timestamp":"2026-10-22T21:43:12.352Z","attempt":1,"durationMs":20,"queryLength":166,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"30dc2169-03d8-4c2b-821d-4e43abc0a87c","timestamp":"2026-10-22T21:43:12.354Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# Subtest: C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+ok 1 - C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+  ---
+  duration_ms: 21.118292
+  type: 'test'
+  ...
+# Subtest: C120: validates request before any network call, including reversed dates
+ok 2 - C120: validates request before any network call, including reversed dates
+  ---
+  duration_ms: 1.1965
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"30dc2169-03d8-4c2b-821d-4e43abc0a87c","timestamp":"2026-10-22T21:43:12.707Z","attempt":2,"durationMs":353,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"757acb73-8358-4a9e-bb8f-1eadae389471","timestamp":"2026-10-22T21:43:12.708Z","attempt":1,"code":"temporary-unavailable","status":429,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"757acb73-8358-4a9e-bb8f-1eadae389471","timestamp":"2026-10-22T21:43:12.708Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"757acb73-8358-4a9e-bb8f-1eadae389471","timestamp":"2026-10-22T21:43:12.708Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"e0d01122-d099-4fbd-8384-531332187b53","timestamp":"2026-10-22T21:43:12.709Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"e0d01122-d099-4fbd-8384-531332187b53","timestamp":"2026-10-22T21:43:12.709Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"e0d01122-d099-4fbd-8384-531332187b53","timestamp":"2026-10-22T21:43:12.709Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"53b01c3e-f133-453c-8241-1e42c404cd8f","timestamp":"2026-10-22T21:43:12.709Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"53b01c3e-f133-453c-8241-1e42c404cd8f","timestamp":"2026-10-22T21:43:12.709Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"53b01c3e-f133-453c-8241-1e42c404cd8f","timestamp":"2026-10-22T21:43:12.710Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"419dad69-79ac-46ad-949c-396038de92ae","timestamp":"2026-10-22T21:43:12.710Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"419dad69-79ac-46ad-949c-396038de92ae","timestamp":"2026-10-22T21:43:12.710Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"419dad69-79ac-46ad-949c-396038de92ae","timestamp":"2026-10-22T21:43:12.711Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"3bd2c397-5a86-4047-accd-75e743d7adc0","timestamp":"2026-10-22T21:43:12.711Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"3bd2c397-5a86-4047-accd-75e743d7adc0","timestamp":"2026-10-22T21:43:12.711Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"3bd2c397-5a86-4047-accd-75e743d7adc0","timestamp":"2026-10-22T21:43:12.712Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"0e021ca0-6086-4c34-b058-aacfa4339ebd","timestamp":"2026-10-22T21:43:12.712Z","attempt":1,"code":"invalid-request","status":400,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"366b1e29-a3f1-4283-9741-5fbf753b115a","timestamp":"2026-10-22T21:43:12.713Z","attempt":1,"code":"unauthorized","status":401,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_request_failed","requestId":"ec82902a-fd31-4f44-9f20-0939d2cab1fd","timestamp":"2026-10-22T21:43:12.713Z","attempt":1,"code":"unauthorized","status":403,"queryLength":26,"durationMs":0}
+# Subtest: C120: retries a connection failure and recovers on the primary without fallback
+ok 3 - C120: retries a connection failure and recovers on the primary without fallback
+  ---
+  duration_ms: 352.906917
+  type: 'test'
+  ...
+# Subtest: C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+ok 4 - C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+  ---
+  duration_ms: 1.690458
+  type: 'test'
+  ...
+# Subtest: C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+ok 5 - C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+  ---
+  duration_ms: 3.613209
+  type: 'test'
+  ...
+# Subtest: C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+ok 6 - C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+  ---
+  duration_ms: 0.55275
+  type: 'test'
+  ...
+# {"event":"research_starter_request_failed","requestId":"4bd92255-9078-4cf2-8eed-9b79b68c2c07","timestamp":"2026-10-22T21:43:12.724Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":11}
+# {"event":"research_starter_fallback_started","requestId":"4bd92255-9078-4cf2-8eed-9b79b68c2c07","timestamp":"2026-10-22T21:43:12.724Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"4bd92255-9078-4cf2-8eed-9b79b68c2c07","timestamp":"2026-10-22T21:43:12.725Z","stage":"crossref","durationMs":12,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"461f958c-e157-4340-b186-f81962a443ec","timestamp":"2026-10-22T21:43:12.726Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"461f958c-e157-4340-b186-f81962a443ec","timestamp":"2026-10-22T21:43:12.726Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_failed","requestId":"461f958c-e157-4340-b186-f81962a443ec","timestamp":"2026-10-22T21:43:12.726Z","stage":"crossref","durationMs":0,"code":"temporary-unavailable"}
+# {"event":"research_starter_request_failed","requestId":"ff9abcc9-6c82-4751-a7bc-5836f376cfd7","timestamp":"2026-10-22T21:43:12.729Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"ff9abcc9-6c82-4751-a7bc-5836f376cfd7","timestamp":"2026-10-22T21:43:12.730Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"ff9abcc9-6c82-4751-a7bc-5836f376cfd7","timestamp":"2026-10-22T21:43:12.730Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# Subtest: C120: primary timeout leaves time for the alternate source
+ok 7 - C120: primary timeout leaves time for the alternate source
+  ---
+  duration_ms: 12.197958
+  type: 'test'
+  ...
+# Subtest: C120: cancellation suppresses retries and fallback, and rejects late results
+ok 8 - C120: cancellation suppresses retries and fallback, and rejects late results
+  ---
+  duration_ms: 1.113292
+  type: 'test'
+  ...
+# Subtest: C120: both services failing gives a recoverable sanitized error and no fake report
+ok 9 - C120: both services failing gives a recoverable sanitized error and no fake report
+  ---
+  duration_ms: 0.322208
+  type: 'test'
+  ...
+# Subtest: C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+ok 10 - C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+  ---
+  duration_ms: 1.619709
+  type: 'test'
+  ...
+# Subtest: C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+ok 11 - C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+  ---
+  duration_ms: 0.396166
+  type: 'test'
+  ...
+# Subtest: C120: progress truthfully identifies Crossref without breaking the existing researching phase
+ok 12 - C120: progress truthfully identifies Crossref without breaking the existing researching phase
+  ---
+  duration_ms: 1.274334
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 540.648375
+{"event":"research_starter_completed","requestId":"4e31ea0c-a87f-4edb-9de9-d7c394dbf2e3","timestamp":"2026-10-22T21:43:12.864Z","attempt":1,"durationMs":7,"queryLength":178,"rankedPapers":1,"stage":"research_starter"}
+{"event":"research_starter_request_failed","requestId":"2f627e57-5654-4fbc-9ae1-da06a2cbaf5e","timestamp":"2026-10-22T21:43:12.872Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":178,"durationMs":0}
+{"event":"research_starter_request_failed","requestId":"2f627e57-5654-4fbc-9ae1-da06a2cbaf5e","timestamp":"2026-10-22T21:43:13.224Z","attempt":2,"code":"temporary-unavailable","status":503,"queryLength":178,"durationMs":353}
+{"event":"research_starter_fallback_started","requestId":"2f627e57-5654-4fbc-9ae1-da06a2cbaf5e","timestamp":"2026-10-22T21:43:13.224Z","code":"temporary-unavailable","stage":"crossref"}
+{"event":"research_starter_fallback_completed","requestId":"2f627e57-5654-4fbc-9ae1-da06a2cbaf5e","timestamp":"2026-10-22T21:43:13.225Z","stage":"crossref","durationMs":354,"rankedPapers":1}
+{"event":"research_starter_request_failed","requestId":"b1d0a841-9e39-49db-97ad-9de7deb6335f","timestamp":"2026-10-22T21:43:13.230Z","attempt":1,"code":"unauthorized","status":401,"queryLength":178,"durationMs":0}
+{"event":"proposal_discovery_failed","requestId":"1262f516-4053-4bdd-b16c-5369cf2c57ec","timestamp":"2026-10-22T21:43:13.231Z","errorCode":"research-starter-unauthorized","projectId":"00000000-0000-4000-8000-000000000002","stage":"literature"}
+{"event":"research_starter_request_failed","requestId":"b9e2e6e7-3469-463d-b67a-fd9c76966240","timestamp":"2026-10-22T21:43:13.232Z","attempt":1,"code":"invalid-request","status":400,"queryLength":178,"durationMs":0}
+{"event":"proposal_discovery_failed","requestId":"17bc6750-0f16-4ab8-9d31-eefc7e2e1e6b","timestamp":"2026-10-22T21:43:13.232Z","errorCode":"research-starter-invalid-request","projectId":"00000000-0000-4000-8000-000000000002","stage":"literature","httpStatus":400}
+{"event":"research_starter_request_failed","requestId":"34ba8b6e-e102-4a08-8312-857f1879fa88","timestamp":"2026-10-22T21:43:13.232Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":178,"durationMs":0}
+{"event":"research_starter_request_failed","requestId":"34ba8b6e-e102-4a08-8312-857f1879fa88","timestamp":"2026-10-22T21:43:13.584Z","attempt":2,"code":"temporary-unavailable","status":503,"queryLength":178,"durationMs":352}
+{"event":"research_starter_fallback_started","requestId":"34ba8b6e-e102-4a08-8312-857f1879fa88","timestamp":"2026-10-22T21:43:13.584Z","code":"temporary-unavailable","stage":"crossref"}
+{"event":"research_starter_fallback_failed","requestId":"34ba8b6e-e102-4a08-8312-857f1879fa88","timestamp":"2026-10-22T21:43:13.584Z","stage":"crossref","durationMs":352,"code":"temporary-unavailable"}
+{"event":"proposal_discovery_failed","requestId":"e0e214ac-54a9-4366-9fa7-ef83ef7fe68a","timestamp":"2026-10-22T21:43:13.584Z","errorCode":"research-starter-unavailable","projectId":"00000000-0000-4000-8000-000000000002","stage":"literature"}
+{"status":"passed","scenarios":8,"externalCalls":0,"paidCalls":0,"originalBriefingPreserved":true}
+{"event":"research_starter_completed","requestId":"4522ad3a-09e3-4a35-b882-19a2299af196","timestamp":"2026-10-22T21:43:13.738Z","attempt":1,"durationMs":4,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"event":"research_starter_completed","requestId":"e1a190ab-1470-4ad6-ba47-cc8f1446a61e","timestamp":"2026-10-22T21:43:13.743Z","attempt":1,"durationMs":0,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"event":"research_starter_completed","requestId":"b2ff020f-f273-4998-905b-bd234b1ae4d6","timestamp":"2026-10-22T21:43:13.752Z","attempt":1,"durationMs":3,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+{"status":"passed","externalCalls":0,"paidCalls":0,"staleClaim":{"status":200,"state":"choosing_problem"},"freshClaim":{"status":409,"writes":0},"concurrentTakeover":{"statuses":[200,409],"writes":2},"saveFailure":{"status":500,"state":"discovering"}}

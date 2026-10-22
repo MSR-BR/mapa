@@ -1,0 +1,6 @@
+reminder_sql_behavior_ok
+explicit_grants_ok
+PASS: 20 concurrent / same review: 1 allowed
+PASS: 20 concurrent / distinct projects: 5 allowed
+PASS: rolling 24h window does not reset recent attempts at boundary
+C127 local reminder checks PASS; no email sent

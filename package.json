@@ -30,10 +30,10 @@
     "research-starter:verify:production": "node --env-file-if-exists=.env.local scripts/verify-research-starter-production.mjs",
     "research-proposals:verify": "node --conditions=react-server --env-file-if-exists=.env.local --import tsx scripts/verify-proposal-discovery.ts",
     "gemini:verify": "node --env-file-if-exists=.env.local scripts/verify-gemini.mjs",
-    "exports:verify": "node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts",
+    "exports:verify": "node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts && node scripts/verify-export-text.mjs",
     "security:audit": "node scripts/audit-security.mjs",
     "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
-    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai",
+    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/measurement-accessibility.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/data-api.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai && npm run test:data-api && npm run test:suggestions && npm run test:reminders && npm run test:lint-glob",
     "test:doi": "node --conditions=react-server --import tsx --test tests/doi-reference.test.ts",
     "lint": "eslint . --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
@@ -45,7 +45,13 @@
     "test:limits": "node scripts/verify-generation-limits-routes.mjs",
     "test:methodology": "node scripts/verify-guided-methodology-routes.mjs && node scripts/verify-methodology-recovery-routes.mjs",
     "test:research-starter": "node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs && node scripts/verify-discovery-claim-recovery.mjs",
-    "test:exports": "node scripts/verify-intake-report-routes.mjs"
+    "test:exports": "node scripts/verify-intake-report-routes.mjs",
+    "test:data-api": "node scripts/verify-data-api-resilience.mjs",
+    "supabase:verify-security-local": "sh scripts/verify-c125-security-local.sh",
+    "test:suggestions": "node scripts/verify-prompt-suggestions-auth.mjs",
+    "test:reminders": "node scripts/verify-reminder-routes.mjs",
+    "supabase:verify-reminders-local": "python3 scripts/verify-reminder-local.py",
+    "test:lint-glob": "node --test tests/next-root-glob.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/google": "3.0.99",
@@ -54,7 +60,7 @@
     "@supabase/supabase-js": "2.110.8",
     "ai": "6.0.234",
     "docx": "^9.7.1",
-    "next": "16.3.8",
+    "next": "16.4.2",
     "pdfkit": "^0.19.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -69,16 +75,20 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.4.2",
     "supabase": "^2.115.0",
     "tailwindcss": "4.3.3",
     "tsx": "^4.23.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "fast-glob": "file:./tools/next-root-glob"
   },
   "overrides": {
     "postcss": "8.5.28",
     "sharp": "0.35.5",
-    "source-map-js": "1.2.2"
+    "source-map-js": "1.2.2",
+    "@next/eslint-plugin-next@16.4.2": {
+      "fast-glob": "$fast-glob"
+    }
   },
   "type": "module"
 }

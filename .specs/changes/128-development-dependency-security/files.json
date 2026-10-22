@@ -1,0 +1,100 @@
+{
+  "change": "C128",
+  "head": "7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c",
+  "publication": "NOT_REQUESTED",
+  "scope": "Incremental C128 sobre C127 local; preservar Changes anteriores sem commit.",
+  "source_files": [
+    {
+      "path": "package.json",
+      "before_sha256": "73306aabcdc397a1aaf421f2df7a99dbe3cc93eb0dab404d20ca05cb63ec0bf4",
+      "sha256": "bbc25f8ef7cd5e60f33a974614701363354e498da169bec1e9ebaae6ba42e8d0"
+    },
+    {
+      "path": "package-lock.json",
+      "before_sha256": "8255e7f0df276faff7d9c6947c99730221dc9647fb33436ac91042c9677a548c",
+      "sha256": "1e212a782624533c8c8de7eea3540f437f1ede98812a5e0b9a4e40e608294dac"
+    },
+    {
+      "path": "tests/next-root-glob.test.mjs",
+      "before_sha256": null,
+      "sha256": "8d66a41c2dda8f2bcd9a28ac5f69acf995438ab6218ab835a6cee6086e0e1229"
+    },
+    {
+      "path": "tools/next-root-glob/index.cjs",
+      "before_sha256": null,
+      "sha256": "9d91db9ec66fa74bb9c179236fcc7d65f7c3159e389a52b6d296cdc51a673eeb"
+    },
+    {
+      "path": "tools/next-root-glob/package.json",
+      "before_sha256": null,
+      "sha256": "6c3e348d7cbb7a1a1a591a585b871c43616b638ecc5af49dfd0c8adfe1ac4a17"
+    },
+    {
+      "path": "tools/next-root-glob/README.md",
+      "before_sha256": null,
+      "sha256": "22a5e4c82378fa7ef092b6ff2881ab8647d506ce670374cdf8264264d64cb330"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/audit-production.json",
+      "sha256": "abdba2dbd58bacc3aaf2b7f857421fc1674f9942185a7a31b4de8dc04c1a286f"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/audit.json",
+      "sha256": "abdba2dbd58bacc3aaf2b7f857421fc1674f9942185a7a31b4de8dc04c1a286f"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/clean-install-tests.log",
+      "sha256": "2261330ed3ab7ed0559f030624f900ad93dccd5361ea2982e567a92913f87f02"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/clean-install.log",
+      "sha256": "c6445e3ed02617933a3a435c3e3e7bf26ae6d16a8f9ffdf0dd7a2608a957ccb2"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/dependency-delta.json",
+      "sha256": "fa13287b1cc388388726ce26cb6de1996a473d831ed14f24ff47ea3585929f96"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/glob-before.json",
+      "sha256": "1d9ee5b10baf94f4e3c6b4934b036fe5cf3382b0f9c81ab62b06019dbe1fbbfd"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/glob-tests.log",
+      "sha256": "52dd20199a88a754b2a37eb1c1a7ad580bb79a9220ee2c517105dd36459bc8c7"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/install.log",
+      "sha256": "ecceb21ca4ddfa260eba6329a3bc99385cbb3d8f69d7a7cd42f8e4880be837ee"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/lint.log",
+      "sha256": "eda94c67db4cf1affe729473987d943d1a240c19e818b3dcd859cb062fe2b750"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/security-fast.log",
+      "sha256": "c8974bdf86db3bf8b42db66c8c9e4455779552cec54288852db3b0e728a81d1a"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/security-gate.log",
+      "sha256": "42ea173a6444f5a9dfcdb329c8ec8cf056bd8b1daead8f80aa4213c9a140e7eb"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/tests.log",
+      "sha256": "9ca7a1f88ae972ae393036413fe82f811123334f75a4becbe5888c8c049b14f8"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/evidence/types.log",
+      "sha256": "d317b89140653aaaca296aac615f5b675379285d1b90f5b375afe66424212774"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/local-changes.patch",
+      "sha256": "e1e565ce8a813f21b9dcac7df622aed55b87a29bab36eec696128ac90c213141"
+    },
+    {
+      "path": ".specs/changes/128-development-dependency-security/spec.md",
+      "sha256": "9b760249333589cf736e6d134f947fca19b29b7f0a10fff55ebb921e5c034fbc"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
 import { topicsFromContent, replaceTopics } from "@/modules/research-workflow/chapter-content";
 import { withAiProgress } from "@/modules/ai/route";
 import { contentWithDraft, saveVersionedWorkflow } from "@/modules/research-workflow/save-versioned-workflow";
@@ -167,17 +168,17 @@ async function saveWorkflow(
   return saveVersionedWorkflow(supabase, { base: baseWorkflow!, content, state, stableState, sourceRevision, step: editStep, action: editAction === "optimize" ? "augment_references" : editAction });
 }
   if (!workflow || workflow.revision !== parsed.data.revision) {
-    return NextResponse.json({ error: "O mapa foi alterado em outra aba. Recarregue para continuar." }, { status: 409 });
+    return NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
   if (!isSelfDirectedProject && parsed.data.action !== "back" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
+    return NextResponse.json({ code: "advisor_pending", error: new WorkflowRequestError("advisor_pending").message }, { status: 409 });
   }
   const context = validateContext(workflow);
-  if (!context) return NextResponse.json({ error: "Problemática e objetivos precisam estar validados." }, { status: 409 });
+  if (!context) return NextResponse.json({ code: "prerequisite_required", error: new WorkflowRequestError("prerequisite_required").message }, { status: 409 });
   const { action, step } = parsed.data;
   const activeStep = step === "literature" ? "literature_topics" : "development_topics";
   if (!canNavigateToWorkflowTarget(workflow, activeStep)) {
-    return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
+    return NextResponse.json({ code: "active_step_required", error: new WorkflowRequestError("active_step_required").message }, { status: 409 });
   }
   const advisorGate = action === "validate"
     ? projectAdvisorGate({
@@ -194,10 +195,10 @@ async function saveWorkflow(
 
   if (action === "initialize") {
     if (!canNavigateToWorkflowTarget(workflow, "literature_topics")) {
-      return NextResponse.json({ error: "A revisão da literatura não pode ser iniciada agora." }, { status: 409 });
+      return NextResponse.json({ code: "active_step_required", error: new WorkflowRequestError("active_step_required").message }, { status: 409 });
     }
     if (topicsFromContent(workflow.content, step).length > 0) return NextResponse.json({ workflow: workflowForView(baseWorkflow!, activeStep) });
-    if (step !== "literature") return NextResponse.json({ error: "Confirme a revisão da literatura em Próximo para preparar o desenvolvimento." }, { status: 409 });
+    if (step !== "literature") return NextResponse.json({ code: "literature_required", error: new WorkflowRequestError("literature_required").message }, { status: 409 });
     const topics = await generatedLiteratureTopics(context, workflow.content);
     let content = replaceTopics(workflow.content, "literature", topics, workflow.sourceRevision, "ai");
     content = researchWorkflowContentSchema.parse({
@@ -209,7 +210,7 @@ async function saveWorkflow(
       ],
     });
     const saved = await saveWorkflow(workflow, content, "validating_literature", "validating_literature", workflow.sourceRevision, supabase);
-    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    return saved ? NextResponse.json({ workflow: saved }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   if (action === "concept") {
@@ -222,7 +223,7 @@ async function saveWorkflow(
         : suggestion),
     });
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-    return saved ? NextResponse.json({ message: "Preferência registrada.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    return saved ? NextResponse.json({ message: "Preferência registrada.", workflow: saved }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   if (action === "back") {
@@ -247,7 +248,7 @@ async function saveWorkflow(
       const added = newReferences.filter((reference) => !priorIds.has(reference.referenceId)).length;
       const content = researchWorkflowContentSchema.parse({ ...baseWorkflow!.content, referenceArchive: archivedReferences });
       const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-      if (!saved) return NextResponse.json({ error: "O mapa foi alterado em outra aba. As referências anteriores foram preservadas; recarregue e tente novamente." }, { status: 409 });
+      if (!saved) return NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
       const partialNotice = report.retrievalProvider === "crossref" ? " Usamos metadados do Crossref como alternativa; a cobertura é reduzida e precisa de revisão acadêmica." : report.status === "partial" ? " A busca retornou resultados parciais; confira as fontes." : "";
       return NextResponse.json({ message: `${added} nova(s) referência(s) adicionada(s). Os tópicos, referências anteriores e associações foram preservados.${partialNotice}`, workflow: saved });
     } catch (error) {
@@ -311,7 +312,7 @@ async function saveWorkflow(
   }
   if (action === "save" || action === "regenerate") {
     const saved = await saveWorkflow(workflow, content, workflow.state, workflow.stableState, workflow.sourceRevision, supabase);
-    return saved ? NextResponse.json({ message: action === "save" ? "Rascunho salvo." : "Nova sugestão criada.", workflow: saved }) : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    return saved ? NextResponse.json({ message: action === "save" ? "Rascunho salvo." : "Nova sugestão criada.", workflow: saved }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   const currentTopics = topicsFromContent(content, step);
@@ -419,7 +420,7 @@ async function saveWorkflow(
     }
     return saved
       ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 2 validado pelo estudante. Aguardando revisão." : reuseExistingDevelopment ? "Capítulo 2 validado. A versão já existente do Capítulo 4 foi preservada." : "Capítulo 2 validado.", workflow: saved })
-      : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+      : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
   content = researchWorkflowContentSchema.parse({ ...content, activeStep: "methodology_matrix" });
   const advisorEmail = advisorGate?.kind === "advisor_review" ? advisorGate.advisorEmail : null;
@@ -463,7 +464,7 @@ async function saveWorkflow(
   }
   return saved
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Capítulo 4 validado pelo estudante. Aguardando revisão." : "Capítulo 4 validado.", workflow: saved })
-    : NextResponse.json({ error: "O mapa foi alterado em outra aba." }, { status: 409 });
+    : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
 }
 
 export const POST = withAiProgress(handlePost);

@@ -1,0 +1,70 @@
+
+> mapa-da-pesquisa@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.3.8 (webpack)
+- Environments: .env.local
+✓ Running next.config.ts took 48ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.5s
+  Running TypeScript ...
+  Finished TypeScript in 1066ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/22) ...
+  Generating static pages using 7 workers (5/22) 
+  Generating static pages using 7 workers (10/22) 
+  Generating static pages using 7 workers (16/22) 
+✓ Generating static pages using 7 workers (22/22) in 192ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /admin/bugs
+├ ƒ /api/bug-reports
+├ ƒ /api/bug-reports/[id]
+├ ƒ /api/health
+├ ƒ /api/inbound/resend
+├ ƒ /api/projects/[id]/advisor-review
+├ ƒ /api/projects/[id]/advisor-review/remind
+├ ƒ /api/projects/[id]/chapters
+├ ƒ /api/projects/[id]/definition
+├ ƒ /api/projects/[id]/discover
+├ ƒ /api/projects/[id]/exports/[format]
+├ ƒ /api/projects/[id]/final-map
+├ ƒ /api/projects/[id]/generate
+├ ƒ /api/projects/[id]/generation
+├ ƒ /api/projects/[id]/history
+├ ƒ /api/projects/[id]/methodology
+├ ƒ /api/projects/[id]/navigation
+├ ƒ /api/projects/[id]/proposal-selection
+├ ƒ /api/projects/[id]/references
+├ ƒ /api/projects/[id]/references/doi
+├ ƒ /api/projects/[id]/regenerate-card
+├ ƒ /api/projects/integrate
+├ ƒ /api/prompt-suggestions
+├ ƒ /api/research-starter/reports
+├ ƒ /api/support
+├ ƒ /auth/callback
+├ ƒ /auth/confirm
+├ ƒ /dashboard
+├ ƒ /dashboard/projects/[id]
+├ ƒ /dashboard/projects/new
+├ ƒ /dashboard/settings
+├ ƒ /forgot-password
+├ ƒ /login
+├ ƒ /mapa
+├ ƒ /reset-password
+├ ○ /robots.txt
+├ ƒ /service-unavailable
+├ ƒ /signup
+└ ○ /sitemap.xml
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

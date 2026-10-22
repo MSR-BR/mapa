@@ -1,0 +1,52 @@
+[
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/apps/*",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/apps/admin",
+      "/tmp/mapa-c128/glob-fixture/apps/web"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/apps/{web,admin}",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/apps/admin",
+      "/tmp/mapa-c128/glob-fixture/apps/web"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/apps/**/pages",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/apps/admin/pages",
+      "/tmp/mapa-c128/glob-fixture/apps/web/pages"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/apps/@(web|admin)",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/apps/admin",
+      "/tmp/mapa-c128/glob-fixture/apps/web"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/missing/*",
+    "result": []
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/dir with spaces",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/dir with spaces"
+    ]
+  },
+  {
+    "pattern": "/tmp/mapa-c128/glob-fixture/linked-*",
+    "result": [
+      "/tmp/mapa-c128/glob-fixture/linked-web"
+    ]
+  }
+]

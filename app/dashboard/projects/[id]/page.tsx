@@ -1,3 +1,4 @@
+import { loadOrThrow, DataApiError } from "@/lib/supabase/data-api";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -30,7 +31,7 @@ function IntegrationBanner({ source }: { source: string | null }) {
   ) : null;
 }
 
-export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string; workflowStep?: string }> }) {
+async function renderProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string; workflowStep?: string }> }) {
   const { id } = await params;
   const { discover, generate, created, entry, workflowStep } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -40,6 +41,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     access = await authorizeProject(id, "related_read", { requireLegalConsent: true });
   } catch (error) {
     if (error instanceof ActorAuthorizationError) {
+      if (error.status === 503) redirect("/service-unavailable");
       if (error.code === "authentication_required") redirect("/login");
       if (error.code === "project_not_found") notFound();
       redirect(`/dashboard?error=${error.code}`);
@@ -47,14 +49,14 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     throw error;
   }
   const { relation, supabase, userId } = access;
-  const { data: project } = await supabase
+  const { data: project } = await loadOrThrow((signal) => supabase
     .from("projects")
     .select(
       "id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at, owner_id, advisor_email, advisor_id, authoring_role",
     )
     .eq("id", id)
     .is("deleted_at", null)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
 
   if (!project) notFound();
   const isOwner = relation === "owner";
@@ -150,4 +152,12 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       <GenerationWorkspace autoGenerate={generate === "1"} initialSnapshot={generationSnapshot} projectId={project.id} />
     </main>
   );
+}
+
+export default async function ProjectPage(props: Parameters<typeof renderProjectPage>[0]) {
+  try { return await renderProjectPage(props); }
+  catch (error) {
+    if (error instanceof DataApiError && error.status === 503) redirect("/service-unavailable");
+    throw error;
+  }
 }

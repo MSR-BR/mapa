@@ -1,0 +1,989 @@
+diff --git a/app/globals.css b/app/globals.css
+index afb474e..a02abe4 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -88,7 +88,7 @@ body {
+ .research-guide-table th,.research-guide-table td { border-bottom: 1px solid var(--border); padding: .55rem; text-align: left; vertical-align: top; }
+ .research-guide-table th { color: var(--foreground); font-weight: 800; }
+ .research-guide-table td { color: var(--muted); line-height: 1.4; }
+-.analytics-consent { position:fixed; z-index:200; right:1rem; bottom:1rem; display:grid; width:min(calc(100% - 2rem),24rem); gap:.55rem; padding:1rem; border:1px solid var(--border); border-radius:1rem; background:#fff; box-shadow:0 1rem 3rem rgb(20 35 29 / 18%); }
++.analytics-consent { position:fixed; margin:0 0 0 auto; top:auto; max-height:calc(100dvh - 2rem); overflow-y:auto; overscroll-behavior:contain; z-index:200; right:1rem; bottom:1rem; display:grid; width:min(calc(100% - 2rem),24rem); gap:.55rem; padding:1rem; border:1px solid var(--border); border-radius:1rem; background:#fff; box-shadow:0 1rem 3rem rgb(20 35 29 / 18%); }
+ .analytics-consent strong { color:var(--foreground); font-size:.9rem; }
+ .analytics-consent p { margin:0; color:var(--muted); font-size:.78rem; line-height:1.45; }
+ .analytics-consent > div { display:flex; justify-content:flex-end; gap:.5rem; }
+@@ -1220,3 +1220,5 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
+ .landing-video-speeds button:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+ 
+ .methodology-classification > .methodology-list-help { grid-column:1 / -1; margin:0; color:var(--muted); font-size:.85rem; line-height:1.5; }
++
++.analytics-consent::backdrop { background:rgb(20 35 29 / 25%); }
+diff --git a/app/mapa/page.tsx b/app/mapa/page.tsx
+index 8f7a260..ede7ee9 100644
+--- a/app/mapa/page.tsx
++++ b/app/mapa/page.tsx
+@@ -1,17 +1,11 @@
+-import type { Metadata } from "next";
++import { mapaMetadata } from "@/modules/landing/mapa-metadata";
+ import Link from "next/link";
+ import { createClient } from "@/lib/supabase/server";
+ import { BrandLogo } from "@/modules/branding/brand-logo";
+ import { LegalLinks } from "@/modules/legal/legal-links";
+ import { PublicStartForm } from "@/modules/projects/public-start-form";
+ 
+-export const metadata: Metadata = {
+-  title: "Criar mapa de pesquisa — Rápido ou Avançado",
+-  description: "Comece seu projeto de pesquisa com cinco perguntas guiadas ou escreva sua ideia no modo Rápido. Prepare sua ideia sem login e salve com Google.",
+-  alternates: { canonical: "/mapa" },
+-  robots: { index: true, follow: true },
+-  openGraph: { title: "Crie seu Mapa da Pesquisa", description: "Escolha o modo Rápido ou Avançado para organizar sua pesquisa.", url: "/mapa" },
+-};
++export const metadata = mapaMetadata;
+ 
+ export default async function MapaPage({ searchParams }: { searchParams: Promise<{ modo?: string }> }) {
+   const params = await searchParams;
+diff --git a/modules/analytics/analytics-consent.tsx b/modules/analytics/analytics-consent.tsx
+index d26a19d..02cfecf 100644
+--- a/modules/analytics/analytics-consent.tsx
++++ b/modules/analytics/analytics-consent.tsx
+@@ -1,7 +1,10 @@
+ "use client";
+ 
+-import { useEffect, useState } from "react";
++import { useEffect, useRef, useState } from "react";
+ 
++import { usePathname } from "next/navigation";
++import { rememberPublicCampaign } from "./campaign-attribution";
++import { hasPendingLoginAttempt, observeAuthAnalytics } from "./login-attempt";
+ import { GoogleAnalytics } from "./google-analytics";
+ import { ADS_CONSENT_KEY, ANALYTICS_CONSENT_KEY, consentModeV2, setAnalyticsContext, trackAnalyticsEvent } from "./analytics";
+ import { createClient } from "@/lib/supabase/client";
+@@ -9,6 +12,9 @@ import { createClient } from "@/lib/supabase/client";
+ type Preference = { analytics: boolean; ads: boolean };
+ 
+ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: string; nonce?: string }) {
++  const pathname = usePathname();
++  const dialog = useRef<HTMLDialogElement>(null);
++  useEffect(() => { rememberPublicCampaign(window.location.href); }, [pathname]);
+   const [choice, setChoice] = useState<Preference | null>(null);
+   const [draft, setDraft] = useState<Preference>({ analytics: false, ads: false });
+   const [open, setOpen] = useState(false);
+@@ -39,49 +45,39 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
+       return;
+     }
+     let active = true;
+-    const sessionKey = "mapa.analytics-auth-session.v1";
+-    const emitSignedIn = () => {
+-      if (!active) return;
+-      let alreadySent = false;
+-      try {
+-        alreadySent = window.sessionStorage.getItem(sessionKey) === "1";
+-      } catch {
+-        // Storage can be unavailable in private browsing; the event remains best effort.
+-      }
+-      if (alreadySent) return;
+-      setAnalyticsContext({ app_auth_state: "authenticated" });
+-      let attempts = 0;
+-      const send = () => {
+-        if (!active) return;
+-        if (typeof (window as Window & { gtag?: unknown }).gtag === "function") {
+-          try { window.sessionStorage.setItem(sessionKey, "1"); } catch { /* best effort */ }
+-          trackAnalyticsEvent("login_success", { app_auth_state: "authenticated", app_surface: "unknown" });
+-          return;
+-        }
+-        if (attempts++ < 20) window.setTimeout(send, 250);
+-      };
+-      send();
+-    };
+-    void supabase.auth.getSession().then(({ data }) => {
+-      if (data.session) emitSignedIn();
+-    });
++    let timer: ReturnType<typeof setTimeout> | undefined;
+     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+-      if (event === "SIGNED_IN" && session) emitSignedIn();
++      if (event === "SIGNED_IN" && session) {
++        setAnalyticsContext({ app_auth_state: "authenticated" });
++        if (!hasPendingLoginAttempt()) return;
++        let attempts = 0;
++        clearTimeout(timer);
++        const send = () => {
++          if (!active) return;
++          if (!observeAuthAnalytics(event, true) && attempts++ < 20) timer = setTimeout(send, 250);
++        };
++        send();
++      }
+       if (event === "SIGNED_OUT") {
+-        let hadSessionEvent = false;
+-        try { hadSessionEvent = window.sessionStorage.getItem(sessionKey) === "1"; } catch { /* best effort */ }
+-        if (hadSessionEvent) {
+-          trackAnalyticsEvent("logout", { app_auth_state: "authenticated" });
+-        }
+-        try { window.sessionStorage.removeItem(sessionKey); } catch { /* best effort */ }
++        clearTimeout(timer);
++        observeAuthAnalytics(event, false);
+         setAnalyticsContext({ app_auth_state: "anonymous", app_role: "unknown" });
+       }
+     });
+     return () => {
+       active = false;
++      clearTimeout(timer);
+       listener.subscription.unsubscribe();
+     };
+   }, [choice?.analytics, measurementId]);
++  useEffect(() => {
++    const element = dialog.current;
++    if (!open || !element) return;
++    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
++    element.showModal();
++    element.focus();
++    return () => { element.close(); if (previous?.isConnected) previous.focus(); };
++  }, [open]);
+   if (!measurementId) return null;
+   function save(next: Preference) {
+     try {
+@@ -111,14 +107,23 @@ export function AnalyticsConsent({ measurementId, nonce }: { measurementId: stri
+   }
+   return <>
+     {choice?.analytics ? <GoogleAnalytics adsConsent={choice.ads} measurementId={measurementId} nonce={nonce} /> : null}
+-    {open ? <aside aria-label="Preferências de privacidade" className="analytics-consent" role="dialog">
++    {open ? <dialog ref={dialog} tabIndex={-1} aria-modal="true" aria-label="Preferências de privacidade" className="analytics-consent" onKeyDown={(event) => {
++      if (event.key !== "Tab") return;
++      const controls = event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), [tabindex="0"]');
++      const first = controls[0], last = controls[controls.length - 1];
++      if (event.shiftKey && (document.activeElement === first || document.activeElement === event.currentTarget)) {
++        event.preventDefault(); last?.focus();
++      } else if (!event.shiftKey && document.activeElement === last) {
++        event.preventDefault(); first?.focus();
++      }
++    }} onCancel={(event) => { if (choice) setOpen(false); else event.preventDefault(); }}>
+       <strong>Privacidade e métricas</strong>
+       <p>Escolha separadamente métricas de uso e publicidade. Nenhum conteúdo do projeto, prompt ou e-mail é enviado nos eventos.</p>
+       <label><input checked={draft.analytics} onChange={(event) => setDraft({ ...draft, analytics: event.target.checked })} type="checkbox" /> Métricas de uso (GA4)</label>
+       <label><input checked={draft.ads} onChange={(event) => setDraft({ ...draft, ads: event.target.checked })} type="checkbox" /> Publicidade e medição de anúncios (opcional)</label>
+       <p>Personalização de anúncios permanece desativada. Você pode revisar ou revogar estas escolhas a qualquer momento.</p>
+       {storageError ? <p role="alert">Não foi possível salvar sua preferência neste navegador. Verifique o armazenamento e tente novamente.</p> : null}
+-      <div><button onClick={() => save({ analytics: false, ads: false })} type="button">Recusar todos</button>{choice ? <button onClick={() => setOpen(false)} type="button">Cancelar</button> : null}<button className="analytics-consent-accept" onClick={() => save(draft)} type="button">Salvar escolhas</button></div>
+-    </aside> : null}
++      <div><button onClick={() => save({ analytics: false, ads: false })} type="button">Recusar todos</button>{choice ? <button onClick={() => setOpen(false)} type="button">Cancelar</button> : null}<button className="analytics-consent-accept" onClick={() => save({ analytics: true, ads: false })} type="button">Aceitar métricas</button><button onClick={() => save(draft)} type="button">Salvar escolhas</button></div>
++    </dialog> : null}
+   </>;
+ }
+diff --git a/modules/analytics/analytics.ts b/modules/analytics/analytics.ts
+index 70c8087..c348cec 100644
+--- a/modules/analytics/analytics.ts
++++ b/modules/analytics/analytics.ts
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { isSafeCampaignValue, PUBLIC_CAMPAIGN_KEYS } from "./campaign-attribution";
++import { clearPendingCampaign, readPendingCampaign, isSafeCampaignValue, PUBLIC_CAMPAIGN_KEYS } from "./campaign-attribution";
+ 
+ /**
+  * The analytics contract is deliberately small. Values are allow-listed
+@@ -121,12 +121,26 @@ export function initializeAnalyticsTag(measurementId: string, adsConsent: boolea
+   const target = window as AnalyticsWindow;
+   if (!target.gtag) {
+     target.dataLayer = target.dataLayer || [];
++    const pendingCampaign = readPendingCampaign();
++    let firstPageView = true;
++    const attributedContext = () => {
++      const context = safeAnalyticsPageContext(window.location.href, document.referrer);
++      // The path is already redacted. Only the nine sanitized campaign values can be restored.
++      const location = new URL(context.page_location);
++      for (const [key, value] of Object.entries(pendingCampaign)) location.searchParams.set(key, value);
++      return { ...context, page_location: location.toString() };
++    };
+     target.gtag = function (...args: unknown[]) {
+       // gtag.js expects the standard Arguments queue, not ordinary event arrays.
+       // eslint-disable-next-line prefer-rest-params -- Required by the Google tag queue protocol.
+       const command = arguments;
+       if (command[0] === "event") {
+-        command[2] = { ...(args[2] as Record<string, unknown> | undefined), ...safeAnalyticsPageContext(window.location.href, document.referrer) };
++        try { if (window.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "accepted") return; } catch { return; }
++        command[2] = { ...(args[2] as Record<string, unknown> | undefined), ...(firstPageView ? attributedContext() : safeAnalyticsPageContext(window.location.href, document.referrer)) };
++        if (command[1] === "page_view" && firstPageView) {
++          firstPageView = false;
++          clearPendingCampaign();
++        }
+       }
+       target.dataLayer!.push(command);
+     };
+@@ -137,7 +151,7 @@ export function initializeAnalyticsTag(measurementId: string, adsConsent: boolea
+     target.gtag("js", new Date());
+     target.gtag("config", measurementId, {
+       send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
+-      ...safeAnalyticsPageContext(window.location.href, document.referrer),
++      ...attributedContext(),
+     });
+   } else {
+     target.gtag("consent", "update", consentModeV2(adsConsent));
+diff --git a/modules/analytics/campaign-attribution.ts b/modules/analytics/campaign-attribution.ts
+index 4891fdd..dd0b2a5 100644
+--- a/modules/analytics/campaign-attribution.ts
++++ b/modules/analytics/campaign-attribution.ts
+@@ -1,12 +1,68 @@
+-export const PUBLIC_CAMPAIGN_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "gclid", "gbraid", "wbraid"] as const;
+-
++export const PUBLIC_CAMPAIGN_KEYS = [
++  "utm_source", "utm_medium", "utm_campaign", "utm_content", "gclid", "gbraid", "wbraid", "utm_term", "utm_id",
++] as const;
+ export type PublicSearchParams = Record<string, string | string[] | undefined>;
++export type PublicCampaign = Partial<Record<typeof PUBLIC_CAMPAIGN_KEYS[number], string>>;
++export const CAMPAIGN_STORAGE_KEY = "mapa.pending-campaign.v1";
+ 
+ export function isSafeCampaignValue(value: unknown): value is string {
+-  return typeof value === "string" && /^[a-zA-Z0-9_-]{1,250}$/.test(value);
++  if (typeof value !== "string" || !value.trim() || value.length > 250) return false;
++  // Permit campaign punctuation, but not URLs, email addresses, controls or encoded bypasses.
++  let decoded = value;
++  for (let depth = 0; depth < 4; depth++) {
++    if (!/^[a-zA-Z0-9_.% -]+$/.test(decoded)) return false;
++    const next = decoded.replace(/%([0-9a-f]{2})/gi, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)));
++    if (next === decoded) return true;
++    decoded = next;
++  }
++  return false;
++}
++
++export function sanitizeCampaign(params: PublicSearchParams): PublicCampaign {
++  const safe: PublicCampaign = {};
++  for (const key of PUBLIC_CAMPAIGN_KEYS) {
++    const value = params[key];
++    if (isSafeCampaignValue(value)) safe[key] = value;
++  }
++  return safe;
++}
++
++export function campaignFromUrl(href: string): PublicCampaign {
++  try {
++    const url = new URL(href);
++    if (!["/", "/mapa"].includes(url.pathname)) return {};
++    const params: PublicSearchParams = {};
++    for (const key of PUBLIC_CAMPAIGN_KEYS) {
++      const values = url.searchParams.getAll(key);
++      if (values.length === 1) params[key] = values[0];
++    }
++    return sanitizeCampaign(params);
++  } catch { return {}; }
+ }
+ 
+-/** A campaign entry must render before an authenticated visitor resumes a private project. */
+ export function hasPublicCampaignAttribution(params: PublicSearchParams): boolean {
+   return ["utm_source", "gclid", "gbraid", "wbraid"].some((key) => isSafeCampaignValue(params[key]));
+ }
++
++/** Local per-tab attribution only. No URL, title, project content, identifiers or network call. */
++export function rememberPublicCampaign(href: string): void {
++  if (typeof window === "undefined") return;
++  const campaign = campaignFromUrl(href);
++  if (!Object.keys(campaign).length) return;
++  try {
++    // Keep the first pending entry across internal navigation and OAuth redirects.
++    if (!window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY)) window.sessionStorage.setItem(CAMPAIGN_STORAGE_KEY, JSON.stringify(campaign));
++  } catch { /* Attribution is best effort when browser storage is disabled. */ }
++}
++
++export function readPendingCampaign(): PublicCampaign {
++  if (typeof window === "undefined") return {};
++  try {
++    const value: unknown = JSON.parse(window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY) ?? "null");
++    return value && typeof value === "object" && !Array.isArray(value) ? sanitizeCampaign(value as PublicSearchParams) : {};
++  } catch { return {}; }
++}
++
++export function clearPendingCampaign(): void {
++  try { window.sessionStorage.removeItem(CAMPAIGN_STORAGE_KEY); } catch { /* best effort */ }
++}
+diff --git a/modules/analytics/export-pdf-link.tsx b/modules/analytics/export-pdf-link.tsx
+index 875617c..491b796 100644
+--- a/modules/analytics/export-pdf-link.tsx
++++ b/modules/analytics/export-pdf-link.tsx
+@@ -1,4 +1,5 @@
+ "use client";
++import { WorkflowHttpError, workflowClientFailure } from "@/modules/research-workflow/request-failure";
+ 
+ import { useRef, useState, type MouseEvent, type ReactNode } from "react";
+ 
+@@ -48,7 +49,11 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
+       if (await beforeDownload?.() === false) return;
+       trackStart();
+       const response = await fetch(href, { credentials: "same-origin" });
+-      if (!response.ok) throw new Error("export_failed");
++      if (!response.ok) {
++        // An HTML error page still has a useful HTTP status; never label it as a network error.
++        const payload = await response.json().catch(() => null) as { errorCode?: string; code?: string } | null;
++        throw new WorkflowHttpError(response.status, payload?.errorCode ?? payload?.code);
++      }
+       const blob = await response.blob();
+       const objectUrl = URL.createObjectURL(blob);
+       const anchor = document.createElement("a");
+@@ -68,7 +73,7 @@ export function ExportPdfLink({ href, referenceCount, productType = "unknown", s
+         app_reference_count_bucket: getReferenceCountBucket(referenceCount),
+       });
+     } catch (error) {
+-      if (format === "pdf" && downloadStarted) trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: "network" });
++      if (format === "pdf" && downloadStarted) trackAnalyticsEvent("export_pdf_failed", { app_result: "failed", app_stage: "final", app_macro_stage: "4", app_step: "final_map", app_product_type: productType, app_surface: source, app_reason_code: workflowClientFailure(error).reason });
+       if (onFailure) onFailure(error instanceof Error && error.message !== "export_failed" ? error.message : "Não foi possível baixar o relatório. Seus textos continuam salvos; tente novamente.");
+       else window.location.assign(href);
+     } finally {
+diff --git a/modules/auth/social-auth-form.tsx b/modules/auth/social-auth-form.tsx
+index 518d3f4..19fecff 100644
+--- a/modules/auth/social-auth-form.tsx
++++ b/modules/auth/social-auth-form.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { useEffect } from "react";
++import { useEffect, useRef } from "react";
+ import { useFormStatus } from "react-dom";
+ 
+ import {
+@@ -8,6 +8,9 @@ import {
+   type AnalyticsSurface,
+ } from "@/modules/analytics/analytics";
+ 
++import { beginLoginAttempt, clearLoginAttempt } from "@/modules/analytics/login-attempt";
++import { workflowResponseFailure } from "@/modules/research-workflow/request-failure";
++
+ import type { SocialAuthErrorCode, SocialAuthProvider } from "./oauth-contract";
+ 
+ type SocialAuthFormProps = {
+@@ -35,7 +38,7 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
+     <form
+       action={action}
+       className="social-auth-form"
+-      onSubmit={() => trackAnalyticsEvent("login_started", { app_result: "started", app_surface: source })}
++      onSubmit={() => { beginLoginAttempt(); }}
+     >
+       <input name="next" type="hidden" value={destination} />
+       <input name="provider" type="hidden" value={provider} />
+@@ -45,9 +48,13 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
+ }
+ 
+ export function SocialAuthErrorNotice({ code, message }: { code: SocialAuthErrorCode; message: string }) {
++  const reported = useRef<string | null>(null);
+   useEffect(() => {
++    if (reported.current === code) return;
++    reported.current = code;
++    clearLoginAttempt();
+     trackAnalyticsEvent("login_failed", {
+-      app_reason_code: "provider_unavailable",
++      app_reason_code: workflowResponseFailure(code === "access" ? 403 : 0, undefined).reason,
+       app_result: "failed",
+       app_surface: code === "google" ? code : "unknown",
+     });
+diff --git a/modules/generation/generation-workspace.tsx b/modules/generation/generation-workspace.tsx
+index c273fcc..3510f8b 100644
+--- a/modules/generation/generation-workspace.tsx
++++ b/modules/generation/generation-workspace.tsx
+@@ -1,4 +1,6 @@
+ "use client";
++import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
++
+ import { useAiProgress } from "@/modules/ai/use-ai-progress";
+ 
+ import { useRouter } from "next/navigation";
+@@ -84,8 +86,9 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
+         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
+         method: "POST",
+       });
+-      const payload = await response.json();
+-      if (!response.ok) throw new Error(payload.error ?? "Não foi possível gerar a estrutura.");
++      const payload = await readWorkflowPayload<GenerationSnapshot & { errorCode?: string; code?: string }>(response);
++      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
++      if (!payload.structure || !Array.isArray(payload.references)) throw new WorkflowRequestError("response_invalid");
+       const next = payload as GenerationSnapshot;
+       setSnapshot(next);
+       setDraft(next.structure);
+@@ -94,10 +97,10 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
+       const referenceBucket = getReferenceCountBucket(next.references.length);
+       trackAnalyticsEvent(operation === "literature" ? "literature_optimization_completed" : "generation_completed", { app_result: "success", app_reference_count_bucket: referenceBucket, app_stage: operation === "literature" ? "literature" : "unknown" });
+     } catch (error) {
+-      const reasonCode = error instanceof DOMException && error.name === "TimeoutError" ? "provider_timeout" : "provider_invalid_response";
++      const reasonCode = workflowClientFailure(error).reason;
+       trackAnalyticsEvent(operation === "literature" ? "literature_optimization_failed" : "generation_failed", { app_result: "failed", app_reason_code: reasonCode, app_stage: operation === "literature" ? "literature" : "unknown" });
+       setMessage(error instanceof Error ? error.message : "Não foi possível gerar a estrutura.");
+-      await refresh();
++      try { await refresh(); } catch { /* Keep the original failure if the status refresh is also offline. */ }
+     } finally {
+       setBusy(false);
+       router.refresh();
+diff --git a/modules/projects/dashboard-project-grid.tsx b/modules/projects/dashboard-project-grid.tsx
+index 6776176..8f31e4c 100644
+--- a/modules/projects/dashboard-project-grid.tsx
++++ b/modules/projects/dashboard-project-grid.tsx
+@@ -1,4 +1,6 @@
+ "use client";
++import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
++
+ import { useAiProgress } from "@/modules/ai/use-ai-progress";
+ 
+ import { useRouter } from "next/navigation";
+@@ -60,12 +62,13 @@ export function DashboardProjectGrid({
+         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
+         method: "POST",
+       });
+-      const payload = await response.json() as { error?: string; projectId?: string; sourceTitles?: string[] };
+-      if (!response.ok || !payload.projectId) throw new Error(payload.error ?? "Não foi possível integrar.");
++      const payload = await readWorkflowPayload<{ error?: string; errorCode?: string; code?: string; projectId?: string; sourceTitles?: string[] }>(response);
++      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
++      if (!payload.projectId) throw new WorkflowRequestError("response_invalid");
+       trackAnalyticsEvent("project_integration_completed", { app_role: activeRole, app_surface: "dashboard", app_result: "success", app_reference_count_bucket: "unknown" });
+       router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
+     } catch (error) {
+-      trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: "unknown" });
++      trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: workflowClientFailure(error).reason });
+       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
+       setIntegrating(false);
+     }
+diff --git a/modules/projects/public-start-form.tsx b/modules/projects/public-start-form.tsx
+index b4c4bc5..400acb1 100644
+--- a/modules/projects/public-start-form.tsx
++++ b/modules/projects/public-start-form.tsx
+@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from
+ import { EMPTY_RESEARCH_INTAKE, composeResearchBrief, hasResearchProductType, isCompleteResearchIntake, researchIntakeInputSchema, type ResearchIntakeDraft } from "./research-intake";
+ import { ResearchIntakeForm } from "./research-intake-form";
+ import { ResearchPromptInput } from "./research-prompt-input";
+-import { setAnalyticsContext, trackAnalyticsEvent, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
++import { setAnalyticsContext, type AnalyticsEntryMode, type AnalyticsProductType } from "@/modules/analytics/analytics";
+ 
+ export const PENDING_PROJECT_KEY = "mapa.pending-project.v1";
+ export const PENDING_PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1_000;
+@@ -100,7 +100,6 @@ export function PublicStartForm({ authenticated = false, initialMode = "quick",
+       setError("Não foi possível guardar o rascunho neste navegador. Verifique as permissões de armazenamento e tente novamente.");
+       return;
+     }
+-    if (!authenticated) trackAnalyticsEvent("login_started", { app_surface: "home" });
+     setContinuing(true);
+     router.push(authenticated ? "/dashboard?resume=1" : "/login?next=%2Fdashboard%3Fresume%3D1");
+   }
+diff --git a/modules/projects/research-prompt-input.tsx b/modules/projects/research-prompt-input.tsx
+index 2766890..9caa274 100644
+--- a/modules/projects/research-prompt-input.tsx
++++ b/modules/projects/research-prompt-input.tsx
+@@ -121,7 +121,7 @@ export function ResearchPromptInput({
+     <>
+       <textarea
+         autoComplete="off"
+-        autoFocus
++        aria-label="Tema ou palavras-chave da pesquisa"
+         id={id}
+         maxLength={5_000}
+         name="prompt"
+diff --git a/modules/research-workflow/literature-development-workspace.tsx b/modules/research-workflow/literature-development-workspace.tsx
+index 9a7a579..5edaa5b 100644
+--- a/modules/research-workflow/literature-development-workspace.tsx
++++ b/modules/research-workflow/literature-development-workspace.tsx
+@@ -1,4 +1,6 @@
+ "use client";
++import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
++
+ import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+ 
+ import { useRegenerationRequests } from "./use-regeneration-requests";
+@@ -139,13 +141,14 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
+         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
+         method: "POST",
+       });
+-      const payload = await response.json() as { error?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow };
++      const payload = await readWorkflowPayload<{ error?: string; errorCode?: string; code?: string; errors?: string[]; message?: string; workflow?: ResearchWorkflow }>(response);
+       if (response.status === 422) {
+         trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "blocked", app_reason_code: "validation" });
+         setErrors(payload.errors ?? [payload.error ?? "Revise esta etapa."]);
+         return;
+       }
+-      if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível atualizar o capítulo.");
++      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
++      if (!payload.workflow) throw new WorkflowRequestError("response_invalid");
+       applyWorkflow(payload.workflow);
+       const nextReferences = [...(payload.workflow.content.discovery?.references ?? []), ...payload.workflow.content.referenceArchive];
+       const referenceBucket = getReferenceCountBucket(new Set(nextReferences.map((reference) => reference.referenceId)).size);
+@@ -156,7 +159,7 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
+       }
+       return true;
+     } catch (error) {
+-      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: "provider_invalid_response" });
++      trackAnalyticsEvent("stage_blocked", { ...analyticsPosition, app_result: "failed", app_reason_code: workflowClientFailure(error).reason });
+       setMessage(error instanceof Error ? error.message : "Não foi possível atualizar o capítulo.");
+       return false;
+     } finally {
+diff --git a/modules/research-workflow/proposal-discovery-workspace.tsx b/modules/research-workflow/proposal-discovery-workspace.tsx
+index 4301650..c7f3b18 100644
+--- a/modules/research-workflow/proposal-discovery-workspace.tsx
++++ b/modules/research-workflow/proposal-discovery-workspace.tsx
+@@ -56,13 +56,13 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+     }
+   }, [activeRole, autoDiscover, discoveryReportId, referenceCount]);
+ 
+-  async function discover() {
++  async function discover(isRetry = false) {
+     setOperation("discovering");
+     setMessage(null);
+     setErrorStage(null);
+     setErrorCode(null);
+     setErrorReason(null);
+-    trackAnalyticsEvent("generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: "started" });
++    trackAnalyticsEvent(isRetry ? "generation_retry" : "generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: isRetry ? "retry" : "started", ...(isRetry ? { app_reason_code: errorReason ?? "unknown" } : {}) });
+     try {
+       const response = await aiProgress.request(`/api/projects/${projectId}/discover`, {
+         headers: profileMutationHeaders(roleVersion),
+@@ -194,7 +194,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
+             {errorStage && errorStage in STAGE_LABELS ? <small>Etapa: {STAGE_LABELS[errorStage]}.</small> : null}
+             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
+           </div>
+-      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: errorReason ?? "unknown" }); void discover(); }} type="button">Tentar novamente</button>
++      <button disabled={busy} onClick={() => { void discover(true); }} type="button">Tentar novamente</button>
+         </div>
+       ) : null}
+ 
+diff --git a/modules/research-workflow/request-failure.ts b/modules/research-workflow/request-failure.ts
+index cb4364c..9667d88 100644
+--- a/modules/research-workflow/request-failure.ts
++++ b/modules/research-workflow/request-failure.ts
+@@ -27,7 +27,7 @@ export class WorkflowRequestError extends Error {
+ }
+ 
+ export function workflowClientFailure(error: unknown) {
+-  if (error instanceof WorkflowRequestError) return error;
++  if (error instanceof WorkflowRequestError || error instanceof WorkflowHttpError) return error;
+   if (error instanceof Error && error.name === "AbortError") return new WorkflowRequestError("cancelled");
+   if (error instanceof TypeError) return new WorkflowRequestError("network");
+   return new WorkflowRequestError("unknown");
+@@ -43,6 +43,25 @@ export function workflowResponseFailure(status: number, code: unknown): { reason
+ 
+ /** A malformed or truncated response is a transport failure, not proof of an AI failure. */
+ export async function readWorkflowPayload<T>(response: Response): Promise<T> {
+-  try { return await response.json() as T; }
+-  catch { throw new WorkflowRequestError("response_invalid"); }
++  try {
++    const payload: unknown = await response.json();
++    if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new WorkflowRequestError("response_invalid");
++    return payload as T;
++  } catch {
++    if (!response.ok) throw new WorkflowHttpError(response.status);
++    throw new WorkflowRequestError("response_invalid");
++  }
++}
++
++/** Preserve the HTTP classification through the catch boundary without raw server messages. */
++export class WorkflowHttpError extends Error {
++  readonly code: WorkflowFailureCode;
++  readonly reason: AnalyticsReasonCode;
++  constructor(readonly status: number, code?: unknown) {
++    const failure = workflowResponseFailure(status, code);
++    super(failure.code ? new WorkflowRequestError(failure.code).message : "Não foi possível concluir a solicitação. Tente novamente.");
++    this.name = "WorkflowHttpError";
++    this.code = failure.code ?? "unknown";
++    this.reason = failure.reason;
++  }
+ }
+diff --git a/package.json b/package.json
+index ab0fc3c..cf0d0fa 100644
+--- a/package.json
++++ b/package.json
+@@ -33,7 +33,7 @@
+     "exports:verify": "node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts",
+     "security:audit": "node scripts/audit-security.mjs",
+     "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
+-    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai",
++    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/measurement-accessibility.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai",
+     "test:doi": "node --conditions=react-server --import tsx --test tests/doi-reference.test.ts",
+     "lint": "eslint . --ignore-pattern .next",
+     "typecheck": "tsc --noEmit",
+diff --git a/tests/analytics.test.ts b/tests/analytics.test.ts
+index 34b1052..155d49d 100644
+--- a/tests/analytics.test.ts
++++ b/tests/analytics.test.ts
+@@ -1,7 +1,7 @@
+ import assert from "node:assert/strict";
+ import test from "node:test";
+ 
+-import { hasPublicCampaignAttribution } from "../modules/analytics/campaign-attribution";
++import { CAMPAIGN_STORAGE_KEY, rememberPublicCampaign, campaignFromUrl, isSafeCampaignValue, hasPublicCampaignAttribution } from "../modules/analytics/campaign-attribution";
+ 
+ import {
+   ANALYTICS_CONSENT_KEY,
+@@ -24,8 +24,9 @@ function installWindow(consent: string | null) {
+   const localStorage = {
+     getItem: (key: string) => storage.get(key) ?? null,
+     setItem: (key: string, value: string) => { storage.set(key, value); },
++    removeItem: (key: string) => { storage.delete(key); },
+   };
+-  const windowValue = { localStorage, location: { href: "https://mapadapesquisa.com.br/" }, gtag: (...args: unknown[]) => calls.push(args) };
++  const windowValue = { localStorage, sessionStorage: localStorage, location: { href: "https://mapadapesquisa.com.br/" }, gtag: (...args: unknown[]) => calls.push(args) };
+   Object.defineProperty(globalThis, "window", { configurable: true, value: windowValue });
+   Object.defineProperty(globalThis, "document", { configurable: true, value: { referrer: "" } });
+   return calls;
+@@ -186,3 +187,47 @@ test("workflow analytics separates four macro stages from internal steps", () =>
+     app_macro_stage: "4", app_stage: "final", app_step: "final_map",
+   });
+ });
++
++
++test("campaign values round trip punctuation; duplicate, private and encoded email values are rejected", () => {
++  const params = new URLSearchParams({ utm_source: "newsletter.uff", utm_campaign: "turma 50%", utm_term: "projeto de pesquisa", utm_id: "2026.10", email: "private@example.com" });
++  const url = new URL(safeAnalyticsPageLocation(`https://mapadapesquisa.com.br/?${params}`));
++  assert.equal(url.searchParams.get("utm_campaign"), "turma 50%");
++  assert.equal(url.searchParams.get("utm_source"), "newsletter.uff");
++  assert.equal(url.searchParams.get("utm_term"), "projeto de pesquisa");
++  assert.equal(url.searchParams.get("utm_id"), "2026.10");
++  assert.equal(url.searchParams.has("email"), false);
++  assert.deepEqual(campaignFromUrl("https://mapadapesquisa.com.br/?utm_source=a&utm_source=b&utm_medium=email"), { utm_medium: "email" });
++  for (const value of ["a@b.com", "a%40b.com", "a%2540b.com", "a%0Ab", "https://example.com", " "]) assert.equal(isSafeCampaignValue(value), false);
++  assert.deepEqual(campaignFromUrl("https://mapadapesquisa.com.br/login?utm_source=private"), {});
++});
++
++test("sanitized campaign survives public navigation and login until the first consented page view", () => {
++  installWindow(null);
++  const target = window as Window & { gtag?: (...args: unknown[]) => void; dataLayer?: unknown[][] };
++  delete target.gtag;
++  rememberPublicCampaign("https://mapadapesquisa.com.br/?utm_source=uff.news&utm_campaign=turma+50%25&utm_term=projeto+pesquisa&utm_id=2026.10&next=secret&email=private%40example.com");
++  rememberPublicCampaign("https://mapadapesquisa.com.br/mapa");
++  assert.deepEqual(JSON.parse(window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY)!), { utm_source: "uff.news", utm_campaign: "turma 50%", utm_term: "projeto pesquisa", utm_id: "2026.10" });
++  assert.equal(initializeAnalyticsTag("G-TEST", false), false);
++  assert.equal(target.dataLayer, undefined);
++  window.location.href = "https://mapadapesquisa.com.br/login?next=secret";
++  window.localStorage.setItem(ANALYTICS_CONSENT_KEY, "accepted");
++  assert.equal(initializeAnalyticsTag("G-TEST", false), true);
++  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", { page_location: "https://private.invalid/secret" });
++  const first = target.dataLayer!.at(-1)![2] as Record<string, string>;
++  const location = new URL(first.page_location);
++  assert.equal(location.pathname, "/login");
++  assert.equal(location.searchParams.get("utm_source"), "uff.news");
++  assert.equal(location.searchParams.get("utm_campaign"), "turma 50%");
++  assert.equal(JSON.stringify(target.dataLayer).includes("secret"), false);
++  assert.equal(window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY), null);
++  window.location.href = "https://mapadapesquisa.com.br/dashboard/projects/123e4567-e89b-12d3-a456-426614174000?email=private";
++  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {});
++  assert.equal((target.dataLayer!.at(-1)![2] as Record<string, string>).page_location, "https://mapadapesquisa.com.br/dashboard/projects/project");
++  const length = target.dataLayer!.length;
++  window.localStorage.setItem(ANALYTICS_CONSENT_KEY, "rejected");
++  (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {});
++  assert.equal(trackAnalyticsEvent("project_start"), false);
++  assert.equal(target.dataLayer!.length, length);
++});
+diff --git a/tests/workflow-request-failure.test.ts b/tests/workflow-request-failure.test.ts
+index d95c218..bbb9ebe 100644
+--- a/tests/workflow-request-failure.test.ts
++++ b/tests/workflow-request-failure.test.ts
+@@ -27,3 +27,13 @@ test("truncated/invalid streams preserve a transport reason; valid result keeps
+   const response=await readProgressResponse(streamResponse(lines),()=>{});
+   assert.equal(response.status,409);assert.equal((await response.json()).code,"context_stale");
+ });
++
++
++test("HTTP errors survive HTML/empty error bodies, while invalid successful payloads are response_invalid", async () => {
++  for (const [status, reason] of [[429, "rate_limited"], [422, "validation"], [503, "unknown"]] as const) {
++    await assert.rejects(() => readWorkflowPayload(new Response("<html>synthetic</html>", { status })), (error: unknown) => workflowClientFailure(error).reason === reason);
++  }
++  for (const payload of [null, [], "unexpected"]) {
++    await assert.rejects(() => readWorkflowPayload(Response.json(payload)), (error: unknown) => workflowClientFailure(error).reason === "response_invalid");
++  }
++});
+diff --git a/modules/analytics/login-attempt.ts b/modules/analytics/login-attempt.ts
+new file mode 100644
+index 0000000..55d4552
+--- /dev/null
++++ b/modules/analytics/login-attempt.ts
+@@ -0,0 +1,43 @@
++import { trackAnalyticsEvent } from "./analytics";
++
++const ATTEMPT_KEY = "mapa.analytics-login-attempt.v1";
++const SESSION_KEY = "mapa.analytics-auth-session.v1";
++const ATTEMPT_TTL_MS = 30 * 60 * 1000;
++
++export function hasPendingLoginAttempt(): boolean {
++  try {
++    const started = Number(window.sessionStorage.getItem(ATTEMPT_KEY));
++    const age = Date.now() - started;
++    return started > 0 && age >= 0 && age <= ATTEMPT_TTL_MS;
++  } catch { return false; }
++}
++
++export function clearLoginAttempt() {
++  try { window.sessionStorage.removeItem(ATTEMPT_KEY); } catch { /* No telemetry without storage. */ }
++}
++
++export function beginLoginAttempt(): boolean {
++  // Require both consent and a queued login_started; never manufacture a matching success.
++  try { window.sessionStorage.setItem(ATTEMPT_KEY, String(Date.now())); } catch { return false; }
++  if (trackAnalyticsEvent("login_started", { app_result: "started", app_surface: "google" })) return true;
++  clearLoginAttempt();
++  return false;
++}
++
++/** Called only by the auth subscription; INITIAL_SESSION/refresh/refocus are not new logins. */
++export function observeAuthAnalytics(event: string, hasSession: boolean): boolean {
++  if (event === "SIGNED_IN" && hasSession && hasPendingLoginAttempt()) {
++    if (!trackAnalyticsEvent("login_success", { app_result: "success", app_auth_state: "authenticated", app_surface: "google" })) return false;
++    clearLoginAttempt();
++    try { window.sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* best effort */ }
++    return true;
++  }
++  if (event === "SIGNED_OUT") {
++    clearLoginAttempt();
++    try {
++      if (window.sessionStorage.getItem(SESSION_KEY) === "1") trackAnalyticsEvent("logout", { app_auth_state: "authenticated" });
++      window.sessionStorage.removeItem(SESSION_KEY);
++    } catch { /* best effort */ }
++  }
++  return false;
++}
+diff --git a/modules/landing/mapa-metadata.ts b/modules/landing/mapa-metadata.ts
+new file mode 100644
+index 0000000..d31e723
+--- /dev/null
++++ b/modules/landing/mapa-metadata.ts
+@@ -0,0 +1,18 @@
++import type { Metadata } from "next";
++
++export const mapaMetadata: Metadata = {
++  title: "Criar mapa de pesquisa — Rápido ou Avançado",
++  description: "Comece seu projeto de pesquisa com cinco perguntas guiadas ou escreva sua ideia no modo Rápido. Prepare sua ideia sem login e salve com Google.",
++  alternates: { canonical: "/mapa" },
++  robots: { index: true, follow: true },
++  openGraph: { title: "Crie seu Mapa da Pesquisa", description: "Escolha o modo Rápido ou Avançado para organizar sua pesquisa.", url: "/mapa",
++    siteName: "Mapa da Pesquisa", locale: "pt_BR", type: "website",
++    images: [{ url: "/brand/mapa-da-pesquisa-social-card.png", width: 1200, height: 630, alt: "Mapa da Pesquisa — crie seu projeto no modo Rápido ou Avançado" }],
++  },
++  twitter: {
++    card: "summary_large_image", title: "Crie seu Mapa da Pesquisa",
++    description: "Escolha o modo Rápido ou Avançado para organizar sua pesquisa.",
++    images: ["/brand/mapa-da-pesquisa-social-card.png"],
++  },
++};
++
+diff --git a/scripts/verify-measurement-browser.mjs b/scripts/verify-measurement-browser.mjs
+new file mode 100644
+index 0000000..e37ee39
+--- /dev/null
++++ b/scripts/verify-measurement-browser.mjs
+@@ -0,0 +1,134 @@
++/** Entirely synthetic browser harness: no real API, tag, login or paid generation is reachable. */
++import assert from "node:assert/strict";
++import { build } from "esbuild";
++import { createRequire } from "node:module";
++import { readFile, mkdir } from "node:fs/promises";
++import path from "node:path";
++const require = createRequire(import.meta.url);
++const playwrightPath = process.env.PLAYWRIGHT_MODULE_PATH;
++const { chromium } = playwrightPath ? await import(playwrightPath) : require("playwright");
++const mocks = {
++  "next/navigation": 'export const usePathname = () => location.pathname; export const useRouter = () => ({refresh(){},push(){},replace(){}});',
++  "next/link": 'export default function Link({children, ...props}) { return <a {...props}>{children}</a>; }',
++  "next/script": 'export default function Script() { return null; }',
++  "@/lib/supabase/client": 'export function createClient() { return {auth:{onAuthStateChange(callback) { window.authCallback = callback; callback("INITIAL_SESSION", {}); return {data:{subscription:{unsubscribe(){}}}}; }}}; }',
++  "@/modules/ai/use-ai-progress": 'export const useAiProgress = () => ({request: (...args) => fetch(...args), label:"Teste sintético", cancel(){}});',
++  "@/modules/profile/active-profile-context": 'export const useActiveProfile = () => ({activeRole:"advisor",roleVersion:1}); export const profileMutationHeaders = () => ({});',
++  "./project-card-modal": 'export function ProjectCardModal({projectId,title,onSelectionChange}) { return <button onClick={() => onSelectionChange(projectId,true)}>Selecionar {title}</button>; }',
++  "./workflow-history": 'export function WorkflowHistory() { return null; }',
++  "./workflow-progress": 'export function WorkflowProgress() { return null; }',
++  "./manual-reference-panel": 'export function ManualReferencePanel() { return null; }',
++};
++const result = await build({ entryPoints: ["tests/fixtures/measurement-browser.tsx"], bundle: true, write: false, platform: "browser", jsx: "automatic", define: { "process.env.NODE_ENV": '"development"' }, plugins: [{ name: "synthetic-only", setup(b) {
++  b.onResolve({filter: /.*/}, args => mocks[args.path] ? {path: args.path, namespace:"mock"} : undefined);
++  b.onLoad({filter: /.*/, namespace:"mock"}, args => ({ contents:mocks[args.path], loader:"jsx", resolveDir:process.cwd() }));
++}}] });
++const bundle = result.outputFiles[0].text;
++const css = await readFile("app/globals.css", "utf8");
++const browser = await chromium.launch({headless:true, ...(process.env.PLAYWRIGHT_CHANNEL ? {channel:process.env.PLAYWRIGHT_CHANNEL} : {})});
++let checks = 0;
++const screenshots = path.resolve("tmp/c123-browser");
++await mkdir(screenshots, {recursive:true});
++async function pageFor(flow, mode = "429", options = {}) {
++  const context = await browser.newContext({viewport:{width:375,height:667},...options});
++  const page = await context.newPage();
++  const errors = [];
++  page.on("pageerror", e => { errors.push(e.message); console.error("Synthetic page error:", e.message); });
++  await page.addInitScript(({flow}) => {
++    window.calls = [];
++    if (flow !== "consent") {
++      localStorage.setItem("mapa.analytics-consent.v1", "accepted");
++      window.gtag = (...args) => window.calls.push(args);
++    }
++  }, {flow});
++  await page.route("**/*", async route => {
++    const url = new URL(route.request().url());
++    if (url.hostname !== "mapa.invalid") return route.abort();
++    if (url.pathname === "/fixture.js") return route.fulfill({contentType:"text/javascript",body:bundle});
++    if (url.pathname === "/fixture.css") return route.fulfill({contentType:"text/css",body:css});
++    if (url.pathname.startsWith("/api/")) {
++      if (mode === "offline") return route.abort("internetdisconnected");
++      if (url.searchParams.has("status")) return route.fulfill({json:{job:null}});
++      if (mode === "invalid") return route.fulfill({status:200,contentType:"application/json",body:"broken-json"});
++      return route.fulfill({status:mode === "503-unknown" ? 503 : Number(mode),json:{error:"Erro sintético", ...(mode === "503" ? {errorCode:"persistence_failed"} : {})}});
++    }
++    if (url.pathname === "/") return route.fulfill({contentType:"text/html",body:'<!doctype html><html lang="pt-BR"><head><link rel="stylesheet" href="/fixture.css"></head><body><div id="root"></div><script src="/fixture.js"></script></body></html>'});
++    return route.abort();
++  });
++  await page.goto(`https://mapa.invalid/?flow=${flow}`);
++  await page.waitForSelector("#root > *");
++  return {page, context, errors};
++}
++try {
++  for (const flow of ["generation", "literature", "export", "integration"]) {
++    for (const [mode, reason] of [["429","rate_limited"],["503","persistence_failed"],["503-unknown","unknown"],["422","validation"],["offline","network"],["invalid","response_invalid"]]) {
++      if (flow === "export" && mode === "invalid") continue;
++      console.log(`Testing ${flow}/${mode}`);
++      const {page,context,errors} = await pageFor(flow, mode);
++      if (flow === "integration") {
++        await page.getByRole("button", {name:"Selecionar Sintético 1"}).click();
++        await page.getByRole("button", {name:"Selecionar Sintético 2"}).click();
++      }
++      const names = {generation:"Gerar estrutura",literature:"Próximo",export:"Baixar PDF",integration:"Integrar"};
++      await page.getByRole(flow === "export" ? "link" : "button",{name:names[flow],exact:true}).click();
++      await page.waitForFunction(() => window.calls.some(c => c[1].endsWith("_failed") || c[1] === "stage_blocked"));
++      const failures = await page.evaluate(() => window.calls.filter(c => c[1].endsWith("_failed") || c[1] === "stage_blocked"));
++      // Invalid download response is tested as HTTP success only for JSON flows, not binary PDF bodies.
++      assert.equal(failures.length,1,`${flow}/${mode}: one failure`);
++      assert.equal(failures[0][2].app_reason_code,reason,`${flow}/${mode}`);
++      assert.deepEqual(errors,[],`${flow}/${mode}`);
++      checks++;
++      await context.close();
++    }
++  }
++  const retry = await pageFor("discovery");
++  await retry.page.getByRole("button",{name:"Tentar novamente",exact:true}).click();
++  await retry.page.waitForFunction(() => window.calls.filter(c=>c[1]==="generation_failed").length===2);
++  assert.deepEqual(await retry.page.evaluate(()=>window.calls.filter(c=>["generation_started","generation_retry"].includes(c[1])).map(c=>c[1])),["generation_started","generation_retry"]);
++  checks++; await retry.context.close();
++
++  const login = await pageFor("login");
++  await login.page.getByRole("button",{name:"Continuar com Google"}).click();
++  assert.equal(await login.page.evaluate(()=>window.calls.filter(c=>c[1]==="login_started").length),1);
++  checks++; await login.context.close();
++  for (const [code,reason] of [["google","unknown"],["access","permission_denied"]]) {
++    const error = await pageFor("login-error");
++    if (code === "access") await error.page.goto("https://mapa.invalid/?flow=login-error&code=access");
++    await error.page.waitForFunction(()=>window.calls.some(c=>c[1]==="login_failed"));
++    assert.equal(await error.page.evaluate(()=>window.calls.filter(c=>c[1]==="login_failed").at(-1)[2].app_reason_code),reason);
++    checks++; await error.context.close();
++  }
++  const touch = await pageFor("prompt","429",{hasTouch:true,isMobile:true});
++  assert.equal(await touch.page.getByRole("textbox",{name:"Tema ou palavras-chave da pesquisa"}).count(),1);
++  assert.equal(await touch.page.evaluate(()=>document.activeElement.tagName),"BODY");
++  checks++; await touch.context.close();
++
++  const consent = await pageFor("consent");
++  await consent.page.getByRole("dialog").waitFor();
++  assert.equal(await consent.page.evaluate(()=>document.activeElement.tagName),"DIALOG");
++  assert.equal(await consent.page.evaluate(()=>window.dataLayer),undefined);
++  assert.equal(await consent.page.getByRole("dialog").evaluate(el=>el.getBoundingClientRect().bottom <= innerHeight && el.getBoundingClientRect().top >= 0),true);
++  await consent.page.keyboard.press("Shift+Tab");
++  assert.equal(await consent.page.evaluate(()=>document.activeElement.textContent),"Salvar escolhas");
++  await consent.page.keyboard.press("Tab");
++  assert.equal(await consent.page.evaluate(()=>document.querySelector("dialog").contains(document.activeElement)),true);
++  await consent.page.screenshot({path:path.join(screenshots,"consent-mobile.png")});
++  await consent.page.setViewportSize({width:320,height:320});
++  assert.equal(await consent.page.getByRole("dialog").evaluate(el=>el.scrollHeight > el.clientHeight && el.getBoundingClientRect().top >= 0 && el.getBoundingClientRect().bottom <= innerHeight),true);
++  await consent.page.getByRole("button",{name:"Recusar todos"}).scrollIntoViewIfNeeded();
++  await consent.page.screenshot({path:path.join(screenshots,"consent-short-viewport.png")});
++  checks++;
++  await consent.page.getByRole("button",{name:"Recusar todos"}).click();
++  assert.equal(await consent.page.evaluate(()=>window.dataLayer),undefined);
++  await consent.page.getByRole("button",{name:"Reabrir preferências"}).click();
++  await consent.page.getByRole("button",{name:"Cancelar",exact:true}).click();
++  assert.equal(await consent.page.evaluate(()=>document.activeElement.id),"outside");
++  await consent.page.getByRole("button",{name:"Reabrir preferências"}).click();
++  await consent.page.getByRole("button",{name:"Aceitar métricas"}).click();
++  await consent.page.waitForFunction(()=>window.dataLayer?.some(c=>c[1]==="page_view"));
++  assert.equal(await consent.page.evaluate(()=>localStorage.getItem("mapa.ads-consent.v1")),"rejected");
++  assert.equal(await consent.page.evaluate(()=>window.dataLayer.filter(c=>c[1]==="login_success").length),0);
++  assert.deepEqual(consent.errors,[]);
++  checks++; await consent.context.close();
++  console.log(`PASS: ${checks} synthetic browser scenarios; all remote requests intercepted.`);
++} finally { await browser.close(); }
+diff --git a/tests/fixtures/measurement-browser.tsx b/tests/fixtures/measurement-browser.tsx
+new file mode 100644
+index 0000000..e315951
+--- /dev/null
++++ b/tests/fixtures/measurement-browser.tsx
+@@ -0,0 +1,30 @@
++import { createRoot } from "react-dom/client";
++import { AnalyticsConsent } from "../../modules/analytics/analytics-consent";
++import { GenerationWorkspace } from "../../modules/generation/generation-workspace";
++import { LiteratureDevelopmentWorkspace } from "../../modules/research-workflow/literature-development-workspace";
++import { ExportPdfLink } from "../../modules/analytics/export-pdf-link";
++import { SocialAuthForm, SocialAuthErrorNotice } from "../../modules/auth/social-auth-form";
++import { DashboardProjectGrid } from "../../modules/projects/dashboard-project-grid";
++import { ProposalDiscoveryWorkspace } from "../../modules/research-workflow/proposal-discovery-workspace";
++import { ResearchPromptInput } from "../../modules/projects/research-prompt-input";
++import { versionedWorkflowFixture } from "./versioned-workflow";
++
++const params = new URLSearchParams(location.search);
++const flow = params.get("flow");
++const workflow = versionedWorkflowFixture();
++workflow.content.activeStep = "literature_topics";
++workflow.navigation = undefined;
++const projects = [1, 2].map(n => ({ projectId: `synthetic-${n}`, title: `Sintético ${n}`, status: "completed" }));
++let content;
++switch (flow) {
++  case "generation": content = <GenerationWorkspace initialSnapshot={{ structure: null, job: null, references: [] } as never} projectId="synthetic" />; break;
++  case "literature": content = <LiteratureDevelopmentWorkspace initialWorkflow={workflow} isSelfDirectedProject projectId="synthetic" />; break;
++  case "export": content = <ExportPdfLink href="/api/export" referenceCount={0} onFailure={() => {}}>Baixar PDF</ExportPdfLink>; break;
++  case "integration": content = <DashboardProjectGrid projects={projects as never} variant="completed" title="Sintéticos" allowIntegration />; break;
++  case "discovery": workflow.content.discovery = null; content = <ProposalDiscoveryWorkspace initialWorkflow={workflow} projectId="synthetic" originalPrompt="Tema sintético" autoDiscover />; break;
++  case "login": content = <SocialAuthForm action={async () => {}} destination="/dashboard" label="Google" mark="G" provider="google" source="google" />; break;
++  case "login-error": content = <SocialAuthErrorNotice code={params.get("code") === "access" ? "access" : "google"} message="Erro sintético" />; break;
++  case "prompt": content = <ResearchPromptInput id="prompt" onChange={() => {}} onEnter={() => {}} value="" />; break;
++  default: content = <><button id="outside" onClick={() => window.dispatchEvent(new Event("mapa:open-privacy-preferences"))}>Reabrir preferências</button><AnalyticsConsent measurementId="G-TEST" nonce="synthetic" /></>;
++}
++createRoot(document.getElementById("root")!).render(content);
+diff --git a/tests/measurement-accessibility.test.ts b/tests/measurement-accessibility.test.ts
+new file mode 100644
+index 0000000..894376f
+--- /dev/null
++++ b/tests/measurement-accessibility.test.ts
+@@ -0,0 +1,53 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { readFileSync } from "node:fs";
++import { mapaMetadata } from "../modules/landing/mapa-metadata";
++import { beginLoginAttempt, observeAuthAnalytics, clearLoginAttempt } from "../modules/analytics/login-attempt";
++import { ANALYTICS_CONSENT_KEY } from "../modules/analytics/analytics";
++
++function browser(consent = "accepted") {
++  const values = new Map([[ANALYTICS_CONSENT_KEY, consent]]);
++  const storage = { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value), removeItem: (key: string) => values.delete(key) };
++  const calls: unknown[][] = [];
++  Object.defineProperty(globalThis, "window", { configurable: true, value: { localStorage: storage, sessionStorage: storage, location: { href: "https://mapa.invalid/login" }, gtag: (...args: unknown[]) => calls.push(args) } });
++  Object.defineProperty(globalThis, "document", { configurable: true, value: { referrer: "" } });
++  return calls;
++}
++
++test("login only pairs one submitted attempt with SIGNED_IN; existing/refreshed sessions do not count", () => {
++  const calls = browser();
++  observeAuthAnalytics("INITIAL_SESSION", true);
++  observeAuthAnalytics("SIGNED_IN", true);
++  assert.equal(calls.length, 0);
++  assert.equal(beginLoginAttempt(), true);
++  observeAuthAnalytics("INITIAL_SESSION", true);
++  observeAuthAnalytics("TOKEN_REFRESHED", true);
++  assert.equal(calls.length, 1);
++  assert.equal(observeAuthAnalytics("SIGNED_IN", true), true);
++  assert.equal(observeAuthAnalytics("SIGNED_IN", true), false);
++  assert.deepEqual(calls.map(call => call[1]), ["login_started", "login_success"]);
++  observeAuthAnalytics("SIGNED_OUT", false);
++  assert.equal(beginLoginAttempt(), true);
++  clearLoginAttempt();
++  assert.equal(observeAuthAnalytics("SIGNED_IN", true), false);
++});
++
++test("denied consent and expired attempts cannot produce login success", () => {
++  const calls = browser("rejected");
++  assert.equal(beginLoginAttempt(), false);
++  assert.equal(observeAuthAnalytics("SIGNED_IN", true), false);
++  assert.equal(calls.length, 0);
++  browser();
++  window.sessionStorage.setItem("mapa.analytics-login-attempt.v1", String(Date.now() - 31 * 60 * 1000));
++  assert.equal(observeAuthAnalytics("SIGNED_IN", true), false);
++});
++
++test("mapa metadata is self-contained because Next shallowly replaces OpenGraph", () => {
++  assert.equal(mapaMetadata.alternates?.canonical, "/mapa");
++  assert.deepEqual(mapaMetadata.robots, { index: true, follow: true });
++  const og = mapaMetadata.openGraph! as { siteName: string; locale: string; type: string; images: { url: string; width: number; height: number }[] };
++  assert.equal(og.siteName, "Mapa da Pesquisa"); assert.equal(og.locale, "pt_BR"); assert.equal(og.type, "website");
++  assert.equal(og.images[0].width, 1200); assert.equal(og.images[0].height, 630);
++  assert.ok(readFileSync(`public${og.images[0].url}`).length > 0);
++  assert.equal((mapaMetadata.twitter as { card: string }).card, "summary_large_image");
++});

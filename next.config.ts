@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   outputFileTracingIncludes: {
-    "/api/projects/[id]/exports/[format]": ["./node_modules/pdfkit/js/data/*.afm"],
+    "/api/projects/*/exports/*": ["./node_modules/pdfkit/js/data/*.afm", "./assets/fonts/dejavu/*"],
   },
   serverExternalPackages: ["pdfkit"],
   turbopack: {

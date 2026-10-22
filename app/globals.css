@@ -88,7 +88,7 @@ body {
 .research-guide-table th,.research-guide-table td { border-bottom: 1px solid var(--border); padding: .55rem; text-align: left; vertical-align: top; }
 .research-guide-table th { color: var(--foreground); font-weight: 800; }
 .research-guide-table td { color: var(--muted); line-height: 1.4; }
-.analytics-consent { position:fixed; z-index:200; right:1rem; bottom:1rem; display:grid; width:min(calc(100% - 2rem),24rem); gap:.55rem; padding:1rem; border:1px solid var(--border); border-radius:1rem; background:#fff; box-shadow:0 1rem 3rem rgb(20 35 29 / 18%); }
+.analytics-consent { position:fixed; margin:0 0 0 auto; top:auto; max-height:calc(100dvh - 2rem); overflow-y:auto; overscroll-behavior:contain; z-index:200; right:1rem; bottom:1rem; display:grid; width:min(calc(100% - 2rem),24rem); gap:.55rem; padding:1rem; border:1px solid var(--border); border-radius:1rem; background:#fff; box-shadow:0 1rem 3rem rgb(20 35 29 / 18%); }
 .analytics-consent strong { color:var(--foreground); font-size:.9rem; }
 .analytics-consent p { margin:0; color:var(--muted); font-size:.78rem; line-height:1.45; }
 .analytics-consent > div { display:flex; justify-content:flex-end; gap:.5rem; }
@@ -1214,9 +1214,14 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .workflow-assistance :focus-visible, .methodology-workspace :is(input,textarea,select):focus-visible { outline: 2px solid #176b4d; outline-offset: 3px; }
 
 .landing-video-speeds { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.5rem; }
+.landing-video-transcript { width:100%; max-width:42rem; color:var(--text); }
+.landing-video-transcript summary { cursor:pointer; font-weight:700; padding:.5rem; }
+.landing-video-transcript p { line-height:1.6; margin:.75rem 0; }
 .landing-video-speeds span { color:var(--muted); font-size:.9rem; }
 .landing-video-speeds button { min-width:3rem; min-height:2.75rem; padding:.4rem .65rem; border:1px solid var(--accent); border-radius:999px; background:var(--surface); color:var(--accent); font:inherit; font-weight:700; cursor:pointer; }
 .landing-video-speeds button[aria-pressed="true"] { background:var(--accent); color:white; }
 .landing-video-speeds button:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 
 .methodology-classification > .methodology-list-help { grid-column:1 / -1; margin:0; color:var(--muted); font-size:.85rem; line-height:1.5; }
+
+.analytics-consent::backdrop { background:rgb(20 35 29 / 25%); }

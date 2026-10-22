@@ -1,4 +1,6 @@
 "use client";
+import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
+
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useRouter } from "next/navigation";
@@ -60,12 +62,13 @@ export function DashboardProjectGrid({
         headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
         method: "POST",
       });
-      const payload = await response.json() as { error?: string; projectId?: string; sourceTitles?: string[] };
-      if (!response.ok || !payload.projectId) throw new Error(payload.error ?? "Não foi possível integrar.");
+      const payload = await readWorkflowPayload<{ error?: string; errorCode?: string; code?: string; projectId?: string; sourceTitles?: string[] }>(response);
+      if (!response.ok) throw new WorkflowHttpError(response.status, payload.errorCode ?? payload.code);
+      if (!payload.projectId) throw new WorkflowRequestError("response_invalid");
       trackAnalyticsEvent("project_integration_completed", { app_role: activeRole, app_surface: "dashboard", app_result: "success", app_reference_count_bucket: "unknown" });
       router.push(`/dashboard/projects/${payload.projectId}?integrated=1`);
     } catch (error) {
-      trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: "unknown" });
+      trackAnalyticsEvent("project_integration_failed", { app_role: activeRole, app_surface: "dashboard", app_result: "failed", app_reason_code: workflowClientFailure(error).reason });
       setMessage(error instanceof Error ? error.message : "Não foi possível integrar os projetos.");
       setIntegrating(false);
     }

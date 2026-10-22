@@ -1,0 +1,5 @@
+
+> mapa-da-pesquisa@0.1.0 test:cards
+> node scripts/verify-card-regeneration-routes.mjs
+
+C114: 13 route scenarios passed (isolated cards, scope, authorization, conflicts, failure preservation, partial drafts, additive references, literature initialization). No live services called.

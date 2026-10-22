@@ -1,3 +1,4 @@
+import { loadOrThrow, dataApiErrorResponse, DATA_RETRY_AFTER_SECONDS } from "@/lib/supabase/data-api";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
@@ -55,20 +56,13 @@ function authorizationErrorFromDecision(code: "profile_mode_mismatch" | "project
 }
 
 async function loadAuthorizationProject(actor: ActorContext, projectId: string) {
-  const { data, error } = await actor.supabase
+  const { data } = await loadOrThrow((signal) => actor.supabase
     .from("projects")
     .select("id,owner_id,authoring_role,advisor_id,advisor_email")
     .eq("id", projectId)
     .is("deleted_at", null)
-    .maybeSingle();
-  if (error) {
-    throw new ActorAuthorizationError(
-      "profile_unavailable",
-      503,
-      "Não foi possível verificar a autorização agora.",
-      { cause: error },
-    );
-  }
+    .retry(false).abortSignal(signal).maybeSingle());
+
   return data;
 }
 
@@ -119,7 +113,7 @@ export async function authorizeProject(
     && actor.activeRole === "advisor"
   ) {
     const { error } = await actor.supabase.rpc("claim_pending_advisor_projects");
-    if (error && isAccountModeSwitchEnabled()) {
+    if (error) {
       throw new ActorAuthorizationError(
         "profile_unavailable",
         503,
@@ -146,19 +140,12 @@ export async function authorizeOwnedProjects(
   options: { expectedRoleVersion?: number; requireLegalConsent?: boolean } = {},
 ) {
   const actor = await requireActorContext(options);
-  const { data, error } = await actor.supabase
+  const { data } = await loadOrThrow((signal) => actor.supabase
     .from("projects")
     .select("id,owner_id,authoring_role,advisor_id,advisor_email")
     .in("id", projectIds)
-    .is("deleted_at", null);
-  if (error) {
-    throw new ActorAuthorizationError(
-      "profile_unavailable",
-      503,
-      "Não foi possível verificar a autorização agora.",
-      { cause: error },
-    );
-  }
+    .is("deleted_at", null).retry(false).abortSignal(signal));
+
   if (!data || data.length !== projectIds.length) {
     throw authorizationErrorFromDecision("project_not_found");
   }
@@ -198,11 +185,13 @@ export function expectedRoleVersionFromFormData(formData: FormData) {
 }
 
 export function authorizationErrorResponse(error: unknown) {
+  const dataFailure = dataApiErrorResponse(error);
+  if (dataFailure) return dataFailure;
   if (!(error instanceof ActorAuthorizationError)) throw error;
   return NextResponse.json(
     { code: error.code, error: error.message },
     {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": "private, no-store", ...(error.status === 503 ? { "Retry-After": String(DATA_RETRY_AFTER_SECONDS) } : {}) },
       status: error.status,
     },
   );

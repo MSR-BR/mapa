@@ -1,10 +1,11 @@
+import { loadOrThrow } from "@/lib/supabase/data-api";
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database, Json } from "@/lib/supabase/database.types";
 import type { ResearchIntake } from "@/modules/projects/research-intake";
-import { cloneResearchWorkflowContent } from "./clone";
+import { duplicateWorkflowSnapshot } from "./clone";
 import {
   EMPTY_WORKFLOW_CONTENT,
   RESEARCH_WORKFLOW_SCHEMA_VERSION,
@@ -45,14 +46,13 @@ export async function loadResearchWorkflow(
   ownerId: string,
   projectId: string,
 ) {
-  const { data, error } = await supabase
+  const { data } = await loadOrThrow((signal) => supabase
     .from("research_workflows")
     .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
     .eq("project_id", projectId)
     .eq("owner_id", ownerId)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
 
-  if (error) throw new Error("Não foi possível carregar o fluxo da pesquisa.");
   return data ? mapStoredWorkflow(data) : null;
 }
 
@@ -85,16 +85,16 @@ export async function duplicateResearchWorkflow(
   ownerId: string,
   sourceProjectId: string,
   targetProjectId: string,
+  authoringRole: "student" | "advisor",
 ) {
   const source = await loadResearchWorkflow(supabase, ownerId, sourceProjectId);
   if (!source) throw new Error("Fluxo original não encontrado.");
 
-  const state = source.state === "completed" ? "reviewing_map" : source.state;
-  const stableState = source.stableState === "completed" ? "reviewing_map" : source.stableState;
+  const { content, state, stableState } = duplicateWorkflowSnapshot(source, authoringRole);
   const { data, error } = await supabase
     .from("research_workflows")
     .insert({
-      content: cloneResearchWorkflowContent(source.content) as unknown as Json,
+      content: content as unknown as Json,
       owner_id: ownerId,
       project_id: targetProjectId,
       schema_version: RESEARCH_WORKFLOW_SCHEMA_VERSION,

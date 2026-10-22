@@ -339,7 +339,7 @@ export async function duplicateProject(formData: FormData) {
   if (error || !copy) redirect("/dashboard?error=duplicate");
   if (source.workflow_version === 2) {
     try {
-      await duplicateResearchWorkflow(supabase, userId, projectId, copy.id);
+      await duplicateResearchWorkflow(supabase, userId, projectId, copy.id, source.authoring_role);
     } catch {
       const now = new Date().toISOString();
       await supabase

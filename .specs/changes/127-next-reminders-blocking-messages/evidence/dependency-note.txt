@@ -1,0 +1,1 @@
+22/10/2026: consulta ao registro público npm retornou braces latest 3.0.3. Auditoria completa sinaliza essa versão; downgrade automático de eslint-config-next não aplicado. Arquivos audit-final.json e audit-production.json registram os resultados finais.

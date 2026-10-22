@@ -21,10 +21,19 @@ const input: FinalMapExportInput = {
   exportedAt: new Date("2026-10-13T12:00:00Z"), revision: workflow.revision, draft: false, finalMap: buildFinalMap(workflow),
   project: { title: "Projeto sintético C118", theme: "Aprendizagem sintética", problem_statement: "Como investigar o cenário sintético?", keywords: ["aprendizagem"], knowledge_area: "Educação", academic_level: "masters" },
 };
-for (const variant of ["advanced", "advanced-draft", "quick"] as const) {
+for (const variant of ["advanced", "advanced-draft", "quick", "unicode", "without-review"] as const) {
   const document = structuredClone(input);
   if (variant === "quick") document.finalMap.workflow.content.initialBriefing = null;
-  document.draft = variant === "advanced-draft";
+  document.draft = variant === "advanced-draft" || variant === "without-review";
+  if (variant === "without-review") document.finalMap.workflow.content.initialBriefingReview = null;
+  if (variant === "unicode") {
+    const briefing = document.finalMap.workflow.content.initialBriefing!;
+    for (const { name } of RESEARCH_INTAKE_FIELDS) briefing[name] = "α≥β → Ω ✓ łódź ğ ş ≠ ∑";
+    document.finalMap.workflow.content.initialBriefingReview = null;
+    document.project.title = "α≥β → Ω ✓ łódź ğ ş ≠ ∑";
+    document.project.academic_level = "α≥β → Ω ✓ łódź ğ ş ≠ ∑";
+    document.finalMap.title!.approvedContent = "α≥β → Ω ✓ łódź ğ ş ≠ ∑";
+  }
   const pdf = await createFinalMapPdfExport(document);
   const docx = await createFinalMapDocxExport(document);
   assert.equal(docx.subarray(0, 2).toString(), "PK");

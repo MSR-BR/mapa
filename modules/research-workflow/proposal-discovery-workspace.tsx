@@ -56,13 +56,13 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
     }
   }, [activeRole, autoDiscover, discoveryReportId, referenceCount]);
 
-  async function discover() {
+  async function discover(isRetry = false) {
     setOperation("discovering");
     setMessage(null);
     setErrorStage(null);
     setErrorCode(null);
     setErrorReason(null);
-    trackAnalyticsEvent("generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: "started" });
+    trackAnalyticsEvent(isRetry ? "generation_retry" : "generation_started", { ...getAnalyticsWorkflowPosition("discovery"), app_surface: autoDiscover ? "resume" : "dashboard", app_result: isRetry ? "retry" : "started", ...(isRetry ? { app_reason_code: errorReason ?? "unknown" } : {}) });
     try {
       const response = await aiProgress.request(`/api/projects/${projectId}/discover`, {
         headers: profileMutationHeaders(roleVersion),
@@ -194,7 +194,7 @@ export function ProposalDiscoveryWorkspace({ autoDiscover = false, initialWorkfl
             {errorStage && errorStage in STAGE_LABELS ? <small>Etapa: {STAGE_LABELS[errorStage]}.</small> : null}
             {briefingPreserved ? <small>Seu briefing continua salvo e será reutilizado na nova tentativa.</small> : null}
           </div>
-      <button disabled={busy} onClick={() => { trackAnalyticsEvent("generation_retry", { ...getAnalyticsWorkflowPosition("discovery"), app_result: "retry", app_reason_code: errorReason ?? "unknown" }); void discover(); }} type="button">Tentar novamente</button>
+      <button disabled={busy} onClick={() => { void discover(true); }} type="button">Tentar novamente</button>
         </div>
       ) : null}
 

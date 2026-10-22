@@ -1,0 +1,146 @@
+{
+  "baseCommit": "7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c",
+  "baseline": "worktree after C123/C124, before C125",
+  "files": [
+    {
+      "path": ".specs/changes/125-local-security-migrations/application-plan.md",
+      "sha256": "c33c11d9ac67c6e0f0f860e272f14800592955a4cc7ba6196c80138a24795fc0",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/changes/125-local-security-migrations/spec.md",
+      "sha256": "09802d2e0f849bca0376d155f269a57ae20a6e6faa2b09257f29f0589ba1f2a6",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/changes/125-local-security-migrations/validation-2026-10-22.md",
+      "sha256": "98b969840a4cde62f05645523dafba843cb9df5ce28c5081a1de4d5e94732e8a",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/project-state.md",
+      "sha256": "09240f4c17cc91adbd4d7ac9641958a534e9737fbe18ada2e3003fd44d761161",
+      "baselineSha256": "5ffa1bcdbfb68a61e6252bae6f649db15f6e996c8c957afccee47cf8ca28b54a"
+    },
+    {
+      "path": ".specs/roadmap.md",
+      "sha256": "ce3bae0708d879efbe6cd9655f0e28641e211a6bb7a83b3ec8d5544b90cdf0b9",
+      "baselineSha256": "d1b535b4ec83162f600e3b97429e6ed90ea2db4d794eaecd184422b75a45ac93"
+    },
+    {
+      "path": "modules/projects/actions.ts",
+      "sha256": "c413a09870d3a5848ed67eb801466c102adb33b42c6c6b9e42d16bf193a33f7e",
+      "baselineSha256": "bdc3a544b387749643cf65a9b7820ed6095152be08a41884d98aad2508a3e282"
+    },
+    {
+      "path": "modules/research-workflow/clone.ts",
+      "sha256": "5d4a7f42ba247348a2744502bfcd391e65826b9bd7708757454d421bd252b1d8",
+      "baselineSha256": "6bf38d2040e2d900238ccb68f16aeb876c24cf4d20d422a2e9ecd25f0ac76825"
+    },
+    {
+      "path": "modules/research-workflow/storage.ts",
+      "sha256": "75dab23e8205a21c47403350c58dc6ede9778736baf09e7fd820a93d4c627bca",
+      "baselineSha256": "7564003e45d822ee6b4b9999b6b5752b14bf6f9c0a60e1ad99039537d4ae21e9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "1ce1a9e48b27fe88d05532377525342682712b7dbfbc9436e0e6f354c1680f24",
+      "baselineSha256": "325dbda62cc569108b1fcb923d8bf7e441626f3d656e35776d6eb7527b46e304"
+    },
+    {
+      "path": "scripts/verify-c125-security-local.sh",
+      "sha256": "08461f56db16b382fdf31a84ca4d07c9b707a473f8a50030771839eb3bfa2db1",
+      "baselineSha256": null
+    },
+    {
+      "path": "scripts/verify-c125-security-seed.sql",
+      "sha256": "636da429cf7d4aa0dc804953829f295bd20c06cef0b8718e1eedac4032344082",
+      "baselineSha256": null
+    },
+    {
+      "path": "scripts/verify-c125-security.sql",
+      "sha256": "6741ad82a97fe062a3f3bb0ae61dc686d5a1e04e1c9515f337314a14fa63e17d",
+      "baselineSha256": null
+    },
+    {
+      "path": "scripts/verify-explicit-grants-local.sh",
+      "sha256": "152c5cbc53d90b6528cca2ff3072363336cb1f4abeec39b9d532eef12474ec31",
+      "baselineSha256": "8221303c6359a6c4e807ee7353ae6b6677618869ff704e3af5f7d0dd0cd0b0f2"
+    },
+    {
+      "path": "scripts/verify-explicit-grants-stub.sql",
+      "sha256": "dcdf579c189d5768d19b2e96a3d6e866186339ac294567bddfffae290795c9f4",
+      "baselineSha256": "f61729e81e2f7f54d474a972ab41af3cbfdf862a44da9f33995539528eab824d"
+    },
+    {
+      "path": "scripts/verify-explicit-grants.sql",
+      "sha256": "d7a33df52bd6cb9f4786b27ef25e3f1d902ae4b0e85e518bac5c9ca94be3aa00",
+      "baselineSha256": "94edb5a77374f70873dfc59e919b87e5f5e9d110436cdaa8a504064998d6b9e5"
+    },
+    {
+      "path": "scripts/verify-mode-aware-rls-auth-stub.sql",
+      "sha256": "7fcd576ad762758a0f1ea1d64c0161fd1c7df3dbb252fb4f78228c9eb8d3c962",
+      "baselineSha256": "df8046fae3536befb6e7c3273345e2394ddb2299d91d01cb0407466863d14621"
+    },
+    {
+      "path": "scripts/verify-mode-aware-rls-seed.sql",
+      "sha256": "b31a22b800d54786ee49b3055369a46ed95f1e8433cdaa9ae424d89f80c73632",
+      "baselineSha256": "3fd892cbc59dbc1f4a7b00828ea4b9fac6a2a0c3eb6d5bf73ea3565ac94dedd8"
+    },
+    {
+      "path": "scripts/verify-mode-aware-rls.sh",
+      "sha256": "e2483b67cb58ec3dfbf53a5e2b5d2e77e9a87207c6fa4f32c643be69baba04cc",
+      "baselineSha256": "c85e1c05b825f01bc365ca0783b5127e447bdbeb4931d795e840d77138ac7836"
+    },
+    {
+      "path": "scripts/verify-mode-aware-rls.sql",
+      "sha256": "753c0abb51b7e6e040d786a47ca0202f7161bbb6eacf45c146b1d42974f42ef7",
+      "baselineSha256": "63fe193bb93abafd24f31243c8cfbc8bfe03e5c60a3c5b93717c60420e96d9cf"
+    },
+    {
+      "path": "scripts/verify-student-advisor-gate.sh",
+      "sha256": "2d3c68ac8458958088dc7b2ca0eeca1741cce65b289f0b7cbd6c955b18692181",
+      "baselineSha256": "819b3d683109db477461903ae85734f06ab692d6cd89e69e40fb2d049191f48e"
+    },
+    {
+      "path": "scripts/verify-student-advisor-gate.sql",
+      "sha256": "673c7410dd9954eb0b884e35e2b52e454ad7fab627fbdec2b0a8187da72b740b",
+      "baselineSha256": "de9e6809809115d31d775e46f6b65719e0585d2dbd707a48728ec27cf7232e0e"
+    },
+    {
+      "path": "scripts/verify-versioned-workflow.sh",
+      "sha256": "c3cad149abccf52994cae9e1b7673e49854377236ef6456c8a051ffd8885a7f3",
+      "baselineSha256": "9ef0f1f6cbb3104542195d73e1278e3d2a10663cde70a91fb95050c69684e386"
+    },
+    {
+      "path": "supabase/explicit-access-manifest.json",
+      "sha256": "069e716f7049c02bf7e0f2bcff8f67592e6a190f8c1b216ff56876c26de9f8bd",
+      "baselineSha256": "67159faf334028b013639f5e86be57dc410d20f9dd5ec23048a09844edee9c07"
+    },
+    {
+      "path": "supabase/migrations/20261022183455_c125_workflow_owner_guard.sql",
+      "sha256": "e33d4742b3f1ca4753efcde6feac61004512e2caaba61a0556975978c2da6609",
+      "baselineSha256": null
+    },
+    {
+      "path": "supabase/migrations/20261022183456_c125_verified_google_advisor.sql",
+      "sha256": "829516cc50bb91b257b3990d6ba0886c46d988f4c50e3dcd14cdafdb9c6092d5",
+      "baselineSha256": null
+    },
+    {
+      "path": "supabase/migrations/20261022183508_c125_bug_report_intake_guard.sql",
+      "sha256": "e38e64be3e59b1ea65f1bd20d717ca2c3418d6e0aa77eb3cc81adfe23977d19a",
+      "baselineSha256": null
+    },
+    {
+      "path": "tests/supabase-explicit-grants.test.ts",
+      "sha256": "a049d4c0d87ffdadfd5b4eb8a43038a157f0a32e8d9e37f21422decbecd6ff1f",
+      "baselineSha256": "56885a528acf0545eb119162d6a8476a910369d36d96fed41666bfda4230f9e6"
+    },
+    {
+      "path": "tests/versioned-workflow.test.ts",
+      "sha256": "0b6eab7d1899007878c7a9ed7cb670e87b5e75ec36a370a4192be377a03ddb64",
+      "baselineSha256": "54eafb25cb9f9457848556a236c21f9709f71a919d4c5f4e61bfac20f587559a"
+    }
+  ]
+}

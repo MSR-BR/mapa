@@ -1,3 +1,4 @@
+import { loadOrThrow, checkDataResult, requireAffectedRow, dataApiErrorResponse } from "@/lib/supabase/data-api";
 import { AiError } from "@/modules/ai/failure";
 import { assertOperationActive, emitProgress } from "@/modules/ai/operation";
 import { withAiProgress } from "@/modules/ai/route";
@@ -32,13 +33,13 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
   if (!access.ok) return access.response;
   const { supabase, userId } = access.value;
   const [{ data: project }, workflow] = await Promise.all([
-    supabase
+    loadOrThrow((signal) => supabase
       .from("projects")
       .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, authoring_role, status, workflow_version, created_at, updated_at, deleted_at")
       .eq("id", id)
       .eq("owner_id", userId)
       .is("deleted_at", null)
-      .maybeSingle(),
+      .retry(false).abortSignal(signal).maybeSingle()),
     loadResearchWorkflow(supabase, userId, id),
   ]);
 
@@ -60,7 +61,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
 
   const claimRevision = workflow.revision + 1;
   const now = new Date().toISOString();
-  const { data: claimed, error: claimError } = await supabase
+  const { data: claimed, error: claimError, status: claimStatus } = await supabase
     .from("research_workflows")
     .update({ revision: claimRevision, state: "discovering", updated_at: now })
     .eq("project_id", id)
@@ -70,7 +71,8 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
     .select("project_id")
     .maybeSingle();
 
-  if (claimError || !claimed) {
+  checkDataResult({ error: claimError, status: claimStatus });
+  if (!claimed) {
     return NextResponse.json({ error: "A descoberta já foi iniciada em outra sessão." }, { status: 409 });
   }
 
@@ -82,7 +84,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
     emitProgress("saving");
     const completedAt = new Date().toISOString();
     const content = { ...workflow.content, discovery };
-    const { data: saved, error: saveError } = await supabase
+    const { data: saved, error: saveError, status: saveStatus } = await supabase
       .from("research_workflows")
       .update({
         content: toJson(content),
@@ -97,7 +99,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       .eq("state", "discovering")
       .select("updated_at")
       .maybeSingle();
-    if (saveError || !saved) throw new Error("Não foi possível salvar as propostas.");
+    const confirmed = requireAffectedRow({ data: saved, error: saveError, status: saveStatus });
 
     const nextWorkflow: ResearchWorkflow = researchWorkflowSchema.parse({
       content,
@@ -108,10 +110,12 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       sourceRevision: workflow.sourceRevision,
       stableState: "choosing_problem",
       state: "choosing_problem",
-      updatedAt: saved.updated_at,
+      updatedAt: confirmed.updated_at,
     });
     return NextResponse.json({ workflow: nextWorkflow }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
+    const dataFailure = dataApiErrorResponse(error);
+    if (dataFailure) return dataFailure;
     const errorCode = error instanceof DiscoveryError
       ? error.code
       : error instanceof ResearchStarterClientError && error.code === "not-configured"
@@ -128,12 +132,15 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       projectId: id,
       stage: stage ?? "unknown",
     });
-    await supabase
+    const cleanup = await supabase
       .from("research_workflows")
       .update({ revision: claimRevision + 1, state: "failed", updated_at: new Date().toISOString() })
       .eq("project_id", id)
       .eq("owner_id", userId)
-      .eq("revision", claimRevision);
+      .eq("revision", claimRevision)
+      .eq("state", "discovering")
+      .select("project_id").maybeSingle();
+    requireAffectedRow(cleanup);
     return NextResponse.json({
       error: error instanceof AiError ? error.message : errorCode === "briefing-too-short"
         ? "Descreva um pouco mais o tema da pesquisa antes de formar as propostas."

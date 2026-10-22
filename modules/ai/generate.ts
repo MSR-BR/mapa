@@ -5,7 +5,7 @@ import { generateText, Output, type LanguageModelUsage } from "ai";
 import { z } from "zod";
 import { observeAiAttempt } from "@/lib/observability/ai-usage";
 import { structuredTextInstruction } from "./schema-instructions";
-import { reserveAdditionalAiBudget } from "./budget";
+import { reserveAiBudget } from "./budget";
 import type { AiProvider, AiRole } from "./contract";
 import { AiError, canFallback, classifyAiFailure } from "./failure";
 import { aiOperation, assertOperationActive, claimAttempt, createOperation, emitProgress } from "./operation";
@@ -40,7 +40,7 @@ async function refusalAwareFetch(input: RequestInfo | URL, init?: RequestInit) {
   }
   return response;
 }
-export const productionDependencies: GenerationDependencies = { invoke: invokeProvider, reserve: reserveAdditionalAiBudget };
+export const productionDependencies: GenerationDependencies = { invoke: invokeProvider, reserve: reserveAiBudget };
 
 export async function generateStructured<T>(request: StructuredRequest<T>, dependencies: GenerationDependencies = productionDependencies): Promise<{ output: T; provider: AiProvider; model: string }> {
   if (!aiOperation.getStore()) {
@@ -66,9 +66,9 @@ export async function generateStructured<T>(request: StructuredRequest<T>, depen
     const maxOutputTokens = OUTPUT_TOKEN_BUDGETS[request.operation];
     const micros = Math.ceil(bytes * price.reserveInput + maxOutputTokens * price.output);
     const attempt = claimAttempt(request.operation, micros);
-    if (provider === "openai" || request.additional || role === "reviewer" && request.operation === "review_workflow_impact" || index > 0 && request.provider === "openai") {
-      await dependencies.reserve(micros);
-    }
+    // Every provider attempt shares the durable monthly ceiling, including primary Gemini.
+    // No per-user daily quota: product decision recorded in C126.
+    await dependencies.reserve(micros);
     assertOperationActive();
     emitProgress(fallbackReason ? "fallback" : role === "reviewer" ? "reviewing" : "generating", provider);
     const started = Date.now();

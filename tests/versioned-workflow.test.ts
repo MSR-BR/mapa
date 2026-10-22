@@ -6,7 +6,7 @@ import { applyWorkflowUnit, workflowUnit } from "../modules/research-workflow/ve
 import { prepareWorkflowEdit, type WorkflowEdit } from "../modules/research-workflow/workflow-edit";
 import { researchWorkflowSchema, type ResearchWorkflowContent } from "../modules/research-workflow/schema";
 import { studentContextNotes } from "../modules/research-workflow/workflow-references";
-import { cloneResearchWorkflowContent } from "../modules/research-workflow/clone";
+import { cloneResearchWorkflowContent, duplicateWorkflowSnapshot } from "../modules/research-workflow/clone";
 
 function edit(action: string, overrides: Partial<WorkflowEdit> = {}): WorkflowEdit {
   const base = versionedWorkflowFixture();
@@ -104,4 +104,23 @@ test("C111: accepting an identical proposal clears the proposal and creates a re
   assert.equal(next.unchanged, false);
   assert.ok(next.content.stepDrafts.general_objective);
   assert.equal(next.content.stepProposals.general_objective, undefined);
+});
+
+test("C125: student duplication preserves text and drafts but restarts approval; advisor stays autonomous", () => {
+  const source = versionedWorkflowFixture();
+  source.state = source.stableState = "completed";
+  const before = JSON.stringify(source);
+  const student = duplicateWorkflowSnapshot(source, "student");
+  assert.equal(student.state, "draft_prompt");
+  assert.equal(student.stableState, "draft_prompt");
+  assert.equal(student.content.activeStep, null);
+  assert.deepEqual(student.content.advisorReviews, []);
+  assert.deepEqual(student.content.elements.map(e => e.proposedContent), source.content.elements.map(e => e.proposedContent));
+  assert.deepEqual(student.content.initialBriefing, source.content.initialBriefing);
+  assert.deepEqual(Object.keys(student.content.stepDrafts), Object.keys(source.content.stepDrafts));
+  const advisor = duplicateWorkflowSnapshot(source, "advisor");
+  assert.equal(advisor.state, "reviewing_map");
+  assert.equal(advisor.stableState, "reviewing_map");
+  assert.deepEqual(advisor.content.advisorReviews, []);
+  assert.equal(JSON.stringify(source), before);
 });

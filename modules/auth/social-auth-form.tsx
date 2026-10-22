@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
 import {
   trackAnalyticsEvent,
   type AnalyticsSurface,
 } from "@/modules/analytics/analytics";
+
+import { beginLoginAttempt, clearLoginAttempt } from "@/modules/analytics/login-attempt";
+import { workflowResponseFailure } from "@/modules/research-workflow/request-failure";
 
 import type { SocialAuthErrorCode, SocialAuthProvider } from "./oauth-contract";
 
@@ -35,7 +38,7 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
     <form
       action={action}
       className="social-auth-form"
-      onSubmit={() => trackAnalyticsEvent("login_started", { app_result: "started", app_surface: source })}
+      onSubmit={() => { beginLoginAttempt(); }}
     >
       <input name="next" type="hidden" value={destination} />
       <input name="provider" type="hidden" value={provider} />
@@ -45,9 +48,13 @@ export function SocialAuthForm({ action, destination, label, mark, provider, sou
 }
 
 export function SocialAuthErrorNotice({ code, message }: { code: SocialAuthErrorCode; message: string }) {
+  const reported = useRef<string | null>(null);
   useEffect(() => {
+    if (reported.current === code) return;
+    reported.current = code;
+    clearLoginAttempt();
     trackAnalyticsEvent("login_failed", {
-      app_reason_code: "provider_unavailable",
+      app_reason_code: workflowResponseFailure(code === "access" ? 403 : 0, undefined).reason,
       app_result: "failed",
       app_surface: code === "google" ? code : "unknown",
     });

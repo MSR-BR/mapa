@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "files": [
+    "DejaVuSans.ttf",
+    "DejaVuSans-Bold.ttf",
+    "DejaVuSans-Oblique.ttf",
+    "LICENSE.txt"
+  ],
+  "route": ".next/server/app/api/projects/[id]/exports/[format]/route.js.nft.json"
+}

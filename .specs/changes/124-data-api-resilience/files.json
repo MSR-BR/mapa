@@ -1,0 +1,152 @@
+{
+  "baseHead": "7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c",
+  "baseline": "workspace including preexisting uncommitted C123",
+  "publication": "NOT_REQUESTED",
+  "files": [
+    {
+      "path": ".specs/changes/124-data-api-resilience/spec.md",
+      "beforeSha256": null,
+      "afterSha256": "c579625afa2e24dc999fcb6e3f3a39893ce3811a1a646a7c256a2780e26b71d4"
+    },
+    {
+      "path": ".specs/changes/124-data-api-resilience/validation-2026-10-20.md",
+      "beforeSha256": null,
+      "afterSha256": "3019dcc468019a40f2bdb4fa088e41245cd517cf1fdda22efe9c22f938dad8a1"
+    },
+    {
+      "path": ".specs/project-state.md",
+      "beforeSha256": "d1571948255d1d896b19449ca5998737c8d76d3820a981e6f99023eed3cb033d",
+      "afterSha256": "5ffa1bcdbfb68a61e6252bae6f649db15f6e996c8c957afccee47cf8ca28b54a"
+    },
+    {
+      "path": ".specs/roadmap.md",
+      "beforeSha256": "c96f63b300b4c7ab0a7861c66f5e3b0dd854211fbf58da34b381a3546269a58d",
+      "afterSha256": "d1b535b4ec83162f600e3b97429e6ed90ea2db4d794eaecd184422b75a45ac93"
+    },
+    {
+      "path": "app/api/bug-reports/route.ts",
+      "beforeSha256": "00df631babb14f656f33be518f3d840679e783e9d3596059b66072555ab83a96",
+      "afterSha256": "1f46da251f52393e77f9c383dff018c66488caf4a3ad6bb0f98beb644e123444"
+    },
+    {
+      "path": "app/api/projects/[id]/discover/route.ts",
+      "beforeSha256": "0b77defd8acba4250ea9b3ee7f4be27850228913dd89d5a070b13befd6f129a4",
+      "afterSha256": "b3e535a0c019b41cc7cf6d01fa020f491980575914dc90395a499d54b9a9e2c9"
+    },
+    {
+      "path": "app/api/projects/[id]/exports/[format]/route.ts",
+      "beforeSha256": "38516b2bac3af73f07db6c88067ae755927f4351fa0669a201d254c83547c2be",
+      "afterSha256": "160737fc0559a71fac147cc5c3f326dc9bd3ec460942f4e6ce714012a86c9f6d"
+    },
+    {
+      "path": "app/api/projects/[id]/generate/route.ts",
+      "beforeSha256": "cb9f1c4544e0e7e02d0cc499216f8c3803e2b4f4e47524ca4f5badd991ae8fc4",
+      "afterSha256": "5f390780bcbeeeb30949d912ccbe33ed46401745c19a472ee6e072f64ffd4380"
+    },
+    {
+      "path": "app/api/projects/[id]/generation/route.ts",
+      "beforeSha256": "c1ec614565b2825a5445c801b84850a505f2659167d44554413ea7644c680eb7",
+      "afterSha256": "1f311e5ae0adc16945f52fba6b7480a68baee8058d8f93362a320d7a1e9a2b62"
+    },
+    {
+      "path": "app/api/projects/[id]/methodology/route.ts",
+      "beforeSha256": "f5920810e405ba99a99489ea0fe4b90fc7838f4113d6405684ba99262d7bd5e4",
+      "afterSha256": "0787b99084ce137a34f5c373b58580a46ac565d71c399584a273f3dbb7ea7bba"
+    },
+    {
+      "path": "app/api/projects/integrate/route.ts",
+      "beforeSha256": "24fea9dea9417bb302ee5df75a62fabff4c4b295bc1a2227699fbef99b7351e9",
+      "afterSha256": "1240a292f8a408343c23761fc4b7e9830106c0f289c984ce41c9d77e5c4544d1"
+    },
+    {
+      "path": "app/dashboard/projects/[id]/page.tsx",
+      "beforeSha256": "4fadc277598dbd19da853b0a161a37221ccc645748342be6a812017f17274d96",
+      "afterSha256": "ebb328a4337000dd5253ddb1e25f011fb1c63c0fd666d59f540682f6573e1c57"
+    },
+    {
+      "path": "app/service-unavailable/route.ts",
+      "beforeSha256": null,
+      "afterSha256": "9083f770bdfa1d310a64e30ab7ec0bdd7a7e1aa1d35e0862f27f072c4970b946"
+    },
+    {
+      "path": "lib/supabase/data-api.ts",
+      "beforeSha256": null,
+      "afterSha256": "6c8079c02c4fe5bea393d291de1c1396f6bebf9e8fc2866c39664fd690cc6d93"
+    },
+    {
+      "path": "modules/ai/progress-client.ts",
+      "beforeSha256": "d860e1c8aa78fcec838108a04a52c3a3675210a3a23ad1e4669add57460f9a34",
+      "afterSha256": "00b841f0fa421edb6c7ff528631c5defbd1b605ad0174f2874c800d9c2914bc1"
+    },
+    {
+      "path": "modules/ai/route.ts",
+      "beforeSha256": "b4b392bf2962772b59da517051b8e43ff3267c041d176dbf8e590f4101185aa6",
+      "afterSha256": "01fc4f8dfe88bef13abae21b6d99f67f5073af2af78a318757c02e9a42e95a1a"
+    },
+    {
+      "path": "modules/generation/storage.ts",
+      "beforeSha256": "bf9030f119f65ed9a63ce6014106ac309430a9d12fb5177a7fd6731356f5a193",
+      "afterSha256": "d1b3ebce55fe2f1f705c995c54cdb5b3eeb1fa6ec563b9a443810a703dc31ec9"
+    },
+    {
+      "path": "modules/profile/future-jwt-retry.ts",
+      "beforeSha256": "1d1d8180bc6bc2573ae52200b964fd972bc2b8cd35c3e05bb9bd38b298521b4a",
+      "afterSha256": "f1e22b2b7e22300a53ee5f3fb8e4fe5f7d7fea3af31b441406093d69170fd35c"
+    },
+    {
+      "path": "modules/profile/storage.ts",
+      "beforeSha256": "62c3985105f6cfbe963ee2bf2810efab6b0f0b98e47ddf7454a4f28ecccfb3e0",
+      "afterSha256": "4527c5726c0c0d62a871917ebfa2834944b6f81d908ae3b0b903b3a9183bcbbf"
+    },
+    {
+      "path": "modules/projects/advisor.ts",
+      "beforeSha256": "c11245afd4fa7efcd2cf965ed0cedc13b81fc4760d3d4ef9749380618ebc6dcc",
+      "afterSha256": "ae42bcd04fc1fbb4a65cdf1d7032b4b92c2809bf06f9d378f40f015671771cf4"
+    },
+    {
+      "path": "modules/projects/auth.ts",
+      "beforeSha256": "aab2c69525beba9c0c5f74d43aa3ae9efc5e5e0e03b55a09a948cd87c836d6dc",
+      "afterSha256": "ef95695645c6abd876f2b799712913f657aea97d4ce97a238976922cfd284b2b"
+    },
+    {
+      "path": "modules/research-workflow/storage.ts",
+      "beforeSha256": "f1565fe1ecb80fd644016680c4dbd2f4dd8b238d2edff126e37c206ea68e3a14",
+      "afterSha256": "7564003e45d822ee6b4b9999b6b5752b14bf6f9c0a60e1ad99039537d4ae21e9"
+    },
+    {
+      "path": "package.json",
+      "beforeSha256": "0947e3f58d92f3ca6eee35ff106b0499830f36677ba0679539ca0afcba8bfb8e",
+      "afterSha256": "325dbda62cc569108b1fcb923d8bf7e441626f3d656e35776d6eb7527b46e304"
+    },
+    {
+      "path": "scripts/c111-route-harness.mjs",
+      "beforeSha256": "b7ba88795b5578dab3b1d9d2b6c3a5ca5e1d22353d14b44ac2e04bb853777d68",
+      "afterSha256": "2a53e24f83256ecaaabeb05f964554ad02cf045926afdd729ffdaf67b4c8db89"
+    },
+    {
+      "path": "scripts/verify-data-api-resilience.mjs",
+      "beforeSha256": null,
+      "afterSha256": "52c596877c0cf2165075cadaeb32c8f15cea9ad44c072abc5054376d4464733a"
+    },
+    {
+      "path": "scripts/verify-discovery-claim-recovery.mjs",
+      "beforeSha256": "5a2aad8f518f9361df29470b2bc77a34a93edd7e92569a4224671fca546ae400",
+      "afterSha256": "8c1650be218b24aa78ad2fa5c851e3a1c1709613717fd009dc920ee2847ae963"
+    },
+    {
+      "path": "scripts/verify-methodology-recovery-routes.mjs",
+      "beforeSha256": "04f03306a133e4691844a6756ffdbc8f237eda43243e5e218a7e4c906640e5b7",
+      "afterSha256": "dde3fa476f387eeecb76faebafafad7dcbd09b6aab70f65abcb118dfdfd406bd"
+    },
+    {
+      "path": "tests/data-api.test.ts",
+      "beforeSha256": null,
+      "afterSha256": "c942993d4a94bd4a15b35df12861896104c5358f8d51b864dedbc78d046efaaa"
+    },
+    {
+      "path": "tests/future-jwt-retry.test.ts",
+      "beforeSha256": "ef6ca873978f0420a7c9b80a54c4a7c93b9f4ef3d80aaf34ab4c7082def1acdf",
+      "afterSha256": "0d76d0eeac332f66f1c821e52891a51c9f278f3e17f74fa5a41dad34b907bef9"
+    }
+  ]
+}

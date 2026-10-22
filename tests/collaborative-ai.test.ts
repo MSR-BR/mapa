@@ -29,7 +29,7 @@ test("C112: transient errors switch provider once, preserving operation and actu
     const dependencies: GenerationDependencies = { reserve: async () => { reservations++; }, invoke: async ({ provider }) => { calls.push(provider); if (calls.length === 1) throw error; return result(provider); } };
     const state = createOperation(new AbortController().signal, (event) => events.push(event));
     const value = await aiOperation.run(state, () => generateStructured(request, dependencies));
-    assert.equal(value.provider, "openai"); assert.deepEqual(calls, ["gemini", "openai"]); assert.equal(reservations, 1);
+    assert.equal(value.provider, "openai"); assert.deepEqual(calls, ["gemini", "openai"]); assert.equal(reservations, 2);
     assert.equal(new Set(events.map((event) => event.operationId)).size, 1);
     assert.deepEqual(events.map((e) => e.sequence), [1, 2, 3]);
     assert.equal(progressLabel(events[1]), "Continuando com GPT…");
@@ -39,7 +39,7 @@ test("C112: transient errors switch provider once, preserving operation and actu
 test("C112: auth, refusal, quota and application budget cannot trigger alternate spending", async () => {
   for (const failure of [{ statusCode: 401 }, { statusCode: 403 }, { statusCode: 400 }, new AiError("refusal"), new AiError("budget"), { statusCode: 429, data: { error: { code: "insufficient_quota" } } }]) {
     let calls = 0;
-    await assert.rejects(() => generateStructured(request, { reserve: async () => assert.fail("unexpected reservation"), invoke: async () => { calls++; throw failure; } }));
+    await assert.rejects(() => generateStructured(request, { reserve: async () => {}, invoke: async () => { calls++; throw failure; } }));
     assert.equal(calls, 1);
   }
   let calls = 0;
@@ -76,7 +76,7 @@ test("C112: rollback flag retains Gemini and performs zero OpenAI calls", async 
   process.env.MAPA_OPENAI_ENABLED = "false";
   try {
     const calls: string[] = [];
-    const value = await generateStructured(request, { reserve: async () => assert.fail(), invoke: async ({ provider }) => { calls.push(provider); return result(provider); } });
+    const value = await generateStructured(request, { reserve: async () => {}, invoke: async ({ provider }) => { calls.push(provider); return result(provider); } });
     assert.equal(value.provider, "gemini"); assert.deepEqual(calls, ["gemini"]);
   } finally { process.env.MAPA_OPENAI_ENABLED = "true"; }
 });
@@ -264,7 +264,7 @@ test("C113: real Gemini adapter treats parameter HTTP 400 as configuration witho
         return Response.json({ error: { code: 400, status: "INVALID_ARGUMENT", message: `Unsupported ${parameter}: SYNTHETIC_PRIVATE_PROMPT` } }, { status: 400 });
       };
       await assert.rejects(() => generateStructured(request, {
-        ...productionDependencies, reserve: async () => assert.fail("configuration failure must not spend on fallback"),
+        ...productionDependencies, reserve: async () => {},
       }), (error) => classifyAiFailure(error) === "configuration" && !String(error).includes("SYNTHETIC_PRIVATE_PROMPT"));
       assert.equal(calls, 1);
     }
@@ -295,7 +295,7 @@ test("C113: real SDK transport retains one fallback for Gemini HTTP 429/503", as
       assert.deepEqual(value.output, output);
       assert.equal(value.provider, "openai");
       assert.equal(urls.length, 2);
-      assert.equal(reservations, 1);
+      assert.equal(reservations, 2);
     }
   } finally { globalThis.fetch = originalFetch; }
 });
@@ -306,6 +306,8 @@ test("C118: real Gemini adapter repairs oversized problem output once, before ac
   const { content } = versionedWorkflowFixture();
   const originalFetch = globalThis.fetch;
   const originalEnabled = process.env.MAPA_OPENAI_ENABLED;
+  const originalReserve = productionDependencies.reserve;
+  productionDependencies.reserve = async () => {};
   process.env.MAPA_OPENAI_ENABLED = "false";
   const valid = { content: "Como compreender a aprendizagem no contexto delimitado pelo autor?", referenceIds: ["fixture-reference"] };
   try {
@@ -327,7 +329,7 @@ test("C118: real Gemini adapter repairs oversized problem output once, before ac
       assert.equal(calls, 2);
       assert.equal(JSON.stringify(content), originalContent);
     }
-  } finally { globalThis.fetch = originalFetch; process.env.MAPA_OPENAI_ENABLED = originalEnabled; }
+  } finally { globalThis.fetch = originalFetch; process.env.MAPA_OPENAI_ENABLED = originalEnabled; productionDependencies.reserve = originalReserve; }
 });
 
 test("C118: nested/nullable text constraints reach both providers and only valid card output is returned", async () => {
@@ -350,4 +352,27 @@ test("C118: nested/nullable text constraints reach both providers and only valid
     });
     assert.equal(calls, 2); assert.deepEqual(value.output, good);
   }
+});
+
+test("C126: every primary and fallback attempt reserves monthly budget before calling either provider", async () => {
+  for (const provider of ["gemini", "openai"] as const) {
+    const order: string[] = [];
+    await generateStructured({ ...request, provider }, {
+      reserve: async () => { order.push("reserve"); },
+      invoke: async ({ provider: actual }) => { order.push(actual); return result(actual); },
+    });
+    assert.deepEqual(order, ["reserve", provider]);
+    let invoked = false;
+    await assert.rejects(() => generateStructured({ ...request, provider }, {
+      reserve: async () => { throw new AiError("budget"); },
+      invoke: async () => { invoked = true; return result(provider); },
+    }), (error) => classifyAiFailure(error) === "budget");
+    assert.equal(invoked, false);
+  }
+  let reservations = 0, calls = 0;
+  await assert.rejects(() => generateStructured(request, {
+    reserve: async () => { if (++reservations === 2) throw new AiError("budget"); },
+    invoke: async () => { calls++; throw { statusCode: 503 }; },
+  }), (error) => classifyAiFailure(error) === "budget");
+  assert.equal(reservations, 2); assert.equal(calls, 1);
 });

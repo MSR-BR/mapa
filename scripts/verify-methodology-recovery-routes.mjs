@@ -60,3 +60,8 @@ plan=setup(); await call({action:'save',...plan, title:''}); before=structuredCl
 response=await call({action:'initialize'}); assert.equal(response.status,503); assert.equal((await response.json()).code,'provider_unavailable'); assert.deepEqual(state.workflow,before);
 state.supabase.from=originalFrom;
 console.log('C119: context recovery, explicit acknowledgment, draft/back with stale prerequisites, revision/database distinction, post-save title failures, student approval and AI failure preservation passed. Synthetic services only.');
+
+// C124: the advisor loader error must survive the custom methodology diagnostic boundary.
+plan=setup(); before=structuredClone(state.workflow); state.failAdvisorRead=true;
+response=await call({action:'validate',...plan}); assert.equal(response.status,503); assert.equal(response.headers.get('retry-after'),'2'); assert.equal((await response.json()).code,'persistence_failed'); assert.deepEqual(state.workflow,before); assert.equal(state.writes,0); assert.equal(state.aiCalls,0);
+console.log('C124: advisor PGRST303 retains 503/Retry-After through methodology diagnostics.');

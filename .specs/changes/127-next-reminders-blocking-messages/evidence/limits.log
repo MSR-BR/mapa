@@ -1,0 +1,5 @@
+
+> mapa-da-pesquisa@0.1.0 test:limits
+> node scripts/verify-generation-limits-routes.mjs
+
+C118: legacy oversized draft saved without expansion, confirmation blocked, isolated regeneration succeeds, oversized result preserves saved content; new oversized draft rejected. No external calls.

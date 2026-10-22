@@ -1,7 +1,7 @@
 "use client";
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -21,14 +21,14 @@ import { objectiveCoverageLabel } from "./chapter-validation";
 import type { ResearchWorkflow } from "./schema";
 import { getAnalyticsWorkflowPosition, getReferenceCountBucket, isWorkflowCompletionTransition, setAnalyticsContext, trackAnalyticsEvent } from "@/modules/analytics/analytics";
 import { profileMutationHeaders, useActiveProfile } from "@/modules/profile/active-profile-context";
-import { currentResearchIntakeReview, RESEARCH_INTAKE_FIELDS, RESEARCH_INTAKE_MAX_LENGTH, type ResearchIntakeReview } from "@/modules/projects/research-intake";
+import { currentResearchIntakeReview, researchIntakeReviewTextsSchema, RESEARCH_INTAKE_FIELDS, RESEARCH_INTAKE_MAX_LENGTH, type ResearchIntakeReview } from "@/modules/projects/research-intake";
 import { ExportPdfLink } from "@/modules/analytics/export-pdf-link";
 import { WorkflowHistory } from "./workflow-history";
 import { WorkflowProgress } from "./workflow-progress";
 import { workflowNavigationUrl } from "./workflow-navigation";
 
 type Props = { initialWorkflow: ResearchWorkflow; isSelfDirectedProject?: boolean; projectId: string };
-type Operation = "complete" | "go_to" | "review" | "prepare_export" | null;
+type Operation = "complete" | "go_to" | "review" | "prepare_export" | "save_export_review" | null;
 
 function chapterReferences(finalMap: FinalMap, referenceIds: string[]) {
   const wanted = new Set(referenceIds);
@@ -43,13 +43,12 @@ function referenceText(reference: FinalMap["references"][number], code?: string)
 
 export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = false, projectId }: Props) {
   const aiProgress = useAiProgress();
-  const exportPreparation = useRef<Promise<boolean> | null>(null);
   const router = useRouter();
   const { activeRole, roleVersion } = useActiveProfile();
   const [workflow, setWorkflow] = useState(initialWorkflow);
   const [reviewDraft, setReviewDraft] = useState<ResearchIntakeReview | null>(null);
   const savedReview = currentResearchIntakeReview(workflow.content);
-  const editableReview = currentResearchIntakeReview({ initialBriefing: workflow.content.initialBriefing, initialBriefingReview: reviewDraft }) ?? savedReview;
+  const editableReview = currentResearchIntakeReview({ initialBriefing: workflow.content.initialBriefing, initialBriefingReview: reviewDraft }) ?? savedReview ?? { problemContext: "", observedSituation: "", discrepancyConsequences: "", existingKnowledgeGap: "", delimitationQuestion: "" };
   const [operation, setOperation] = useState<Operation>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -64,6 +63,8 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
   const blockingFindings: typeof finalMap.findings = [];
   const warningFindings = finalMap.findings;
   const busy = operation !== null;
+  const appendixLocked = Boolean(pendingAdvisorReview(workflow.content));
+  const hasReviewChanges = Boolean(reviewDraft && JSON.stringify(editableReview) !== JSON.stringify(savedReview));
   const waitingForAdvisor = !isSelfDirectedProject && Boolean(pendingAdvisorReview(workflow.content));
   const completeButtonLabel = hasCurrentFinalApproval(workflow)
     ? "Projeto concluído"
@@ -137,33 +138,36 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
     }
   }
 
-  async function prepareExport() {
-    if (!workflow.content.initialBriefing) return true;
-    const changed = savedReview && editableReview && JSON.stringify(savedReview) !== JSON.stringify(editableReview);
-    if (savedReview && !changed) return true;
-    if (exportPreparation.current) return exportPreparation.current;
-    const preparation = (async () => {
-      setOperation("prepare_export");
-      setMessage(null);
-      try {
-        const response = await aiProgress.request(`/api/projects/${projectId}/final-map`, {
-          body: JSON.stringify({ action: changed ? "save_export_review" : "prepare_export", revision: workflow.revision, ...(changed ? { reviewTexts: editableReview } : {}) }),
-          headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
-          method: "POST",
-        });
-        const payload = await response.json() as { error?: string; workflow?: ResearchWorkflow };
-        if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível preparar o comparativo. Seus textos originais continuam salvos; tente novamente.");
-        setWorkflow(payload.workflow);
-        setReviewDraft(null);
-        if (!changed) setMessage("Comparativo preparado. Confira os cinco campos abaixo, ajuste se desejar e clique novamente em Exportar PDF ou Exportar Word.");
-        return Boolean(changed);
-      } finally {
-        setOperation(null);
-        exportPreparation.current = null;
-      }
-    })();
-    exportPreparation.current = preparation;
-    return preparation;
+  async function saveAppendix(action: "prepare_export" | "save_export_review") {
+    if (busy || appendixLocked || !workflow.content.initialBriefing) return;
+    if (action === "save_export_review" && !researchIntakeReviewTextsSchema.safeParse(editableReview).success) {
+      setMessage("Preencha os cinco campos da reformulação, com até 400 caracteres cada. Você também pode exportar sem reformulação.");
+      return;
+    }
+    if (action === "prepare_export" && hasReviewChanges && !window.confirm("Substituir sua reformulação ainda não salva por uma sugestão da IA? Os textos originais serão preservados.")) return;
+    setOperation(action);
+    setMessage(null);
+    try {
+      const response = await aiProgress.request(`/api/projects/${projectId}/final-map`, {
+        body: JSON.stringify({ action, revision: workflow.revision, ...(action === "save_export_review" ? { reviewTexts: editableReview } : {}) }),
+        headers: { "Content-Type": "application/json", ...profileMutationHeaders(roleVersion) },
+        method: "POST",
+      });
+      const payload = await response.json() as { error?: string; workflow?: ResearchWorkflow };
+      if (!response.ok || !payload.workflow) throw new Error(payload.error || "Não foi possível salvar a reformulação. Seus textos foram preservados e você pode exportar a versão já salva.");
+      setWorkflow(payload.workflow);
+      setReviewDraft(null);
+      setMessage(action === "prepare_export" ? "Comparativo preparado. Confira os cinco campos abaixo e ajuste se desejar." : "Reformulação salva. PDF e Word usarão estes textos junto aos originais.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Não foi possível salvar. Seus textos foram preservados.");
+    } finally {
+      setOperation(null);
+    }
+  }
+
+  async function confirmSavedExport() {
+    // Downloads never call AI or write workflow metadata, including during advisor review.
+    return !hasReviewChanges || window.confirm("Há uma reformulação ainda não salva. Baixar com o conteúdo já salvo? Sua edição continuará nesta página.");
   }
 
   function correctionButton(step: FinalMapNode["correctionStep"], label = "Corrigir origem") {
@@ -198,9 +202,9 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
         <span className={`definition-origin ${hasCurrentFinalApproval(workflow) ? "" : "user"}`}>{hasCurrentFinalApproval(workflow) ? "Versão concluída" : "Em revisão final"}</span>
       </div>
 
-      {busy ? <div className="generation-overlay-card" role="status" aria-live="polite"><p>{aiProgress.label}</p></div> : null}
+      {busy ? <div className="generation-overlay-card" role="status" aria-live="polite"><p>{operation === "save_export_review" ? "Salvando reformulação…" : aiProgress.label}</p></div> : null}
       <WorkflowProgress current={4} currentStep="final_map" disabled={busy} onWorkflow={setWorkflow} projectId={projectId} revision={workflow.revision} availableSteps={workflow.navigation?.availableSteps} />
-      <WorkflowHistory workflow={workflow} step={"final_map"} hasUnsavedChanges={false} onWorkflow={setWorkflow} />
+      <WorkflowHistory workflow={workflow} step={"final_map"} hasUnsavedChanges={hasReviewChanges} onWorkflow={setWorkflow} />
 
       <div className="final-completion-panel" aria-labelledby="final-completion-title">
         <div className="final-completion-copy">
@@ -220,23 +224,29 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
           <span>{hasCurrentFinalApproval(workflow) ? "PDF e Word com referências cruzadas e avisos preservados." : "Os arquivos indicarão que o mapa ainda é rascunho e manterão bloqueios/avisos visíveis."}</span>
         </div>
         <div>
-        <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`} referenceCount={finalMap.references.length} beforeDownload={prepareExport} disabled={busy} onFailure={setMessage}>Exportar PDF</ExportPdfLink>
-        <ExportPdfLink href={`/api/projects/${projectId}/exports/docx${exportSuffix}`} referenceCount={finalMap.references.length} format="docx" beforeDownload={prepareExport} disabled={busy} onFailure={setMessage}>Exportar Word</ExportPdfLink>
+        <ExportPdfLink href={`/api/projects/${projectId}/exports/pdf${exportSuffix}`} referenceCount={finalMap.references.length} beforeDownload={confirmSavedExport} disabled={busy} onFailure={setMessage}>Exportar PDF</ExportPdfLink>
+        <ExportPdfLink href={`/api/projects/${projectId}/exports/docx${exportSuffix}`} referenceCount={finalMap.references.length} format="docx" beforeDownload={confirmSavedExport} disabled={busy} onFailure={setMessage}>Exportar Word</ExportPdfLink>
         </div>
       </div>
 
-      {editableReview && workflow.content.initialBriefing ? (
+      {workflow.content.initialBriefing ? (
         <details className="final-completion-panel final-intake-review" open={message?.startsWith("Comparativo preparado") || undefined}>
-          <summary>Comparativo do Mapa Avançado — revisar antes de exportar</summary>
+          <summary>Comparativo do Mapa Avançado — reformulação opcional</summary>
           <div className="final-map-document">
-            <p>O texto original fica preservado. Você pode ajustar a reformulação; suas alterações serão salvas ao exportar PDF ou Word.</p>
+            <p>O texto original fica preservado. Você pode escrever a reformulação manualmente e salvá-la, ou pedir uma sugestão à IA. O download usa apenas a versão salva e não consulta IA.</p>
+            {appendixLocked ? <p role="status">Aguardando revisão do orientador: a reformulação está protegida, mas você pode baixar o rascunho com os textos já salvos.</p> : null}
+            {!savedReview ? <p>Sem reformulação salva, o relatório inclui os cinco textos originais e informa que a reformulação ainda não foi preparada.</p> : null}
+            <div className="final-map-actions">
+              <button className="definition-button secondary" type="button" disabled={busy || appendixLocked || !hasReviewChanges} onClick={() => void saveAppendix("save_export_review")}>Salvar reformulação</button>
+              {!savedReview ? <button className="definition-button secondary" type="button" disabled={busy || appendixLocked} onClick={() => void saveAppendix("prepare_export")}>Sugerir reformulação com IA (opcional)</button> : null}
+            </div>
             {RESEARCH_INTAKE_FIELDS.map(({ name, label }) => (
               <section key={name} className="definition-editor">
                 <h3>{label}</h3>
                 <strong>Texto original:</strong>
                 <p style={{ whiteSpace: "pre-wrap" }}>{workflow.content.initialBriefing![name]}</p>
                 <label htmlFor={`review-${name}`}><strong>Texto Mapa da Pesquisa:</strong></label>
-                <textarea aria-label={`Texto Mapa da Pesquisa — ${label}`} id={`review-${name}`} rows={4} maxLength={RESEARCH_INTAKE_MAX_LENGTH} value={editableReview[name]} onChange={(event) => setReviewDraft({ sourceBriefing: workflow.content.initialBriefing!, texts: { ...editableReview, [name]: event.target.value } })} disabled={busy} />
+                <textarea aria-label={`Texto Mapa da Pesquisa — ${label}`} id={`review-${name}`} rows={4} maxLength={RESEARCH_INTAKE_MAX_LENGTH} value={editableReview[name]} onChange={(event) => setReviewDraft({ sourceBriefing: workflow.content.initialBriefing!, texts: { ...editableReview, [name]: event.target.value } })} disabled={busy || appendixLocked} />
                 <small>{editableReview[name].length}/{RESEARCH_INTAKE_MAX_LENGTH} caracteres</small>
               </section>
             ))}

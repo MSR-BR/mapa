@@ -68,7 +68,7 @@ begin
   end if;
 
   foreach table_name in array array[
-    'generation_jobs', 'research_structures', 'research_workflows'
+    'generation_jobs', 'research_structures'
   ] loop
     if has_table_privilege('anon', format('public.%I', table_name), 'SELECT,INSERT,UPDATE,DELETE')
       or not has_table_privilege('authenticated', format('public.%I', table_name), 'SELECT,INSERT,UPDATE,DELETE')
@@ -110,7 +110,7 @@ begin
     raise exception 'legal_consents_privilege_mismatch';
   end if;
 
-  if not has_table_privilege('anon', 'public.bug_reports', 'INSERT')
+  if not has_any_column_privilege('anon', 'public.bug_reports', 'INSERT')
     or has_table_privilege('anon', 'public.bug_reports', 'SELECT,UPDATE,DELETE')
     or not has_table_privilege('authenticated', 'public.bug_reports', 'SELECT,INSERT,UPDATE')
     or has_table_privilege('authenticated', 'public.bug_reports', 'DELETE')
@@ -131,6 +131,14 @@ begin
     raise exception 'role_events_privilege_mismatch';
   end if;
 
+  foreach table_name in array array['private.advisor_reminder_actors','private.advisor_reminder_reservations'] loop
+    if not (select relrowsecurity from pg_class where oid=table_name::regclass)
+      or has_table_privilege('anon',table_name,'SELECT,INSERT,UPDATE,DELETE')
+      or has_table_privilege('authenticated',table_name,'SELECT,INSERT,UPDATE,DELETE')
+      or has_table_privilege('service_role',table_name,'SELECT,INSERT,UPDATE,DELETE')
+    then raise exception 'reminder_private_table_exposed:%',table_name; end if;
+  end loop;
+
   if has_schema_privilege('public', 'private', 'USAGE')
     or has_schema_privilege('anon', 'private', 'USAGE')
     or has_schema_privilege('service_role', 'private', 'USAGE')
@@ -140,6 +148,7 @@ begin
   end if;
 
   foreach function_signature in array array[
+    'public.reserve_advisor_reminder(uuid,text)',
     'public.set_project_advisor(uuid,text)',
     'public.claim_pending_advisor_projects()',
     'public.switch_active_role(text,bigint,uuid)',
@@ -161,7 +170,9 @@ begin
     'public.audit_user_profile_role_change()',
     'public.enforce_project_authoring_role()',
     'public.restrict_advisor_workflow_update()',
-    'public.enforce_student_advisor_workflow_progress()'
+    'public.enforce_student_advisor_workflow_progress()',
+    'public.guard_workflow_owner_reviews()',
+    'public.guard_project_advisor_identity()'
   ] loop
     if has_function_privilege('anon', function_signature, 'EXECUTE')
       or has_function_privilege('authenticated', function_signature, 'EXECUTE')
@@ -203,13 +214,27 @@ begin
         'research_workflows', 'user_profiles', 'legal_consents',
         'bug_reports', 'user_profile_role_events', 'workflow_versions'
       )
-  ) <> 29 then
+  ) <> 28 then
     raise exception 'public_policy_inventory_mismatch';
   end if;
+
+  if has_table_privilege('authenticated', 'public.research_workflows', 'DELETE')
+    or not has_table_privilege('authenticated', 'public.research_workflows', 'SELECT')
+    or not has_table_privilege('authenticated', 'public.research_workflows', 'INSERT')
+    or not has_table_privilege('authenticated', 'public.research_workflows', 'UPDATE') then
+    raise exception 'workflow_c125_privileges';
+  end if;
+  if exists (
+    select 1 from unnest(array['anon','authenticated']) r,
+      unnest(array['status','priority','admin_notes','resolved_at','created_at','updated_at']) c
+    where has_column_privilege(r, 'public.bug_reports', c, 'INSERT')
+  ) then raise exception 'bug_report_admin_columns_insertable'; end if;
 
   if not exists (
     select 1 from storage.buckets
     where id = 'bug-report-attachments' and public = false
+      and file_size_limit = 5242880
+      and allowed_mime_types = array['image/png', 'image/jpeg', 'image/webp']
   ) then
     raise exception 'private_bug_report_bucket_missing';
   end if;

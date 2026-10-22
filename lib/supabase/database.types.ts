@@ -397,6 +397,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      reserve_advisor_reminder: { Args: { p_project_id: string; p_review_id: string }; Returns: Json };
       reserve_ai_budget: { Args: { p_secret: string; p_micros: number }; Returns: boolean };
       is_bug_report_admin: {
         Args: Record<PropertyKey, never>

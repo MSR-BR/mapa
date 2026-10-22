@@ -1,0 +1,10 @@
+
+> mapa-da-pesquisa@0.1.0 lint
+> eslint . --ignore-pattern .next
+
+
+/Users/marioreis/Library/CloudStorage/Dropbox/Mac (6)/Documents/Developer/mapa/tests/foundation.test.mjs
+  887:47  warning  'methodology' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (0 errors, 1 warning)
+

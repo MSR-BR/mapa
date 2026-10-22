@@ -1,0 +1,156 @@
+{
+  "baseCommit": "7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c",
+  "baseline": "Worktree after C123/C124/C125, before C126; evidence logs/images excluded from patch",
+  "files": [
+    {
+      "path": ".specs/changes/126-export-independence-ai-access/review-plan.md",
+      "sha256": "82d9dc5cdac8a44241b1ac33f80381d1cf461af2de8b3d8457e69695c57091b3",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/changes/126-export-independence-ai-access/spec.md",
+      "sha256": "c9c13a9db4dc503121a53c1867f56890449d8cd913ba197188ae671d39393c05",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/changes/126-export-independence-ai-access/validation-2026-10-22.md",
+      "sha256": "ab9fbee4bb20078f90913518e40d78b870246511fb8255bd88ca019717149fb2",
+      "baselineSha256": null
+    },
+    {
+      "path": ".specs/project-state.md",
+      "sha256": "aadc722fee1e48d3e7ca6a3a8b64632aa91071192cfe6325727d0b2455b8f9a4",
+      "baselineSha256": "09240f4c17cc91adbd4d7ac9641958a534e9737fbe18ada2e3003fd44d761161"
+    },
+    {
+      "path": ".specs/roadmap.md",
+      "sha256": "224d3440451bbeac74bcf60fb8076c3f9fb69bd9f836dd128b9b175839047a94",
+      "baselineSha256": "ce3bae0708d879efbe6cd9655f0e28641e211a6bb7a83b3ec8d5544b90cdf0b9"
+    },
+    {
+      "path": "app/api/projects/[id]/exports/[format]/route.ts",
+      "sha256": "1c143d9ff014dcb0619419de5245e3a346a949103f2509a44a3b8a414ef7fd2c",
+      "baselineSha256": "160737fc0559a71fac147cc5c3f326dc9bd3ec460942f4e6ce714012a86c9f6d"
+    },
+    {
+      "path": "app/api/projects/[id]/final-map/route.ts",
+      "sha256": "ddc7770c731a103716b7da4b5de15481f400d08710c1c1db8789e9af03a873e5",
+      "baselineSha256": "5f500a4bb27485c96eb31b8ae0e46c8bd242ac283724f5e25e43008482222f49"
+    },
+    {
+      "path": "app/api/prompt-suggestions/route.ts",
+      "sha256": "852a985471129f2d2b2a4509eb979052c74627e8cfa9876255ca559ebc56be1e",
+      "baselineSha256": "6e7e8a08193c37b37a3bb5742c22b39bb79cb77ae20abb968f93d44250f9adc8"
+    },
+    {
+      "path": "assets/fonts/dejavu/DejaVuSans-Bold.ttf",
+      "sha256": "e6476c1b80502924294eed40894c5b18e06c181444ca953e5334262df9c27724",
+      "baselineSha256": null
+    },
+    {
+      "path": "assets/fonts/dejavu/DejaVuSans-Oblique.ttf",
+      "sha256": "4af75fa16ee6d3ad43e1ecec41862c24954af26a55c6bb1ebb27bd486a50f5f4",
+      "baselineSha256": null
+    },
+    {
+      "path": "assets/fonts/dejavu/DejaVuSans.ttf",
+      "sha256": "7da195a74c55bef988d0d48f9508bd5d849425c1770dba5d7bfc6ce9ed848954",
+      "baselineSha256": null
+    },
+    {
+      "path": "assets/fonts/dejavu/LICENSE.txt",
+      "sha256": "77556aa5549f463ce673f0407ea77b1019d1f1a1abe253767b325d4460558dd2",
+      "baselineSha256": null
+    },
+    {
+      "path": "assets/fonts/dejavu/README.md",
+      "sha256": "14a51149947d5235ffe90528042c330081a58665931505aa4c3868affa5e7b2b",
+      "baselineSha256": null
+    },
+    {
+      "path": "modules/ai/budget.ts",
+      "sha256": "e08f4ca96bd475042b75f4e1c2ece0a2a76d0af3fd08febf51acd0598c60b2bb",
+      "baselineSha256": "04ee1b99f414c64b79303df0b0a61a0441145afa25c5d59507de3a04cb329acc"
+    },
+    {
+      "path": "modules/ai/generate.ts",
+      "sha256": "c3c2f71bc1d1ad2ff25a78076dbb4da7dcafd68feb421e4de75e250d23c60603",
+      "baselineSha256": "a9247a97f61a879f73a50ec1a8ac821d7bc1bd8b3b483d51d500530f5fb4d0c5"
+    },
+    {
+      "path": "modules/export/final-report.ts",
+      "sha256": "ea4ba45bac9e7d05ceb30cac26ee20c7386782b6c495f286101f81e332e166ac",
+      "baselineSha256": "cc74e810fd2694b7777a8440905e71964f5b5284f4557bdf810114c66a7e6bc5"
+    },
+    {
+      "path": "modules/export/pdf.ts",
+      "sha256": "ecafb9068470f568753adf1a2909fdbd818495f774ca27f3ac549912fe745ddf",
+      "baselineSha256": "9a84c13c149fb8621fdae1882014ba9204f57963eea5f02b6113200e1a0d2ca7"
+    },
+    {
+      "path": "modules/projects/public-start-form.tsx",
+      "sha256": "e35be9afa948e8f105aae55c08c65219094841b547e35c758e29b790dc0162ce",
+      "baselineSha256": "ad6bdcc3fee491b2193de7d6ed3a56644e5d8f469240b3b50e8e81d817a8c226"
+    },
+    {
+      "path": "modules/projects/quick-start-form.tsx",
+      "sha256": "3eec732faaa7767cfb9ea80798dc18bdbe3a1c4f19038e91e656ffda7b373735",
+      "baselineSha256": "109162bbf47d55a4cf0cbf9a6f4709b54bd101a69c062f7b49a0bc358e853c2e"
+    },
+    {
+      "path": "modules/projects/research-prompt-input.tsx",
+      "sha256": "bf73d2ba6fa01c6cc046036397c21c25e5e3bbd6a39da16edc9a2c40bc70f5f5",
+      "baselineSha256": "07c0624df5c2fa696eda14b07d28f3587e0aba4b9bb01c302ababc36bff4f319"
+    },
+    {
+      "path": "modules/research-workflow/final-map-workspace.tsx",
+      "sha256": "9652dc57d972b4b34d7fee4bb17e26da59ba6aeaff1da23ad9949cc69c21f343",
+      "baselineSha256": "6cadd2047128cd04e0727b1f29ef7bd904d2d368b76cc6bbfb5f70acc1fff7b5"
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "3bd7880984f86202d79bcd87d18821117e166947ae2e236c16aab77138fc5ff7",
+      "baselineSha256": "1492192da9788e88974cd117f1f9fa3fb079a6ed059fe00fe378024102c91ee2"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c8a294c0b207a6c26d5cd8beb3e6a03cac0de678f660c68b40dbe062caeb2c19",
+      "baselineSha256": "1ce1a9e48b27fe88d05532377525342682712b7dbfbc9436e0e6f354c1680f24"
+    },
+    {
+      "path": "scripts/verify-export-browser.mjs",
+      "sha256": "513b4e786d269b9aee5b8a8a93c06ea3c1a9fd11905b5798a99909f99e9366d8",
+      "baselineSha256": null
+    },
+    {
+      "path": "scripts/verify-export-text.mjs",
+      "sha256": "7a46c0e91b4be8310554a85550fd8cf69fc79db892952061938273bd7d25c3b5",
+      "baselineSha256": null
+    },
+    {
+      "path": "scripts/verify-final-map-exports.ts",
+      "sha256": "aebfd7e9d66af07c45af1d24fe5c3cbf580591719d5e27cc8ea7a9add4ab7b91",
+      "baselineSha256": "440cb7418ea82e8d6d8033a7ff13bc21ab3a8ec6ee8bb086fd9579f4565702af"
+    },
+    {
+      "path": "scripts/verify-intake-report-routes.mjs",
+      "sha256": "4a82a0311177c45c2a7e1b2abcc6796a93045b0470ad5f521b37f349ce5d7148",
+      "baselineSha256": "2d59ddcbe86c5d447bedbe7896fc80b90f3a91583e5e60f9f6a074891b6a5ab4"
+    },
+    {
+      "path": "scripts/verify-prompt-suggestions-auth.mjs",
+      "sha256": "f025019a47deff41b54935eedcdb274f5fcec4a82195a99a064f6a49ab9478cb",
+      "baselineSha256": null
+    },
+    {
+      "path": "tests/collaborative-ai.test.ts",
+      "sha256": "5eb7d758deb8b9b99dd244e6c2ec60d9557c7339cf6ae3ed370c163c150f29fd",
+      "baselineSha256": "adb74b172b82dcaa4a82fed9a6120e1260ef7a5b768a9513b6b716976ebdeb75"
+    },
+    {
+      "path": "tests/fixtures/export-browser.tsx",
+      "sha256": "3a10ee70bc418426db91fcc2974b3934d943a8faeceab6315decddc2d54dc86e",
+      "baselineSha256": null
+    }
+  ]
+}

@@ -15,10 +15,10 @@ test("keeps every owned Supabase object aligned with the explicit access manifes
   const result = await auditExplicitGrantRepository(projectRoot);
   assert.deepEqual(result.errors, []);
   assert.deepEqual(result.summary, {
-    functions: 17,
-    migrations: 21,
+    functions: 20,
+    migrations: 25,
     sequences: 0,
-    tables: 11,
+    tables: 13,
     views: 0,
   });
 });

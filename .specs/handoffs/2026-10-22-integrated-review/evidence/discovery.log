@@ -1,0 +1,135 @@
+
+> mapa-da-pesquisa@0.1.0 test:research-starter
+> node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs && node scripts/verify-discovery-claim-recovery.mjs
+
+TAP version 13
+# {"event":"research_starter_completed","requestId":"eb3883f4-082d-4795-82fb-03697ac27971","timestamp":"2026-10-22T19:54:56.059Z","attempt":1,"durationMs":21,"queryLength":166,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"a5929119-42a3-4899-8951-cf06bf09fe12","timestamp":"2026-10-22T19:54:56.061Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# Subtest: C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+ok 1 - C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+  ---
+  duration_ms: 23.193416
+  type: 'test'
+  ...
+# Subtest: C120: validates request before any network call, including reversed dates
+ok 2 - C120: validates request before any network call, including reversed dates
+  ---
+  duration_ms: 1.06775
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"a5929119-42a3-4899-8951-cf06bf09fe12","timestamp":"2026-10-22T19:54:56.414Z","attempt":2,"durationMs":353,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"330c9492-1a46-4fbd-b534-3907a076f0c6","timestamp":"2026-10-22T19:54:56.415Z","attempt":1,"code":"temporary-unavailable","status":429,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"330c9492-1a46-4fbd-b534-3907a076f0c6","timestamp":"2026-10-22T19:54:56.415Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"330c9492-1a46-4fbd-b534-3907a076f0c6","timestamp":"2026-10-22T19:54:56.416Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"3325d953-0f3a-41f5-af5a-0cce211621c1","timestamp":"2026-10-22T19:54:56.416Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"3325d953-0f3a-41f5-af5a-0cce211621c1","timestamp":"2026-10-22T19:54:56.416Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"3325d953-0f3a-41f5-af5a-0cce211621c1","timestamp":"2026-10-22T19:54:56.417Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"45bb4d59-d051-4fd2-8f9e-ed8d51ff0d84","timestamp":"2026-10-22T19:54:56.418Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"45bb4d59-d051-4fd2-8f9e-ed8d51ff0d84","timestamp":"2026-10-22T19:54:56.418Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"45bb4d59-d051-4fd2-8f9e-ed8d51ff0d84","timestamp":"2026-10-22T19:54:56.418Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"71c4ab0e-705d-4a56-aeea-c0a602c83825","timestamp":"2026-10-22T19:54:56.419Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"71c4ab0e-705d-4a56-aeea-c0a602c83825","timestamp":"2026-10-22T19:54:56.419Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"71c4ab0e-705d-4a56-aeea-c0a602c83825","timestamp":"2026-10-22T19:54:56.419Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"14ff2ae8-19b6-4e90-840c-a11086fc966d","timestamp":"2026-10-22T19:54:56.419Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"14ff2ae8-19b6-4e90-840c-a11086fc966d","timestamp":"2026-10-22T19:54:56.419Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"14ff2ae8-19b6-4e90-840c-a11086fc966d","timestamp":"2026-10-22T19:54:56.420Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"a8bd8cac-7e8f-41bb-b1d9-70259e5fcff9","timestamp":"2026-10-22T19:54:56.420Z","attempt":1,"code":"invalid-request","status":400,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"a96db139-2ecc-4dba-86ac-6256ebc26e59","timestamp":"2026-10-22T19:54:56.421Z","attempt":1,"code":"unauthorized","status":401,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"2d4bee89-1ad2-4f20-a18b-04e0da32f1a6","timestamp":"2026-10-22T19:54:56.421Z","attempt":1,"code":"unauthorized","status":403,"queryLength":26,"durationMs":0}
+# Subtest: C120: retries a connection failure and recovers on the primary without fallback
+ok 3 - C120: retries a connection failure and recovers on the primary without fallback
+  ---
+  duration_ms: 353.113166
+  type: 'test'
+  ...
+# Subtest: C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+ok 4 - C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+  ---
+  duration_ms: 1.651
+  type: 'test'
+  ...
+# Subtest: C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+ok 5 - C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+  ---
+  duration_ms: 4.172625
+  type: 'test'
+  ...
+# Subtest: C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+ok 6 - C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+  ---
+  duration_ms: 0.500458
+  type: 'test'
+  ...
+# {"event":"research_starter_request_failed","requestId":"90d76df2-a1e7-4bdd-a1a7-86043361c448","timestamp":"2026-10-22T19:54:56.432Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":11}
+# {"event":"research_starter_fallback_started","requestId":"90d76df2-a1e7-4bdd-a1a7-86043361c448","timestamp":"2026-10-22T19:54:56.432Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"90d76df2-a1e7-4bdd-a1a7-86043361c448","timestamp":"2026-10-22T19:54:56.432Z","stage":"crossref","durationMs":11,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"77b8e653-41bd-4591-96f7-5bc08d5f7e6c","timestamp":"2026-10-22T19:54:56.434Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"77b8e653-41bd-4591-96f7-5bc08d5f7e6c","timestamp":"2026-10-22T19:54:56.434Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_failed","requestId":"77b8e653-41bd-4591-96f7-5bc08d5f7e6c","timestamp":"2026-10-22T19:54:56.434Z","stage":"crossref","durationMs":0,"code":"temporary-unavailable"}
+# {"event":"research_starter_request_failed","requestId":"0365a3d7-5852-4c36-b6c6-b6e96e86c653","timestamp":"2026-10-22T19:54:56.436Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"0365a3d7-5852-4c36-b6c6-b6e96e86c653","timestamp":"2026-10-22T19:54:56.436Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"0365a3d7-5852-4c36-b6c6-b6e96e86c653","timestamp":"2026-10-22T19:54:56.436Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# Subtest: C120: primary timeout leaves time for the alternate source
+ok 7 - C120: primary timeout leaves time for the alternate source
+  ---
+  duration_ms: 11.444125
+  type: 'test'
+  ...
+# Subtest: C120: cancellation suppresses retries and fallback, and rejects late results
+ok 8 - C120: cancellation suppresses retries and fallback, and rejects late results
+  ---
+  duration_ms: 1.230208
+  type: 'test'
+  ...
+# Subtest: C120: both services failing gives a recoverable sanitized error and no fake report
+ok 9 - C120: both services failing gives a recoverable sanitized error and no fake report
+  ---
+  duration_ms: 0.413875
+  type: 'test'
+  ...
+# Subtest: C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+ok 10 - C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+  ---
+  duration_ms: 1.190917
+  type: 'test'
+  ...
+# Subtest: C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+ok 11 - C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+  ---
+  duration_ms: 0.106125
+  type: 'test'
+  ...
+# Subtest: C120: progress truthfully identifies Crossref without breaking the existing researching phase
+ok 12 - C120: progress truthfully identifies Crossref without breaking the existing researching phase
+  ---
+  duration_ms: 0.541458
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 562.877667
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: {"error":"Não foi possível concluir. Confira a versão salva antes de tentar novamente."}
+
+502 !== 200
+
+    at file:///Users/marioreis/Library/CloudStorage/Dropbox/Mac%20(6)/Documents/Developer/mapa/scripts/verify-research-starter-resilience.mjs:53:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 502,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.2

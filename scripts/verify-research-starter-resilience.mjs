@@ -29,6 +29,7 @@ function reset(mode){
 }
 class Query{
  constructor(table){this.table=table;this.filters=[];}
+ retry(enabled){assert.equal(enabled,false);return this;}abortSignal(signal){assert.ok(signal instanceof AbortSignal);return this;}
  select(){return this;}eq(k,v){this.filters.push([k,v]);return this;}is(){return this;}in(k,v){this.states=v;return this;}update(v){this.value=v;return this;}
  async maybeSingle(){if(this.table==='projects')return {data:s.project,error:null};return this.execute();}
  execute(){if(!this.value)return {data:null,error:null};const revision=this.filters.find(([k])=>k==='revision')?.[1];if(revision!==s.workflow.revision||(this.states&&!this.states.includes(s.workflow.state)))return {data:null,error:null};s.writes++;const v=this.value;s.workflow={...s.workflow,revision:v.revision,state:v.state,stableState:v.stable_state??s.workflow.stableState,content:v.content??s.workflow.content,updatedAt:v.updated_at};return {data:{project_id:s.workflow.projectId,updated_at:v.updated_at},error:null};}

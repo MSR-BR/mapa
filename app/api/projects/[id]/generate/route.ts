@@ -1,3 +1,4 @@
+import { loadOrThrow, checkDataResult, requireAffectedRow, dataApiErrorResponse } from "@/lib/supabase/data-api";
 import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
 import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
@@ -44,34 +45,34 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
   const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
   if (!access.ok) return access.response;
   const { supabase, userId } = access.value;
-  const { data: project } = await supabase
+  const { data: project } = await loadOrThrow((signal) => supabase
     .from("projects")
     .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, authoring_role, status, workflow_version, created_at, updated_at, deleted_at")
     .eq("id", id)
     .eq("owner_id", userId)
     .is("deleted_at", null)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
   if (!project) return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
 
-  const { data: existing } = await supabase
+  const { data: existing } = await loadOrThrow((signal) => supabase
     .from("generation_jobs")
     .select("id, status")
     .eq("owner_id", userId)
     .eq("idempotency_key", idempotencyKey)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
   if (existing) {
     const snapshot = await loadGenerationSnapshot(supabase, userId, id);
     return NextResponse.json(snapshot, { status: existing.status === "completed" ? 200 : 409 });
   }
 
-  const { data: job, error: jobError } = await supabase
+  const { data: job, error: jobError, status: jobStatus } = await supabase
     .from("generation_jobs")
     .insert({ idempotency_key: idempotencyKey, owner_id: userId, project_id: id, status: "researching" })
     .select("id")
     .single();
-  if (jobError || !job) return NextResponse.json({ error: "Não foi possível iniciar a geração." }, { status: 500 });
+  const confirmedJob = requireAffectedRow({ data: job, error: jobError, status: jobStatus });
 
-  await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
+  requireAffectedRow(await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle());
   try {
     const alreadyInterpreted = keywordOverrides.length === 0
       && project.status !== "failed"
@@ -104,7 +105,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       theme: interpreted.researchQuery,
       title: interpreted.title,
     };
-    const { error: interpretationSaveError } = await supabase
+    const interpretationSave = await supabase
       .from("projects")
       .update({
         keywords: interpreted.keywords,
@@ -114,8 +115,8 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .eq("owner_id", userId);
-    if (interpretationSaveError) throw interpretationSaveError;
+      .eq("owner_id", userId).select("id").maybeSingle();
+    requireAffectedRow(interpretationSave);
 
     let report = await fetchResearchStarterReport({
       includeMarkdown: false,
@@ -158,12 +159,12 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
         }, { requestId: requestContext.requestId });
         if (report.references.length > 0) {
           interpretedProject = { ...interpretedProject, theme: broaderQuery };
-          const { error: broaderQuerySaveError } = await supabase
+          const broaderQuerySave = await supabase
             .from("projects")
             .update({ theme: broaderQuery, updated_at: new Date().toISOString() })
             .eq("id", id)
-            .eq("owner_id", userId);
-          if (broaderQuerySaveError) throw broaderQuerySaveError;
+            .eq("owner_id", userId).select("id").maybeSingle();
+          requireAffectedRow(broaderQuerySave);
         }
       }
     }
@@ -171,7 +172,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       throw new Error("Research Starter não encontrou referências verificáveis para este tema.");
     }
 
-    await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
+    requireAffectedRow(await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle());
     const structure = await generateResearchStructure(
       interpretedProject,
       report,
@@ -182,7 +183,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
 
     assertOperationActive();
     emitProgress("saving");
-    const { error: saveError } = await supabase.from("research_structures").upsert({
+    const { error: saveError, status: saveStatus } = await supabase.from("research_structures").upsert({
       content: toJson(structure),
       model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
       owner_id: userId,
@@ -193,14 +194,18 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       updated_at: now,
       warnings: [...report.warnings, ...structure.warnings].slice(0, 12),
     }, { onConflict: "project_id" });
-    if (saveError) throw saveError;
+    checkDataResult({ error: saveError, status: saveStatus });
 
-    await Promise.all([
-      supabase.from("generation_jobs").update({ completed_at: now, status: "completed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
-      supabase.from("projects").update({ status: "generated", title: structure.title, updated_at: now }).eq("id", id).eq("owner_id", userId),
+    const results = await Promise.all([
+      supabase.from("generation_jobs").update({ completed_at: now, status: "completed", updated_at: now }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle(),
+      supabase.from("projects").update({ status: "generated", title: structure.title, updated_at: now }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle(),
     ]);
+    results.forEach(checkDataResult);
+    results.forEach(requireAffectedRow);
     return NextResponse.json(await loadGenerationSnapshot(supabase, userId, id));
   } catch (error) {
+    const dataFailure = dataApiErrorResponse(error);
+    if (dataFailure) return dataFailure;
     const errorCode = error instanceof Error && error.message.includes("não encontrou referências")
       ? "research-starter-empty"
       : error instanceof Error && error.message.includes("Referências não verificadas")
@@ -208,14 +213,16 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
         : "generation-failed";
     logOperationalFailure("generation_job_failed", requestContext, {
       errorCode,
-      jobId: job.id,
+      jobId: confirmedJob.id,
       projectId: id,
     });
     const now = new Date().toISOString();
-    await Promise.all([
-      supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
-      supabase.from("projects").update({ status: "failed", updated_at: now }).eq("id", id).eq("owner_id", userId),
+    const results = await Promise.all([
+      supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle(),
+      supabase.from("projects").update({ status: "failed", updated_at: now }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle(),
     ]);
+    results.forEach(checkDataResult);
+    results.forEach(requireAffectedRow);
     return NextResponse.json({
       error: errorCode === "research-starter-empty"
         ? "O Research Starter não encontrou fontes verificáveis. Ajuste o tema ou tente novamente."

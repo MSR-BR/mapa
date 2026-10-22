@@ -1,3 +1,4 @@
+import { withDataApiErrors, loadOrThrow, requireAffectedRow } from "@/lib/supabase/data-api";
 import { NextResponse } from "next/server";
 
 import { authorizeProjectRoute } from "@/modules/projects/auth";
@@ -7,7 +8,7 @@ import { toJson } from "@/modules/generation/types";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+async function handleGET(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
   const access = await authorizeProjectRoute({ projectId: id, request });
@@ -20,7 +21,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   return NextResponse.json(payload, { headers: { "Cache-Control": "private, no-store" } });
 }
 
-export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+async function handlePATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
   const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
@@ -30,12 +31,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const parsed = editableResearchStructureSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "A estrutura contém campos inválidos." }, { status: 400 });
 
-  const { data: stored } = await supabase
+  const { data: stored } = await loadOrThrow((signal) => supabase
     .from("research_structures")
     .select("references_data, revision")
     .eq("project_id", id)
     .eq("owner_id", userId)
-    .maybeSingle();
+    .retry(false).abortSignal(signal).maybeSingle());
   if (!stored) return NextResponse.json({ error: "Gere uma estrutura antes de editar." }, { status: 404 });
 
   const allowed = new Set(
@@ -47,11 +48,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     return NextResponse.json({ error: "A edição contém referências não verificadas." }, { status: 400 });
   }
 
-  const { error } = await supabase
+  const result = await supabase
     .from("research_structures")
     .update({ content: toJson(parsed.data), revision: stored.revision + 1, updated_at: new Date().toISOString() })
     .eq("project_id", id)
-    .eq("owner_id", userId);
-  if (error) return NextResponse.json({ error: "Não foi possível salvar a estrutura." }, { status: 500 });
-  return NextResponse.json({ ok: true, revision: stored.revision + 1 });
+    .eq("owner_id", userId)
+    .eq("revision", stored.revision)
+    .select("revision").maybeSingle();
+  const saved = requireAffectedRow(result);
+  return NextResponse.json({ ok: true, revision: saved.revision });
 }
+
+export const GET = withDataApiErrors(handleGET);
+
+export const PATCH = withDataApiErrors(handlePATCH);

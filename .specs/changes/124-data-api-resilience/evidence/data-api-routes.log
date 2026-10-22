@@ -1,0 +1,63 @@
+
+> mapa-da-pesquisa@0.1.0 test:data-api
+> node scripts/verify-data-api-resilience.mjs
+
+{"event":"research_starter_retry_broader_interval","requestId":"8a03c291-9467-4738-a201-407901e1b7ce","timestamp":"2026-10-20T21:34:18.610Z","projectId":"00000000-0000-4000-8000-000000000002","rankedPapers":0,"searchQualityStatus":"empty","sourceRecords":0}
+{"event":"research_starter_retry_broader_query","requestId":"8a03c291-9467-4738-a201-407901e1b7ce","timestamp":"2026-10-20T21:34:18.611Z","projectId":"00000000-0000-4000-8000-000000000002","queryLength":23}
+{"event":"proposal_discovery_failed","requestId":"0ce63397-8822-4a49-87e6-a9b91eb93a2b","timestamp":"2026-10-20T21:34:18.619Z","errorCode":"unexpected","projectId":"00000000-0000-4000-8000-000000000002","stage":"unknown"}
+{"event":"generation_job_failed","requestId":"20424a5d-c579-4f6c-806f-cc2d9131de99","timestamp":"2026-10-20T21:34:18.620Z","errorCode":"generation-failed","jobId":"00000000-0000-4000-8000-000000000099","projectId":"00000000-0000-4000-8000-000000000002"}
+{"event":"proposal_discovery_failed","requestId":"f9b8255b-1ee1-4ea2-b038-68ab2797c8db","timestamp":"2026-10-20T21:34:18.623Z","errorCode":"unexpected","projectId":"00000000-0000-4000-8000-000000000002","stage":"unknown"}
+{"event":"bug_report_insert_failed","requestId":"4ca33de3-b13b-4285-a1db-a9288eef2616","timestamp":"2026-10-20T21:34:18.624Z","errorCode":"PGRST303"}
+{
+  "status": "passed",
+  "checks": 45,
+  "networkCalls": 0,
+  "paidCalls": 0,
+  "evidence": [
+    "discover: PGRST303, raw HTTP 503 before progress",
+    "generate: PGRST303, raw HTTP 503 before progress",
+    "generation: PGRST303, raw HTTP 503 before progress",
+    "patch: PGRST303, raw HTTP 503 before progress",
+    "exportReport: PGRST303, raw HTTP 503 before progress",
+    "integrate: PGRST303, raw HTTP 503 before progress",
+    "bug: PGRST303, raw HTTP 503 before progress",
+    "generation status-only: failed query is not an empty job",
+    "export v2 workflow failure is not a 409",
+    "integrate research_structures: no legacy fallback",
+    "integrate research_workflows: no legacy fallback",
+    "advisor lookup does not masquerade as missing advisor",
+    "page projects: redirect destination 503, no false 404",
+    "page research_workflows: redirect destination 503, no false 404",
+    "page research_structures: redirect destination 503, no false 404",
+    "realAuthorize: real authorization reads fail closed",
+    "realAuthorizeMany: real authorization reads fail closed",
+    "profile: same three-attempt bound",
+    "claim RPC checked once, no retry",
+    "transient read recovers without repeated AI",
+    "PATCH transient write: one attempt, no false success",
+    "PATCH success advances exactly one revision",
+    "generate mutation 1: checked once",
+    "generate mutation 2: checked once",
+    "generate mutation 3: checked once",
+    "generate mutation 4: checked once",
+    "generate mutation 5: checked once",
+    "generate mutation 6: checked once",
+    "generate mutation 7: checked once",
+    "generate update 2: zero rows is a conflict",
+    "generate update 3: zero rows is a conflict",
+    "generate update 4: zero rows is a conflict",
+    "generate update 6: zero rows is a conflict",
+    "generate update 7: zero rows is a conflict",
+    "generate broader query update checked once",
+    "discover claim failure is not a concurrency 409",
+    "discover late save: terminal 503 + Retry-After after committed stream",
+    "discover: cleanup failure checked",
+    "generate: cleanup failure checked",
+    "integrate projects insert failure",
+    "integrate research_structures insert failure",
+    "integration cleanup zero rows checked",
+    "discovery cleanup zero rows checked",
+    "bug report insert failure",
+    "bug report auth transient does not become anonymous"
+  ]
+}

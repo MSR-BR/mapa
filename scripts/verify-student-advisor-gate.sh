@@ -13,15 +13,15 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-docker run --detach --rm \
+docker run --detach --rm --network none \
   --name "$container_name" \
   --env POSTGRES_PASSWORD=mapa_c89_local_check \
-  --volume "$PWD:/workspace:ro" \
+  --volume "$PWD/supabase/migrations:/workspace/supabase/migrations:ro" --volume "$PWD/scripts:/workspace/scripts:ro" --volume "$PWD/tmp:/workspace/tmp:ro" \
   --volume "$PWD/scripts/verify-mode-aware-rls-auth-stub.sql:/docker-entrypoint-initdb.d/000_auth_stub.sql:ro" \
   postgres:17-alpine >/dev/null
 
 attempt=0
-until docker exec "$container_name" pg_isready --username postgres >/dev/null 2>&1; do
+until docker exec "$container_name" pg_isready --host 127.0.0.1 --username postgres >/dev/null 2>&1; do
   attempt=$((attempt + 1))
   if [ "$attempt" -ge 30 ]; then
     docker logs "$container_name" >&2
@@ -58,6 +58,8 @@ apply_sql supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql
 apply_sql supabase/migrations/20260917015508_c087_fix_project_insert_returning.sql
 apply_sql supabase/migrations/20260919123000_c089_require_student_advisor_approval.sql
 apply_sql supabase/migrations/20260924222657_c104_reduce_legacy_explicit_grants.sql
+
+for migration in supabase/migrations/*c125*.sql; do apply_sql "$migration"; done
 
 result="$(docker exec "$container_name" \
   psql \

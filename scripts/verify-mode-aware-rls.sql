@@ -7,7 +7,7 @@ declare
 begin
   if (select count(*) from pg_policies where schemaname = 'public' and tablename = 'user_profiles') <> 2
     or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'projects') <> 5
-    or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'research_workflows') <> 6
+    or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'research_workflows') <> 5
     or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'generation_jobs') <> 4
     or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'research_structures') <> 4
     or (select count(*) from pg_policies where schemaname = 'public' and tablename = 'legal_consents') <> 3

@@ -58,11 +58,17 @@ insert into public.research_workflows (
 ) values (
   '89898989-8989-4989-8989-898989898989',
   auth.uid(),
-  'choosing_problem',
-  'choosing_problem',
-  '{"activeStep":"problem_statement","advisorReviews":[],"draft":"initial"}'::jsonb,
+  'draft_prompt',
+  'draft_prompt',
+  '{"activeStep":null,"advisorReviews":[],"draft":"initial"}'::jsonb,
   '{}'::jsonb
 );
+
+-- Discovery may move an initialized student workflow to the first review step.
+update public.research_workflows
+set state = 'choosing_problem', stable_state = 'choosing_problem',
+    content = jsonb_set(content, '{activeStep}', '"problem_statement"'), revision = revision + 1
+where project_id = '89898989-8989-4989-8989-898989898989';
 
 -- Salvar rascunho não é avanço e continua permitido.
 update public.research_workflows

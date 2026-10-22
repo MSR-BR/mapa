@@ -1,3 +1,4 @@
+import { DataApiError, loadOrThrow, requireAffectedRow, dataApiErrorResponse, checkDataResult } from "@/lib/supabase/data-api";
 import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
 import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
@@ -274,12 +275,12 @@ async function handlePost(request: Request) {
   });
   if (!access.ok) return access.response;
   const { supabase, userId } = access.value;
-  const { data: projects } = await supabase
+  const { data: projects } = await loadOrThrow((signal) => supabase
     .from("projects")
     .select("id, title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
     .in("id", projectIds)
     .eq("owner_id", userId)
-    .is("deleted_at", null);
+    .is("deleted_at", null).retry(false).abortSignal(signal));
   if (!projects || projects.length !== projectIds.length) {
     return NextResponse.json({ error: "Um dos projetos não foi encontrado." }, { status: 404 });
   }
@@ -289,16 +290,16 @@ async function handlePost(request: Request) {
   const sourceTitles = orderedProjects.map((project) => project.title);
 
   const [{ data: storedStructures }, { data: storedWorkflows }] = await Promise.all([
-    supabase
+    loadOrThrow((signal) => supabase
       .from("research_structures")
       .select("project_id, content, references_data")
       .in("project_id", projectIds)
-      .eq("owner_id", userId),
-    supabase
+      .eq("owner_id", userId).retry(false).abortSignal(signal)),
+    loadOrThrow((signal) => supabase
       .from("research_workflows")
       .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
       .in("project_id", projectIds)
-      .eq("owner_id", userId),
+      .eq("owner_id", userId).retry(false).abortSignal(signal)),
   ]);
 
   const storedByProject = new Map((storedStructures ?? []).map((stored) => [stored.project_id, stored]));
@@ -335,7 +336,7 @@ async function handlePost(request: Request) {
     const academicLevel = orderedProjects.map((project) => project.academic_level).find(Boolean) ?? null;
     assertOperationActive();
     emitProgress("saving");
-    const { data: integrated, error: projectError } = await supabase
+    const { data: integrated, error: projectError, status: projectStatus } = await supabase
       .from("projects")
       .insert({
         academic_level: academicLevel,
@@ -349,13 +350,13 @@ async function handlePost(request: Request) {
       })
       .select("id")
       .single();
-    if (projectError || !integrated) throw new Error("Não foi possível criar o projeto integrado.");
+    const confirmed = requireAffectedRow({ data: integrated, error: projectError, status: projectStatus });
 
-    const { error: structureError } = await supabase.from("research_structures").insert({
+    const { error: structureError, status: structureStatus } = await supabase.from("research_structures").insert({
       content: toJson(structure),
       model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
       owner_id: userId,
-      project_id: integrated.id,
+      project_id: confirmed.id,
       prompt_version: `${STRUCTURE_PROMPT_VERSION}-merge`,
       references_data: toJson(references),
       schema_version: RESEARCH_STRUCTURE_SCHEMA_VERSION,
@@ -363,11 +364,17 @@ async function handlePost(request: Request) {
     });
     if (structureError) {
       const now = new Date().toISOString();
-      await supabase.from("projects").update({ deleted_at: now, updated_at: now }).eq("id", integrated.id).eq("owner_id", userId);
-      throw new Error("Não foi possível salvar a estrutura integrada.");
+      // A rejected insert is known not to have persisted; a transient/ambiguous
+      // failure must not hide a potentially saved integrated structure.
+      const failure = dataApiErrorResponse(new DataApiError(structureError, structureStatus));
+      if (failure?.status === 503) return failure;
+      requireAffectedRow(await supabase.from("projects").update({ deleted_at: now, updated_at: now }).eq("id", confirmed.id).eq("owner_id", userId).select("id").maybeSingle());
+      checkDataResult({ error: structureError, status: structureStatus });
     }
-    return NextResponse.json({ projectId: integrated.id, sourceTitles });
+    return NextResponse.json({ projectId: confirmed.id, sourceTitles });
   } catch (error) {
+    const dataFailure = dataApiErrorResponse(error);
+    if (dataFailure) return dataFailure;
     logSanitizedOperationalFailure("project_integration_failed", requestContext, error, {
       projectCount: projectIds.length,
     });

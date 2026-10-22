@@ -118,6 +118,8 @@ Cada fase entrega uma base verificável para a seguinte. Integrações externas 
 | 120 | Resiliência da primeira busca bibliográfica | Concluída / publicada v16102026.1 | Consulta até 180 caracteres, tentativas limitadas e fallback Crossref com proveniência e cobertura reduzida. 238 testes, oito cenários de rota e recuperação real em produção: seis propostas/20 referências, pedido original preservado após recarregar. [CPD](changes/120-research-starter-resilience/cpd-2026-10-16.md). |
 | 121 | Relatórios completos e revisão da entrada avançada | Concluída / publicada v16102026.2 | Word com conteúdo integral do PDF, cinco pares original/reformulação, entradas novas até 400 caracteres, validação por perfil e retirada do otimizador. 241 testes, paridade/renderização, build remoto e smoke canônico aprovados. [CPD](changes/121-complete-exports-intake-review/cpd-2026-10-16.md). |
 | 122 | Recuperação da descoberta, diagnóstico de falhas e Word seguro | Revisada para commit local / publicação pendente | Ordem 1: lógica original preservada; 247 testes e rotas simuladas aprovados, build Webpack aprovado. Build padrão bloqueado por sandbox; gate de produção BLOCKED, SEC-03 aberto e identificação de versão pendente. Sem push/deploy. [Spec](changes/122-discovery-recovery-and-docx-safety/spec.md), [revisão Codex](changes/122-discovery-recovery-and-docx-safety/review-codex-2026-10-20.md). |
+| 123 | Medição, atribuição, SEO e acessibilidade | Implementada localmente; UX-06 parcial / sem commit ou deploy | Ordem 2: GA-01…04, SEO-01 e UX-01/02 com regressões locais. WebVTT do roteiro preparado, sincronização com vídeo pendente; build padrão limitado pelo sandbox, Webpack aprovado. [Spec](changes/123-measurement-attribution-accessibility/spec.md), [validação](changes/123-measurement-attribution-accessibility/validation-2026-10-20.md). |
+| 124 | Resiliência Data API e SEC-07 (Ordem 3) | Implementada localmente; revisão pendente | Retry GET/HEAD limitado, erro 503/Retry-After, escritas verificadas e revisão otimista; 261 testes + 45 verificações de rotas. Webpack passa; Turbopack bloqueado pelo sandbox. Limites HTTP de stream/página documentados. Sem commit/deploy/remoto. |
 
 ## Marcos
 
@@ -154,3 +156,29 @@ C111 e C112 foram autorizadas, implementadas e publicadas em 06/10/2026, respect
 ## Fora do roadmap atual
 
 Templates completos por área, compartilhamento, colaboração em tempo real, redação integral da pesquisa e aprendizado entre usuários permanecem fora do escopo.
+
+## C125 — Ordem 4 (22/10/2026)
+
+Segurança SEC-03/05/01 implementada e validada apenas em PostgreSQL local.
+[Plano de aplicação/rollback](changes/125-local-security-migrations/application-plan.md)
+aguarda revisão e autorização separada de ambiente/candidato. Sem commit/deploy.
+
+## C126 — Ordem 5 (22/10/2026)
+
+Exportações sem dependência de IA, primeiro save manual, revisão pendente protegida,
+PDF Unicode e sugestões com login no app. Sem cota diária por decisão humana;
+reserva mensal existente cobre também Gemini primário. Sem migration/commit/deploy.
+[Validação e limitações](changes/126-export-independence-ai-access/validation-2026-10-22.md).
+
+## C127 — Next, lembretes e mensagens (22/10/2026)
+
+Next 16.4.2, proteção durável de reenvios e bloqueios com orientação clara.
+Implementada e validada localmente, sem commit/deploy ou banco remoto.
+[Validação e limitações](changes/127-next-reminders-blocking-messages/validation-2026-10-22.md).
+Cinco alertas na cadeia dev ESLint continuam pendentes.
+
+## C128 — Dependências de desenvolvimento (22/10/2026)
+
+Cadeia vulnerável de braces removida com adaptador restrito ao Next lint 16.4.2.
+Audit completo zero; instalação limpa, compatibilidade, testes, lint/tipos e gate
+local PASS. Sem commit/deploy. [Evidências](changes/128-development-dependency-security/spec.md).

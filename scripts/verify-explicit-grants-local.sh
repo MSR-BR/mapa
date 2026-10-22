@@ -13,15 +13,15 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-docker run --detach --rm \
+docker run --detach --rm --network none \
   --name "$container_name" \
   --env POSTGRES_PASSWORD=mapa_c103_local_check \
-  --volume "$PWD:/workspace:ro" \
+  --volume "$PWD/supabase/migrations:/workspace/supabase/migrations:ro" --volume "$PWD/scripts:/workspace/scripts:ro" --volume "$PWD/tmp:/workspace/tmp:ro" \
   --volume "$PWD/scripts/verify-explicit-grants-stub.sql:/docker-entrypoint-initdb.d/000_platform_stub.sql:ro" \
   postgres:17-alpine >/dev/null
 
 attempt=0
-until docker exec "$container_name" pg_isready --username postgres >/dev/null 2>&1; do
+until docker exec "$container_name" pg_isready --host 127.0.0.1 --username postgres >/dev/null 2>&1; do
   attempt=$((attempt + 1))
   if [ "$attempt" -ge 30 ]; then
     docker logs "$container_name" >&2
@@ -51,4 +51,4 @@ if [ "$result" != "explicit_grants_ok" ]; then
   exit 1
 fi
 
-echo "C112 validada em PostgreSQL 17 isolado: 21 migrations, grants mínimos, RLS, funções, policies e ausência de sequences aprovados."
+echo "C127 validada em PostgreSQL 17 isolado: 25 migrations, grants mínimos, RLS, funções, policies e ausência de sequences aprovados."

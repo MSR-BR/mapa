@@ -1,3 +1,4 @@
+import { withDataApiErrors, loadOrThrow, checkDataResult, DataApiError, isTransientDataError } from "@/lib/supabase/data-api";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -80,7 +81,7 @@ async function notifyTeam(input: {
   return response.ok;
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   const requestContext = startRequest(request);
   const rate = checkRateLimit(getRequestClientKey(request, "bug-report"), 5, 60 * 60_000);
   if (!rate.allowed) {
@@ -100,7 +101,11 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const { data: claims } = await supabase.auth.getClaims();
+  const { data: claims, error: claimsError } = await supabase.auth.getClaims();
+  if (claimsError && claimsError.name !== "AuthSessionMissingError") {
+    if (isTransientDataError(claimsError)) throw new DataApiError(claimsError);
+    return NextResponse.json({ error: "Entre novamente na conta para enviar o relato." }, { status: 401 });
+  }
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
   const authenticatedEmail = typeof claims?.claims?.email === "string" ? claims.claims.email : null;
   const parsed = bugReportSchema.safeParse({
@@ -123,7 +128,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Entre na conta para associar o relato a um projeto." }, { status: 401 });
   }
   if (parsed.data.projectId && userId) {
-    const { data: project } = await supabase.from("projects").select("id").eq("id", parsed.data.projectId).maybeSingle();
+    const { data: project } = await loadOrThrow((signal) => supabase.from("projects").select("id").eq("id", parsed.data.projectId!).retry(false).abortSignal(signal).maybeSingle());
     if (!project) return NextResponse.json({ error: "Projeto não encontrado ou sem acesso." }, { status: 404 });
   }
 
@@ -146,7 +151,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const { error: insertError } = await supabase.from("bug_reports").insert({
+  const { error: insertError, status: insertStatus } = await supabase.from("bug_reports").insert({
     attachment_name: attachmentFile?.name || null,
     attachment_path: attachmentPath,
     attachment_size: attachmentFile?.size || null,
@@ -164,7 +169,7 @@ export async function POST(request: Request) {
   });
   if (insertError) {
     logSanitizedOperationalFailure("bug_report_insert_failed", requestContext, insertError);
-    return NextResponse.json({ error: "Não foi possível registrar o relato agora." }, { status: 502 });
+    checkDataResult({ error: insertError, status: insertStatus });
   }
 
   let emailSent = false;
@@ -186,3 +191,5 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ emailSent, id: reportId, ok: true });
 }
+
+export const POST = withDataApiErrors(handlePOST);

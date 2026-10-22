@@ -1,0 +1,10 @@
+{
+  "name": "@mapa/next-root-glob",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Restricted directory glob adapter for @next/eslint-plugin-next 16.4.2",
+  "main": "index.cjs",
+  "dependencies": {
+    "glob": "13.0.6"
+  }
+}

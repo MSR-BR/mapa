@@ -1,6 +1,7 @@
 import {
   researchWorkflowContentSchema,
   type ResearchWorkflowContent,
+  type ResearchWorkflow,
 } from "./schema";
 
 function remap(id: string, idMap: Map<string, string>) {
@@ -70,4 +71,19 @@ export function cloneResearchWorkflowContent(content: ResearchWorkflowContent) {
   });
 
   return cloned;
+}
+
+// Student copies preserve academic content but must obtain their own approvals.
+export function duplicateWorkflowSnapshot(source: ResearchWorkflow, authoringRole: "student" | "advisor") {
+  const content = cloneResearchWorkflowContent(source.content);
+  if (authoringRole === "student") return {
+    content: { ...content, activeStep: null },
+    state: "draft_prompt" as const,
+    stableState: "draft_prompt" as const,
+  };
+  return {
+    content,
+    state: source.state === "completed" ? "reviewing_map" as const : source.state,
+    stableState: source.stableState === "completed" ? "reviewing_map" as const : source.stableState,
+  };
 }

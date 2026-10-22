@@ -1,0 +1,1565 @@
+--- /dev/null
++++ b/.specs/changes/124-data-api-resilience/spec.md
+@@ -0,0 +1,54 @@
++# C124 — Ordem 3: falhas do Data API sem sucesso ou ausência falsos
++
++Data: 20/10/2026. Base Git `7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c`,
++com C123 já modificada no workspace. Autoridade: pedido humano para executar
++somente Ordem 3, sem commit/deploy/Ads/GA4/Supabase remoto.
++
++## Escopo
++
++SEC-07: leituras de projeto, descoberta, geração, snapshot/status, exportação,
++integração, orientador, página privada e relatos de problemas. Helpers de perfil
++e autorização compartilham o mesmo limite de leitura. Falhas não podem ser
++interpretadas como projeto ausente, orientador ausente, legado disponível ou
++persistência concluída.
++
++- `loadOrThrow`: GET/HEAD do PostgREST, no máximo três tentativas e cinco segundos
++  por leitura/lote, incluindo tempo de resposta; AbortSignal cancela a consulta
++  ao esgotar o prazo. Esperas de 500 e 1500 ms, apenas para falhas transitórias.
++  O retry nativo do SDK instalado é desligado nessas SELECTs com `.retry(false)`
++  para não multiplicar as tentativas; isso foi testado com o cliente real e fetch
++  sintético para HTTP 520 e erro de rede. Relógio monotônico mede o prazo.
++- `PGRST303 / JWT issued at future`, indisponibilidade do pool/banco, falhas de
++  rede reconhecidas e HTTP 5xx: 503 e `Retry-After: 2`. Outros erros não são
++  repetidos. JWT expirado, permissões e constraints continuam falhando fechado.
++- Escritas/RPC/IA nunca são repetidas pelo helper. UPDATEs do escopo retornam
++  uma linha confirmada; zero linhas resulta em 409, erro de consulta em 5xx.
++  PATCH de estrutura usa também a revisão lida como predicado de concorrência.
++- Persistência incerta não é sobrescrita por uma limpeza que marca fracasso ou
++  oculta o projeto. Não há transação nova nem migração: estados parciais continuam
++  possíveis entre escritas diferentes e precisam ser conferidos antes de repetir.
++- Mensagens públicas não incluem erro bruto, JWT, conteúdo ou credenciais.
++  Identidade, filtros de proprietário, autorização e RLS não são relaxados.
++
++## HTTP, página e progresso
++
++- Erros anteriores ao primeiro progresso útil devolvem HTTP 503 de verdade,
++  mesmo com `Accept: application/x-ndjson` (antes o wrapper iniciava HTTP 200).
++- Depois do início do stream, os cabeçalhos HTTP já foram enviados. Falha tardia
++  devolve **resultado terminal 503 + Retry-After**, reconstruído pelo cliente,
++  com progresso `failed`, nunca `completed`. O HTTP do transporte permanece 200;
++  alterar isso exigiria retirar streaming ou mudar seu protocolo. Não declarar
++  cumprimento literal de “nunca HTTP 200” para falhas após o começo do stream.
++- Server Components não definem HTTP 503 arbitrário. Falha transitória na página
++  redireciona a `/service-unavailable`, que responde HTML **503 / Retry-After /
++  private,no-store / noindex** e oferece retorno à biblioteca. O primeiro salto
++  segue o protocolo de redirect do Next; o destino é 503. Não há falso notFound.
++
++## Aceitação / entrega
++
++Injeção sintética de PGRST303 em cada rota e loader, recuperação transitória,
++falha persistente, limite de tempo, erro/zero linhas nas escritas, concorrência,
++limpeza com erro, exportação e preservação das regras de autorização. Nenhuma
++chamada externa/paga. Executar `npm run check`, `test:methodology`, `test:cards`,
++`test:exports` e testes específicos. Diff incremental contra workspace anterior
++à C124; preservar integralmente C123. Publicação não solicitada.
+--- /dev/null
++++ b/.specs/changes/124-data-api-resilience/validation-2026-10-20.md
+@@ -0,0 +1,89 @@
++# C124 — validação local da Ordem 3
++
++**Resultado:** implementada localmente, `NEEDS_REVIEW`. Sem commit, push, deploy,
++migration, API paga ou mudança em Ads/GA4/Supabase remoto. Base Git permanece
++`7fbd8e4a7fe95acd3a88fd23ad0dd621c9cc5e0c`; C123 já estava no workspace e foi
++preservada. Este relatório não é um gate de publicação nem validação remota.
++
++## O que foi corrigido
++
++| Caminho | Correção e prova sintética |
++|---|---|
++| Descoberta | Leitura não vira 404; erro ao reservar não vira 409; gravação/limpeza verificam erro e linha. Não sobrescreve resultado incerto. Reserva expirada da C122 e concorrência preservadas. |
++| Geração legada | Projeto/job/snapshot verificam erro; atualizações de estado, interpretação, consulta ampliada, conclusão e limpeza confirmam linha. Nenhum retry de escrita ou IA. |
++| GET/PATCH generation | Status/snapshot não mascaram falha; PATCH usa revisão esperada e retorna revisão confirmada; zero linhas → 409. |
++| Exportação | Falha de projeto/workflow/snapshot não vira ausência ou falta de aprovação. Downloads mantêm as regras existentes. |
++| Integração | Erro de workflow não permite fallback para estrutura legada. INSERTs e limpeza são verificados; falha transitória de resultado incerto não oculta o projeto. |
++| Orientador | Erro de leitura não vira orientador nulo/falso bloqueio acadêmico. 503 preservado também no diagnosticador da metodologia. |
++| Página privada | SELECT e autorização falham fechados; erro transitório redireciona ao destino HTML 503, com Retry-After e noindex. |
++| Bug reports | Leitura de projeto e INSERT verificam erro; falha de autenticação transitória não é tratada como visitante anônimo. Notificações não foram disparadas nos testes. |
++| Perfil/autorização | Mesmo limite de três tentativas; RPC de vínculo verificado sem repetição; resposta 503 contém Retry-After. |
++
++`loadOrThrow` é o helper de leitura, com deadline monotônico de cinco segundos
++por consulta/lote, abort da requisição e até três tentativas. As SELECTs usam
++`.retry(false)` porque o SDK instalado já repete erros de rede/HTTP 520. Os testes
++com **o SDK real e fetch sintético** contam três requisições, evitando multiplicar
++três tentativas do app pelas tentativas internas. JWT expirado, erro de permissão
++e constraint não são repetidos. Escritas e RPC executam uma vez.
++
++## Verificações executadas
++
++| Comando | Resultado |
++|---|---|
++| `npm run check` | Lint (um warning anterior), tipos, grants estáticos, **261 testes** e exportações passaram. Build padrão Turbopack **bloqueado** por `binding to a port / Operation not permitted` do sandbox. Não classificar o comando completo como aprovado. |
++| `npm run test:data-api` | **45 verificações direcionadas** aprovadas, com handlers e loaders reais, autenticação/banco/provedores sintéticos e fetch externo proibido. Inclui PGRST303 por rota, erro persistente, recuperação, zero linhas, limpeza, status-only, workflow de exportação, integração e stream tardio. |
++| `npm run test:methodology` | Aprovado, incluindo o caso novo de orientador PGRST303 atravessando o diagnosticador com 503/Retry-After, sem escrita ou IA. |
++| `npm run test:cards` | 13 cenários aprovados. |
++| `npm run test:exports` | Aprovado, incluindo renderizadores PDF/DOCX reais, aprovação/rascunho e preservação de conteúdo. |
++| `node scripts/verify-discovery-claim-recovery.mjs` | Aprovado: reserva expirada, recente, concorrência e falha de gravação preservada para recuperação. |
++| `npm run build -- --webpack` | Aprovado com a revisão final. A rota `/service-unavailable` foi compilada. |
++| Auditoria estática / security_fast_check | Aprovadas com os riscos anteriores registrados. Nenhuma evidência de RLS remoto ou segurança integral é inferida. |
++| `git diff --check` | Aprovado. |
++
++A suíte principal somou 210 + 13 + 38 = **261 testes**. As 45 verificações de
++rotas são adicionais; não representam 45 usuários nem incidentes reais.
++O primeiro check incluiu 35 verificações direcionadas; depois foram acrescentadas
++10 verificações de status-only, exportação v2, zero linhas e limpeza, e a suíte
++`test:data-api` foi reexecutada com sucesso. Lint/tipos/build Webpack foram
++reexecutados no candidato final.
++
++## Limitações relevantes para revisão
++
++1. **Streaming:** antes do primeiro progresso útil, o wrapper devolve HTTP 503
++   real, inclusive quando o cliente pediu NDJSON. Depois que o stream começou,
++   HTTP 200 já foi enviado e é imutável. O resultado terminal transporta 503 e
++   Retry-After, o cliente os reconstrói, e a fase é `failed`, nunca `completed`.
++   Portanto a exigência literal de “nunca HTTP 200” **não é atendida no transporte
++   de falhas tardias**, embora a operação não seja anunciada como sucesso.
++   Retirar esse limite exige abandonar o progresso incremental ou mudar protocolo.
++2. **Página Next:** Server Component não pode definir 503 arbitrário. O primeiro
++   salto usa o protocolo de redirect do Next; `/service-unavailable` responde 503.
++   Testada a escolha do destino e seu handler; não um fluxo autenticado remoto.
++3. **Persistência:** não foi criada transação/RPC/migration. Escritas em tabelas
++   diferentes podem resultar em estado parcial. Não repetir automaticamente IA
++   ou gravação diante de resposta incerta; conferir a versão salva. A nova checagem
++   de linhas presume os SELECTs/RLS já existentes, sem alterá-los.
++4. **Causa histórica:** a reprodução é sintética; não comprova que PGRST303 causou
++   os eventos de produção de 17–18/10. Produção permanece inalterada.
++5. Ordens 4–5, SEC-03 e demais pendências da auditoria continuam fora do escopo.
++
++## Evidências, preservação e próxima etapa
++
++- [Especificação](spec.md), [diff incremental C124](local-changes.patch),
++  [manifesto de arquivos](files.json), logs em `evidence/`.
++- O diff foi calculado contra o workspace **antes da C124**, incluindo o estado
++  já modificado da C123. Não usar o diff global contra HEAD como se fosse só C124.
++- Os 16 arquivos rastreados de implementação/testes previamente modificados pela
++  C123 foram comparados byte a byte com o snapshot inicial e permaneceram iguais.
++  `package.json`, memória e roadmap receberam somente acréscimos da C124.
++- Revisar o diff e as duas ressalvas HTTP; resolver separadamente os bloqueios
++  anteriores antes de propor publicação. Esta etapa não autoriza publicar.
++- Reversão local: aplicar inversamente **apenas** o patch C124 depois de revisão;
++  ele depende da C123 presente. Não usar reset/checkout global.
++
++Skills aplicadas: Pó Mágico, Supabase (leituras locais) e
++[project-security-audit](/Users/marioreis/.agents/skills/project-security-audit/SKILL.md).
++S3; Next Route Handlers local e implementação instalada de PostgREST consultados.
++Pó Mágico v20261020.002; checkpoints start/classification/phase/Change/delivery,
++sem alterar o arquivo central. Codex/GPT-6, variante/esforço não expostos;
++sem subagentes. `PUBLICATION_STATE: NOT_REQUESTED`.
+--- a/.specs/project-state.md
++++ b/.specs/project-state.md
+@@ -1,4 +1,31 @@
+ # Estado do projeto
++
++## C124 — Ordem 3 implementada localmente, 20/10/2026
++
++- Pedido humano: resiliência PGRST303 e SEC-07, sem commit/push/deploy nem
++  alteração de Ads, GA4, Supabase remoto, migration, chaves ou ambiente.
++- Helper comum para SELECTs: até três tentativas em cinco segundos por leitura,
++  incluindo timeout/abort e retry nativo do SDK desligado. Transitórios retornam
++  503 + Retry-After; escritas/RPC/IA não são repetidos. UPDATEs do escopo têm
++  confirmação de linha e PATCH tem predicado de revisão.
++- 261 testes unitários/contratos e 45 verificações direcionadas de rotas/SDK,
++  além de metodologia, cards, exports e recuperação de descoberta, aprovados.
++  Lint/tipos/grants estáticos/exportações passaram; build Webpack aprovado.
++  `npm run check` termina bloqueado no Turbopack por bind de porta do sandbox.
++- HTTP: falhas antes de progresso útil retornam 503 real; em stream já iniciado
++  o resultado terminal é 503 com Retry-After, mas o transporte não pode mudar
++  seu 200 já enviado. A página Next redireciona para destino HTML 503.
++  SEC-07 fica implementado com essas ressalvas, sujeito à revisão, não comprovado
++  em produção nem causa confirmada dos eventos históricos.
++- [Validação](changes/124-data-api-resilience/validation-2026-10-20.md) e
++  [diff incremental](changes/124-data-api-resilience/local-changes.patch).
++  C123 preservada; Ordens 4–5 e bloqueios anteriores de segurança continuam
++  pendentes. `PUBLICATION_STATE: NOT_REQUESTED`, parecer `NEEDS_REVIEW`.
++- Pó Mágico v20261020.002, fonte local/remota conferida nesta sessão em 20/10;
++  checkpoints start/classification/phase/Change/delivery. APP + AI SYSTEM +
++  SECURITY/RESILIENCE, S3; delta: validar tentativas HTTP reais além das chamadas
++  do helper e distinguir status HTTP de envelope de progresso. Codex/GPT-6,
++  variante/esforço não expostos; sem subagentes. Archive central inalterado.
+ 
+ ## C123 — Ordem 2 implementada localmente, 20/10/2026
+ 
+--- a/.specs/roadmap.md
++++ b/.specs/roadmap.md
+@@ -119,6 +119,7 @@
+ | 121 | Relatórios completos e revisão da entrada avançada | Concluída / publicada v16102026.2 | Word com conteúdo integral do PDF, cinco pares original/reformulação, entradas novas até 400 caracteres, validação por perfil e retirada do otimizador. 241 testes, paridade/renderização, build remoto e smoke canônico aprovados. [CPD](changes/121-complete-exports-intake-review/cpd-2026-10-16.md). |
+ | 122 | Recuperação da descoberta, diagnóstico de falhas e Word seguro | Revisada para commit local / publicação pendente | Ordem 1: lógica original preservada; 247 testes e rotas simuladas aprovados, build Webpack aprovado. Build padrão bloqueado por sandbox; gate de produção BLOCKED, SEC-03 aberto e identificação de versão pendente. Sem push/deploy. [Spec](changes/122-discovery-recovery-and-docx-safety/spec.md), [revisão Codex](changes/122-discovery-recovery-and-docx-safety/review-codex-2026-10-20.md). |
+ | 123 | Medição, atribuição, SEO e acessibilidade | Implementada localmente; UX-06 parcial / sem commit ou deploy | Ordem 2: GA-01…04, SEO-01 e UX-01/02 com regressões locais. WebVTT do roteiro preparado, sincronização com vídeo pendente; build padrão limitado pelo sandbox, Webpack aprovado. [Spec](changes/123-measurement-attribution-accessibility/spec.md), [validação](changes/123-measurement-attribution-accessibility/validation-2026-10-20.md). |
++| 124 | Resiliência Data API e SEC-07 (Ordem 3) | Implementada localmente; revisão pendente | Retry GET/HEAD limitado, erro 503/Retry-After, escritas verificadas e revisão otimista; 261 testes + 45 verificações de rotas. Webpack passa; Turbopack bloqueado pelo sandbox. Limites HTTP de stream/página documentados. Sem commit/deploy/remoto. |
+ 
+ ## Marcos
+ 
+--- a/app/api/bug-reports/route.ts
++++ b/app/api/bug-reports/route.ts
+@@ -1,3 +1,4 @@
++import { withDataApiErrors, loadOrThrow, checkDataResult, DataApiError, isTransientDataError } from "@/lib/supabase/data-api";
+ import { NextResponse } from "next/server";
+ import { z } from "zod";
+ 
+@@ -80,7 +81,7 @@
+   return response.ok;
+ }
+ 
+-export async function POST(request: Request) {
++async function handlePOST(request: Request) {
+   const requestContext = startRequest(request);
+   const rate = checkRateLimit(getRequestClientKey(request, "bug-report"), 5, 60 * 60_000);
+   if (!rate.allowed) {
+@@ -100,7 +101,11 @@
+   }
+ 
+   const supabase = await createClient();
+-  const { data: claims } = await supabase.auth.getClaims();
++  const { data: claims, error: claimsError } = await supabase.auth.getClaims();
++  if (claimsError && claimsError.name !== "AuthSessionMissingError") {
++    if (isTransientDataError(claimsError)) throw new DataApiError(claimsError);
++    return NextResponse.json({ error: "Entre novamente na conta para enviar o relato." }, { status: 401 });
++  }
+   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
+   const authenticatedEmail = typeof claims?.claims?.email === "string" ? claims.claims.email : null;
+   const parsed = bugReportSchema.safeParse({
+@@ -123,7 +128,7 @@
+     return NextResponse.json({ error: "Entre na conta para associar o relato a um projeto." }, { status: 401 });
+   }
+   if (parsed.data.projectId && userId) {
+-    const { data: project } = await supabase.from("projects").select("id").eq("id", parsed.data.projectId).maybeSingle();
++    const { data: project } = await loadOrThrow((signal) => supabase.from("projects").select("id").eq("id", parsed.data.projectId!).retry(false).abortSignal(signal).maybeSingle());
+     if (!project) return NextResponse.json({ error: "Projeto não encontrado ou sem acesso." }, { status: 404 });
+   }
+ 
+@@ -146,7 +151,7 @@
+     }
+   }
+ 
+-  const { error: insertError } = await supabase.from("bug_reports").insert({
++  const { error: insertError, status: insertStatus } = await supabase.from("bug_reports").insert({
+     attachment_name: attachmentFile?.name || null,
+     attachment_path: attachmentPath,
+     attachment_size: attachmentFile?.size || null,
+@@ -164,7 +169,7 @@
+   });
+   if (insertError) {
+     logSanitizedOperationalFailure("bug_report_insert_failed", requestContext, insertError);
+-    return NextResponse.json({ error: "Não foi possível registrar o relato agora." }, { status: 502 });
++    checkDataResult({ error: insertError, status: insertStatus });
+   }
+ 
+   let emailSent = false;
+@@ -186,3 +191,5 @@
+ 
+   return NextResponse.json({ emailSent, id: reportId, ok: true });
+ }
++
++export const POST = withDataApiErrors(handlePOST);
+--- a/app/api/projects/[id]/discover/route.ts
++++ b/app/api/projects/[id]/discover/route.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow, checkDataResult, requireAffectedRow, dataApiErrorResponse } from "@/lib/supabase/data-api";
+ import { AiError } from "@/modules/ai/failure";
+ import { assertOperationActive, emitProgress } from "@/modules/ai/operation";
+ import { withAiProgress } from "@/modules/ai/route";
+@@ -32,13 +33,13 @@
+   if (!access.ok) return access.response;
+   const { supabase, userId } = access.value;
+   const [{ data: project }, workflow] = await Promise.all([
+-    supabase
++    loadOrThrow((signal) => supabase
+       .from("projects")
+       .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, authoring_role, status, workflow_version, created_at, updated_at, deleted_at")
+       .eq("id", id)
+       .eq("owner_id", userId)
+       .is("deleted_at", null)
+-      .maybeSingle(),
++      .retry(false).abortSignal(signal).maybeSingle()),
+     loadResearchWorkflow(supabase, userId, id),
+   ]);
+ 
+@@ -60,7 +61,7 @@
+ 
+   const claimRevision = workflow.revision + 1;
+   const now = new Date().toISOString();
+-  const { data: claimed, error: claimError } = await supabase
++  const { data: claimed, error: claimError, status: claimStatus } = await supabase
+     .from("research_workflows")
+     .update({ revision: claimRevision, state: "discovering", updated_at: now })
+     .eq("project_id", id)
+@@ -70,7 +71,8 @@
+     .select("project_id")
+     .maybeSingle();
+ 
+-  if (claimError || !claimed) {
++  checkDataResult({ error: claimError, status: claimStatus });
++  if (!claimed) {
+     return NextResponse.json({ error: "A descoberta já foi iniciada em outra sessão." }, { status: 409 });
+   }
+ 
+@@ -82,7 +84,7 @@
+     emitProgress("saving");
+     const completedAt = new Date().toISOString();
+     const content = { ...workflow.content, discovery };
+-    const { data: saved, error: saveError } = await supabase
++    const { data: saved, error: saveError, status: saveStatus } = await supabase
+       .from("research_workflows")
+       .update({
+         content: toJson(content),
+@@ -97,7 +99,7 @@
+       .eq("state", "discovering")
+       .select("updated_at")
+       .maybeSingle();
+-    if (saveError || !saved) throw new Error("Não foi possível salvar as propostas.");
++    const confirmed = requireAffectedRow({ data: saved, error: saveError, status: saveStatus });
+ 
+     const nextWorkflow: ResearchWorkflow = researchWorkflowSchema.parse({
+       content,
+@@ -108,10 +110,12 @@
+       sourceRevision: workflow.sourceRevision,
+       stableState: "choosing_problem",
+       state: "choosing_problem",
+-      updatedAt: saved.updated_at,
++      updatedAt: confirmed.updated_at,
+     });
+     return NextResponse.json({ workflow: nextWorkflow }, { headers: { "Cache-Control": "private, no-store" } });
+   } catch (error) {
++    const dataFailure = dataApiErrorResponse(error);
++    if (dataFailure) return dataFailure;
+     const errorCode = error instanceof DiscoveryError
+       ? error.code
+       : error instanceof ResearchStarterClientError && error.code === "not-configured"
+@@ -128,12 +132,15 @@
+       projectId: id,
+       stage: stage ?? "unknown",
+     });
+-    await supabase
++    const cleanup = await supabase
+       .from("research_workflows")
+       .update({ revision: claimRevision + 1, state: "failed", updated_at: new Date().toISOString() })
+       .eq("project_id", id)
+       .eq("owner_id", userId)
+-      .eq("revision", claimRevision);
++      .eq("revision", claimRevision)
++      .eq("state", "discovering")
++      .select("project_id").maybeSingle();
++    requireAffectedRow(cleanup);
+     return NextResponse.json({
+       error: error instanceof AiError ? error.message : errorCode === "briefing-too-short"
+         ? "Descreva um pouco mais o tema da pesquisa antes de formar as propostas."
+--- a/app/api/projects/[id]/exports/[format]/route.ts
++++ b/app/api/projects/[id]/exports/[format]/route.ts
+@@ -1,3 +1,4 @@
++import { withDataApiErrors, loadOrThrow } from "@/lib/supabase/data-api";
+ import { currentResearchIntakeReview } from "@/modules/projects/research-intake";
+ import { hasCurrentFinalApproval } from "@/modules/research-workflow/advisor-review";
+ import { NextResponse } from "next/server";
+@@ -15,7 +16,7 @@
+ 
+ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ 
+-export async function GET(request: Request, context: { params: Promise<{ format: string; id: string }> }) {
++async function handleGET(request: Request, context: { params: Promise<{ format: string; id: string }> }) {
+   const { format, id } = await context.params;
+   if (!UUID.test(id) || (format !== "docx" && format !== "pdf")) return NextResponse.json({ error: "Exportação inválida." }, { status: 400 });
+   const { searchParams } = new URL(request.url);
+@@ -25,13 +26,13 @@
+   if (!access.ok) return access.response;
+   const { supabase, userId } = access.value;
+ 
+-  const { data: project } = await supabase
++  const { data: project } = await loadOrThrow((signal) => supabase
+     .from("projects")
+     .select("title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
+     .eq("id", id)
+     .eq("owner_id", userId)
+     .is("deleted_at", null)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+   if (!project) return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
+ 
+   if (project.workflow_version === 2) {
+@@ -80,3 +81,5 @@
+     },
+   });
+ }
++
++export const GET = withDataApiErrors(handleGET);
+--- a/app/api/projects/[id]/generate/route.ts
++++ b/app/api/projects/[id]/generate/route.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow, checkDataResult, requireAffectedRow, dataApiErrorResponse } from "@/lib/supabase/data-api";
+ import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
+ import { withAiProgress } from "@/modules/ai/route";
+ import { NextResponse } from "next/server";
+@@ -44,34 +45,34 @@
+   const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+   if (!access.ok) return access.response;
+   const { supabase, userId } = access.value;
+-  const { data: project } = await supabase
++  const { data: project } = await loadOrThrow((signal) => supabase
+     .from("projects")
+     .select("id, owner_id, title, theme, problem_statement, keywords, knowledge_area, academic_level, advisor_email, advisor_id, authoring_role, status, workflow_version, created_at, updated_at, deleted_at")
+     .eq("id", id)
+     .eq("owner_id", userId)
+     .is("deleted_at", null)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+   if (!project) return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
+ 
+-  const { data: existing } = await supabase
++  const { data: existing } = await loadOrThrow((signal) => supabase
+     .from("generation_jobs")
+     .select("id, status")
+     .eq("owner_id", userId)
+     .eq("idempotency_key", idempotencyKey)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+   if (existing) {
+     const snapshot = await loadGenerationSnapshot(supabase, userId, id);
+     return NextResponse.json(snapshot, { status: existing.status === "completed" ? 200 : 409 });
+   }
+ 
+-  const { data: job, error: jobError } = await supabase
++  const { data: job, error: jobError, status: jobStatus } = await supabase
+     .from("generation_jobs")
+     .insert({ idempotency_key: idempotencyKey, owner_id: userId, project_id: id, status: "researching" })
+     .select("id")
+     .single();
+-  if (jobError || !job) return NextResponse.json({ error: "Não foi possível iniciar a geração." }, { status: 500 });
+-
+-  await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId);
++  const confirmedJob = requireAffectedRow({ data: job, error: jobError, status: jobStatus });
++
++  requireAffectedRow(await supabase.from("projects").update({ status: "generating", updated_at: new Date().toISOString() }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle());
+   try {
+     const alreadyInterpreted = keywordOverrides.length === 0
+       && project.status !== "failed"
+@@ -104,7 +105,7 @@
+       theme: interpreted.researchQuery,
+       title: interpreted.title,
+     };
+-    const { error: interpretationSaveError } = await supabase
++    const interpretationSave = await supabase
+       .from("projects")
+       .update({
+         keywords: interpreted.keywords,
+@@ -114,8 +115,8 @@
+         updated_at: new Date().toISOString(),
+       })
+       .eq("id", id)
+-      .eq("owner_id", userId);
+-    if (interpretationSaveError) throw interpretationSaveError;
++      .eq("owner_id", userId).select("id").maybeSingle();
++    requireAffectedRow(interpretationSave);
+ 
+     let report = await fetchResearchStarterReport({
+       includeMarkdown: false,
+@@ -158,12 +159,12 @@
+         }, { requestId: requestContext.requestId });
+         if (report.references.length > 0) {
+           interpretedProject = { ...interpretedProject, theme: broaderQuery };
+-          const { error: broaderQuerySaveError } = await supabase
++          const broaderQuerySave = await supabase
+             .from("projects")
+             .update({ theme: broaderQuery, updated_at: new Date().toISOString() })
+             .eq("id", id)
+-            .eq("owner_id", userId);
+-          if (broaderQuerySaveError) throw broaderQuerySaveError;
++            .eq("owner_id", userId).select("id").maybeSingle();
++          requireAffectedRow(broaderQuerySave);
+         }
+       }
+     }
+@@ -171,7 +172,7 @@
+       throw new Error("Research Starter não encontrou referências verificáveis para este tema.");
+     }
+ 
+-    await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", userId);
++    requireAffectedRow(await supabase.from("generation_jobs").update({ report_id: report.reportId, status: "generating", updated_at: new Date().toISOString() }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle());
+     const structure = await generateResearchStructure(
+       interpretedProject,
+       report,
+@@ -182,7 +183,7 @@
+ 
+     assertOperationActive();
+     emitProgress("saving");
+-    const { error: saveError } = await supabase.from("research_structures").upsert({
++    const { error: saveError, status: saveStatus } = await supabase.from("research_structures").upsert({
+       content: toJson(structure),
+       model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
+       owner_id: userId,
+@@ -193,14 +194,18 @@
+       updated_at: now,
+       warnings: [...report.warnings, ...structure.warnings].slice(0, 12),
+     }, { onConflict: "project_id" });
+-    if (saveError) throw saveError;
+-
+-    await Promise.all([
+-      supabase.from("generation_jobs").update({ completed_at: now, status: "completed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
+-      supabase.from("projects").update({ status: "generated", title: structure.title, updated_at: now }).eq("id", id).eq("owner_id", userId),
++    checkDataResult({ error: saveError, status: saveStatus });
++
++    const results = await Promise.all([
++      supabase.from("generation_jobs").update({ completed_at: now, status: "completed", updated_at: now }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle(),
++      supabase.from("projects").update({ status: "generated", title: structure.title, updated_at: now }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle(),
+     ]);
++    results.forEach(checkDataResult);
++    results.forEach(requireAffectedRow);
+     return NextResponse.json(await loadGenerationSnapshot(supabase, userId, id));
+   } catch (error) {
++    const dataFailure = dataApiErrorResponse(error);
++    if (dataFailure) return dataFailure;
+     const errorCode = error instanceof Error && error.message.includes("não encontrou referências")
+       ? "research-starter-empty"
+       : error instanceof Error && error.message.includes("Referências não verificadas")
+@@ -208,14 +213,16 @@
+         : "generation-failed";
+     logOperationalFailure("generation_job_failed", requestContext, {
+       errorCode,
+-      jobId: job.id,
++      jobId: confirmedJob.id,
+       projectId: id,
+     });
+     const now = new Date().toISOString();
+-    await Promise.all([
+-      supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", job.id).eq("owner_id", userId),
+-      supabase.from("projects").update({ status: "failed", updated_at: now }).eq("id", id).eq("owner_id", userId),
++    const results = await Promise.all([
++      supabase.from("generation_jobs").update({ error_code: errorCode, status: "failed", updated_at: now }).eq("id", confirmedJob.id).eq("owner_id", userId).select("id").maybeSingle(),
++      supabase.from("projects").update({ status: "failed", updated_at: now }).eq("id", id).eq("owner_id", userId).select("id").maybeSingle(),
+     ]);
++    results.forEach(checkDataResult);
++    results.forEach(requireAffectedRow);
+     return NextResponse.json({
+       error: errorCode === "research-starter-empty"
+         ? "O Research Starter não encontrou fontes verificáveis. Ajuste o tema ou tente novamente."
+--- a/app/api/projects/[id]/generation/route.ts
++++ b/app/api/projects/[id]/generation/route.ts
+@@ -1,3 +1,4 @@
++import { withDataApiErrors, loadOrThrow, requireAffectedRow } from "@/lib/supabase/data-api";
+ import { NextResponse } from "next/server";
+ 
+ import { authorizeProjectRoute } from "@/modules/projects/auth";
+@@ -7,7 +8,7 @@
+ 
+ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ 
+-export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
++async function handleGET(request: Request, context: { params: Promise<{ id: string }> }) {
+   const { id } = await context.params;
+   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
+   const access = await authorizeProjectRoute({ projectId: id, request });
+@@ -20,7 +21,7 @@
+   return NextResponse.json(payload, { headers: { "Cache-Control": "private, no-store" } });
+ }
+ 
+-export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
++async function handlePATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+   const { id } = await context.params;
+   if (!UUID.test(id)) return NextResponse.json({ error: "Projeto inválido." }, { status: 400 });
+   const access = await authorizeProjectRoute({ mutation: true, projectId: id, request });
+@@ -30,12 +31,12 @@
+   const parsed = editableResearchStructureSchema.safeParse(body);
+   if (!parsed.success) return NextResponse.json({ error: "A estrutura contém campos inválidos." }, { status: 400 });
+ 
+-  const { data: stored } = await supabase
++  const { data: stored } = await loadOrThrow((signal) => supabase
+     .from("research_structures")
+     .select("references_data, revision")
+     .eq("project_id", id)
+     .eq("owner_id", userId)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+   if (!stored) return NextResponse.json({ error: "Gere uma estrutura antes de editar." }, { status: 404 });
+ 
+   const allowed = new Set(
+@@ -47,11 +48,17 @@
+     return NextResponse.json({ error: "A edição contém referências não verificadas." }, { status: 400 });
+   }
+ 
+-  const { error } = await supabase
++  const result = await supabase
+     .from("research_structures")
+     .update({ content: toJson(parsed.data), revision: stored.revision + 1, updated_at: new Date().toISOString() })
+     .eq("project_id", id)
+-    .eq("owner_id", userId);
+-  if (error) return NextResponse.json({ error: "Não foi possível salvar a estrutura." }, { status: 500 });
+-  return NextResponse.json({ ok: true, revision: stored.revision + 1 });
++    .eq("owner_id", userId)
++    .eq("revision", stored.revision)
++    .select("revision").maybeSingle();
++  const saved = requireAffectedRow(result);
++  return NextResponse.json({ ok: true, revision: saved.revision });
+ }
++
++export const GET = withDataApiErrors(handleGET);
++
++export const PATCH = withDataApiErrors(handlePATCH);
+--- a/app/api/projects/[id]/methodology/route.ts
++++ b/app/api/projects/[id]/methodology/route.ts
+@@ -1,3 +1,4 @@
++import { dataApiErrorResponse } from "@/lib/supabase/data-api";
+ import { APP_VERSION } from "@/lib/app-version";
+ import { AiError, classifyAiFailure } from "@/modules/ai/failure";
+ import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
+@@ -631,7 +632,7 @@
+       : error instanceof AiError
+         ? new WorkflowRequestError(ai === "cancelled" ? "cancelled" : ai === "timeout" ? "provider_timeout" : ai === "invalid_output" ? "provider_invalid_response" : "provider_unavailable")
+         : new WorkflowRequestError("unknown");
+-    response = NextResponse.json({ code: failure.code, error: failure.message }, { status: failure.status });
++    response = dataApiErrorResponse(error) ?? NextResponse.json({ code: failure.code, error: failure.message }, { status: failure.status });
+   }
+   const body = await response.clone().json().catch(() => ({}));
+   const knownCode = typeof body.code === "string" && /^[a-z_]{1,50}$/.test(body.code) ? body.code : response.status === 422 ? "validation" : "unknown";
+--- a/app/api/projects/integrate/route.ts
++++ b/app/api/projects/integrate/route.ts
+@@ -1,3 +1,4 @@
++import { DataApiError, loadOrThrow, requireAffectedRow, dataApiErrorResponse, checkDataResult } from "@/lib/supabase/data-api";
+ import { aiOperation, assertOperationActive, emitProgress } from "@/modules/ai/operation";
+ import { withAiProgress } from "@/modules/ai/route";
+ import { NextResponse } from "next/server";
+@@ -274,12 +275,12 @@
+   });
+   if (!access.ok) return access.response;
+   const { supabase, userId } = access.value;
+-  const { data: projects } = await supabase
++  const { data: projects } = await loadOrThrow((signal) => supabase
+     .from("projects")
+     .select("id, title, theme, problem_statement, keywords, knowledge_area, academic_level, workflow_version")
+     .in("id", projectIds)
+     .eq("owner_id", userId)
+-    .is("deleted_at", null);
++    .is("deleted_at", null).retry(false).abortSignal(signal));
+   if (!projects || projects.length !== projectIds.length) {
+     return NextResponse.json({ error: "Um dos projetos não foi encontrado." }, { status: 404 });
+   }
+@@ -289,16 +290,16 @@
+   const sourceTitles = orderedProjects.map((project) => project.title);
+ 
+   const [{ data: storedStructures }, { data: storedWorkflows }] = await Promise.all([
+-    supabase
++    loadOrThrow((signal) => supabase
+       .from("research_structures")
+       .select("project_id, content, references_data")
+       .in("project_id", projectIds)
+-      .eq("owner_id", userId),
+-    supabase
++      .eq("owner_id", userId).retry(false).abortSignal(signal)),
++    loadOrThrow((signal) => supabase
+       .from("research_workflows")
+       .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
+       .in("project_id", projectIds)
+-      .eq("owner_id", userId),
++      .eq("owner_id", userId).retry(false).abortSignal(signal)),
+   ]);
+ 
+   const storedByProject = new Map((storedStructures ?? []).map((stored) => [stored.project_id, stored]));
+@@ -335,7 +336,7 @@
+     const academicLevel = orderedProjects.map((project) => project.academic_level).find(Boolean) ?? null;
+     assertOperationActive();
+     emitProgress("saving");
+-    const { data: integrated, error: projectError } = await supabase
++    const { data: integrated, error: projectError, status: projectStatus } = await supabase
+       .from("projects")
+       .insert({
+         academic_level: academicLevel,
+@@ -349,13 +350,13 @@
+       })
+       .select("id")
+       .single();
+-    if (projectError || !integrated) throw new Error("Não foi possível criar o projeto integrado.");
+-
+-    const { error: structureError } = await supabase.from("research_structures").insert({
++    const confirmed = requireAffectedRow({ data: integrated, error: projectError, status: projectStatus });
++
++    const { error: structureError, status: structureStatus } = await supabase.from("research_structures").insert({
+       content: toJson(structure),
+       model: aiOperation.getStore()?.lastModel ?? GENERATION_MODEL,
+       owner_id: userId,
+-      project_id: integrated.id,
++      project_id: confirmed.id,
+       prompt_version: `${STRUCTURE_PROMPT_VERSION}-merge`,
+       references_data: toJson(references),
+       schema_version: RESEARCH_STRUCTURE_SCHEMA_VERSION,
+@@ -363,11 +364,17 @@
+     });
+     if (structureError) {
+       const now = new Date().toISOString();
+-      await supabase.from("projects").update({ deleted_at: now, updated_at: now }).eq("id", integrated.id).eq("owner_id", userId);
+-      throw new Error("Não foi possível salvar a estrutura integrada.");
++      // A rejected insert is known not to have persisted; a transient/ambiguous
++      // failure must not hide a potentially saved integrated structure.
++      const failure = dataApiErrorResponse(new DataApiError(structureError, structureStatus));
++      if (failure?.status === 503) return failure;
++      requireAffectedRow(await supabase.from("projects").update({ deleted_at: now, updated_at: now }).eq("id", confirmed.id).eq("owner_id", userId).select("id").maybeSingle());
++      checkDataResult({ error: structureError, status: structureStatus });
+     }
+-    return NextResponse.json({ projectId: integrated.id, sourceTitles });
++    return NextResponse.json({ projectId: confirmed.id, sourceTitles });
+   } catch (error) {
++    const dataFailure = dataApiErrorResponse(error);
++    if (dataFailure) return dataFailure;
+     logSanitizedOperationalFailure("project_integration_failed", requestContext, error, {
+       projectCount: projectIds.length,
+     });
+--- a/app/dashboard/projects/[id]/page.tsx
++++ b/app/dashboard/projects/[id]/page.tsx
+@@ -1,3 +1,4 @@
++import { loadOrThrow, DataApiError } from "@/lib/supabase/data-api";
+ import Link from "next/link";
+ import { notFound, redirect } from "next/navigation";
+ 
+@@ -30,7 +31,7 @@
+   ) : null;
+ }
+ 
+-export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string; workflowStep?: string }> }) {
++async function renderProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ discover?: string; generate?: string; integrated?: string; created?: string; entry?: string; workflowStep?: string }> }) {
+   const { id } = await params;
+   const { discover, generate, created, entry, workflowStep } = await searchParams;
+   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+@@ -40,6 +41,7 @@
+     access = await authorizeProject(id, "related_read", { requireLegalConsent: true });
+   } catch (error) {
+     if (error instanceof ActorAuthorizationError) {
++      if (error.status === 503) redirect("/service-unavailable");
+       if (error.code === "authentication_required") redirect("/login");
+       if (error.code === "project_not_found") notFound();
+       redirect(`/dashboard?error=${error.code}`);
+@@ -47,14 +49,14 @@
+     throw error;
+   }
+   const { relation, supabase, userId } = access;
+-  const { data: project } = await supabase
++  const { data: project } = await loadOrThrow((signal) => supabase
+     .from("projects")
+     .select(
+       "id, title, theme, problem_statement, keywords, knowledge_area, academic_level, status, workflow_version, created_at, updated_at, deleted_at, owner_id, advisor_email, advisor_id, authoring_role",
+     )
+     .eq("id", id)
+     .is("deleted_at", null)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+ 
+   if (!project) notFound();
+   const isOwner = relation === "owner";
+@@ -151,3 +153,11 @@
+     </main>
+   );
+ }
++
++export default async function ProjectPage(props: Parameters<typeof renderProjectPage>[0]) {
++  try { return await renderProjectPage(props); }
++  catch (error) {
++    if (error instanceof DataApiError && error.status === 503) redirect("/service-unavailable");
++    throw error;
++  }
++}
+--- /dev/null
++++ b/app/service-unavailable/route.ts
+@@ -0,0 +1,10 @@
++import { DATA_RETRY_AFTER_SECONDS } from "@/lib/supabase/data-api";
++
++// Server Components cannot set an arbitrary status. Their transient data errors
++// redirect here instead of rendering a false empty project/not-found page.
++export function GET() {
++  return new Response(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Consulta temporariamente indisponível | Mapa da Pesquisa</title></head><body><main><h1>Não foi possível consultar seu mapa agora</h1><p>A consulta falhou temporariamente. Nenhum texto foi alterado por esta consulta.</p><p>Aguarde alguns instantes e <a href="/dashboard">volte à sua biblioteca</a> para abrir o mapa novamente.</p></main></body></html>`, {
++    status: 503,
++    headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "private, no-store", "Retry-After": String(DATA_RETRY_AFTER_SECONDS), "X-Robots-Tag": "noindex" },
++  });
++}
+--- /dev/null
++++ b/lib/supabase/data-api.ts
+@@ -0,0 +1,116 @@
++/** A bounded retry belongs to a SELECT, never to a mutation or an AI operation. */
++type DataError = { code?: string; message?: string; status?: number };
++type DataResult = { error: DataError | null; status?: number };
++export const DATA_READ_BUDGET_MS = 5_000;
++export const DATA_RETRY_AFTER_SECONDS = 2;
++
++export function isTransientDataError(error: DataError | null, status?: number) {
++  if (!error) return false;
++  return (error.code === "PGRST303" && error.message?.includes("JWT issued at future") === true)
++    || ["PGRST000", "PGRST001", "PGRST002", "PGRST003", "53300", "57P01", "57P02", "57P03"].includes(error.code ?? "")
++    || error.code?.startsWith("08") === true
++    || (status ?? error.status ?? 0) >= 500
++    || (!error.code && /fetch failed|Failed to fetch|NetworkError|network request failed|AbortError/i.test(error.message ?? ""));
++}
++
++export class DataApiError extends Error {
++  readonly code = "persistence_failed";
++  readonly status: number;
++  constructor(error: DataError, status?: number) {
++    super("Não foi possível confirmar os dados salvos. Aguarde e confira a versão salva antes de tentar novamente.", { cause: error });
++    this.name = "DataApiError";
++    this.status = isTransientDataError(error, status) ? 503 : 500;
++  }
++}
++
++export class DataRevisionConflict extends Error {
++  readonly code = "revision_conflict";
++  readonly status = 409;
++  constructor() {
++    super("Esta gravação não foi confirmada. Reabra a versão salva antes de tentar novamente.");
++    this.name = "DataRevisionConflict";
++  }
++}
++
++/** Checks a single result. In particular this NEVER repeats a write/RPC. */
++export function checkDataResult<T extends DataResult>(result: T): T {
++  if (result.error) throw new DataApiError(result.error, result.status);
++  return result;
++}
++
++export function requireAffectedRow<T>(result: { data: T | null; error: DataError | null; status?: number }): T {
++  checkDataResult(result);
++  if (result.data === null || result.data === undefined) throw new DataRevisionConflict();
++  return result.data;
++}
++
++type ReadOptions = {
++  wait?: (milliseconds: number) => Promise<void>;
++  now?: () => number;
++  budgetMs?: number;
++};
++
++// Shared with the profile batch adapter. The callback must build a fresh GET/HEAD
++// query with .retry(false).abortSignal(signal): disable the SDK retry to avoid
++// nested attempts. All requests consume the same deadline.
++export async function retryDataRead<T>(
++  read: (signal: AbortSignal) => PromiseLike<T>,
++  shouldRetry: (result: T) => boolean,
++  options: ReadOptions = {},
++): Promise<T> {
++  const now = options.now ?? (() => performance.now());
++  const wait = options.wait ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
++  const deadline = now() + Math.min(options.budgetMs ?? DATA_READ_BUDGET_MS, DATA_READ_BUDGET_MS);
++  for (let attempt = 0; attempt < 3; attempt++) {
++    const remaining = deadline - now();
++    if (remaining <= 0) break;
++    const controller = new AbortController();
++    let timer: ReturnType<typeof setTimeout> | undefined;
++    let result: T;
++    try {
++      result = await Promise.race([
++        Promise.resolve().then(() => read(controller.signal)),
++        new Promise<never>((_, reject) => {
++          timer = setTimeout(() => {
++            controller.abort();
++            reject(new DataApiError({ code: "PGRST003" }));
++          }, remaining);
++        }),
++      ]);
++    } finally { clearTimeout(timer); }
++    if (!shouldRetry(result) || attempt === 2) return result;
++    const delay = [500, 1500][attempt];
++    if (now() + delay >= deadline) return result;
++    await wait(delay);
++  }
++  throw new DataApiError({ code: "PGRST003" });
++}
++
++export async function loadOrThrow<T extends DataResult>(
++  read: (signal: AbortSignal) => PromiseLike<T>,
++  options?: ReadOptions,
++): Promise<T> {
++  return checkDataResult(await retryDataRead(read, (result) => isTransientDataError(result.error, result.status), options));
++}
++
++export function dataApiErrorResponse(error: unknown): Response | null {
++  if (!(error instanceof DataApiError || error instanceof DataRevisionConflict)) return null;
++  return Response.json({ code: error.code, error: error.message }, {
++    status: error.status,
++    headers: {
++      "Cache-Control": "private, no-store",
++      ...(error.status === 503 ? { "Retry-After": String(DATA_RETRY_AFTER_SECONDS) } : {}),
++    },
++  });
++}
++
++export function withDataApiErrors<A extends unknown[]>(handler: (...args: A) => Promise<Response>) {
++  return async (...args: A): Promise<Response> => {
++    try { return await handler(...args); }
++    catch (error) {
++      const response = dataApiErrorResponse(error);
++      if (response) return response;
++      throw error;
++    }
++  };
++}
+--- a/modules/ai/progress-client.ts
++++ b/modules/ai/progress-client.ts
+@@ -19,7 +19,11 @@
+     } else if (data.type === "result") {
+       if (data.operationId !== operationId || !Number.isInteger(data.sequence) || data.sequence <= sequence || data.status < 200 || data.status > 599) return;
+       sequence = data.sequence;
+-      result = Response.json(data.body, { status: data.status });
++      result = Response.json(data.body, {
++        status: data.status,
++        headers: typeof data.retryAfter === "string" && /^\d{1,5}$/.test(data.retryAfter)
++          ? { "Retry-After": data.retryAfter } : {},
++      });
+     }
+   };
+   try {
+--- a/modules/ai/route.ts
++++ b/modules/ai/route.ts
+@@ -1,10 +1,12 @@
+ import "server-only";
++import { dataApiErrorResponse } from "@/lib/supabase/data-api";
+ import { AiError } from "./failure";
+ import { aiOperation, createOperation, emitProgress } from "./operation";
+ import { AI_LIMITS } from "./policy";
+ 
+-// One response carries ordered progress followed by the original JSON result.
+-// No polling, no stored prompt, and no server-generated percentage.
++// Do not commit HTTP 200 just for "preparing": authentication/data preflight
++// failures can then return their actual status and Retry-After. Once progress
++// has started, HTTP headers are immutable; the terminal envelope carries status.
+ export function withAiProgress<C>(handler: (request: Request, context: C) => Promise<Response>, totalMs: number = AI_LIMITS.totalMs) {
+   return async (request: Request, context: C): Promise<Response> => {
+     const abort = new AbortController();
+@@ -13,33 +15,52 @@
+     const handle = async () => {
+       try { return await handler(request, context); }
+       catch (error) {
+-        return Response.json({ error: error instanceof AiError ? error.message : "Não foi possível concluir. Seu conteúdo foi preservado; tente novamente." }, { status: error instanceof AiError && error.code === "cancelled" ? 409 : 502 });
++        return dataApiErrorResponse(error) ?? Response.json({ error: error instanceof AiError ? error.message : "Não foi possível concluir. Confira a versão salva antes de tentar novamente." }, { status: error instanceof AiError && error.code === "cancelled" ? 409 : 502 });
+       }
+     };
+     if (!wantsStream) return aiOperation.run(createOperation(signal, undefined, totalMs), handle);
+     const encoder = new TextEncoder();
+     let closed = false;
++    let committed = false;
++    let resolveResponse: (response: Response) => void;
++    const responseReady = new Promise<Response>((resolve) => { resolveResponse = resolve; });
+     const stream = new ReadableStream<Uint8Array>({
+       async start(controller) {
+         function send(value: unknown) { if (!closed) controller.enqueue(encoder.encode(JSON.stringify(value) + "\n")); }
+-        const operation = createOperation(signal, (event) => send({ type: "progress", event }), totalMs);
++        const operation = createOperation(signal, (event) => {
++          send({ type: "progress", event });
++          if (event.phase !== "preparing" && !committed) {
++            committed = true;
++            resolveResponse(streamResponse);
++          }
++        }, totalMs);
++        // Defer the handler so streamResponse exists before progress can start.
++        await Promise.resolve();
+         await aiOperation.run(operation, async () => {
+           try {
+             emitProgress("preparing");
+             const response = await handle();
++            if (!committed) {
++              // No substantive progress yet: cached results/preflight failures
++              // remain normal JSON with the real HTTP status and headers.
++              resolveResponse(response);
++              return;
++            }
+             const body = await response.json();
+             if (!closed) {
+-              // An OK HTTP result means the handler confirmed its persistence.
+               emitProgress(response.ok ? "completed" : "failed");
+-              send({ type: "result", operationId: operation.id, sequence: ++operation.sequence, status: response.status, body });
++              send({ type: "result", operationId: operation.id, sequence: ++operation.sequence, status: response.status, retryAfter: response.headers.get("Retry-After"), body });
+             }
+           } catch {
+-            if (!closed) send({ type: "result", operationId: operation.id, sequence: ++operation.sequence, status: 502, body: { error: "A conexão foi interrompida. Confira a versão salva antes de tentar novamente." } });
++            const body = { error: "A conexão foi interrompida. Confira a versão salva antes de tentar novamente." };
++            if (!committed) resolveResponse(Response.json(body, { status: 502 }));
++            else if (!closed) send({ type: "result", operationId: operation.id, sequence: ++operation.sequence, status: 502, body });
+           } finally { if (!closed) { closed = true; controller.close(); } }
+         });
+       },
+       cancel() { closed = true; abort.abort(); },
+     });
+-    return new Response(stream, { headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
++    const streamResponse = new Response(stream, { headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
++    return responseReady;
+   };
+ }
+--- a/modules/generation/storage.ts
++++ b/modules/generation/storage.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow } from "@/lib/supabase/data-api";
+ import "server-only";
+ 
+ import type { SupabaseClient } from "@supabase/supabase-js";
+@@ -11,14 +12,14 @@
+   ownerId: string,
+   projectId: string,
+ ): Promise<GenerationSnapshot["job"]> {
+-  const { data: job } = await supabase
++  const { data: job } = await loadOrThrow((signal) => supabase
+     .from("generation_jobs")
+     .select("id, status, error_code, updated_at")
+     .eq("project_id", projectId)
+     .eq("owner_id", ownerId)
+     .order("created_at", { ascending: false })
+     .limit(1)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+ 
+   return job ? {
+     errorCode: job.error_code,
+@@ -34,12 +35,12 @@
+   projectId: string,
+ ): Promise<GenerationSnapshot> {
+   const [{ data: stored }, job] = await Promise.all([
+-    supabase
++    loadOrThrow((signal) => supabase
+       .from("research_structures")
+       .select("content, references_data, revision")
+       .eq("project_id", projectId)
+       .eq("owner_id", ownerId)
+-      .maybeSingle(),
++      .retry(false).abortSignal(signal).maybeSingle()),
+     loadGenerationStatus(supabase, ownerId, projectId),
+   ]);
+ 
+--- a/modules/profile/future-jwt-retry.ts
++++ b/modules/profile/future-jwt-retry.ts
+@@ -1,20 +1,11 @@
+-type ReadResult = { error: { code?: string; message?: string } | null };
++import { isTransientDataError, retryDataRead } from "../../lib/supabase/data-api";
+ 
+-function isFutureJwtError(error: ReadResult["error"]) {
+-  return error?.code === "PGRST303" && error.message?.includes("JWT issued at future") === true;
++type ReadResult = { error: { code?: string; message?: string } | null; status?: number };
++
++/** Profile and consent GETs share one five-second deadline and at most three attempts. */
++export async function retryFutureJwtRead<T extends readonly ReadResult[]>(
++  read: (signal: AbortSignal) => Promise<T>,
++  wait?: (milliseconds: number) => Promise<void>,
++): Promise<T> {
++  return retryDataRead(read, (results) => results.some(({ error, status }) => isTransientDataError(error, status)), { wait });
+ }
+-
+-/** Retry only idempotent profile reads affected by brief Auth/Data API clock skew. */
+-export async function retryFutureJwtRead<T extends readonly ReadResult[]>(
+-  read: () => Promise<T>,
+-  wait: (milliseconds: number) => Promise<void> = (milliseconds) =>
+-    new Promise((resolve) => setTimeout(resolve, milliseconds)),
+-): Promise<T> {
+-  let result = await read();
+-  for (const delay of [500, 1500, 3000]) {
+-    if (!result.some(({ error }) => isFutureJwtError(error))) return result;
+-    await wait(delay);
+-    result = await read();
+-  }
+-  return result;
+-}
+--- a/modules/profile/storage.ts
++++ b/modules/profile/storage.ts
+@@ -1,3 +1,4 @@
++import { checkDataResult } from "@/lib/supabase/data-api";
+ import "server-only";
+ 
+ import type { SupabaseClient } from "@supabase/supabase-js";
+@@ -40,13 +41,13 @@
+   supabase: SupabaseClient<Database>,
+   userId: string,
+ ): Promise<UserProfile> {
+-  const [{ data, error: profileError }, { data: consent, error: consentError }] = await retryFutureJwtRead(() => Promise.all([
++  const [{ data, error: profileError }, { data: consent, error: consentError }] = await retryFutureJwtRead((signal) => Promise.all([
+     supabase
+       .from("user_profiles")
+       .select("active_role,role_changed_at,role_version")
+       .eq("user_id", userId)
+-      .maybeSingle(),
+-    supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId),
++      .retry(false).abortSignal(signal).maybeSingle(),
++    supabase.from("legal_consents").select("profile_role,terms_version").eq("user_id", userId).retry(false).abortSignal(signal),
+   ]));
+ 
+   if (profileError || consentError) {
+@@ -73,5 +74,5 @@
+ }
+ 
+ export async function claimPendingAdvisorProjects(supabase: SupabaseClient<Database>) {
+-  await supabase.rpc("claim_pending_advisor_projects");
++  checkDataResult(await supabase.rpc("claim_pending_advisor_projects"));
+ }
+--- a/modules/projects/advisor.ts
++++ b/modules/projects/advisor.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow } from "@/lib/supabase/data-api";
+ import "server-only";
+ 
+ import type { SupabaseClient } from "@supabase/supabase-js";
+@@ -17,12 +18,12 @@
+   ownerId: string,
+   projectId: string,
+ ) {
+-  const { data } = await supabase
++  const { data } = await loadOrThrow((signal) => supabase
+     .from("projects")
+     .select("advisor_email")
+     .eq("id", projectId)
+     .eq("owner_id", ownerId)
+     .is("deleted_at", null)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+   return normalizeAdvisorEmail(data?.advisor_email);
+ }
+--- a/modules/projects/auth.ts
++++ b/modules/projects/auth.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow, dataApiErrorResponse, DATA_RETRY_AFTER_SECONDS } from "@/lib/supabase/data-api";
+ import { cache } from "react";
+ import { redirect } from "next/navigation";
+ import { NextResponse } from "next/server";
+@@ -55,20 +56,13 @@
+ }
+ 
+ async function loadAuthorizationProject(actor: ActorContext, projectId: string) {
+-  const { data, error } = await actor.supabase
++  const { data } = await loadOrThrow((signal) => actor.supabase
+     .from("projects")
+     .select("id,owner_id,authoring_role,advisor_id,advisor_email")
+     .eq("id", projectId)
+     .is("deleted_at", null)
+-    .maybeSingle();
+-  if (error) {
+-    throw new ActorAuthorizationError(
+-      "profile_unavailable",
+-      503,
+-      "Não foi possível verificar a autorização agora.",
+-      { cause: error },
+-    );
+-  }
++    .retry(false).abortSignal(signal).maybeSingle());
++
+   return data;
+ }
+ 
+@@ -119,7 +113,7 @@
+     && actor.activeRole === "advisor"
+   ) {
+     const { error } = await actor.supabase.rpc("claim_pending_advisor_projects");
+-    if (error && isAccountModeSwitchEnabled()) {
++    if (error) {
+       throw new ActorAuthorizationError(
+         "profile_unavailable",
+         503,
+@@ -146,19 +140,12 @@
+   options: { expectedRoleVersion?: number; requireLegalConsent?: boolean } = {},
+ ) {
+   const actor = await requireActorContext(options);
+-  const { data, error } = await actor.supabase
++  const { data } = await loadOrThrow((signal) => actor.supabase
+     .from("projects")
+     .select("id,owner_id,authoring_role,advisor_id,advisor_email")
+     .in("id", projectIds)
+-    .is("deleted_at", null);
+-  if (error) {
+-    throw new ActorAuthorizationError(
+-      "profile_unavailable",
+-      503,
+-      "Não foi possível verificar a autorização agora.",
+-      { cause: error },
+-    );
+-  }
++    .is("deleted_at", null).retry(false).abortSignal(signal));
++
+   if (!data || data.length !== projectIds.length) {
+     throw authorizationErrorFromDecision("project_not_found");
+   }
+@@ -198,11 +185,13 @@
+ }
+ 
+ export function authorizationErrorResponse(error: unknown) {
++  const dataFailure = dataApiErrorResponse(error);
++  if (dataFailure) return dataFailure;
+   if (!(error instanceof ActorAuthorizationError)) throw error;
+   return NextResponse.json(
+     { code: error.code, error: error.message },
+     {
+-      headers: { "Cache-Control": "private, no-store" },
++      headers: { "Cache-Control": "private, no-store", ...(error.status === 503 ? { "Retry-After": String(DATA_RETRY_AFTER_SECONDS) } : {}) },
+       status: error.status,
+     },
+   );
+--- a/modules/research-workflow/storage.ts
++++ b/modules/research-workflow/storage.ts
+@@ -1,3 +1,4 @@
++import { loadOrThrow } from "@/lib/supabase/data-api";
+ import "server-only";
+ 
+ import type { SupabaseClient } from "@supabase/supabase-js";
+@@ -45,14 +46,13 @@
+   ownerId: string,
+   projectId: string,
+ ) {
+-  const { data, error } = await supabase
++  const { data } = await loadOrThrow((signal) => supabase
+     .from("research_workflows")
+     .select("project_id, owner_id, schema_version, state, stable_state, revision, source_revision, content, updated_at")
+     .eq("project_id", projectId)
+     .eq("owner_id", ownerId)
+-    .maybeSingle();
++    .retry(false).abortSignal(signal).maybeSingle());
+ 
+-  if (error) throw new Error("Não foi possível carregar o fluxo da pesquisa.");
+   return data ? mapStoredWorkflow(data) : null;
+ }
+ 
+--- a/package.json
++++ b/package.json
+@@ -33,7 +33,7 @@
+     "exports:verify": "node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts",
+     "security:audit": "node scripts/audit-security.mjs",
+     "security:gate": "npm run security:audit && npm run supabase:verify-explicit-grants && npm audit --audit-level=high && git diff --check",
+-    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/measurement-accessibility.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai",
++    "test": "node --import tsx --test tests/foundation.test.mjs tests/workflow-request-failure.test.ts tests/generation-field-limits.test.ts tests/research-workflow-v2.test.ts tests/versioned-workflow.test.ts tests/project-notifications.test.ts tests/bug-reports.test.ts tests/observability.test.ts tests/security-foundation.test.ts tests/supabase-explicit-grants.test.ts tests/analytics.test.ts tests/measurement-accessibility.test.ts tests/actor-authorization.test.ts tests/account-mode-settings.test.ts tests/strict-role-interface.test.ts tests/mode-aware-rls.test.ts tests/student-advisor-requirement.test.ts tests/social-auth.test.ts tests/regeneration-guidance.test.ts tests/card-regeneration.test.ts tests/methodology-assistance.test.ts tests/supabase-proxy-headers.test.ts tests/future-jwt-retry.test.ts tests/data-api.test.ts tests/discovery-failure.test.ts tests/docx-xml-safety.test.ts && npm run test:doi && npm run test:ai && npm run test:data-api",
+     "test:doi": "node --conditions=react-server --import tsx --test tests/doi-reference.test.ts",
+     "lint": "eslint . --ignore-pattern .next",
+     "typecheck": "tsc --noEmit",
+@@ -45,7 +45,8 @@
+     "test:limits": "node scripts/verify-generation-limits-routes.mjs",
+     "test:methodology": "node scripts/verify-guided-methodology-routes.mjs && node scripts/verify-methodology-recovery-routes.mjs",
+     "test:research-starter": "node --conditions=react-server --import tsx --test tests/research-starter.test.ts && node scripts/verify-research-starter-resilience.mjs && node scripts/verify-discovery-claim-recovery.mjs",
+-    "test:exports": "node scripts/verify-intake-report-routes.mjs"
++    "test:exports": "node scripts/verify-intake-report-routes.mjs",
++    "test:data-api": "node scripts/verify-data-api-resilience.mjs"
+   },
+   "dependencies": {
+     "@ai-sdk/google": "3.0.99",
+--- a/scripts/c111-route-harness.mjs
++++ b/scripts/c111-route-harness.mjs
+@@ -6,7 +6,7 @@
+ const stubs = {
+   "@/modules/projects/auth": `export async function authorizeProjectRoute(){ return globalThis.c111.denied ? {ok:false,response:Response.json({error:'Acesso negado'},{status:403})} : {ok:true,value:{actor:{claims:{}},userId:globalThis.c111.workflow.ownerId,supabase:globalThis.c111.supabase,project:{owner_id:globalThis.c111.workflow.ownerId,authoring_role:globalThis.c111.authoringRole??'advisor'}}}; } export const authorizeProjectCapabilityResponse=()=>null;`,
+   "@/modules/research-workflow/storage": `export const loadResearchWorkflow=async()=>structuredClone(globalThis.c111.workflow);`,
+-  "@/modules/projects/advisor": `export const claimEmail=()=>null; export const loadProjectAdvisorEmail=async()=>globalThis.c111.advisorEmail??null;`,
++  "@/modules/projects/advisor": `import {DataApiError} from "@/lib/supabase/data-api"; export const claimEmail=()=>null; export const loadProjectAdvisorEmail=async()=>{if(globalThis.c111.failAdvisorRead)throw new DataApiError({code:"PGRST303",message:"JWT issued at future PRIVATE"});return globalThis.c111.advisorEmail??null;};`,
+   "@/lib/email/project-notifications": `export const notifyAdvisorOfReviewRequest=async()=>{};`,
+   "@/modules/generation/gemini": `import {emitProgress} from "@/modules/ai/operation"; const call=async(name)=>{if(globalThis.c111.progressMode){emitProgress("generating","gemini");await new Promise(r=>setTimeout(r,450));emitProgress("fallback","openai");await new Promise(r=>setTimeout(r,900));}globalThis.c111.aiCalls++; if(globalThis.c111.failAI) throw Error('Synthetic provider unavailable'); return globalThis.c111.generate(name)}; export const generateGeneralObjective=()=>call('general'); export const generateSpecificObjectives=()=>call('specifics'); export const regenerateProblemStatement=()=>call('problem'); export const generateLiteratureTopics=()=>call('literature'); export const generateDevelopmentTopics=()=>call('development'); export const generateMethodologyPlan=()=>call('methodology'); export const reviewFinalMapCoherence=()=>call('review');`,
+   "@/lib/supabase/server": `export const createClient=async()=>globalThis.c111.supabase;`,
+@@ -19,8 +19,10 @@
+ const api = await import(`../tmp/c111-route-harness.mjs?run=${Date.now()}`);
+ const state = {workflow:api.versionedWorkflowFixture(),writes:0,aiCalls:0,versions:[],denied:false,failAI:false,beforeWrite:null};
+ state.generate = name => name==='review' ? [] : ({content:`Como investigar uma nova proposta sintética com ${name}?`,referenceIds:['fixture-reference']});
+-state.reset = () => {state.workflow=api.versionedWorkflowFixture();state.writes=state.aiCalls=0;state.versions=[];state.denied=false;state.failAI=false;state.beforeWrite=null;state.rsCalls=0;state.failRS=false;state.cardInput=null;state.authoringRole='advisor';state.advisorEmail=null;};
++state.reset = () => {state.workflow=api.versionedWorkflowFixture();state.writes=state.aiCalls=0;state.versions=[];state.denied=false;state.failAI=false;state.beforeWrite=null;state.rsCalls=0;state.failRS=false;state.cardInput=null;state.authoringRole='advisor';state.advisorEmail=null;state.failAdvisorRead=false;};
+ class Query {
++  retry(enabled){if(enabled)throw Error("Unexpected SDK retry");return this;}
++  abortSignal(){return this;}
+   constructor(table){this.table=table;this.filters=[];this.count=21;}
+   select(columns){this.columns=columns;return this;} update(value){this.value=value;return this;}
+   eq(key,value){this.filters.push([key,value]);return this;} is(){return this;} order(){return this;} limit(count){this.count=count;return this;} or(){return this;}
+--- /dev/null
++++ b/scripts/verify-data-api-resilience.mjs
+@@ -0,0 +1,179 @@
++// Real handlers + real data loaders; synthetic Auth/Data API/AI/export boundaries.
++// No .env loading, no credentials, all fetch traffic denied.
++import assert from 'node:assert/strict';
++import { build } from 'esbuild';
++import { mkdir } from 'node:fs/promises';
++await mkdir('tmp',{recursive:true});
++const stubs={
++ 'server-only':'',
++ '@/lib/supabase/server':`export const createClient=async()=>globalThis.c124.db;`,
++ '@/lib/security/rate-limit':`export const checkRateLimit=()=>({allowed:true});export const getRequestClientKey=()=> 'synthetic';`,
++ '@/modules/projects/auth':`export const authorizeProjectRoute=async()=>({ok:true,value:globalThis.c124.access});export const authorizeOwnedProjectsRoute=authorizeProjectRoute;export const authorizeProject=async()=>globalThis.c124.access;`,
++ '@/modules/profile/authorization':`export class ActorAuthorizationError extends Error{};export const isAccountModeSwitchEnabled=()=>true;export const actorEmail=()=>null;export const requireActorContext=async()=>globalThis.c124.actor;`,
++ '@/modules/generation/gemini':`import {emitProgress} from '@/modules/ai/operation';export const GENERATION_MODEL='synthetic';const run=(v)=>{globalThis.c124.ai++;if(globalThis.c124.stream)emitProgress('generating','gemini');if(globalThis.c124.aiFails)throw Error('synthetic AI failure');return v;};export const interpretResearchRequest=async()=>run(globalThis.c124.discovery.interpreted);export const broadenResearchQuery=async()=>run('broader synthetic query');export const generateResearchStructure=async()=>run(globalThis.c124.structure);export const mergeResearchStructures=async()=>run(globalThis.c124.structure);`,
++ '@/modules/research-workflow/discovery-service':`import {emitProgress} from '@/modules/ai/operation';export async function discoverResearchProposals(){globalThis.c124.ai++;if(globalThis.c124.stream)emitProgress('generating','gemini');if(globalThis.c124.aiFails)throw Error('synthetic AI failure');return globalThis.c124.discovery;}`,
++ '@/modules/research-starter/client':`export class ResearchStarterClientError extends Error{};export async function fetchResearchStarterReport(){globalThis.c124.literature++;if(globalThis.c124.emptyLiterature&&globalThis.c124.literature<=2)return {references:[],coverage:{rankedPapers:0,searchQualityStatus:'empty',sourceRecords:0},warnings:[]};return {references:[{referenceId:'fixture-reference',authors:[],title:'Fixture',doi:null,url:'https://example.invalid',year:2026}],reportId:'fixture',warnings:[]};}`,
++ '@/modules/export/pdf':`export const createPdfExport=async()=>Buffer.from('%PDF');export const createFinalMapPdfExport=createPdfExport;`,
++ '@/modules/export/docx':`export const createDocxExport=async()=>Buffer.from('PK');export const createFinalMapDocxExport=createDocxExport;`,
++ 'next/link':`export default function Link(){return null;}`,
++ 'next/navigation':`export function redirect(path){throw Object.assign(Error('REDIRECT'),{redirect:path});}export function notFound(){throw Object.assign(Error('NOT_FOUND'),{status:404});}`,
++};
++for(const [path,name] of Object.entries({
++ '@/modules/generation/generation-workspace':'GenerationWorkspace',
++ '@/modules/projects/pending-project-cleanup':'PendingProjectCleanup',
++ '@/modules/projects/project-created-analytics':'ProjectCreatedAnalytics',
++ '@/modules/projects/project-advisor-panel':'ProjectAdvisorPanel',
++ '@/modules/research-workflow/advisor-review-workspace':'AdvisorReviewWorkspace',
++ '@/modules/research-workflow/final-map-workspace':'FinalMapWorkspace',
++ '@/modules/research-workflow/literature-development-workspace':'LiteratureDevelopmentWorkspace',
++ '@/modules/research-workflow/methodology-workspace':'MethodologyWorkspace',
++ '@/modules/research-workflow/proposal-discovery-workspace':'ProposalDiscoveryWorkspace',
++ '@/modules/research-workflow/research-definition-workspace':'ResearchDefinitionWorkspace',
++}))stubs[path]=`export function ${name}(){return null;}`;
++await build({stdin:{resolveDir:process.cwd(),contents:`
++ export {POST as discover} from './app/api/projects/[id]/discover/route';
++ export {POST as generate} from './app/api/projects/[id]/generate/route';
++ export {GET as generation, PATCH as patch} from './app/api/projects/[id]/generation/route';
++ export {GET as exportReport} from './app/api/projects/[id]/exports/[format]/route';
++ export {POST as integrate} from './app/api/projects/integrate/route';
++ export {POST as bug} from './app/api/bug-reports/route';
++ export {default as page} from './app/dashboard/projects/[id]/page';
++ export {GET as unavailable} from './app/service-unavailable/route';
++ export {loadProjectAdvisorEmail as advisor} from './modules/projects/advisor';
++ export {loadUserProfile as profile,claimPendingAdvisorProjects as claim} from './modules/profile/storage';
++ export {authorizeProjectRoute as realAuthorize,authorizeOwnedProjectsRoute as realAuthorizeMany} from './modules/projects/auth';
++ export {versionedWorkflowFixture} from './tests/fixtures/versioned-workflow';
++ export {readProgressResponse} from './modules/ai/progress-client';
++ export {withAiProgress} from './modules/ai/route';
++ export {dataApiErrorResponse,withDataApiErrors} from './lib/supabase/data-api';
++`,loader:'ts'},outfile:'tmp/c124-harness.mjs',bundle:true,platform:'node',format:'esm',packages:'external',jsx:'automatic',plugins:[{name:'c124-boundaries',setup(b){
++ b.onResolve({filter:/^next\/server$/},()=>({path:'next/server.js',external:true}));
++ b.onResolve({filter:/.*/},a=>Object.hasOwn(stubs,a.path)?{path:a.path,namespace:'stub'}:undefined);
++ b.onLoad({filter:/.*/,namespace:'stub'},a=>({contents:stubs[a.path],resolveDir:process.cwd()}));
++}}]});
++const api=await import('../tmp/c124-harness.mjs');
++const s=globalThis.c124={};
++const fixture=api.versionedWorkflowFixture();
++const id=fixture.projectId,owner=fixture.ownerId,other='00000000-0000-4000-8000-000000000099';
++const future={code:'PGRST303',message:'JWT issued at future PRIVATE'};
++const titles=['Introdução','Revisão da Literatura','Metodologia Científica','Desenvolvimento da Pesquisa','Conclusões'];
++function reset(){
++ Object.assign(s,{ai:0,literature:0,stream:false,aiFails:false,queries:[],fail:()=>false,failures:0,error:future,failStatus:401,zero:()=>false,missing:()=>false,claimsError:null,emptyLiterature:false,discovery:structuredClone(fixture.content.discovery),workflow:structuredClone(fixture),project:{id,owner_id:owner,advisor_email:null,advisor_id:null,authoring_role:'advisor',workflow_version:1,title:'Mapa sintético',theme:'Tema sintético',problem_statement:'Descrição original sintética preservada.',keywords:['a','b','c'],knowledge_area:'Educação',academic_level:'masters',status:'generated'},structure:{schemaVersion:'1.0.0',title:'Mapa sintético',warnings:[],chapters:titles.map((title,i)=>({id:`chapter-${i+1}`,number:i+1,title,sections:[{id:`section-${i+1}`,title:'Síntese',content:'Conteúdo sintético já escrito.',optional:false,provenance:'user',referenceIds:[]}]}))},revision:7});
++ s.db={from:table=>new Query(table),rpc:async()=>{const q={table:'rpc',op:'rpc'};s.queries.push(q);return {data:null,error:s.fail(q)?s.error:null};},auth:{getClaims:async()=>({data:{claims:{sub:owner,email:'fixture@example.invalid'}},error:s.claimsError})}};
++ s.actor={userId:owner,supabase:s.db,activeRole:'advisor',claims:{},hasProfile:true,hasLegalConsent:true,roleVersion:1};
++ s.access={supabase:s.db,userId:owner,actor:s.actor,relation:'owner',project:s.project};
++}
++class Query {
++  retry(enabled){if(enabled)throw Error("Unexpected SDK retry");return this;}
++ constructor(table){this.table=table;this.op='read';this.filters=[];this.columns='';}
++ select(columns){this.columns=columns;return this;}eq(k,v){this.filters.push([k,v]);return this;}is(){return this;}in(k,v){this.values=v;this.filters.push([k,v]);return this;}order(){return this;}limit(){return this;}abortSignal(signal){this.signal=signal;return this;}
++ update(value){this.op='update';this.value=value;return this;}insert(value){this.op='insert';this.value=value;return this;}upsert(value){this.op='upsert';this.value=value;return this;}
++ maybeSingle(){return this.execute(true);}single(){return this.execute(true);}then(a,b){return this.execute(false).then(a,b);}
++ async execute(single){
++  s.queries.push(this);
++  if(s.fail(this)){s.failures++;return {data:null,error:s.error,status:s.failStatus};}
++  if(s.zero(this)||s.missing(this))return {data:null,error:null,status:200};
++  if(this.op==='read'){
++   if(this.table==='projects')return {data:single?s.project:(this.values??[id]).map(id=>({...s.project,id})),error:null};
++   if(this.table==='generation_jobs')return {data:null,error:null};
++   if(this.table==='research_structures')return {data:single?{content:s.structure,references_data:[],revision:s.revision}:[id,other].map(project_id=>({project_id,content:s.structure,references_data:[],revision:s.revision})),error:null};
++   if(this.table==='research_workflows'){
++    const w=s.workflow;const row={project_id:id,owner_id:owner,schema_version:w.schemaVersion,state:w.state,stable_state:w.stableState,revision:w.revision,source_revision:w.sourceRevision,content:w.content,updated_at:w.updatedAt};
++    return {data:single?row:[],error:null};
++   }
++   if(this.table==='user_profiles')return {data:{active_role:'advisor',role_changed_at:'2026-10-20T00:00:00Z',role_version:1},error:null};
++   if(this.table==='legal_consents')return {data:[],error:null};
++  }
++  if(this.op==='update'&&this.table==='research_structures'){
++   const revision=this.filters.find(([k])=>k==='revision')?.[1];
++   if(revision!==s.revision)return {data:null,error:null};
++   s.structure=structuredClone(this.value.content);s.revision=this.value.revision;
++  }
++  if(this.op==='update'&&this.table==='research_workflows'){
++   const revision=this.filters.find(([k])=>k==='revision')?.[1];
++   if(revision!==s.workflow.revision)return {data:null,error:null};
++   s.workflow={...s.workflow,revision:this.value.revision,state:this.value.state,content:this.value.content??s.workflow.content};
++  }
++  return {data:single?{id:other,project_id:id,revision:s.revision,updated_at:new Date().toISOString()}:null,error:null,status:200};
++ }
++}
++const writes=()=>s.queries.filter(q=>q.op!=='read');
++function discoverSetup(){s.project.workflow_version=2;s.workflow.state='draft_prompt';s.workflow.stableState='draft_prompt';s.workflow.content.discovery=null;}
++function request(route,stream=false){
++ const options={method:['generation','exportReport'].includes(route)?'GET':route==='patch'?'PATCH':'POST',headers:{accept:stream?'application/x-ndjson':'application/json'}};
++ if(route==='bug'){const form=new FormData();form.set('subject','Teste sintético');form.set('message','Descrição sintética do teste de erro.');form.set('projectId',id);options.body=form;}
++ else if(options.method!=='GET'){options.headers['content-type']='application/json';options.body=JSON.stringify(route==='generate'?{idempotencyKey:other}:route==='integrate'?{projectIds:[id,other]}:route==='patch'?s.structure:{});}
++ return new Request(`http://localhost/api/${route}`,options);
++}
++async function call(route,stream=false){return api[route](request(route,stream),{params:Promise.resolve({id,format:'pdf'})});}
++const evidence=[];
++async function expect503(response,label){assert.equal(response.status,503,label);assert.equal(response.headers.get('retry-after'),'2',label);assert.ok(!(await response.clone().text()).includes('PRIVATE'));evidence.push(label);}
++const originalFetch=globalThis.fetch;
++globalThis.fetch=async()=>{throw Error('UNAUTHORIZED NETWORK IN TEST');};
++try{
++ // Real callback deadlines/backoff used here (about 2 s per persistent failure).
++ for(const route of ['discover','generate','generation','patch','exportReport','integrate','bug']){
++  reset();if(route==='discover')discoverSetup();s.fail=q=>q.op==='read'&&(route==='generation'||route==='patch'?q.table==='research_structures':q.table==='projects');
++  const response=await call(route,true);await expect503(response,`${route}: PGRST303, raw HTTP 503 before progress`);
++  assert.equal(s.failures,3);assert.equal(writes().length,0);assert.equal(s.ai,0);
++ }
++ reset();s.fail=q=>q.table==='generation_jobs';await expect503(await api.generation(new Request('http://localhost/generation?status=1'),{params:Promise.resolve({id})}),'generation status-only: failed query is not an empty job');assert.equal(s.failures,3);
++ reset();s.project.workflow_version=2;s.fail=q=>q.table==='research_workflows';await expect503(await call('exportReport'),'export v2 workflow failure is not a 409');assert.equal(s.failures,3);
++ // Both integration sources must load successfully; no fallback to stale legacy data on an error.
++ for(const table of ['research_structures','research_workflows']){
++  reset();s.fail=q=>q.op==='read'&&q.table===table;
++  await expect503(await call('integrate'),`integrate ${table}: no legacy fallback`);assert.equal(s.ai,0);assert.equal(writes().length,0);
++ }
++ reset();s.fail=q=>q.table==='projects';
++ const advisorResponse=await api.withDataApiErrors(async()=>Response.json({email:await api.advisor(s.db,owner,id)}))();
++ await expect503(advisorResponse,'advisor lookup does not masquerade as missing advisor');assert.equal(s.failures,3);
++ for(const table of ['projects','research_workflows','research_structures']){
++  reset();s.project.workflow_version=table==='research_workflows'?2:1;s.fail=q=>q.table===table;
++  await assert.rejects(api.page({params:Promise.resolve({id}),searchParams:Promise.resolve({})}),e=>e.redirect==='/service-unavailable');
++  await expect503(api.unavailable(),`page ${table}: redirect destination 503, no false 404`);assert.equal(s.failures,3);
++ }
++ for(const route of ['realAuthorize','realAuthorizeMany']){
++  reset();s.fail=q=>q.op==='read'&&q.table==='projects';
++  const result=await api[route]({projectId:id,projectIds:[id,other],request:new Request('http://localhost')});
++  assert.equal(result.ok,false);await expect503(result.response,`${route}: real authorization reads fail closed`);
++ }
++ reset();s.fail=q=>q.table==='user_profiles';await assert.rejects(api.profile(s.db,owner),e=>e.code==='profile_unavailable');assert.equal(s.failures,3);evidence.push('profile: same three-attempt bound');
++ reset();s.fail=()=>true;await assert.rejects(api.claim(s.db),e=>e.status===503);assert.equal(s.queries.length,1);evidence.push('claim RPC checked once, no retry');
++ // Transient read recovery vs absence and permanent permission errors.
++ reset();s.fail=q=>q.op==='read'&&q.table==='projects'&&s.failures<1;
++ assert.equal((await call('generate')).status,200);assert.equal(s.failures,1);assert.equal(s.ai,1);evidence.push('transient read recovers without repeated AI');
++ reset();s.missing=q=>q.table==='projects';assert.equal((await call('generate')).status,404);assert.equal(s.ai,0);
++ reset();s.error={code:'42501',message:'PRIVATE permission'};s.fail=q=>q.table==='projects';assert.equal((await call('generate')).status,500);assert.equal(s.failures,1);
++ // PATCH optimistic concurrency and every mutation result checked exactly once.
++ reset();const before=structuredClone(s.structure);s.zero=q=>q.op==='update';assert.equal((await call('patch')).status,409);assert.deepEqual(s.structure,before);assert.equal(writes().length,1);assert.ok(writes()[0].filters.some(([key,value])=>key==='revision'&&value===7));
++ reset();s.fail=q=>q.op==='update';await expect503(await call('patch'),'PATCH transient write: one attempt, no false success');assert.equal(s.failures,1);assert.equal(s.revision,7);
++ reset();assert.equal((await call('patch')).status,200);assert.equal(s.revision,8);evidence.push('PATCH success advances exactly one revision');
++ const generationWrites=[q=>q.op==='insert'&&q.table==='generation_jobs',q=>q.op==='update'&&q.value.status==='generating'&&q.table==='projects',q=>q.op==='update'&&q.value.keywords,q=>q.op==='update'&&q.table==='generation_jobs'&&q.value.status==='generating',q=>q.op==='upsert',q=>q.op==='update'&&q.value.status==='completed',q=>q.op==='update'&&q.value.status==='generated'];
++ for(const [i,match] of generationWrites.entries()){
++  reset();s.fail=match;await expect503(await call('generate'),`generate mutation ${i+1}: checked once`);assert.equal(s.failures,1);assert.ok(s.ai<=1);assert.ok(!writes().some(q=>q.value?.status==='failed'));
++ }
++ for(const [i,match] of generationWrites.entries()){
++  if([0,4].includes(i))continue;
++  reset();s.zero=match;assert.equal((await call('generate')).status,409);assert.ok(s.ai<=1);evidence.push(`generate update ${i+1}: zero rows is a conflict`);
++ }
++ reset();s.emptyLiterature=true;s.fail=q=>q.op==='update'&&q.table==='projects'&&q.value.theme&&!q.value.keywords;
++ await expect503(await call('generate'),'generate broader query update checked once');assert.equal(s.failures,1);assert.equal(s.ai,1);
++ reset();discoverSetup();s.fail=q=>q.op==='update'&&q.value.state==='discovering';await expect503(await call('discover'),'discover claim failure is not a concurrency 409');assert.equal(s.ai,0);assert.equal(s.failures,1);
++ reset();discoverSetup();s.stream=true;s.fail=q=>q.op==='update'&&q.value.state==='choosing_problem';
++ const transport=await call('discover',true);assert.equal(transport.status,200);assert.match(transport.headers.get('content-type'),/ndjson/);
++ const events=[];await expect503(await api.readProgressResponse(transport,e=>events.push(e)),'discover late save: terminal 503 + Retry-After after committed stream');assert.equal(s.ai,1);assert.equal(s.failures,1);assert.equal(s.workflow.state,'discovering');assert.ok(!events.some(e=>e.phase==='completed'));assert.equal(events.at(-1).phase,'failed');
++ for(const route of ['discover','generate']){
++  reset();if(route==='discover')discoverSetup();s.aiFails=true;s.fail=q=>q.op==='update'&&(q.value.state==='failed'||q.value.status==='failed');await expect503(await call(route),`${route}: cleanup failure checked`);assert.equal(s.ai,1);assert.ok(s.failures>=1&&s.failures<=2);
++ }
++ for(const table of ['projects','research_structures']){
++  reset();s.fail=q=>q.op==='insert'&&q.table===table;await expect503(await call('integrate'),`integrate ${table} insert failure`);assert.equal(s.ai,1);assert.equal(s.failures,1);assert.ok(!writes().some(q=>q.value?.deleted_at));
++ }
++ reset();s.error={code:'23514',message:'synthetic constraint'};s.failStatus=400;s.fail=q=>q.op==='insert'&&q.table==='research_structures';s.zero=q=>q.op==='update'&&q.value.deleted_at;
++ assert.equal((await call('integrate')).status,409);assert.equal(s.ai,1);evidence.push('integration cleanup zero rows checked');
++ reset();discoverSetup();s.aiFails=true;s.zero=q=>q.op==='update'&&q.value.state==='failed';assert.equal((await call('discover')).status,409);assert.equal(s.ai,1);evidence.push('discovery cleanup zero rows checked');
++ reset();s.fail=q=>q.op==='insert'&&q.table==='bug_reports';await expect503(await call('bug'),'bug report insert failure');assert.equal(s.failures,1);
++ reset();s.claimsError={...future,name:'AuthApiError'};await expect503(await call('bug'),'bug report auth transient does not become anonymous');assert.equal(s.queries.length,0);
++ // Every UPDATE executed by these scenarios requests a returning row.
++ for(const route of ['generate','patch','discover']){reset();if(route==='discover')discoverSetup();assert.equal((await call(route)).status,200);assert.ok(writes().filter(q=>q.op==='update').every(q=>q.columns.length>0));}
++ console.log(JSON.stringify({status:'passed',checks:evidence.length,networkCalls:0,paidCalls:0,evidence},null,2));
++}finally{globalThis.fetch=originalFetch;delete globalThis.c124;}
+--- a/scripts/verify-discovery-claim-recovery.mjs
++++ b/scripts/verify-discovery-claim-recovery.mjs
+@@ -30,6 +30,8 @@
+   s.db = {from:table=>new Query(table)};
+ }
+ class Query {
++  retry(enabled){if(enabled)throw Error("Unexpected SDK retry");return this;}
++  abortSignal(){return this;}
+   constructor(table){this.table=table;this.filters=[];}
+   select(){return this;} eq(k,v){this.filters.push([k,v]);return this;} is(){return this;} in(k,v){this.states=v;return this;} update(v){this.value=v;return this;}
+   async maybeSingle(){if(this.table==='projects')return {data:s.project,error:null};return this.execute();}
+@@ -81,9 +83,9 @@
+   reset({ageMs:60 * 60_000,failSave:true});
+   const failed = await call();
+   results.saveFailure = {status:failed.status,stage:failed.payload.stage,state:s.workflow.state,preservedBriefing:failed.payload.preservedBriefing};
+-  assert.equal(failed.status,502);
+-  assert.equal(failed.payload.stage,'saving');
+-  assert.equal(s.workflow.state,'failed');
++  assert.equal(failed.status,500);
++  assert.equal(failed.payload.code,'persistence_failed');
++  assert.equal(s.workflow.state,'discovering'); // ambiguous save must not be overwritten by cleanup
+   console.log(JSON.stringify({status:'passed',externalCalls:0,paidCalls:0,...results}));
+ } catch (error) {
+   console.log(JSON.stringify({status:'failed',...results,message:error.message.split('\n')[0]}));
+--- a/scripts/verify-methodology-recovery-routes.mjs
++++ b/scripts/verify-methodology-recovery-routes.mjs
+@@ -60,3 +60,8 @@
+ response=await call({action:'initialize'}); assert.equal(response.status,503); assert.equal((await response.json()).code,'provider_unavailable'); assert.deepEqual(state.workflow,before);
+ state.supabase.from=originalFrom;
+ console.log('C119: context recovery, explicit acknowledgment, draft/back with stale prerequisites, revision/database distinction, post-save title failures, student approval and AI failure preservation passed. Synthetic services only.');
++
++// C124: the advisor loader error must survive the custom methodology diagnostic boundary.
++plan=setup(); before=structuredClone(state.workflow); state.failAdvisorRead=true;
++response=await call({action:'validate',...plan}); assert.equal(response.status,503); assert.equal(response.headers.get('retry-after'),'2'); assert.equal((await response.json()).code,'persistence_failed'); assert.deepEqual(state.workflow,before); assert.equal(state.writes,0); assert.equal(state.aiCalls,0);
++console.log('C124: advisor PGRST303 retains 503/Retry-After through methodology diagnostics.');
+--- /dev/null
++++ b/tests/data-api.test.ts
+@@ -0,0 +1,84 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { checkDataResult, DataApiError, dataApiErrorResponse, isTransientDataError, loadOrThrow, requireAffectedRow } from "../lib/supabase/data-api";
++
++const future = { code: "PGRST303", message: "JWT issued at future PRIVATE" };
++const noWait = { wait: async () => {} };
++
++test("persistent future JWT: three reads, 503 + Retry-After, no raw error", async () => {
++  let attempts = 0;
++  await assert.rejects(loadOrThrow(async () => { attempts++; return {data:null,error:future}; },noWait), asyncError => {
++    assert.ok(asyncError instanceof DataApiError);
++    const response=dataApiErrorResponse(asyncError)!;
++    assert.equal(response.status,503);assert.equal(response.headers.get("Retry-After"),"2");
++    return true;
++  });
++  assert.equal(attempts,3);
++  const body=await dataApiErrorResponse(new DataApiError(future))!.text();
++  assert.ok(!body.includes("PRIVATE"));assert.ok(!body.includes("JWT"));
++});
++
++test("transient Data API errors recover; absence only after a successful read", async () => {
++  for (const result of [{error:future},{error:{code:"PGRST003"}},{error:{code:"08006"}},{error:{message:"proxy failure"},status:503},{error:{message:"TypeError: fetch failed"}}]) {
++    let attempts=0;
++    const actual=await loadOrThrow(async()=> ++attempts===1?{data:null,...result}:{data:null,error:null},noWait);
++    assert.equal(attempts,2);assert.equal(actual.data,null);assert.equal(actual.error,null);
++  }
++});
++
++test("JWT validation, permissions and constraints are not retried", async () => {
++  for (const error of [{code:"PGRST303",message:"JWT expired"},{code:"42501"},{code:"23505"},{code:"PGRST204"}]) {
++    let attempts=0;
++    await assert.rejects(loadOrThrow(async()=>{attempts++;return {data:null,error};},noWait),DataApiError);
++    assert.equal(attempts,1);assert.equal(isTransientDataError(error),false);
++  }
++});
++
++test("single mutation result is checked once; zero affected rows is conflict", () => {
++  assert.throws(()=>requireAffectedRow({data:null,error:future}),e=>e instanceof DataApiError&&e.status===503);
++  assert.equal(dataApiErrorResponse(assertCaught(()=>requireAffectedRow({data:null,error:null})))?.status,409);
++  assert.deepEqual(requireAffectedRow({data:{revision:4},error:null}),{revision:4});
++  assert.throws(()=>checkDataResult({error:{message:"proxy"},status:503}),e=>e instanceof DataApiError&&e.status===503);
++});
++function assertCaught(fn:()=>void){try{fn();assert.fail("expected failure");}catch(error){return error;}}
++
++test("a hung read is aborted within the shared deadline, never starts a retry", async () => {
++  let calls=0, aborted=false;
++  const start=Date.now();
++  await assert.rejects(loadOrThrow(signal=>{calls++;signal.addEventListener("abort",()=>{aborted=true;});return new Promise(()=>{});},{budgetMs:30}),DataApiError);
++  assert.equal(calls,1);assert.equal(aborted,true);assert.ok(Date.now()-start<500);
++});
++
++test("time spent in queries counts towards five seconds, not only backoff", async () => {
++  let now=0,calls=0;
++  await assert.rejects(loadOrThrow(async()=>{calls++;now+=3500;return {data:null,error:future};},{now:()=>now,wait:async ms=>{now+=ms;}}),DataApiError);
++  assert.equal(calls,2); // after 7.5 s simulated elapsed, a third request is forbidden
++});
++
++test("actual installed PostgREST SDK: no nested retries for HTTP 520/network errors", async () => {
++  const { PostgrestClient } = await import("@supabase/postgrest-js");
++  for (const network of [false,true]) {
++    let requests=0;
++    const client=new PostgrestClient("https://fixture.invalid/rest/v1",{fetch:async()=>{
++      requests++;
++      if(network)throw new TypeError("fetch failed");
++      return Response.json({message:"synthetic proxy outage"},{status:520});
++    }});
++    await assert.rejects(loadOrThrow(signal=>client.from("projects").select("id").retry(false).abortSignal(signal).maybeSingle(),noWait),e=>e instanceof DataApiError&&e.status===503);
++    assert.equal(requests,3);
++  }
++});
++
++test("actual installed SDK: POST/PATCH/RPC are never retried on a transient failure", async () => {
++  const { PostgrestClient } = await import("@supabase/postgrest-js");
++  let requests=0;
++  const methods:string[]=[];
++  const client=new PostgrestClient("https://fixture.invalid/rest/v1",{fetch:async(_input,init)=>{
++    requests++;methods.push(init!.method!);
++    return Response.json(future,{status:401});
++  }});
++  for(const query of [client.from("projects").insert({id:"fixture"}),client.from("projects").update({title:"fixture"}).eq("id","fixture"),client.rpc("fixture_rpc")]){
++    const result=await query;assert.throws(()=>checkDataResult(result),e=>e instanceof DataApiError&&e.status===503);
++  }
++  assert.equal(requests,3);assert.deepEqual(methods,["POST","PATCH","POST"]);
++});
+--- a/tests/future-jwt-retry.test.ts
++++ b/tests/future-jwt-retry.test.ts
+@@ -38,7 +38,7 @@
+     async () => { calls++; return [{ error: futureJwt }]; },
+     async (milliseconds) => { waits.push(milliseconds); },
+   );
+-  assert.equal(calls, 4);
+-  assert.deepEqual(waits, [500, 1500, 3000]);
++  assert.equal(calls, 3);
++  assert.deepEqual(waits, [500, 1500]);
+   assert.deepEqual(result[0].error, futureJwt);
+ });

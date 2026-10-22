@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: keeps every owned Supabase object aligned with the explicit access manifest
+ok 1 - keeps every owned Supabase object aligned with the explicit access manifest
+  ---
+  duration_ms: 14.426
+  type: 'test'
+  ...
+# Subtest: fails when a future migration adds an undeclared exposed object
+ok 2 - fails when a future migration adds an undeclared exposed object
+  ---
+  duration_ms: 6.711125
+  type: 'test'
+  ...
+# Subtest: fails when a future migration broadens a protected table grant
+ok 3 - fails when a future migration broadens a protected table grant
+  ---
+  duration_ms: 6.799458
+  type: 'test'
+  ...
+# Subtest: fails when legacy default privileges are not explicitly removed
+ok 4 - fails when legacy default privileges are not explicitly removed
+  ---
+  duration_ms: 6.851958
+  type: 'test'
+  ...
+# Subtest: C111: all 49 navigation pairs preserve the canonical state, history, IDs and approvals
+ok 5 - C111: all 49 navigation pairs preserve the canonical state, history, IDs and approvals
+  ---
+  duration_ms: 5.289333
+  type: 'test'
+  ...
+# Subtest: C111: a saved draft survives parsing while the canonical context and later work stay intact
+ok 6 - C111: a saved draft survives parsing while the canonical context and later work stay intact
+  ---
+  duration_ms: 3.91475
+  type: 'test'
+  ...
+# Subtest: C111: unchanged saves do not create academic revisions
+ok 7 - C111: unchanged saves do not create academic revisions
+  ---
+  duration_ms: 0.719125
+  type: 'test'
+  ...
+# Subtest: C111: confirming an earlier edit preserves downstream text and historical approvals, flagging review
+ok 8 - C111: confirming an earlier edit preserves downstream text and historical approvals, flagging review
+  ---
+  duration_ms: 1.646834
+  type: 'test'
+  ...
+# Subtest: C111: regenerated content is an independent proposal and cannot replace a saved draft
+ok 9 - C111: regenerated content is an independent proposal and cannot replace a saved draft
+  ---
+  duration_ms: 0.745875
+  type: 'test'
+  ...
+# Subtest: C111: unit restoration includes methodological data, notes, links and references
+ok 10 - C111: unit restoration includes methodological data, notes, links and references
+  ---
+  duration_ms: 1.011583
+  type: 'test'
+  ...
+# Subtest: C111: legacy arrays beyond 300 versions parse without truncation
+ok 11 - C111: legacy arrays beyond 300 versions parse without truncation
+  ---
+  duration_ms: 8.441125
+  type: 'test'
+  ...
+# Subtest: C111: pending advisor submission rejects a new confirmation
+ok 12 - C111: pending advisor submission rejects a new confirmation
+  ---
+  duration_ms: 2.266417
+  type: 'test'
+  ...
+# Subtest: C111: duplication creates independent IDs and no inherited approval or history
+ok 13 - C111: duplication creates independent IDs and no inherited approval or history
+  ---
+  duration_ms: 0.995958
+  type: 'test'
+  ...
+# Subtest: C111: accepting an identical proposal clears the proposal and creates a recoverable draft
+ok 14 - C111: accepting an identical proposal clears the proposal and creates a recoverable draft
+  ---
+  duration_ms: 0.771
+  type: 'test'
+  ...
+# Subtest: C125: student duplication preserves text and drafts but restarts approval; advisor stays autonomous
+ok 15 - C125: student duplication preserves text and drafts but restarts approval; advisor stays autonomous
+  ---
+  duration_ms: 0.549875
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 354.08725

@@ -1,0 +1,58 @@
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:31: NOTICE:  policy "projects_select_advised" for relation "public.projects" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:43: NOTICE:  policy "research_workflows_select_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:62: NOTICE:  policy "research_workflows_update_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:22: NOTICE:  policy "user_profiles_select_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:29: NOTICE:  policy "user_profiles_insert_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:36: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260818230000_harden_advisor_workflow_updates.sql:152: NOTICE:  trigger "restrict_advisor_workflow_update_trigger" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:14: NOTICE:  policy "legal_consents_select_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:17: NOTICE:  policy "legal_consents_insert_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:20: NOTICE:  policy "legal_consents_update_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql:269: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260919123000_c089_require_student_advisor_approval.sql:170: NOTICE:  trigger "enforce_student_advisor_workflow_progress_trigger" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20261006191733_c111_versioned_workflow_history.sql:27: NOTICE:  policy "workflow_versions_select_authorized" for relation "public.workflow_versions" does not exist, skipping
+psql:/workspace/supabase/migrations/20261006191733_c111_versioned_workflow_history.sql:146: NOTICE:  trigger "zz_capture_workflow_versions" for relation "public.research_workflows" does not exist, skipping
+reproduced: SEC03 forged completed INSERT
+reproduced: SEC03 forged reviews INSERT
+reproduced: SEC03 workflow DELETE
+reproduced: SEC03 owner approves existing review
+reproduced: SEC03 owner erases review history
+reproduced: SEC03 owner changes decision target
+reproduced: SEC03 missing review transition
+reproduced: SEC03 missing review status
+link_eligibility_ok
+link_eligibility_ok
+link_eligibility_ok
+reproduced: SEC01 direct INSERT with unverified advisor
+reproduced: SEC01 unconfirmed student links advisor
+claim_count_ok: 1
+claim_count_ok: 1
+claim_count_ok: 1
+claim_count_ok: 1
+reproduced: SEC05 anonymous priority urgent
+reproduced: SEC05 anonymous forged triage
+resubmission_and_bug_report_roles_ok
+earlier_step_revalidation_preserved
+c125_baseline_vulnerabilities_reproduced
+blocked: SEC03 forged completed INSERT
+blocked: SEC03 forged reviews INSERT
+blocked: SEC03 workflow DELETE
+blocked: SEC03 owner approves existing review
+blocked: SEC03 owner erases review history
+blocked: SEC03 owner changes decision target
+blocked: SEC03 missing review transition
+blocked: SEC03 missing review status
+link_eligibility_ok
+link_eligibility_ok
+link_eligibility_ok
+blocked: SEC01 direct INSERT with unverified advisor
+blocked: SEC01 unconfirmed student links advisor
+claim_count_ok: 0
+claim_count_ok: 0
+claim_count_ok: 0
+claim_count_ok: 1
+blocked: SEC05 anonymous priority urgent
+blocked: SEC05 anonymous forged triage
+resubmission_and_bug_report_roles_ok
+psql:/workspace/scripts/verify-c125-security.sql:131: ERROR:  student_advisor_review_transition_invalid
+CONTEXT:  PL/pgSQL function public.enforce_student_advisor_workflow_progress() line 148 at RAISE

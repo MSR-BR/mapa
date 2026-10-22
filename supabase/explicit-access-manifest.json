@@ -27,7 +27,7 @@
         ],
         "service_role": []
       },
-      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
+      "migration": "20261022183456_c125_verified_google_advisor.sql"
     },
     {
       "name": "public.generation_jobs",
@@ -83,7 +83,6 @@
         "research_workflows_select_own",
         "research_workflows_insert_own",
         "research_workflows_update_own",
-        "research_workflows_delete_own",
         "research_workflows_select_advised",
         "research_workflows_update_advised"
       ],
@@ -93,12 +92,11 @@
         "authenticated": [
           "select",
           "insert",
-          "update",
-          "delete"
+          "update"
         ],
         "service_role": []
       },
-      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
+      "migration": "20261022183455_c125_workflow_owner_guard.sql"
     },
     {
       "name": "public.user_profiles",
@@ -162,7 +160,7 @@
         ],
         "service_role": []
       },
-      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
+      "migration": "20261022183508_c125_bug_report_intake_guard.sql"
     },
     {
       "name": "public.user_profile_role_events",
@@ -221,6 +219,32 @@
       },
       "migration": "20261006214054_c112_ai_budget.sql",
       "policies": []
+    },
+    {
+      "name": "private.advisor_reminder_actors",
+      "consumer": "reserva privada e atômica de lembretes; sem acesso direto",
+      "rls": true,
+      "policies": [],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": []
+      },
+      "migration": "20261022213449_c127_advisor_reminder_guard.sql"
+    },
+    {
+      "name": "private.advisor_reminder_reservations",
+      "consumer": "reserva privada e atômica de lembretes; sem acesso direto",
+      "rls": true,
+      "policies": [],
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": []
+      },
+      "migration": "20261022213449_c127_advisor_reminder_guard.sql"
     }
   ],
   "views": [],
@@ -237,7 +261,7 @@
         "authenticated": true,
         "service_role": false
       },
-      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
+      "migration": "20261022183456_c125_verified_google_advisor.sql"
     },
     {
       "signature": "public.claim_pending_advisor_projects()",
@@ -250,7 +274,7 @@
         "authenticated": true,
         "service_role": false
       },
-      "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
+      "migration": "20261022183456_c125_verified_google_advisor.sql"
     },
     {
       "signature": "public.switch_active_role(text,bigint,uuid)",
@@ -446,6 +470,45 @@
         "service_role": false
       },
       "migration": "20261006214054_c112_ai_budget.sql"
+    },
+    {
+      "signature": "public.guard_workflow_owner_reviews()",
+      "consumer": "trigger interno de segurança C125",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": false,
+        "service_role": false
+      },
+      "migration": "20261022183455_c125_workflow_owner_guard.sql"
+    },
+    {
+      "signature": "public.guard_project_advisor_identity()",
+      "consumer": "trigger interno de segurança C125",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": false,
+        "service_role": false
+      },
+      "migration": "20261022183456_c125_verified_google_advisor.sql"
+    },
+    {
+      "signature": "public.reserve_advisor_reminder(uuid,text)",
+      "consumer": "ator autenticado proprietário no modo ativo ou orientador vinculado; autorização interna",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261022213449_c127_advisor_reminder_guard.sql"
     }
   ],
   "managedDependencies": [

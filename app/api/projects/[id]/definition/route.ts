@@ -1,3 +1,4 @@
+import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
 import { FIELD_LIMITS, problemDraftLimit } from "@/modules/research-workflow/field-limits";
 import { replaceTopics } from "@/modules/research-workflow/chapter-content";
 import { withAiProgress } from "@/modules/ai/route";
@@ -277,13 +278,13 @@ async function saveWorkflow(
     return NextResponse.json({ error: "Fluxo da pesquisa não encontrado." }, { status: 404 });
   }
   if (workflow.revision !== parsed.data.revision) {
-    return NextResponse.json({ error: "Esta etapa foi alterada em outra aba. Recarregue para continuar." }, { status: 409 });
+    return NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
   if (!isSelfDirectedProject && parsed.data.action !== "back" && pendingAdvisorReview(workflow.content)) {
-    return NextResponse.json({ error: "Esta etapa já foi validada pelo estudante e está aguardando revisão." }, { status: 409 });
+    return NextResponse.json({ code: "advisor_pending", error: new WorkflowRequestError("advisor_pending").message }, { status: 409 });
   }
   if (!canNavigateToWorkflowTarget(workflow, parsed.data.step)) {
-    return NextResponse.json({ error: "Esta não é a etapa ativa do projeto." }, { status: 409 });
+    return NextResponse.json({ code: "active_step_required", error: new WorkflowRequestError("active_step_required").message }, { status: 409 });
   }
 
   const { action, step } = parsed.data;
@@ -315,7 +316,7 @@ async function saveWorkflow(
     const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
     return saved
       ? NextResponse.json({ message: "Rascunho salvo.", workflow: saved })
-      : NextResponse.json({ error: "O rascunho foi alterado em outra aba." }, { status: 409 });
+      : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   if (action === "initialize") {
@@ -343,7 +344,7 @@ async function saveWorkflow(
       }
     }
     const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
-    return saved ? NextResponse.json({ workflow: saved, message: "Objetivos preenchidos. Revise a sugestão e use Próximo para continuar." }) : NextResponse.json({ error: "A página mudou durante a geração. Recarregue para manter suas edições." }, { status: 409 });
+    return saved ? NextResponse.json({ workflow: saved, message: "Objetivos preenchidos. Revise a sugestão e use Próximo para continuar." }) : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   if (action === "validate") {
@@ -371,7 +372,7 @@ async function saveWorkflow(
     } catch (error) {
       return NextResponse.json({ error: error instanceof Error ? error.message : "Pedido inválido." }, { status: 400 });
     }
-    if (!problem) return NextResponse.json({ error: "Problemática não encontrada." }, { status: 409 });
+    if (!problem) return NextResponse.json({ code: "prerequisite_required", error: new WorkflowRequestError("prerequisite_required").message }, { status: 409 });
     if (step === "problem_statement") {
       const generated = await regenerateProblemStatement(candidate, generationDiscovery, studentContext);
       const existing = currentElement(content, "problem_statement")!;
@@ -401,7 +402,7 @@ async function saveWorkflow(
         updatedBy: "ai",
       });
     } else {
-      if (!general) return NextResponse.json({ error: "Objetivo geral não encontrado." }, { status: 409 });
+      if (!general) return NextResponse.json({ code: "prerequisite_required", error: new WorkflowRequestError("prerequisite_required").message }, { status: 409 });
       const generated = await generateSpecificObjectives(problem.approvedContent ?? problem.proposedContent, general.approvedContent ?? general.proposedContent, generationDiscovery, studentContext);
       const existing = content.elements.filter((element) => element.type === "specific_objective");
       for (const [index, objective] of generated.entries()) {
@@ -431,7 +432,7 @@ async function saveWorkflow(
     const saved = await saveWorkflow(workflow, content, workflow.sourceRevision, workflow.state, workflow.stableState, supabase);
     return saved
       ? NextResponse.json({ message: "Nova sugestão criada.", workflow: saved })
-      : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
+      : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
   }
 
   const errors = validationErrors(content, step, { requireStudentJustification: false });
@@ -651,7 +652,7 @@ async function saveWorkflow(
   }
   return saved
     ? NextResponse.json({ message: shouldWaitForAdvisor ? "Etapa validada pelo estudante. Aguardando revisão." : "Etapa validada.", workflow: saved })
-    : NextResponse.json({ error: "A etapa foi alterada em outra aba." }, { status: 409 });
+    : NextResponse.json({ code: "revision_conflict", error: new WorkflowRequestError("revision_conflict").message }, { status: 409 });
 }
 
 export const POST = withAiProgress(handlePost);

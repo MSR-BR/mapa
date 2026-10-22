@@ -1,0 +1,13 @@
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:31: NOTICE:  policy "projects_select_advised" for relation "public.projects" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:43: NOTICE:  policy "research_workflows_select_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:62: NOTICE:  policy "research_workflows_update_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:22: NOTICE:  policy "user_profiles_select_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:29: NOTICE:  policy "user_profiles_insert_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:36: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260818230000_harden_advisor_workflow_updates.sql:152: NOTICE:  trigger "restrict_advisor_workflow_update_trigger" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:14: NOTICE:  policy "legal_consents_select_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:17: NOTICE:  policy "legal_consents_insert_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:20: NOTICE:  policy "legal_consents_update_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql:269: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260919123000_c089_require_student_advisor_approval.sql:170: NOTICE:  trigger "enforce_student_advisor_workflow_progress_trigger" for relation "public.research_workflows" does not exist, skipping
+C104 validada em PostgreSQL 17 isolado: modo, autoria, vínculo, filhos, RPC e grants mínimos aprovados.

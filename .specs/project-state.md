@@ -1,11 +1,179 @@
 # Estado do projeto
 
+## Publicação consolidada autorizada — 22/10/2026
+
+- Autorização humana de CPD para C122–C128; preparando v22102026.1.
+- Legendas/transcrição do vídeo real incluídas. Vercel acessível por CLI; flag
+  de perfil true. Verificação 2FA do painel Supabase depende do responsável.
+- [Registro de execução](handoffs/2026-10-22-release/RELEASE.md).
+- Checkpoint resume/release, Pó Mágico v20261020.002, Codex/GPT-6.
+
+## Revisão final de prontidão C122–C128 — 22/10/2026
+
+- RELEASE_GATE: BLOCKED por verificações do destino, versão/rollout e UX-06;
+  R3/R4/R5 resolvidos. Não identificado novo bloqueio de implementação na revisão focal.
+- Build padrão Turbopack 16.4.2 PASS em instalação limpa sem credenciais; tracing
+  de fontes/marca confirmado. 108 hashes de evidências anteriores conferidos.
+- [Parecer atual e candidato](handoffs/2026-10-22-final-readiness/REVIEW.md).
+  Quatro migrations locais; confirmar ledger/drift/backup, identidade, US$5 e
+  flag de perfil no destino. Sem commit/deploy/serviço remoto ou chamada paga.
+- Pó Mágico v20261020.002; checkpoint review/delivery, delta build padrão validado
+  e pendências operacionais separadas dos defeitos corrigidos. Codex/GPT-6.
+
+## C128 — alertas de desenvolvimento resolvidos localmente, 22/10/2026
+
+- Audit completo e produção: zero vulnerabilidades reportadas. Substituição
+  restrita do glob do Next lint por adaptador privado + glob 13.0.6; sem downgrade.
+- npm test (269 testes + harnesses), lint/tipos, security:gate e instalação limpa
+  PASS. Único warning de lint preexistente mantido. Next permanece 16.4.2.
+- [Validação e limites](changes/128-development-dependency-security/spec.md).
+  Revalidar adaptador ao atualizar Next lint. Nenhum serviço remoto alterado.
+  Sem commit/deploy; snapshots C127 anteriores permanecem históricos.
+- PO_MAGICO_VERSION_USED: v20261020.002; PO_MAGICO_LAST_CHECKED: 2026-10-22;
+  PO_MAGICO_CHECKPOINT: delivery; PO_MAGICO_DELTA_ADOPTED: yes (compatibilidade
+  por teste e instalação limpa); PO_MAGICO_LESSON_CANDIDATE: alias entre libs
+  de glob exige validação semântica, não apenas audit zerado.
+
+## C127 — pendências R3/R4/R5 corrigidas localmente, 22/10/2026
+
+- Next/eslint-config-next 16.4.2 com lockfile; audit produção zero. Audit completo
+  mantém cinco altos na cadeia dev ESLint/braces (sem versão corrigida publicada),
+  sem downgrade/aceitação de risco automática.
+- Nova migration LOCAL: contadores privados + reserva atômica de lembretes,
+  uma tentativa/revisão/remetente/24h e cinco/remetente em janela móvel de 24h.
+  Destinatário canônico, timeout/idempotência, nenhuma devolução em entrega incerta.
+  Não cria cota diária para mapas/IA nem limita edição.
+- Bloqueios explicam orientador, pendência, conflito, perfil e indisponibilidade;
+  31 cenários browser preservam os textos. 265 testes + 45 Data API + harnesses,
+  40 concorrentes PostgreSQL, C125, 553 campos PDF/Word, tipos/lint e Webpack PASS.
+- [Validação](changes/127-next-reminders-blocking-messages/validation-2026-10-22.md)
+  e [plano futuro](changes/127-next-reminders-blocking-messages/application-plan.md).
+  NEEDS_REVIEW / PUBLICATION_STATE NOT_REQUESTED; sem commit/deploy/SQL remoto,
+  Ads/GA4/chaves/ambiente ou chamada paga. Não é CPD limpo.
+- Pó Mágico v20261020.002, última conferência local/remota em 22/10;
+  checkpoints resume/Change/delivery, delta janela móvel e prova de concorrência.
+  Codex/GPT-6, variante/esforço não expostos, sem subagentes; archive inalterado.
+
+## Revisão integrada C123–C126 — 22/10/2026
+
+- Revisão local concluída; NEEDS_REVIEW / release BLOCKED. C125 corrigida para
+  preservar revisão de etapa anterior sem perda de texto/avanço; prova antes/depois
+  em PostgreSQL local e cinco pedidos inválidos recusados. Simulador Research
+  Starter ajustado à Data API C124 e suíte retestada.
+- 263 testes, 45 cenários Data API, 35 cenários browser, paridade de 553 campos
+  PDF/Word, tipos/lint, migrations/grants locais aprovados. Audit online atual:
+  seis pacotes sinalizados (Next crítico agregado + cinco altos na cadeia ESLint).
+  DoS por Server Actions aplicável ao código; exploração não testada. Sharp já
+  atende mitigação de imagem; pré-condição use cache não encontrada no app.
+- Pendências: atualizar dependências com validação; SEC-04 lembretes sem cooldown;
+  erro advisor_required genérico na interface; legenda sincronizada UX-06 e gates
+  operacionais futuros. Sem commit/deploy/Ads/GA4/Supabase remoto ou chamada paga.
+- [Parecer e candidato](handoffs/2026-10-22-integrated-review/REVIEW.md).
+  Pacotes individuais antigos são históricos; prevalece o manifesto integrado.
+- Pó Mágico v20261020.002 local/remoto 81e3cbef9fc2b5b29074297490351f681ed16b47
+  confirmado; checkpoints resume/review/delivery, delta compatibilidade de revisita.
+  Codex/GPT-6, variante/esforço não expostos, sem subagentes, archive inalterado.
+
+## C126 — Ordem 5 implementada somente localmente, 22/10/2026
+
+- Decisão humana: login no app para sugestões de IA; sem login de API e sem cota
+  diária por usuário. Teto global US$ 5/mês mantido; nenhuma configuração remota
+  lida/alterada. Gemini primário agora também reserva no contador já existente.
+- PDF/Word independem de IA; fallback mantém cinco originais. Primeiro save
+  manual permitido. Revisão pendente bloqueia escrita com 409 advisor_pending,
+  mas permite rascunho identificado; aprovação preservada.
+- DejaVu redistribuível incorporada; 553 campos comparados nos dois formatos e
+  Unicode exato verificado. 263 testes + 45 cenários Data API, rotas, 5 fluxos
+  browser e orçamento concorrente PostgreSQL local PASS; Webpack final PASS.
+  Turbopack limitado pelo ambiente; não declarar check completo ou produção.
+- [Spec](changes/126-export-independence-ai-access/spec.md),
+  [validação](changes/126-export-independence-ai-access/validation-2026-10-22.md),
+  [revisão/publicação](changes/126-export-independence-ai-access/review-plan.md).
+- `NEEDS_REVIEW`, `PUBLICATION_STATE: NOT_REQUESTED`. Sem migrations novas,
+  commit/push/deploy/chamadas pagas/Ads/GA4/Supabase remoto. C123–C125 preservadas.
+  SEC-06/AI-04 permanece risco de consumo compartilhado, sem cota por decisão.
+- Pó Mágico v20261020.002, checkpoint Change/delivery, fonte já conferida em 22/10.
+  Delta: separar exportação da IA e orçamento global da cota diária. Codex/GPT-6,
+  variante/esforço não expostos; sem subagentes; archive central inalterado.
+
+## C125 — Ordem 4 implementada e testada somente localmente, 22/10/2026
+
+- SEC-03/05/01: três migrations NOVAS; nenhuma migration antiga alterada.
+  PostgreSQL 17.11 descartável, sem rede, dados sintéticos: reprodução antes e
+  bloqueio depois de aprovação/etapa forjada, triagem indevida e vínculo sem
+  Google confirmado. 12 tentativas passam a erro e seis vínculos/claims a falso/zero.
+- Rascunho, pedido/reenvio, aprovação pelo orientador, autonomia, isolamento,
+  exclusão do projeto-pai e histórico continuam passando. Duplicação estudantil
+  preserva texto/briefing/rascunho e reinicia aprovação da cópia.
+- `supabase:release-gate` PASS (24 migrations, 19 funções, 11 tabelas); quatro
+  verificadores locais de comportamento/histórico PASS. 262 testes + 45 checks
+  do harness, tipos e lint aprovados (um warning preexistente).
+- [Validação](changes/125-local-security-migrations/validation-2026-10-22.md),
+  [diff incremental](changes/125-local-security-migrations/local-changes.patch) e
+  [plano de aplicação/rollback](changes/125-local-security-migrations/application-plan.md).
+  SQL local não comprova Auth/Storage/PostgREST remoto; vínculos históricos e
+  rejeição de upload por HTTP precisam de verificação futura autorizada.
+- `PUBLICATION_STATE: NOT_REQUESTED`, `NEEDS_REVIEW`. Sem commit/push/deploy,
+  chaves, chamadas pagas ou mudança em Supabase remoto, Ads/GA4. C123/C124
+  preservadas; não é CPD limpo. Ordem 5 e demais riscos da auditoria continuam pendentes.
+- Pó Mágico v20261020.002, HEAD local/remoto 81e3cbef9fc2b5b29074297490351f681ed16b47
+  confirmado em 22/10; checkpoints start/classification/phase/Change/delivery.
+  Delta: prova antes/depois em banco real isolado e limites claros do stub.
+  Codex/GPT-6, variante/esforço não expostos; sem subagentes; archive inalterado.
+
+## C124 — Ordem 3 implementada localmente, 20/10/2026
+
+- Pedido humano: resiliência PGRST303 e SEC-07, sem commit/push/deploy nem
+  alteração de Ads, GA4, Supabase remoto, migration, chaves ou ambiente.
+- Helper comum para SELECTs: até três tentativas em cinco segundos por leitura,
+  incluindo timeout/abort e retry nativo do SDK desligado. Transitórios retornam
+  503 + Retry-After; escritas/RPC/IA não são repetidos. UPDATEs do escopo têm
+  confirmação de linha e PATCH tem predicado de revisão.
+- 261 testes unitários/contratos e 45 verificações direcionadas de rotas/SDK,
+  além de metodologia, cards, exports e recuperação de descoberta, aprovados.
+  Lint/tipos/grants estáticos/exportações passaram; build Webpack aprovado.
+  `npm run check` termina bloqueado no Turbopack por bind de porta do sandbox.
+- HTTP: falhas antes de progresso útil retornam 503 real; em stream já iniciado
+  o resultado terminal é 503 com Retry-After, mas o transporte não pode mudar
+  seu 200 já enviado. A página Next redireciona para destino HTML 503.
+  SEC-07 fica implementado com essas ressalvas, sujeito à revisão, não comprovado
+  em produção nem causa confirmada dos eventos históricos.
+- [Validação](changes/124-data-api-resilience/validation-2026-10-20.md) e
+  [diff incremental](changes/124-data-api-resilience/local-changes.patch).
+  C123 preservada; Ordens 4–5 e bloqueios anteriores de segurança continuam
+  pendentes. `PUBLICATION_STATE: NOT_REQUESTED`, parecer `NEEDS_REVIEW`.
+- Pó Mágico v20261020.002, fonte local/remota conferida nesta sessão em 20/10;
+  checkpoints start/classification/phase/Change/delivery. APP + AI SYSTEM +
+  SECURITY/RESILIENCE, S3; delta: validar tentativas HTTP reais além das chamadas
+  do helper e distinguir status HTTP de envelope de progresso. Codex/GPT-6,
+  variante/esforço não expostos; sem subagentes. Archive central inalterado.
+
+## C123 — Ordem 2 implementada localmente, 20/10/2026
+
+- Autorização exclusiva para medição GA-01…04, SEO-01 e UX-01/02/06; sem commit,
+  push/deploy ou mudança em Ads, GA4 e Supabase remoto. Base C122 `7fbd8e4`.
+- Erros classificados, login/repetições sem contagem duplicada, campanha
+  sanitizada por aba até consentimento, metadados completos e consentimento
+  acessível. [Validação e limites](changes/123-measurement-attribution-accessibility/validation-2026-10-20.md).
+- UX-06 parcial: WebVTT do roteiro existente preparado; vídeo de 76,57 s difere
+  do roteiro de 60 s. Transcrição/sincronização real pendente; faixa não publicada
+  nem ligada ao player sem comprovação das falas.
+- 253 testes, tipos, lint, grants estáticos e exportações aprovados; build
+  Webpack aprovado. Turbopack bloqueado pela restrição de portas do sandbox.
+  Testes de navegador sintéticos e auditoria estática documentados na C123.
+- `PUBLICATION_STATE: NOT_REQUESTED`; alterações locais revisáveis. Sem CPD limpo.
+  Ordens 3–5 não iniciadas; bloqueios anteriores da C122 preservados.
+- Pó Mágico v20261020.002 / HEAD local-remoto 81e3cbef9fc2b5b29074297490351f681ed16b47;
+  checkpoints start/classification/phase/Change/delivery; delta: distinguir
+  evidência sintética, limitação de mídia e publicação. Codex/GPT-6, variante e
+  esforço não expostos; sem subagentes.
+
 ## C122 — revisão Codex da Ordem 1, 20/10/2026
 
 - Revisados os nove arquivos de implementação/testes do Claude, sem alterar sua lógica. Reproduzida a reserva expirada: HEAD retorna 409, C122 retorna 200; reserva recente e concorrência protegidas. 247 testes e suítes direcionadas aprovados. [Revisão completa](changes/122-discovery-recovery-and-docx-safety/review-codex-2026-10-20.md).
 - Commit local autorizado pela Ordem 1; pacote de publicação registra o SHA resultante. Sem push/deploy, chamadas pagas, alteração de ambiente ou Ads/GA4/Supabase remoto. Auditoria e handoffs preservados fora do stage automático.
 - `PUBLICATION_STATE: APPROVAL_PENDING`; gate `BLOCKED`: Turbopack bloqueado por porta no sandbox (Webpack passa), SEC-03 alto ainda não reproduzido/resolvido e identificação pública da versão futura pendente. Cinco alertas high dev-only preexistentes confirmados; zero de produção. Versão `v20102026.1` apenas proposta, não aplicada.
-- Ordens 2–5 não iniciadas. Não confundir a aprovação local dos testes com correção dos erros históricos ou validação de produção.
+- Na entrega da Ordem 1, Ordens 2–5 ainda não iniciadas; estado posterior da Ordem 2 na C123 acima. Não confundir a aprovação local dos testes com correção dos erros históricos ou validação de produção.
 - Pó Mágico `v20261020.002`, local/remoto `81e3cbef9fc2b5b29074297490351f681ed16b47`, reconfirmado em 20/10; checkpoints resume/phase/delivery; delta adotado: separar commit local, gate técnico e autorização do candidato exato. Modelo Codex/GPT-6, variante/esforço não expostos; sem subagentes.
 
 ## Auditoria independente Claude Code — 20/10/2026 (resultado)

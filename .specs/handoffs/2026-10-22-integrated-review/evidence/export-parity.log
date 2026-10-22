@@ -1,0 +1,11 @@
+
+> mapa-da-pesquisa@0.1.0 exports:verify
+> node --import tsx scripts/verify-exports.ts && node --import tsx scripts/verify-final-map-exports.ts && node scripts/verify-export-text.mjs
+
+{"docxBytes":10976,"outputDirectory":"/Users/marioreis/Library/CloudStorage/Dropbox/Mac (6)/Documents/Developer/mapa/tmp/exports","pdfBytes":44011}
+{"variant":"advanced","pdfBytes":462024,"docxBytes":309455}
+{"variant":"advanced-draft","pdfBytes":464599,"docxBytes":309839}
+{"variant":"quick","pdfBytes":452201,"docxBytes":308474}
+{"variant":"unicode","pdfBytes":460177,"docxBytes":308959}
+{"variant":"without-review","pdfBytes":464558,"docxBytes":309860}
+C126 text parity PASS: 553 shared content fields present in PDF and Word; Unicode exact; fonts embedded; originals and fallback retained.

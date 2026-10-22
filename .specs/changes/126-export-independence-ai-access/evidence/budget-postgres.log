@@ -1,0 +1,21 @@
+
+> mapa-da-pesquisa@0.1.0 supabase:verify-ai-budget
+> sh scripts/verify-ai-budget.sh
+
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:31: NOTICE:  policy "projects_select_advised" for relation "public.projects" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:43: NOTICE:  policy "research_workflows_select_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814203000_add_advisor_review_access.sql:62: NOTICE:  policy "research_workflows_update_advised" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:22: NOTICE:  policy "user_profiles_select_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:29: NOTICE:  policy "user_profiles_insert_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260814214000_add_user_profiles_and_advisor_linking.sql:36: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260818230000_harden_advisor_workflow_updates.sql:152: NOTICE:  trigger "restrict_advisor_workflow_update_trigger" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:14: NOTICE:  policy "legal_consents_select_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:17: NOTICE:  policy "legal_consents_insert_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260819090000_add_legal_consents.sql:20: NOTICE:  policy "legal_consents_update_own" for relation "public.legal_consents" does not exist, skipping
+psql:/workspace/supabase/migrations/20260917003928_c087_harden_mode_aware_rls.sql:269: NOTICE:  policy "user_profiles_update_own" for relation "public.user_profiles" does not exist, skipping
+psql:/workspace/supabase/migrations/20260919123000_c089_require_student_advisor_approval.sql:170: NOTICE:  trigger "enforce_student_advisor_workflow_progress_trigger" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20261006191733_c111_versioned_workflow_history.sql:27: NOTICE:  policy "workflow_versions_select_authorized" for relation "public.workflow_versions" does not exist, skipping
+psql:/workspace/supabase/migrations/20261006191733_c111_versioned_workflow_history.sql:146: NOTICE:  trigger "zz_capture_workflow_versions" for relation "public.research_workflows" does not exist, skipping
+psql:/workspace/supabase/migrations/20261006214054_c112_ai_budget.sql:6: NOTICE:  relation "ai_budget_config" already exists, skipping
+psql:/workspace/supabase/migrations/20261006214054_c112_ai_budget.sql:11: NOTICE:  relation "ai_budget_months" already exists, skipping
+C112_BUDGET_PASS: deny by default, secret+auth, private tables, idempotent migration, and concurrent hard cap.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { presentationTranscript } from "./presentation-transcript";
 
 export function PresentationVideo() {
   const video = useRef<HTMLVideoElement>(null);
@@ -28,6 +29,7 @@ export function PresentationVideo() {
           onRateChange={(event) => setRate(event.currentTarget.playbackRate)}
         >
           <source src="/media/mapa-da-pesquisa-apresentacao.mp4" type="video/mp4" />
+          <track kind="captions" src="/media/mapa-da-pesquisa-apresentacao.pt-BR.vtt" srcLang="pt-BR" label="Português" />
           Seu navegador não oferece suporte à reprodução deste vídeo.
         </video>
       </div>
@@ -40,6 +42,10 @@ export function PresentationVideo() {
         ))}
       </div>
       <figcaption>Apresentação do Mapa da Pesquisa · 1 min 17 s</figcaption>
+      <details className="landing-video-transcript">
+        <summary>Ler transcrição do vídeo</summary>
+        {presentationTranscript.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+      </details>
     </figure>
   );
 }

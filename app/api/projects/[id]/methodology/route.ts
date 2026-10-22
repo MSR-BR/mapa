@@ -1,3 +1,4 @@
+import { dataApiErrorResponse } from "@/lib/supabase/data-api";
 import { APP_VERSION } from "@/lib/app-version";
 import { AiError, classifyAiFailure } from "@/modules/ai/failure";
 import { WorkflowRequestError } from "@/modules/research-workflow/request-failure";
@@ -631,7 +632,7 @@ async function diagnosedPost(request: Request, context: { params: Promise<{ id: 
       : error instanceof AiError
         ? new WorkflowRequestError(ai === "cancelled" ? "cancelled" : ai === "timeout" ? "provider_timeout" : ai === "invalid_output" ? "provider_invalid_response" : "provider_unavailable")
         : new WorkflowRequestError("unknown");
-    response = NextResponse.json({ code: failure.code, error: failure.message }, { status: failure.status });
+    response = dataApiErrorResponse(error) ?? NextResponse.json({ code: failure.code, error: failure.message }, { status: failure.status });
   }
   const body = await response.clone().json().catch(() => ({}));
   const knownCode = typeof body.code === "string" && /^[a-z_]{1,50}$/.test(body.code) ? body.code : response.status === 422 ? "validation" : "unknown";
