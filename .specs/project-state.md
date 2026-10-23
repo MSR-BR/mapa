@@ -1,5 +1,12 @@
 # Estado do projeto
 
+## Capacidade para turmas — 23/10/2026
+
+C129–C134 em execução. C129 implementada e validada localmente (suíte geral: 213 + 13 + 50 + 4 testes; PostgreSQL isolado); migration remota e publicação pendentes. C130: teto de US$100/mês aplicado e relido em produção, preservando US$4,99825/501 tentativas. C131 tem avaliador de rotas com dados sanitizados, mas nenhum modelo foi trocado sem evidência comparativa de qualidade acadêmica. C132 removeu sugestões pagas automáticas: são solicitadas somente por clique. C133 separou por conta autenticada o limite momentâneo de sugestões, distinguiu erros e simulou 50 pedidos duplicados sem gerar 50 vezes; cotas de provedor e 50 jornadas completas seguem não comprovadas. C134 registra pressão do orçamento em 80%/95% e tem relatório sanitizado sintético; falta custo real por mapa completo e logs de produção. Nenhuma cota diária por usuário. Aplicação pública ainda v22102026.1; commit candidato local preparado, sem deploy.
+
+Pó Mágico v20261020.002 local/remoto 81e3cbef9fc2b5b29074297490351f681ed16b47 conferidos; checkpoints resume/classification/change/delivery; APP+AI_SYSTEM/S3. Modelo GPT-6, variante/esforço não expostos. Delta: liquidação de reservas, gasto opcional sob clique, contenção individual de sugestões e capacidade financeira separada da concorrência. Registry não lista Mapa; workspace explícito do usuário e Git confirmados, sem redirecionamento.
+
+
 ## Publicação consolidada C122–C128 — concluída em 22/10/2026
 
 - **v22102026.1 publicada**, commit funcional aa781d042ed125fee8f4bb49d2fa67702b3a2a02,

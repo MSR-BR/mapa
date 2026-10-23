@@ -182,3 +182,14 @@ Cinco alertas na cadeia dev ESLint continuam pendentes.
 Cadeia vulnerável de braces removida com adaptador restrito ao Next lint 16.4.2.
 Audit completo zero; instalação limpa, compatibilidade, testes, lint/tipos e gate
 local PASS. Sem commit/deploy. [Evidências](changes/128-development-dependency-security/spec.md).
+
+## Escala para turmas — 23/10/2026
+
+C129–C134 autorizadas para execução. Implementações locais concluídas onde havia evidência suficiente; publicação e capacidade real ainda dependem dos gates abaixo.
+
+- [C129 — Contabilização correta da IA](changes/129-ai-budget-settlement/spec.md): IMPLEMENTED_LOCAL; publicação pendente.
+- [C130 — Capacidade para 50 mapas completos por dia](changes/130-fifty-maps-daily-capacity/spec.md): BUDGET_APPLIED (US$100/mês); capacidade completa pendente de validação.
+- [C131 — Distribuição inteligente Gemini/GPT](changes/131-ai-task-routing/spec.md): EVALUATION_READY; troca de modelo depende de comparação acadêmica com dados reais.
+- [C132 — Redução de chamadas desnecessárias](changes/132-ai-call-efficiency/spec.md): IMPLEMENTED_LOCAL; publicação pendente.
+- [C133 — Atendimento simultâneo de turmas](changes/133-classroom-concurrency/spec.md): IMPLEMENTED_LOCAL_PARTIAL; cotas reais e jornadas completas pendentes.
+- [C134 — Monitoramento e validação da capacidade](changes/134-ai-capacity-observability/spec.md): IMPLEMENTED_LOCAL_PARTIAL; dados de produção e custo por mapa completo pendentes.

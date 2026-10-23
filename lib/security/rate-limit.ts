@@ -20,6 +20,11 @@ export function getRequestClientKey(request: Request, scope: string) {
   return `${scope}:${forwarded || realIp || "unknown"}`;
 }
 
+/** Use only after verified authentication; one classroom IP must not pool students. */
+export function getAuthenticatedClientKey(scope: string, userId: string) {
+  return `${scope}:user:${userId}`;
+}
+
 export function checkRateLimit(
   key: string,
   limit: number,

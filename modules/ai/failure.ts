@@ -1,12 +1,32 @@
 export type AiFailureCode = "cancelled" | "timeout" | "rate_limited" | "provider_quota" | "unavailable" | "invalid_output" | "refusal" | "auth" | "configuration" | "budget" | "unknown";
 export class AiError extends Error {
-  constructor(readonly code: AiFailureCode) {
+  constructor(readonly code: AiFailureCode, readonly retryAfterSeconds?: number) {
     super(code === "budget" ? "O limite de uso da IA foi atingido. Seu conteúdo foi preservado."
       : code === "cancelled" ? "Solicitação cancelada. Confira a versão salva antes de tentar novamente."
+      : code === "provider_quota" ? "A cota do provedor de IA foi atingida. Seu conteúdo foi preservado; tente novamente quando a cota estiver disponível."
+      : code === "rate_limited" ? "O provedor de IA está recebendo muitas solicitações agora. Seu conteúdo foi preservado; aguarde antes de tentar novamente."
+      : code === "timeout" ? "A IA demorou além do tempo disponível. Seu conteúdo foi preservado; tente novamente em instantes."
       : code === "auth" || code === "configuration" ? "A integração de IA precisa de configuração. Seu conteúdo foi preservado."
       : "A IA não conseguiu concluir agora. Seu conteúdo foi preservado; tente novamente.");
     this.name = "AiError";
   }
+}
+export function retryAfterSecondsFromAiFailure(error: unknown, now = Date.now()): number | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const e = error as { responseHeaders?: Record<string, string>; cause?: unknown };
+  const value = Object.entries(e.responseHeaders ?? {}).find(([key]) => key.toLowerCase() === "retry-after")?.[1];
+  if (value) {
+    const seconds = /^\d+$/.test(value) ? Number(value) : Math.ceil((Date.parse(value) - now) / 1000);
+    if (Number.isFinite(seconds) && seconds > 0) return Math.min(3600, Math.max(1, Math.ceil(seconds)));
+  }
+  return e.cause && e.cause !== error ? retryAfterSecondsFromAiFailure(e.cause, now) : undefined;
+}
+export function aiErrorStatus(error: AiError) {
+  if (error.code === "cancelled") return 409;
+  if (error.code === "rate_limited") return 429;
+  if (error.code === "timeout") return 504;
+  if (["budget", "provider_quota", "auth", "configuration"].includes(error.code)) return 503;
+  return 502;
 }
 export function classifyAiFailure(error: unknown): AiFailureCode {
   if (error instanceof AiError) return error.code;

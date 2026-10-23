@@ -97,7 +97,7 @@ test("requests login only after the public central execution", async () => {
   assert.match(await readProjectFile("modules/projects/pending-project-cleanup.tsx"), /successful project page|localStorage\.removeItem/);
 });
 
-test("suggests AI refinements while the research request is being written", async () => {
+test("offers local suggestions while writing and requests paid AI suggestions only on click", async () => {
   const [input, route, gemini, quickStart, publicStart] = await Promise.all([
     readProjectFile("modules/projects/research-prompt-input.tsx"),
     readProjectFile("app/api/prompt-suggestions/route.ts"),
@@ -108,7 +108,9 @@ test("suggests AI refinements while the research request is being written", asyn
 
   assert.match(input, /Informe as palavras-chave \(mínimo duas\) ou escreva o tema da pesquisa\./);
   assert.doesNotMatch(input, /Exemplo: Crie um roteiro de dissertação de mestrado/);
-  assert.match(input, /650/);
+  assert.match(input, /Aprimorar ideia com IA/);
+  assert.match(input, /onClick=\{requestAiSuggestions\}/);
+  assert.doesNotMatch(input, /window\.setTimeout/);
   assert.match(input, /Sugestões para consolidar o mapa/);
   assert.match(input, /MINIMUM_SUGGESTION_LENGTH = 8/);
   assert.match(input, /buildLocalPromptSuggestions/);

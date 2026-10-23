@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { AiError } from "@/modules/ai/failure";
+import { AiError, aiErrorStatus } from "@/modules/ai/failure";
 import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ import {
   startRequest,
 } from "@/lib/observability/request-context";
 import { suggestResearchPrompts } from "@/modules/generation/gemini";
-import { checkRateLimit, getRequestClientKey } from "@/lib/security/rate-limit";
+import { checkRateLimit, getAuthenticatedClientKey } from "@/lib/security/rate-limit";
 
 export const maxDuration = 30;
 
@@ -19,7 +19,9 @@ async function handlePost(request: Request) {
   if (error || typeof data?.claims?.sub !== "string" || data.claims.is_anonymous === true) {
     return NextResponse.json({ code: "authentication_required", error: "Entre no Mapa com sua conta Google para receber sugestões de IA. Você pode continuar escrevendo sua ideia." }, { status: 401, headers: { "Cache-Control": "private, no-store" } });
   }
-  const rate = checkRateLimit(getRequestClientKey(request, "prompt-suggestions"), 15, 60_000);
+  // Students in one classroom share a public IP; verified account identity is
+  // the abuse-control boundary for this authenticated, optional operation.
+  const rate = checkRateLimit(getAuthenticatedClientKey("prompt-suggestions", data.claims.sub), 15, 60_000);
   if (!rate.allowed) {
     return NextResponse.json(
       { error: "Muitas solicitações. Tente novamente em instantes." },
@@ -49,8 +51,8 @@ async function handlePost(request: Request) {
       queryLength: prompt.length,
     });
     return NextResponse.json(
-      { code: error instanceof AiError ? error.code : "suggestions_unavailable", error: error instanceof AiError && error.code === "budget" ? "As sugestões de IA estão indisponíveis porque o limite global de uso foi atingido. Continue escrevendo ou use as sugestões locais." : "Não foi possível preparar sugestões agora. Você pode continuar escrevendo sua ideia." },
-      { status: error instanceof AiError && error.code === "budget" ? 503 : 502, headers: { "Cache-Control": "private, no-store" } },
+      { code: error instanceof AiError ? error.code : "suggestions_unavailable", error: error instanceof AiError ? error.message : "Não foi possível preparar sugestões agora. Você pode continuar escrevendo sua ideia." },
+      { status: error instanceof AiError ? aiErrorStatus(error) : 502, headers: { "Cache-Control": "private, no-store", ...(error instanceof AiError && error.retryAfterSeconds ? { "Retry-After": String(error.retryAfterSeconds) } : {}) } },
     );
   }
 }

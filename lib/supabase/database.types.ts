@@ -398,6 +398,8 @@ export type Database = {
     }
     Functions: {
       reserve_advisor_reminder: { Args: { p_project_id: string; p_review_id: string }; Returns: Json };
+      reserve_ai_budget_v2: { Args: { p_secret: string; p_id: string; p_micros: number; p_provider: string; p_model: string; p_operation: string }; Returns: Json };
+      settle_ai_budget: { Args: { p_secret: string; p_id: string; p_actual_micros: number; p_input_tokens: number; p_output_tokens: number }; Returns: boolean };
       reserve_ai_budget: { Args: { p_secret: string; p_micros: number }; Returns: boolean };
       is_bug_report_admin: {
         Args: Record<PropertyKey, never>

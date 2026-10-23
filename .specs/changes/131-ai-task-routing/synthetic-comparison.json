@@ -1,0 +1,92 @@
+{
+  "operations": {
+    "generate_general_objective": {
+      "gemini": {
+        "attempts": 29,
+        "successRate": 0.345,
+        "averageDurationMs": 1,
+        "estimatedKnownUsd": 0.003419,
+        "unpricedAttempts": 16,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "openai": {
+        "attempts": 11,
+        "successRate": 0.818,
+        "averageDurationMs": 11,
+        "estimatedKnownUsd": 0.00038,
+        "unpricedAttempts": 1,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "decision": "retain_current_routing",
+      "reason": "Falta comparação acadêmica dos dois provedores para esta operação."
+    },
+    "generate_specific_objectives": {
+      "gemini": {
+        "attempts": 2,
+        "successRate": 1,
+        "averageDurationMs": 0,
+        "estimatedKnownUsd": 0.000526,
+        "unpricedAttempts": 0,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "openai": null,
+      "decision": "retain_current_routing",
+      "reason": "Falta comparação acadêmica dos dois provedores para esta operação."
+    },
+    "review_workflow_impact": {
+      "gemini": {
+        "attempts": 2,
+        "successRate": 1,
+        "averageDurationMs": 2,
+        "estimatedKnownUsd": 0.000526,
+        "unpricedAttempts": 0,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "openai": null,
+      "decision": "retain_current_routing",
+      "reason": "Falta comparação acadêmica dos dois provedores para esta operação."
+    },
+    "regenerate_problem_statement": {
+      "gemini": {
+        "attempts": 4,
+        "successRate": 0.25,
+        "averageDurationMs": 1,
+        "estimatedKnownUsd": 0,
+        "unpricedAttempts": 4,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "openai": null,
+      "decision": "retain_current_routing",
+      "reason": "Falta comparação acadêmica dos dois provedores para esta operação."
+    },
+    "generate_methodology_plan": {
+      "gemini": {
+        "attempts": 2,
+        "successRate": 0.5,
+        "averageDurationMs": 0,
+        "estimatedKnownUsd": 0.000526,
+        "unpricedAttempts": 0,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "openai": {
+        "attempts": 2,
+        "successRate": 0.5,
+        "averageDurationMs": 0,
+        "estimatedKnownUsd": 0.000076,
+        "unpricedAttempts": 0,
+        "academicallyReviewed": 0,
+        "reviewedPassRate": null
+      },
+      "decision": "retain_current_routing",
+      "reason": "Falta comparação acadêmica dos dois provedores para esta operação."
+    }
+  },
+  "appliedModelChanges": 0,
+  "note": "Avaliação somente. Não distribui chamadas artificialmente nem troca modelo sem qualidade validada."
+}

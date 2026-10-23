@@ -71,7 +71,7 @@ export function ResearchPromptInput({
   const [suggestions, setSuggestions] = useState<PromptSuggestion[]>([]);
   const [suggestionsForPrompt, setSuggestionsForPrompt] = useState("");
   const [loadingPrompt, setLoadingPrompt] = useState("");
-  const lastRequestedPrompt = useRef("");
+  const requestController = useRef<AbortController | null>(null);
   const normalizedPrompt = value.trim();
   const localSuggestions = normalizedPrompt.length >= MINIMUM_SUGGESTION_LENGTH
     ? buildLocalPromptSuggestions(normalizedPrompt)
@@ -81,51 +81,51 @@ export function ResearchPromptInput({
     : localSuggestions;
   const loading = normalizedPrompt.length >= AI_SUGGESTION_LENGTH && loadingPrompt === normalizedPrompt;
 
-  useEffect(() => {
+  useEffect(() => () => { requestController.current?.abort(); }, [value]);
+
+  async function requestAiSuggestions() {
     const prompt = value.trim();
-    if (!aiSuggestionsEnabled || prompt.length < AI_SUGGESTION_LENGTH) return;
-
+    if (!aiSuggestionsEnabled || prompt.length < AI_SUGGESTION_LENGTH ||
+      (requestController.current && !requestController.current.signal.aborted) ||
+      (suggestionsForPrompt === prompt && suggestions.length > 0)) return;
+    requestController.current?.abort();
     const controller = new AbortController();
-    const timeout = window.setTimeout(async () => {
-      if (prompt === lastRequestedPrompt.current) return;
-      lastRequestedPrompt.current = prompt;
-      setLoadingPrompt(prompt);
-      setProgress(null);
-      setSuggestionMessage(null);
-
-      try {
-        const rawResponse = await fetch("/api/prompt-suggestions", {
-          body: JSON.stringify({ prompt }),
-          headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
-          method: "POST",
-          signal: controller.signal,
-        });
-        const response = await readProgressResponse(rawResponse, (event) => { if (!controller.signal.aborted) setProgress(event); });
-        if (!response.ok) {
-          setSuggestionMessage(response.status === 401
-            ? "Entre no Mapa para usar sugestões de IA. As sugestões abaixo são locais; você pode continuar escrevendo."
-            : "Sugestões de IA indisponíveis agora. As sugestões abaixo são locais; você pode continuar escrevendo.");
-          throw new Error("suggestion-request-failed");
-        }
-        const payload = await response.json() as { suggestions?: PromptSuggestion[] };
+    requestController.current = controller;
+    setLoadingPrompt(prompt);
+    setProgress(null);
+    setSuggestionMessage(null);
+    try {
+      const rawResponse = await fetch("/api/prompt-suggestions", {
+        body: JSON.stringify({ prompt }),
+        headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
+        method: "POST",
+        signal: controller.signal,
+      });
+      const response = await readProgressResponse(rawResponse, (event) => { if (!controller.signal.aborted) setProgress(event); });
+      if (!response.ok) {
+        setSuggestionMessage(response.status === 401
+          ? "Entre no Mapa para usar sugestões de IA. As sugestões abaixo são locais; você pode continuar escrevendo."
+          : "Sugestões de IA indisponíveis agora. As sugestões abaixo são locais; você pode continuar escrevendo.");
+        throw new Error("suggestion-request-failed");
+      }
+      const payload = await response.json() as { suggestions?: PromptSuggestion[] };
+      if (!controller.signal.aborted) {
         setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions.slice(0, 3) : []);
         setSuggestionsForPrompt(prompt);
-      } catch (error) {
-        if (!(error instanceof DOMException && error.name === "AbortError")) {
-          setSuggestions([]);
-          setSuggestionsForPrompt(prompt);
-          setSuggestionMessage((current) => current ?? "Sugestões de IA indisponíveis agora. Você pode continuar escrevendo ou usar as sugestões locais.");
-        }
-      } finally {
-        if (!controller.signal.aborted) setLoadingPrompt("");
       }
-    }, 650);
-
-    return () => {
-      controller.abort();
-      window.clearTimeout(timeout);
-    };
-  }, [aiSuggestionsEnabled, value]);
+    } catch (error) {
+      if (!controller.signal.aborted && !(error instanceof DOMException && error.name === "AbortError")) {
+        setSuggestions([]);
+        setSuggestionsForPrompt(prompt);
+        setSuggestionMessage((current) => current ?? "Sugestões de IA indisponíveis agora. Você pode continuar escrevendo ou usar as sugestões locais.");
+      }
+    } finally {
+      if (requestController.current === controller) {
+        requestController.current = null;
+        setLoadingPrompt("");
+      }
+    }
+  }
 
   return (
     <>
@@ -142,6 +142,13 @@ export function ResearchPromptInput({
         rows={3}
         value={value}
       />
+      {aiSuggestionsEnabled && normalizedPrompt.length >= AI_SUGGESTION_LENGTH ? (
+        <button className="prompt-ai-request" disabled={loading || (suggestionsForPrompt === normalizedPrompt && suggestions.length > 0)}
+          onClick={requestAiSuggestions} type="button">
+          {loading ? "Gerando sugestões com IA…" : suggestionsForPrompt === normalizedPrompt && suggestions.length > 0
+            ? "Sugestões de IA recebidas" : "Aprimorar ideia com IA"}
+        </button>
+      ) : null}
       {visibleSuggestions.length > 0 ? (
         <div className="prompt-suggestions" aria-live="polite">
           <p>
@@ -159,7 +166,7 @@ export function ResearchPromptInput({
                   onSuggestionSelect?.(selectedPrompt);
                   setSuggestions([]);
                   setSuggestionsForPrompt("");
-                  lastRequestedPrompt.current = selectedPrompt;
+                  requestController.current?.abort();
                 }}
                 type="button"
               >

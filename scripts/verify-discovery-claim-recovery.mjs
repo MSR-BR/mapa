@@ -13,7 +13,7 @@ const stubs = {
   '@/modules/generation/gemini': `
     export async function interpretResearchRequest(){return {...globalThis.c122.interpreted,researchQuery:'graphene lithium batteries'};}
     export const broadenResearchQuery=async()=> 'graphene lithium batteries';
-    export async function generateProblemCandidates(original,interpreted,report){return globalThis.c122.candidates.map(c=>({...c,referenceIds:[report.references[0].referenceId]}));}`,
+    export async function generateProblemCandidates(original,interpreted,report){globalThis.c122.aiCalls++;return globalThis.c122.candidates.map(c=>({...c,referenceIds:[report.references[0].referenceId]}));}`,
 };
 await build({stdin:{resolveDir:process.cwd(),contents:`export {POST} from '${routeSource}';export {versionedWorkflowFixture} from './tests/fixtures/versioned-workflow';export {crossrefReport} from './modules/research-starter/crossref';export {readProgressResponse} from './modules/ai/progress-client';`,loader:'ts'},outfile:'tmp/c122-discovery-harness.mjs',bundle:true,platform:'node',format:'esm',packages:'external',plugins:[{name:'synthetic-boundaries',setup(b){b.onResolve({filter:/^next\/server$/},()=>({path:'next/server.js',external:true}));b.onResolve({filter:/.*/},a=>Object.hasOwn(stubs,a.path)?{path:a.path,namespace:'c122'}:undefined);b.onLoad({filter:/.*/,namespace:'c122'},a=>({contents:stubs[a.path],resolveDir:process.cwd()}));}}]});
 const api = await import('../tmp/c122-discovery-harness.mjs');
@@ -24,7 +24,7 @@ const originalFetch = globalThis.fetch;
 const oldKey = process.env.RESEARCH_STARTER_MAPA_API_KEY;
 process.env.RESEARCH_STARTER_MAPA_API_KEY = 'synthetic-only';
 function reset({ageMs, failSave = false}) {
-  Object.assign(s,{failSave,writes:0,workflow:structuredClone(template),interpreted:template.content.discovery.interpreted,candidates:template.content.discovery.candidates,project:{id:template.projectId,owner_id:template.ownerId,workflow_version:2,title:'Fixture C122',problem_statement:'Pedido original sintético preservado integralmente, sem truncamento.'}});
+  Object.assign(s,{failSave,writes:0,aiCalls:0,workflow:structuredClone(template),interpreted:template.content.discovery.interpreted,candidates:template.content.discovery.candidates,project:{id:template.projectId,owner_id:template.ownerId,workflow_version:2,title:'Fixture C122',problem_statement:'Pedido original sintético preservado integralmente, sem truncamento.'}});
   s.workflow.state = 'discovering'; s.workflow.stableState = 'draft_prompt'; s.workflow.content.discovery = null;
   s.workflow.updatedAt = new Date(Date.now() - ageMs).toISOString();
   s.db = {from:table=>new Query(table)};
@@ -79,6 +79,15 @@ try {
   results.concurrentTakeover = {statuses:[a.status,b.status].sort(),writes:s.writes};
   assert.deepEqual([a.status,b.status].sort(),[200,409]);
   assert.equal(s.writes,2);
+
+  reset({ageMs:60 * 60_000});
+  const classroom = await Promise.all(Array.from({length:50},()=>call()));
+  results.fiftyDuplicateRequests = {statuses:classroom.reduce((counts,item)=>(counts[item.status]=(counts[item.status]??0)+1,counts),{}),writes:s.writes,aiCalls:s.aiCalls};
+  assert.ok(classroom.every(item=>item.status===200||item.status===409));
+  assert.ok(classroom.some(item=>item.status===200));
+  assert.equal(s.aiCalls,1,'only the winning claim may generate');
+  assert.equal(s.writes,2,'one claim and one save');
+  assert.equal(s.workflow.content.discovery.candidates.length,6);
 
   reset({ageMs:60 * 60_000,failSave:true});
   const failed = await call();

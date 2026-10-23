@@ -1,0 +1,375 @@
+
+> mapa-da-pesquisa@0.1.0 test:ai
+> node --conditions=react-server --import tsx --test tests/collaborative-ai.test.ts tests/ai-budget-settlement.test.ts tests/card-regeneration-prompt.test.ts tests/guided-methodology-generation.test.ts tests/research-starter.test.ts tests/intake-report.test.ts
+
+TAP version 13
+# {"timestamp":"2026-10-23T17:05:27.380Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"d87bbf32-2d42-4b60-9612-3201ab26c35b","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":2,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.384Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"3f669513-6f6a-4798-bb88-80514740d8ac","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.387Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"f34bea0f-5bc0-4dec-aa19-926ff29c1ae8","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":null,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.387Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"802e2795-608f-435c-a5d5-4790dcc7fb8b","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"different","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":null,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.388Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"e23cfa0a-ee0f-465a-aea2-b516b9ecc843","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"timeout"}
+# {"timestamp":"2026-10-23T17:05:27.389Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"c4d8322d-97a7-4fd8-8e39-59772ee76e97","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.390Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"684476f1-b91a-4b37-b54d-e7b3046a153a","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"cancelled"}
+# {"timestamp":"2026-10-23T17:05:27.390Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"1ab79d7e-a58e-403f-9df5-c4bb7288c218","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.392Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"f977743f-f41f-4e44-a6e4-e2227691cbcb","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"rate_limited"}
+# {"timestamp":"2026-10-23T17:05:27.392Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"f977743f-f41f-4e44-a6e4-e2227691cbcb","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":20,"cachedInputTokens":0,"cacheWriteTokens":0,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"rate_limited"}
+# Subtest: C129: token costing rounds up micros, includes reasoning once, and never treats missing/invalid usage as zero
+ok 1 - C129: token costing rounds up micros, includes reasoning once, and never treats missing/invalid usage as zero
+  ---
+  duration_ms: 0.742459
+  type: 'test'
+  ...
+# Subtest: C129: reserve precedes transport; known usage settles once and returns unchanged content
+ok 2 - C129: reserve precedes transport; known usage settles once and returns unchanged content
+  ---
+  duration_ms: 4.688333
+  type: 'test'
+  ...
+# Subtest: C129: settlement outage preserves valid output and never calls fallback
+ok 3 - C129: settlement outage preserves valid output and never calls fallback
+  ---
+  duration_ms: 1.29
+  type: 'test'
+  ...
+# Subtest: C129: unknown usage/model and transport timeout retain the reservation
+ok 4 - C129: unknown usage/model and transport timeout retain the reservation
+  ---
+  duration_ms: 3.527041
+  type: 'test'
+  ...
+# Subtest: C129: known billable usage settles even when output or cancellation prevents persistence
+ok 5 - C129: known billable usage settles even when output or cancellation prevents persistence
+  ---
+  duration_ms: 1.621125
+  type: 'test'
+  ...
+# Subtest: C129: SDK structured-output failure exposes usage without logging generated private text
+ok 6 - C129: SDK structured-output failure exposes usage without logging generated private text
+  ---
+  duration_ms: 0.579833
+  type: 'test'
+  ...
+# Subtest: C129: provider fallback retains unknown first cost and settles only second known usage
+ok 7 - C129: provider fallback retains unknown first cost and settles only second known usage
+  ---
+  duration_ms: 2.436541
+  type: 'test'
+  ...
+# Subtest: card prompt combines the current draft, explicit instruction and confirmed project context
+ok 8 - card prompt combines the current draft, explicit instruction and confirmed project context
+  ---
+  duration_ms: 9.672625
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-23T17:05:27.417Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"31f45533-12e7-453a-84a8-b664424e57bf","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"rate_limited"}
+# {"timestamp":"2026-10-23T17:05:27.419Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"31f45533-12e7-453a-84a8-b664424e57bf","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"rate_limited"}
+# {"timestamp":"2026-10-23T17:05:27.420Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"d3e86280-650d-4f05-a335-3e9aa9559322","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"unavailable"}
+# {"timestamp":"2026-10-23T17:05:27.420Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"d3e86280-650d-4f05-a335-3e9aa9559322","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"unavailable"}
+# {"timestamp":"2026-10-23T17:05:27.420Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"d960f9f9-088a-4d11-8340-5c55c36c0b15","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"timeout"}
+# {"timestamp":"2026-10-23T17:05:27.420Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"d960f9f9-088a-4d11-8340-5c55c36c0b15","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"timeout"}
+# {"timestamp":"2026-10-23T17:05:27.421Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"51a9ee32-0f00-4885-b792-7001a0c22748","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"auth"}
+# {"timestamp":"2026-10-23T17:05:27.421Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"7d927a5e-21fe-47ef-a495-2beaef013c78","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"auth"}
+# {"timestamp":"2026-10-23T17:05:27.421Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"cbf869e5-4e76-4d67-bc06-f663da9bf2de","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"configuration"}
+# {"timestamp":"2026-10-23T17:05:27.422Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"21716f57-293c-4703-acd1-07abf1e4c22a","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"refusal"}
+# {"timestamp":"2026-10-23T17:05:27.422Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"c1fd8612-fb00-4f8b-9966-c1b0d6002865","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"budget"}
+# {"timestamp":"2026-10-23T17:05:27.422Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"00de28be-e285-48bf-862c-7ed1117eb690","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"provider_quota"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"fae7a131-b41c-4641-af63-9763410cb829","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"fae7a131-b41c-4641-af63-9763410cb829","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"cc31116e-5fa6-4d61-82fa-915a36da6643","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"cancelled"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"generate_general_objective","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.423Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"generate_specific_objectives","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":3,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.424Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"generate_specific_objectives","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":4,"durationMs":1,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.424Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"review_workflow_impact","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":5,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.424Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"55fe6a07-4900-489f-bd62-5e2a0874c26a","operation":"review_workflow_impact","provider":"gemini","role":"reviewer","model":"gemini-3.6-flash","attempt":6,"durationMs":0,"maxOutputTokens":2400,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.424Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"006d9c4b-4886-4a7b-9bfe-8ac70baed6f1","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.461Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"0fd02d77-1d71-4f9b-93c3-75434cf9b9f9","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":29,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"refusal"}
+# {"timestamp":"2026-10-23T17:05:27.462Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"cf7a0375-c587-4cb6-9a9a-bd7da3dcb8f8","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.462Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"c08d79c5-8dee-4ec1-b499-aa499a3ab81e","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.485Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"40cc5f65-3471-4802-bd12-5cf372359aba","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":6,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.490Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"c5543910-47dc-4fa3-8d07-1ced1d7b2695","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":5,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# Gemini validado: modelo=gemini-3.6-flash; saída estruturada compatível com o schema 1.0.0.
+# Gemini validado: modelo=gemini-3.8-flash; saída estruturada compatível com o schema 1.0.0.
+# Gemini validado: modelo=gemini-2.5-flash; saída estruturada compatível com o schema 1.0.0.
+# {"timestamp":"2026-10-23T17:05:27.506Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"7441fcc4-d95c-497d-b36c-a8ab53efe467","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"rate_limited"}
+# {"timestamp":"2026-10-23T17:05:27.507Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"7441fcc4-d95c-497d-b36c-a8ab53efe467","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"rate_limited"}
+# {"timestamp":"2026-10-23T17:05:27.507Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"35add040-f1d1-44de-a289-13934b903ba7","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"unavailable"}
+# {"timestamp":"2026-10-23T17:05:27.507Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"35add040-f1d1-44de-a289-13934b903ba7","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":0,"cachedInputTokens":0,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"unavailable"}
+# {"timestamp":"2026-10-23T17:05:27.518Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"5c061e79-6c2c-473d-8af3-14cdfef9ec65","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":3,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.519Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"5c061e79-6c2c-473d-8af3-14cdfef9ec65","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.520Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"0f46ccfc-cd93-41ae-aede-41afce466e35","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":1,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.520Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"0f46ccfc-cd93-41ae-aede-41afce466e35","operation":"regenerate_problem_statement","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.522Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"832a7854-f99b-4f13-9db3-89937fd7b4b1","operation":"generate_methodology_plan","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.522Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"832a7854-f99b-4f13-9db3-89937fd7b4b1","operation":"generate_methodology_plan","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":2,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.522Z","event":"openai_generation_failed","contractVersion":"ai-usage-v2","operationId":"a7daa901-881f-47f1-80b2-e2e29b1f3d6b","operation":"generate_methodology_plan","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.522Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"a7daa901-881f-47f1-80b2-e2e29b1f3d6b","operation":"generate_methodology_plan","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":2,"durationMs":0,"maxOutputTokens":5000,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded","fallbackReason":"invalid_output"}
+# {"timestamp":"2026-10-23T17:05:27.522Z","event":"gemini_generation_completed","contractVersion":"ai-usage-v2","operationId":"912e071a-df8b-428f-8479-d9b2e006feaa","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000263,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.523Z","event":"openai_generation_completed","contractVersion":"ai-usage-v2","operationId":"00bb5476-1940-4967-a9a5-40b1314fc982","operation":"generate_general_objective","provider":"openai","role":"generator","model":"gpt-6-luna","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":100,"outputTokens":50,"totalTokens":150,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":0.000038,"finishReason":"stop","warningCount":0,"priceDate":"2026-10-06","status":"succeeded"}
+# {"timestamp":"2026-10-23T17:05:27.523Z","event":"gemini_generation_failed","contractVersion":"ai-usage-v2","operationId":"49b1d6c0-baf0-453a-807a-9f1262a0bdd4","operation":"generate_general_objective","provider":"gemini","role":"generator","model":"gemini-3.6-flash","attempt":1,"durationMs":0,"maxOutputTokens":700,"inputTokens":null,"outputTokens":null,"totalTokens":null,"reasoningTokens":null,"cachedInputTokens":null,"cacheWriteTokens":null,"estimatedCostUsd":null,"finishReason":null,"warningCount":null,"priceDate":"2026-10-06","status":"failed","errorCode":"unavailable"}
+# Subtest: C112: transient errors switch provider once, preserving operation and actual progress
+ok 9 - C112: transient errors switch provider once, preserving operation and actual progress
+  ---
+  duration_ms: 4.922667
+  type: 'test'
+  ...
+# Subtest: C112: auth, refusal, quota and application budget cannot trigger alternate spending
+ok 10 - C112: auth, refusal, quota and application budget cannot trigger alternate spending
+  ---
+  duration_ms: 1.601292
+  type: 'test'
+  ...
+# Subtest: C112: malformed output and foreign reference IDs get only one repair, no unvalidated result
+ok 11 - C112: malformed output and foreign reference IDs get only one repair, no unvalidated result
+  ---
+  duration_ms: 0.536666
+  type: 'test'
+  ...
+# Subtest: C112: cancellation after provider completion rejects late content before persistence
+ok 12 - C112: cancellation after provider completion rejects late content before persistence
+  ---
+  duration_ms: 0.310083
+  type: 'test'
+  ...
+# Subtest: C112: global attempt limit includes different operations and reviewer calls
+ok 13 - C112: global attempt limit includes different operations and reviewer calls
+  ---
+  duration_ms: 0.68775
+  type: 'test'
+  ...
+# Subtest: C112: rollback flag retains Gemini and performs zero OpenAI calls
+ok 14 - C112: rollback flag retains Gemini and performs zero OpenAI calls
+  ---
+  duration_ms: 0.159042
+  type: 'test'
+  ...
+# Subtest: C112: observations omit content/secrets and report unknown usage as null
+ok 15 - C112: observations omit content/secrets and report unknown usage as null
+  ---
+  duration_ms: 0.3355
+  type: 'test'
+  ...
+# Subtest: C112: streamed result waits for confirmed save and retains HTTP authorization failures
+ok 16 - C112: streamed result waits for confirmed save and retains HTTP authorization failures
+  ---
+  duration_ms: 6.553667
+  type: 'test'
+  ...
+# Subtest: C112: disconnect and alien/out-of-order events cannot report false success
+ok 17 - C112: disconnect and alien/out-of-order events cannot report false success
+  ---
+  duration_ms: 0.522375
+  type: 'test'
+  ...
+# Subtest: C112: real OpenAI adapter recognizes completed refusal without attempting Gemini
+ok 18 - C112: real OpenAI adapter recognizes completed refusal without attempting Gemini
+  ---
+  duration_ms: 29.624459
+  type: 'test'
+  ...
+# Subtest: C112: failure classification does not inspect or expose arbitrary error messages
+ok 19 - C112: failure classification does not inspect or expose arbitrary error messages
+  ---
+  duration_ms: 0.103042
+  type: 'test'
+  ...
+# Subtest: C112: global cost reservation stops a call before any provider is invoked
+ok 20 - C112: global cost reservation stops a call before any provider is invoked
+  ---
+  duration_ms: 0.247709
+  type: 'test'
+  ...
+# Subtest: C112: two concurrent operations keep progress and context isolated
+ok 21 - C112: two concurrent operations keep progress and context isolated
+  ---
+  duration_ms: 0.301583
+  type: 'test'
+  ...
+# Subtest: C112: reviewer failure and disabled flag preserve the generated proposal; save calls no reviewer
+ok 22 - C112: reviewer failure and disabled flag preserve the generated proposal; save calls no reviewer
+  ---
+  duration_ms: 17.203167
+  type: 'test'
+  ...
+# Subtest: C112: both real SDK adapters parse the same domain contract and keep provider options separate
+ok 23 - C112: both real SDK adapters parse the same domain contract and keep provider options separate
+  ---
+  duration_ms: 11.000417
+  type: 'test'
+  ...
+# Subtest: C113: verification script serializes compatible controls without a network call
+ok 24 - C113: verification script serializes compatible controls without a network call
+  ---
+  duration_ms: 6.273208
+  type: 'test'
+  ...
+# Subtest: C113: unsupported model overrides fail before transport or additional spending
+ok 25 - C113: unsupported model overrides fail before transport or additional spending
+  ---
+  duration_ms: 0.14425
+  type: 'test'
+  ...
+# Subtest: C113: real Gemini adapter treats parameter HTTP 400 as configuration without retry or fallback
+ok 26 - C113: real Gemini adapter treats parameter HTTP 400 as configuration without retry or fallback
+  ---
+  duration_ms: 8.631292
+  type: 'test'
+  ...
+# Subtest: C113: real SDK transport retains one fallback for Gemini HTTP 429/503
+ok 27 - C113: real SDK transport retains one fallback for Gemini HTTP 429/503
+  ---
+  duration_ms: 2.047666
+  type: 'test'
+  ...
+# Subtest: C118: real Gemini adapter repairs oversized problem output once, before accepting it
+ok 28 - C118: real Gemini adapter repairs oversized problem output once, before accepting it
+  ---
+  duration_ms: 12.644958
+  type: 'test'
+  ...
+# Subtest: C118: nested/nullable text constraints reach both providers and only valid card output is returned
+ok 29 - C118: nested/nullable text constraints reach both providers and only valid card output is returned
+  ---
+  duration_ms: 2.093292
+  type: 'test'
+  ...
+# Subtest: C126: every primary and fallback attempt reserves monthly budget before calling either provider
+ok 30 - C126: every primary and fallback attempt reserves monthly budget before calling either provider
+  ---
+  duration_ms: 0.423792
+  type: 'test'
+  ...
+# Subtest: methodology generation supplies a complete editable proposal, real links and stable existing row IDs
+ok 31 - methodology generation supplies a complete editable proposal, real links and stable existing row IDs
+  ---
+  duration_ms: 6.858833
+  type: 'test'
+  ...
+# Subtest: new advanced intake accepts 400, rejects 401 on the server, and preserves legacy 2000 characters
+ok 32 - new advanced intake accepts 400, rejects 401 on the server, and preserves legacy 2000 characters
+  ---
+  duration_ms: 6.213042
+  type: 'test'
+  ...
+# Subtest: appendix rewrite preserves original spacing, isolates source text, validates every generated limit and caches exact source
+ok 33 - appendix rewrite preserves original spacing, isolates source text, validates every generated limit and caches exact source
+  ---
+  duration_ms: 1.1855
+  type: 'test'
+  ...
+# Subtest: shared report includes complete chapters and five literal original/reformulated pairs only for advanced mode
+ok 34 - shared report includes complete chapters and five literal original/reformulated pairs only for advanced mode
+  ---
+  duration_ms: 6.018375
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"1b7d27cb-b709-43f3-90ee-2c13d21b1ca3","timestamp":"2026-10-23T17:05:27.118Z","attempt":1,"durationMs":46,"queryLength":166,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"1a53b6ef-136b-4241-93e1-b9c99bdc8715","timestamp":"2026-10-23T17:05:27.125Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# Subtest: C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+ok 35 - C120: a 240-character legacy query fits the v1 180-character contract without changing its source
+  ---
+  duration_ms: 50.20275
+  type: 'test'
+  ...
+# Subtest: C120: validates request before any network call, including reversed dates
+ok 36 - C120: validates request before any network call, including reversed dates
+  ---
+  duration_ms: 2.958458
+  type: 'test'
+  ...
+# {"event":"research_starter_completed","requestId":"1a53b6ef-136b-4241-93e1-b9c99bdc8715","timestamp":"2026-10-23T17:05:27.478Z","attempt":2,"durationMs":353,"queryLength":26,"rankedPapers":1,"stage":"research_starter"}
+# {"event":"research_starter_request_failed","requestId":"afbf11fa-bbad-467a-bbec-e8c89393e299","timestamp":"2026-10-23T17:05:27.479Z","attempt":1,"code":"temporary-unavailable","status":429,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"afbf11fa-bbad-467a-bbec-e8c89393e299","timestamp":"2026-10-23T17:05:27.479Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"afbf11fa-bbad-467a-bbec-e8c89393e299","timestamp":"2026-10-23T17:05:27.479Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"7af0309e-446b-4673-abd3-e48872c794a4","timestamp":"2026-10-23T17:05:27.480Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"7af0309e-446b-4673-abd3-e48872c794a4","timestamp":"2026-10-23T17:05:27.480Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"7af0309e-446b-4673-abd3-e48872c794a4","timestamp":"2026-10-23T17:05:27.480Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"3c936d6e-c476-4bab-a97d-a0568fd55441","timestamp":"2026-10-23T17:05:27.481Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"3c936d6e-c476-4bab-a97d-a0568fd55441","timestamp":"2026-10-23T17:05:27.481Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"3c936d6e-c476-4bab-a97d-a0568fd55441","timestamp":"2026-10-23T17:05:27.481Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"1e2e0202-2715-47eb-a014-2c6158bd3730","timestamp":"2026-10-23T17:05:27.482Z","attempt":1,"code":"invalid-response","status":200,"queryLength":26,"durationMs":1}
+# {"event":"research_starter_fallback_started","requestId":"1e2e0202-2715-47eb-a014-2c6158bd3730","timestamp":"2026-10-23T17:05:27.482Z","code":"invalid-response","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"1e2e0202-2715-47eb-a014-2c6158bd3730","timestamp":"2026-10-23T17:05:27.482Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"2c01f5c1-1492-4525-8bd3-dd4e8d151042","timestamp":"2026-10-23T17:05:27.482Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"2c01f5c1-1492-4525-8bd3-dd4e8d151042","timestamp":"2026-10-23T17:05:27.482Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"2c01f5c1-1492-4525-8bd3-dd4e8d151042","timestamp":"2026-10-23T17:05:27.483Z","stage":"crossref","durationMs":1,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"99d70e05-964b-4b99-a6bb-850521bd4c57","timestamp":"2026-10-23T17:05:27.483Z","attempt":1,"code":"invalid-request","status":400,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"9c6c8df9-7a02-4e2e-b566-66bcf130bd45","timestamp":"2026-10-23T17:05:27.483Z","attempt":1,"code":"unauthorized","status":401,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_request_failed","requestId":"793cff9e-b355-46fe-bd32-50dbca834eec","timestamp":"2026-10-23T17:05:27.483Z","attempt":1,"code":"unauthorized","status":403,"queryLength":26,"durationMs":0}
+# Subtest: C120: retries a connection failure and recovers on the primary without fallback
+ok 37 - C120: retries a connection failure and recovers on the primary without fallback
+  ---
+  duration_ms: 353.349333
+  type: 'test'
+  ...
+# Subtest: C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+ok 38 - C120: HTML 429 respects Retry-After; uses fallback instead of retrying before the requested time
+  ---
+  duration_ms: 1.494708
+  type: 'test'
+  ...
+# Subtest: C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+ok 39 - C120: 503, malformed JSON, invalid reference records and failed reports trigger bounded fallback
+  ---
+  duration_ms: 3.165959
+  type: 'test'
+  ...
+# Subtest: C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+ok 40 - C120: authentication, configuration and invalid request errors are not retried or hidden by fallback
+  ---
+  duration_ms: 0.454917
+  type: 'test'
+  ...
+# {"event":"research_starter_request_failed","requestId":"b2b3a365-bc61-49ca-a455-801ada14ca12","timestamp":"2026-10-23T17:05:27.495Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":11}
+# {"event":"research_starter_fallback_started","requestId":"b2b3a365-bc61-49ca-a455-801ada14ca12","timestamp":"2026-10-23T17:05:27.496Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"b2b3a365-bc61-49ca-a455-801ada14ca12","timestamp":"2026-10-23T17:05:27.496Z","stage":"crossref","durationMs":12,"rankedPapers":1}
+# {"event":"research_starter_request_failed","requestId":"7defabe1-7dd3-4992-9233-901402499d91","timestamp":"2026-10-23T17:05:27.497Z","attempt":1,"code":"temporary-unavailable","status":null,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"7defabe1-7dd3-4992-9233-901402499d91","timestamp":"2026-10-23T17:05:27.498Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_failed","requestId":"7defabe1-7dd3-4992-9233-901402499d91","timestamp":"2026-10-23T17:05:27.498Z","stage":"crossref","durationMs":1,"code":"temporary-unavailable"}
+# {"event":"research_starter_request_failed","requestId":"69f38b32-5a9c-4ec6-86d6-aac58818cd39","timestamp":"2026-10-23T17:05:27.499Z","attempt":1,"code":"temporary-unavailable","status":503,"queryLength":26,"durationMs":0}
+# {"event":"research_starter_fallback_started","requestId":"69f38b32-5a9c-4ec6-86d6-aac58818cd39","timestamp":"2026-10-23T17:05:27.499Z","code":"temporary-unavailable","stage":"crossref"}
+# {"event":"research_starter_fallback_completed","requestId":"69f38b32-5a9c-4ec6-86d6-aac58818cd39","timestamp":"2026-10-23T17:05:27.499Z","stage":"crossref","durationMs":0,"rankedPapers":1}
+# Subtest: C120: primary timeout leaves time for the alternate source
+ok 41 - C120: primary timeout leaves time for the alternate source
+  ---
+  duration_ms: 12.791167
+  type: 'test'
+  ...
+# Subtest: C120: cancellation suppresses retries and fallback, and rejects late results
+ok 42 - C120: cancellation suppresses retries and fallback, and rejects late results
+  ---
+  duration_ms: 0.978
+  type: 'test'
+  ...
+# Subtest: C120: both services failing gives a recoverable sanitized error and no fake report
+ok 43 - C120: both services failing gives a recoverable sanitized error and no fake report
+  ---
+  duration_ms: 0.296167
+  type: 'test'
+  ...
+# Subtest: C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+ok 44 - C120: Crossref rejects missing DOI/title, unrelated items, malformed envelopes; deduplicates and sanitizes
+  ---
+  duration_ms: 0.805041
+  type: 'test'
+  ...
+# Subtest: C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+ok 45 - C120: Crossref receives date bounds, bounded result count and no credentials or whole briefing
+  ---
+  duration_ms: 0.093
+  type: 'test'
+  ...
+# Subtest: C120: progress truthfully identifies Crossref without breaking the existing researching phase
+ok 46 - C120: progress truthfully identifies Crossref without breaking the existing researching phase
+  ---
+  duration_ms: 0.45975
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 776.438333

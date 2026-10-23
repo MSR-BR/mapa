@@ -1,5 +1,5 @@
 import { loadOrThrow, checkDataResult, requireAffectedRow, dataApiErrorResponse } from "@/lib/supabase/data-api";
-import { AiError } from "@/modules/ai/failure";
+import { AiError, aiErrorStatus } from "@/modules/ai/failure";
 import { assertOperationActive, emitProgress } from "@/modules/ai/operation";
 import { withAiProgress } from "@/modules/ai/route";
 import { NextResponse } from "next/server";
@@ -116,7 +116,7 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
   } catch (error) {
     const dataFailure = dataApiErrorResponse(error);
     if (dataFailure) return dataFailure;
-    const errorCode = error instanceof DiscoveryError
+    const errorCode = error instanceof AiError ? error.code : error instanceof DiscoveryError
       ? error.code
       : error instanceof ResearchStarterClientError && error.code === "not-configured"
         ? "research-starter-config"
@@ -126,7 +126,8 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
     const stage = error instanceof DiscoveryError
       ? error.stage
       : error instanceof ResearchStarterClientError ? "literature" : unclassifiedStage;
-    const retryable = error instanceof DiscoveryError || error instanceof ResearchStarterClientError ? error.retryable : true;
+    const retryable = error instanceof AiError ? !["budget", "provider_quota", "auth", "configuration"].includes(error.code)
+      : error instanceof DiscoveryError || error instanceof ResearchStarterClientError ? error.retryable : true;
     logSanitizedOperationalFailure("proposal_discovery_failed", requestContext, error, {
       errorCode,
       projectId: id,
@@ -167,7 +168,8 @@ async function handlePost(request: Request, context: { params: Promise<{ id: str
       retryable,
       stage,
       preservedBriefing: Boolean(workflow.content.initialBriefing),
-    }, { status: errorCode === "briefing-too-short" ? 422 : ["research-starter-config", "research-starter-unauthorized"].includes(errorCode) ? 503 : 502, headers: { "Cache-Control": "private, no-store" } });
+    }, { status: error instanceof AiError ? aiErrorStatus(error) : errorCode === "briefing-too-short" ? 422 : ["research-starter-config", "research-starter-unauthorized"].includes(errorCode) ? 503 : 502,
+      headers: { "Cache-Control": "private, no-store", ...(error instanceof AiError && error.retryAfterSeconds ? { "Retry-After": String(error.retryAfterSeconds) } : {}) } });
   }
 }
 

@@ -1,13 +1,14 @@
 import "server-only";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
-import { generateText, Output, type LanguageModelUsage } from "ai";
+import { generateText, Output, NoObjectGeneratedError, type LanguageModelUsage } from "ai";
 import { z } from "zod";
-import { observeAiAttempt } from "@/lib/observability/ai-usage";
+import { observeAiAttempt, observeAiBudgetWarning } from "@/lib/observability/ai-usage";
 import { structuredTextInstruction } from "./schema-instructions";
-import { reserveAiBudget } from "./budget";
+import { reserveAiBudget, settleAiBudget, type BudgetMetadata } from "./budget";
+import { knownAiCost, type KnownAiCost } from "./cost";
 import type { AiProvider, AiRole } from "./contract";
-import { AiError, canFallback, classifyAiFailure } from "./failure";
+import { AiError, canFallback, classifyAiFailure, retryAfterSecondsFromAiFailure } from "./failure";
 import { aiOperation, assertOperationActive, claimAttempt, createOperation, emitProgress } from "./operation";
 import { AI_LIMITS, OUTPUT_TOKEN_BUDGETS, configuredModel, priceFor, providerEnabled, type AiOperation } from "./policy";
 
@@ -17,7 +18,7 @@ export type StructuredRequest<T> = {
 };
 export type ProviderCall = { request: Omit<StructuredRequest<unknown>, "validate">; prompt: string; provider: AiProvider; model: string; maxOutputTokens: number; signal: AbortSignal };
 export type ProviderResult = { output: unknown; totalUsage: LanguageModelUsage; response: { modelId: string }; finishReason: string; warnings?: readonly unknown[] };
-export type GenerationDependencies = { invoke: (call: ProviderCall) => Promise<ProviderResult>; reserve: (micros: number) => Promise<void> };
+export type GenerationDependencies = { invoke: (call: ProviderCall) => Promise<ProviderResult>; reserve: (micros: number, metadata?: BudgetMetadata) => Promise<string | void>; settle?: (id: string, cost: KnownAiCost) => Promise<void> };
 async function invokeProvider({ request, prompt, provider, model, maxOutputTokens, signal }: ProviderCall): Promise<ProviderResult> {
   return generateText({
         model: provider === "gemini"
@@ -40,7 +41,7 @@ async function refusalAwareFetch(input: RequestInfo | URL, init?: RequestInit) {
   }
   return response;
 }
-export const productionDependencies: GenerationDependencies = { invoke: invokeProvider, reserve: reserveAiBudget };
+export const productionDependencies: GenerationDependencies = { invoke: invokeProvider, reserve: reserveAiBudget, settle: settleAiBudget };
 
 export async function generateStructured<T>(request: StructuredRequest<T>, dependencies: GenerationDependencies = productionDependencies): Promise<{ output: T; provider: AiProvider; model: string }> {
   if (!aiOperation.getStore()) {
@@ -68,16 +69,31 @@ export async function generateStructured<T>(request: StructuredRequest<T>, depen
     const attempt = claimAttempt(request.operation, micros);
     // Every provider attempt shares the durable monthly ceiling, including primary Gemini.
     // No per-user daily quota: product decision recorded in C126.
-    await dependencies.reserve(micros);
+    const reservationId = await dependencies.reserve(micros, { provider, model, operation: request.operation });
     assertOperationActive();
     emitProgress(fallbackReason ? "fallback" : role === "reviewer" ? "reviewing" : "generating", provider);
     const started = Date.now();
     const signal = AbortSignal.any([state.signal, AbortSignal.timeout(Math.max(1, Math.min(AI_LIMITS.attemptMs, state.deadline - Date.now())))]);
     let usage: LanguageModelUsage | undefined;
     let actualModel = model;
+    let settlementAttempted = false;
+    async function settleKnownUsage() {
+      // Known usage is chargeable even when the generated content fails validation.
+      const knownCost = actualModel === model ? knownAiCost(model, usage) : null;
+      if (settlementAttempted || !reservationId || !dependencies.settle || !knownCost) return;
+      settlementAttempted = true;
+      try {
+        await dependencies.settle(reservationId, knownCost);
+        if (knownCost.micros > micros) observeAiBudgetWarning("ai_budget_estimate_exceeded", provider, request.operation);
+      } catch {
+        // Keep valid content and the conservative reservation. Never retry generation here.
+        observeAiBudgetWarning("ai_budget_settlement_pending", provider, request.operation);
+      }
+    }
     try {
       const result = await dependencies.invoke({ request, prompt, provider, model, maxOutputTokens, signal });
       usage = result.totalUsage; actualModel = result.response.modelId || model;
+      await settleKnownUsage();
       if (result.finishReason === "content-filter") throw new AiError("refusal");
       assertOperationActive();
       emitProgress("validating");
@@ -87,12 +103,16 @@ export async function generateStructured<T>(request: StructuredRequest<T>, depen
       if (role === "generator") { state.lastGenerator = provider; state.lastModel = actualModel; }
       return { output, provider, model: actualModel };
     } catch (error) {
+      if (NoObjectGeneratedError.isInstance(error)) {
+        usage = error.usage; actualModel = error.response?.modelId || model;
+        await settleKnownUsage();
+      }
       const failure = state.signal.aborted ? "cancelled" : signal.aborted ? "timeout" : classifyAiFailure(error);
       observeAiAttempt({ ...request, provider, role, model: actualModel, attempt, started, maxOutputTokens, usage, failure, fallbackReason });
-      if (request.allowFallback === false || index > 0 || !canFallback(failure)) throw new AiError(failure);
+      if (request.allowFallback === false || index > 0 || !canFallback(failure)) throw new AiError(failure, failure === "rate_limited" ? retryAfterSecondsFromAiFailure(error) : undefined);
       const alternate = provider === "gemini" ? "openai" : "gemini";
       if (providerEnabled(alternate)) provider = alternate;
-      else if (failure !== "invalid_output") throw new AiError(failure);
+      else if (failure !== "invalid_output") throw new AiError(failure, failure === "rate_limited" ? retryAfterSecondsFromAiFailure(error) : undefined);
       fallbackReason = failure;
     }
   }

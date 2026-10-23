@@ -1,0 +1,8 @@
+{
+  "supabase/migrations/20261023165336_c129_ai_budget_settlement.sql": "30ca3839e46ef5e828f9880526aec5d488b7a35c1e6f2432acc1b5ce733899d3",
+  "modules/ai/budget.ts": "957be20066576854fe3e33fad76f48c1d61861f684432301615e754f06be880e",
+  "modules/ai/generate.ts": "15d7a362a82a879dfb445ca409baabbe80fc1278edc23a54c9792b3618624a90",
+  "modules/ai/cost.ts": "2c867f8291174d5b9f2199a7154f6d94195afe47d2523c7041984180cf2d27f3",
+  ".specs/changes/130-fifty-maps-daily-capacity/budget-update.sql": "6dea436719eb479f26feffe0f4bb571e2bb235e535aeceeade1fc98a42024d1a",
+  ".specs/changes/130-fifty-maps-daily-capacity/budget-readback.json": "775ce1b58682f30a43c405b682ce4f5fd945e447251aae8913048276c08c9f41"
+}

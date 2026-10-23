@@ -245,6 +245,19 @@
         "service_role": []
       },
       "migration": "20261022213449_c127_advisor_reminder_guard.sql"
+    },
+    {
+      "name": "private.ai_budget_reservations",
+      "consumer": "C129: reservas por tentativa; identidade somente para isolamento, sem conteúdo acadêmico",
+      "rls": true,
+      "privileges": {
+        "public": [],
+        "anon": [],
+        "authenticated": [],
+        "service_role": []
+      },
+      "migration": "20261023165336_c129_ai_budget_settlement.sql",
+      "policies": []
     }
   ],
   "views": [],
@@ -509,6 +522,58 @@
         "service_role": false
       },
       "migration": "20261022213449_c127_advisor_reminder_guard.sql"
+    },
+    {
+      "signature": "private.reserve_ai_budget_v2(text,uuid,integer,text,text,text)",
+      "consumer": "C129: servidor + identidade autenticada + segredo; liquidação restrita ao dono",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261023165336_c129_ai_budget_settlement.sql"
+    },
+    {
+      "signature": "private.settle_ai_budget(text,uuid,bigint,bigint,bigint)",
+      "consumer": "C129: servidor + identidade autenticada + segredo; liquidação restrita ao dono",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261023165336_c129_ai_budget_settlement.sql"
+    },
+    {
+      "signature": "public.reserve_ai_budget_v2(text,uuid,integer,text,text,text)",
+      "consumer": "C129: servidor + identidade autenticada + segredo; liquidação restrita ao dono",
+      "security": "invoker",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261023165336_c129_ai_budget_settlement.sql"
+    },
+    {
+      "signature": "public.settle_ai_budget(text,uuid,bigint,bigint,bigint)",
+      "consumer": "C129: servidor + identidade autenticada + segredo; liquidação restrita ao dono",
+      "security": "invoker",
+      "searchPath": "empty",
+      "execute": {
+        "public": false,
+        "anon": false,
+        "authenticated": true,
+        "service_role": false
+      },
+      "migration": "20261023165336_c129_ai_budget_settlement.sql"
     }
   ],
   "managedDependencies": [

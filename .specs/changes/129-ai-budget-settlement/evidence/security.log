@@ -1,0 +1,121 @@
+
+> mapa-da-pesquisa@0.1.0 security:audit
+> node scripts/audit-security.mjs
+
+{
+  "classification": "S3_SENSITIVE",
+  "filesScanned": 1405,
+  "findings": [
+    {
+      "check": "secrets",
+      "evidence": "Nenhum .env de ambiente versionado ou pendente foi encontrado.",
+      "status": "pass"
+    },
+    {
+      "check": "secrets",
+      "evidence": "Nenhum padrão de chave privada/token foi encontrado nos arquivos do repositório.",
+      "status": "pass"
+    },
+    {
+      "check": "public-environment",
+      "evidence": "Variáveis públicas não incluem service_role, senha ou tokens privados.",
+      "status": "pass"
+    },
+    {
+      "check": "supabase-rls",
+      "evidence": "9 tabelas públicas criadas pelas migrations têm RLS habilitado.",
+      "status": "pass"
+    },
+    {
+      "check": "advisor-rls",
+      "evidence": "Atualizações diretas do orientador são limitadas por trigger transacional.",
+      "status": "pass"
+    },
+    {
+      "check": "api-auth",
+      "evidence": "17 rotas de projeto usam autorização central de ator, modo e relação.",
+      "status": "pass"
+    },
+    {
+      "check": "xss",
+      "evidence": "Único uso de HTML bruto está limitado ao JSON-LD serializado e protegido por nonce da página pública.",
+      "status": "pass"
+    },
+    {
+      "check": "security-headers",
+      "evidence": "Cabeçalhos de transporte, framing, MIME, referrer e permissões configurados.",
+      "status": "pass"
+    },
+    {
+      "check": "csrf",
+      "evidence": "Origem explícita cross-site é rejeitada para mutações da API no proxy.",
+      "status": "pass"
+    },
+    {
+      "check": "csp",
+      "evidence": "CSP dinâmica com nonce é emitida pelo proxy.",
+      "status": "pass"
+    },
+    {
+      "check": "security-governance",
+      "evidence": "Perfil S3, riscos residuais, autoridade e gate de release estão documentados.",
+      "status": "pass"
+    },
+    {
+      "check": "public-abuse-controls",
+      "evidence": "Relatos de bugs, sugestões e suporte aplicam limitação de taxa.",
+      "status": "pass"
+    },
+    {
+      "check": "inbound-webhook",
+      "evidence": "Webhook de suporte exige assinatura e limita o volume agregado de anexos.",
+      "status": "pass"
+    },
+    {
+      "check": "provider-auth",
+      "evidence": "Proxy do Research Starter exige usuário autenticado.",
+      "status": "pass"
+    },
+    {
+      "check": "private-upload",
+      "evidence": "Anexos de bugs são limitados, normalizados e armazenados em bucket privado com policy.",
+      "status": "pass"
+    },
+    {
+      "check": "log-privacy",
+      "evidence": "Logs de runtime passam pelos observadores com allowlist e classificação sanitizada de falhas.",
+      "status": "pass"
+    },
+    {
+      "check": "privacy-indexing",
+      "evidence": "Áreas privadas emitem noindex por metadata e cabeçalho, sem bloqueio contraditório no robots.txt.",
+      "status": "pass"
+    },
+    {
+      "check": "distributed-rate-limit",
+      "evidence": "O rate limit permanece em memória e é válido por instância; distribuição depende de uma futura decisão orientada por evidência.",
+      "status": "warning"
+    },
+    {
+      "check": "attachment-malware-scan",
+      "evidence": "Anexos recebidos por e-mail são limitados, mas não passam por antivírus antes do encaminhamento interno.",
+      "status": "warning"
+    },
+    {
+      "check": "supabase-explicit-grants",
+      "evidence": "Oito tabelas, doze funções e ausência de views/sequences têm contrato local e gate PostgreSQL descartável.",
+      "status": "pass"
+    },
+    {
+      "check": "remote-verification",
+      "evidence": "Verificação RLS remota, restore e fluxo E2E dependem de credenciais e execução operacional; não são inferidos por esta auditoria estática.",
+      "status": "warning"
+    }
+  ],
+  "generatedAt": "2026-10-23T17:05:35.717Z",
+  "result": "PASS_WITH_ACCEPTED_RISK",
+  "snapshot": {
+    "commit": "3b366af82a2d767c6277f887eac15d6d6581a9a7",
+    "dirty": true
+  }
+}

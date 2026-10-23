@@ -1,6 +1,6 @@
 import "server-only";
 import { dataApiErrorResponse } from "@/lib/supabase/data-api";
-import { AiError } from "./failure";
+import { AiError, aiErrorStatus } from "./failure";
 import { aiOperation, createOperation, emitProgress } from "./operation";
 import { AI_LIMITS } from "./policy";
 
@@ -15,7 +15,10 @@ export function withAiProgress<C>(handler: (request: Request, context: C) => Pro
     const handle = async () => {
       try { return await handler(request, context); }
       catch (error) {
-        return dataApiErrorResponse(error) ?? Response.json({ error: error instanceof AiError ? error.message : "Não foi possível concluir. Confira a versão salva antes de tentar novamente." }, { status: error instanceof AiError && error.code === "cancelled" ? 409 : 502 });
+        return dataApiErrorResponse(error) ?? Response.json({ error: error instanceof AiError ? error.message : "Não foi possível concluir. Confira a versão salva antes de tentar novamente." }, {
+          status: error instanceof AiError ? aiErrorStatus(error) : 502,
+          headers: error instanceof AiError && error.retryAfterSeconds ? { "Retry-After": String(error.retryAfterSeconds) } : undefined,
+        });
       }
     };
     if (!wantsStream) return aiOperation.run(createOperation(signal, undefined, totalMs), handle);

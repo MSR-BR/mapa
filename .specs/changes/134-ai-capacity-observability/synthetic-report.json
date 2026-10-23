@@ -1,0 +1,88 @@
+{
+  "attempts": 52,
+  "succeeded": 26,
+  "failed": 26,
+  "estimatedKnownUsd": 0.005453,
+  "unpricedAttempts": 21,
+  "providerOperations": {
+    "gemini/generate_general_objective": {
+      "attempts": 29,
+      "succeeded": 10,
+      "failed": 19,
+      "estimatedKnownUsd": 0.003419,
+      "unpricedAttempts": 16,
+      "measuredDurationMs": 35,
+      "timedAttempts": 29
+    },
+    "openai/generate_general_objective": {
+      "attempts": 11,
+      "succeeded": 9,
+      "failed": 2,
+      "estimatedKnownUsd": 0.00038,
+      "unpricedAttempts": 1,
+      "measuredDurationMs": 116,
+      "timedAttempts": 11
+    },
+    "gemini/generate_specific_objectives": {
+      "attempts": 2,
+      "succeeded": 2,
+      "failed": 0,
+      "estimatedKnownUsd": 0.000526,
+      "unpricedAttempts": 0,
+      "measuredDurationMs": 0,
+      "timedAttempts": 2
+    },
+    "gemini/review_workflow_impact": {
+      "attempts": 2,
+      "succeeded": 2,
+      "failed": 0,
+      "estimatedKnownUsd": 0.000526,
+      "unpricedAttempts": 0,
+      "measuredDurationMs": 4,
+      "timedAttempts": 2
+    },
+    "gemini/regenerate_problem_statement": {
+      "attempts": 4,
+      "succeeded": 1,
+      "failed": 3,
+      "estimatedKnownUsd": 0,
+      "unpricedAttempts": 4,
+      "measuredDurationMs": 3,
+      "timedAttempts": 4
+    },
+    "gemini/generate_methodology_plan": {
+      "attempts": 2,
+      "succeeded": 1,
+      "failed": 1,
+      "estimatedKnownUsd": 0.000526,
+      "unpricedAttempts": 0,
+      "measuredDurationMs": 0,
+      "timedAttempts": 2
+    },
+    "openai/generate_methodology_plan": {
+      "attempts": 2,
+      "succeeded": 1,
+      "failed": 1,
+      "estimatedKnownUsd": 0.000076,
+      "unpricedAttempts": 0,
+      "measuredDurationMs": 0,
+      "timedAttempts": 2
+    }
+  },
+  "failures": {
+    "timeout": 2,
+    "invalid_output": 9,
+    "cancelled": 2,
+    "rate_limited": 3,
+    "unavailable": 3,
+    "auth": 2,
+    "configuration": 1,
+    "refusal": 2,
+    "budget": 1,
+    "provider_quota": 1
+  },
+  "warnings": {},
+  "scope": "AI attempts in the supplied log only; no unique students, projects or completed maps",
+  "costPerCompletedMapUsd": null,
+  "completedMaps": null
+}
