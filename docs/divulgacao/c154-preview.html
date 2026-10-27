@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C154 — prévia local da mensagem de entrada</title>
+  <style>
+    :root { color-scheme: light; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f3f4ef; color: #17322d; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 18px 50px; }
+    main { max-width: 1220px; margin: auto; }
+    .intro { max-width: 800px; margin: 0 auto 30px; text-align: center; }
+    .intro h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin: 0 0 10px; letter-spacing: -.04em; }
+    .intro p { line-height: 1.5; margin: 0; color: #45635a; }
+    .comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .panel { background: white; border: 1px solid #d9e2d8; border-radius: 20px; box-shadow: 0 10px 35px #1433290d; overflow: hidden; }
+    .panel-label { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 13px 20px; border-bottom: 1px solid #e5ebe4; font-size: .83rem; font-weight: 700; }
+    .panel-label .state { color: #5c716b; font-weight: 500; }
+    .candidate .panel-label { background: #e4f4ec; }
+    .hero { padding: clamp(26px, 4vw, 55px) clamp(22px, 4vw, 48px) 46px; min-height: 450px; }
+    .brand { display: flex; align-items: center; gap: 9px; font-size: .89rem; font-weight: 750; margin-bottom: 55px; }
+    .brand-mark { width: 25px; height: 25px; border-radius: 7px; background: #185d48; display: inline-block; position: relative; }
+    .brand-mark::after { content: ""; position: absolute; inset: 6px; border: 2px solid #f0ca78; border-radius: 50%; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .16em; color: #678a6c; font-size: .73rem; font-weight: 800; margin: 0 0 15px; }
+    .hero h2 { font-size: clamp(2rem, 3.5vw, 3.35rem); max-width: 560px; line-height: 1.06; letter-spacing: -.05em; margin: 0 0 20px; }
+    .lede { color: #476258; font-size: .98rem; line-height: 1.58; max-width: 550px; margin: 0 0 27px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .button { display: inline-flex; align-items: center; justify-content: center; padding: 12px 17px; min-height: 45px; border-radius: 8px; font-size: .88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .primary { color: #fff; background: #13543f; }
+    .secondary { color: #22503f; border: 1px solid #cddbd0; }
+    .microcopy { margin: 13px 0 0; padding: 9px 11px; max-width: 520px; border-left: 3px solid #63aa7e; background: #f2faf3; color: #275441; font-size: .87rem; line-height: 1.45; }
+    .placeholder { height: 59px; }
+    .points { display: flex; gap: 9px; flex-wrap: wrap; list-style: none; padding: 0; margin: 28px 0 0; }
+    .points li { border-radius: 999px; border: 1px solid #dce7da; color: #5a7164; padding: 6px 9px; font-size: .73rem; }
+    .note { margin: 20px auto 0; max-width: 800px; color: #4c675c; font-size: .84rem; line-height: 1.5; text-align: center; }
+    @media (max-width: 850px) { .comparison { grid-template-columns: 1fr; max-width: 620px; margin: auto; } .hero { min-height: 0; } .brand { margin-bottom: 35px; } }
+    @media (max-width: 390px) { body { padding: 20px 10px 36px; } .hero { padding: 24px 18px 32px; } .hero h2 { font-size: 2.05rem; } .button { white-space: normal; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="intro"><h1>C154 — clareza antes do login</h1><p>Prévia local esquemática. A única alteração proposta é a frase de apoio sob os botões. Nenhuma página foi publicada.</p></div>
+    <div class="comparison">
+      <section class="panel" aria-labelledby="version-a">
+        <div class="panel-label"><span id="version-a">A · Texto atual</span><span class="state">Referência de 27/10</span></div>
+        <div class="hero">
+          <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Mapa da Pesquisa</div>
+          <p class="eyebrow">Mapa da Pesquisa</p>
+          <h2>Planeje seu projeto de pesquisa com IA.</h2>
+          <p class="lede">Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.</p>
+          <div class="actions"><span class="button primary">Começar meu projeto</span><span class="button secondary">Como funciona</span></div>
+          <div class="placeholder" aria-hidden="true"></div>
+          <ul class="points"><li>Acesso gratuito</li><li>Mapa Rápido ou Avançado</li><li>Aluno ou Orientador</li></ul>
+        </div>
+      </section>
+      <section class="panel candidate" aria-labelledby="version-b">
+        <div class="panel-label"><span id="version-b">B · Candidata C154-v1</span><span class="state">Pendente de aprovação</span></div>
+        <div class="hero">
+          <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Mapa da Pesquisa</div>
+          <p class="eyebrow">Mapa da Pesquisa</p>
+          <h2>Planeje seu projeto de pesquisa com IA.</h2>
+          <p class="lede">Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.</p>
+          <div class="actions"><span class="button primary">Começar meu projeto</span><span class="button secondary">Como funciona</span></div>
+          <p class="microcopy">Prepare sua ideia sem login. Para gerar e guardar o mapa, entre com sua conta Google.</p>
+          <ul class="points"><li>Acesso gratuito</li><li>Mapa Rápido ou Avançado</li><li>Aluno ou Orientador</li></ul>
+        </div>
+      </section>
+    </div>
+    <p class="note">Os botões são apenas representações visuais nesta prévia. O destino real proposto continua <code>/mapa</code>, sem UTM interno. A implementação requer o projeto de desenvolvimento e revisão de layout em dispositivos reais.</p>
+  </main>
+</body>
+</html>

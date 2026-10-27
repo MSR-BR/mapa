@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C155 — prévia local de retomada por estado</title>
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #19352e; background: #f3f5ef; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 28px 16px 48px; }
+    main { max-width: 1050px; margin: auto; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.7rem, 4vw, 2.5rem); letter-spacing: -.04em; }
+    .intro { color: #536a5f; line-height: 1.5; max-width: 780px; margin: 0 0 25px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .case { background: #fff; border: 1px solid #d8e3d7; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px #284b380d; }
+    .case header { padding: 11px 18px; background: #e9f3e8; font-size: .82rem; font-weight: 700; }
+    .case.pending header { background: #f7f0dc; }
+    .case.later header { background: #e9edf2; }
+    .body { padding: 22px 20px 25px; min-height: 185px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; color: #668069; font-weight: 800; margin: 0 0 12px; }
+    h2 { margin: 0 0 10px; font-size: 1.28rem; line-height: 1.25; }
+    p { line-height: 1.48; }
+    .body p { color: #526a5d; margin: 0 0 16px; }
+    .button { display: inline-block; padding: 10px 14px; border-radius: 8px; background: #195c44; color: white; font-size: .86rem; font-weight: 700; }
+    .muted { background: #f5f7f3; border-left: 3px solid #abb9ac; padding: 9px 11px; color: #4d6658; font-size: .82rem; }
+    footer { color: #5b6e63; font-size: .82rem; line-height: 1.5; margin-top: 20px; }
+    @media (max-width: 690px) { .grid { grid-template-columns: 1fr; } .body { min-height: 0; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>C155 — a ação certa para cada estado</h1>
+    <p class="intro">Prévia local esquemática para revisão de mensagens. Apenas o primeiro cartão é candidato ao primeiro teste. Nenhum cartão, aviso ou e-mail foi publicado.</p>
+    <div class="grid">
+      <section class="case" aria-labelledby="ready-title"><header>1 · Primeiro teste proposto — Aluno, etapa disponível</header><div class="body"><p class="eyebrow">Continue de onde parou</p><h2 id="ready-title">Projeto em andamento</h2><p>Próxima etapa: [etapa disponível] · [progresso]% concluído</p><span class="button">Abrir etapa</span></div></section>
+      <section class="case pending" aria-labelledby="pending-title"><header>2 · Aguardando orientador — sem novo nudge</header><div class="body"><p class="eyebrow">Estado legítimo de espera</p><h2 id="pending-title">Aguardando revisão do orientador</h2><p>Manter o aviso existente; não tratar este projeto como abandonado nem prometer uma etapa livre.</p><div class="muted">O cartão genérico de “continuar” deve ser conferido e, se necessário, suprimido neste estado.</div></div></section>
+      <section class="case later" aria-labelledby="advisor-title"><header>3 · Candidata posterior — Orientador</header><div class="body"><p class="eyebrow">Revisão pendente</p><h2 id="advisor-title">Há uma revisão aguardando você.</h2><p>Somente quando houver uma revisão persistida e acesso autorizado.</p><span class="button">Abrir revisão</span></div></section>
+      <section class="case later" aria-labelledby="failure-title"><header>4 · Bloqueada até validação da C153 — Falha recuperável</header><div class="body"><p class="eyebrow">Recuperação</p><h2 id="failure-title">Sua ideia continua salva; tente novamente.</h2><p>Esta promessa só pode ser usada depois de comprovar preservação e retry seguro.</p><span class="button">Retomar geração</span></div></section>
+    </div>
+    <footer>“Projeto em andamento” é só um título ilustrativo; a interface real preservaria o título privado existente. Os botões são representações inertes. A prévia não contém dados de projetos nem substitui a revisão real do desenvolvimento. Nenhuma comunicação externa está proposta na primeira fase.</footer>
+  </main>
+</body>
+</html>
