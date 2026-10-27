@@ -1,5 +1,11 @@
 # Estado do projeto
 
+## C157 — Entrada e retomada a partir da base publicada — 27/10/2026
+
+- **CANDIDATA_LOCAL; PUBLICATION_STATE: APPROVAL_PENDING.** Implementação C154-v1/C155-v1 isolada em `codex/growth-c154-c155-release` a partir do commit funcional publicado `aa781d042ed125fee8f4bb49d2fa67702b3a2a02`, sem incluir o trabalho posterior de capacidade de IA C129–C134. A documentação de divulgação C152–C156 está em `codex/growth-c152-c156`, commit `8bcb0cea902851a8ca6a806fad7eda41a783c96f`.
+- Frase sob os botões da home e cartão de continuação apenas para Aluno dono de projeto v2 com orientador e etapa persistida acionável. Testes, tipos, lint, build Webpack offline, prévia da home e auditoria rápida passaram; build Turbopack padrão foi bloqueado pelo host local. Sem projeto Mapa na conexão Supabase disponível, o agregado C152 de projetos distintos permanece indisponível. Ads, GA4, Search Console, consentimento e produção não foram alterados.
+- Pó Mágico local `v20261020.002`, remoto não reconfirmado; checkpoints `resume/classification APP/phase/Change/validation`. Modelo: Codex baseado em GPT-6; variante/esforço, tokens, latência e custo não expostos/medidos. Próximo gate: revisão exata, build remoto, autorização específica do destino e smoke pós-publicação. Rollback por revisão anterior, sem migration.
+
 ## Publicação consolidada autorizada — 22/10/2026
 
 - Autorização humana de CPD para C122–C128; preparando v22102026.1.

@@ -10,7 +10,7 @@ import { claimPendingAdvisorProjects } from "@/modules/profile/storage";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
 import { workflowAdvisorStatus } from "@/modules/research-workflow/advisor-review";
-import { workflowDashboardMeta } from "@/modules/research-workflow/dashboard";
+import { studentContinuationMeta, workflowDashboardMeta } from "@/modules/research-workflow/dashboard";
 import {
   researchWorkflowContentSchema,
   researchWorkflowSchema,
@@ -207,7 +207,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const advisorProjects = advisedProjects
     .map((project) => dashboardProjectById.get(project.id))
     .filter((project): project is typeof dashboardProjects[number] => Boolean(project));
-  const continuationMeta = activeProjects[0] ?? null;
+  const continuationMeta = projects.flatMap((project) => {
+    const dashboardProject = dashboardProjectById.get(project.id);
+    if (!dashboardProject || dashboardProject.isIntegration) return [];
+    const next = studentContinuationMeta(project, workflowByProject.get(project.id), { activeRole: profile.activeRole, userId });
+    return next ? [{ ...dashboardProject, ...next }] : [];
+  })[0] ?? null;
   const hasOwnProjects = projects.length > 0;
   const hasAdvisorProjects = advisorProjects.length > 0;
   const hasPrimaryLibraryProjects = strictMode ? hasOwnProjects : hasOwnProjects || hasAdvisorProjects;
@@ -241,12 +246,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       )}
 
       <section className="recent-projects" aria-labelledby="recent-projects-title">
-        {(strictMode || isStudentMode) && continuationMeta ? (
+        {continuationMeta ? (
           <div className="continue-project-card">
             <div>
               <p className="section-kicker">Continue de onde parou</p>
               <h2>{continuationMeta.title}</h2>
-              <span>{continuationMeta.stageLabel} · {continuationMeta.progress ?? 0}% concluído</span>
+              <span>Próxima etapa: {continuationMeta.stageLabel} · {continuationMeta.progress}% concluído</span>
             </div>
             <a className="primary-link" href={`/dashboard/projects/${continuationMeta.projectId}`}>Abrir etapa</a>
           </div>

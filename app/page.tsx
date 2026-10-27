@@ -118,6 +118,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
           <Link className="landing-primary" href="/mapa">Começar meu projeto</Link>
           <Link className="landing-secondary" href="#como-funciona">Como funciona</Link>
         </div>
+        <p className="landing-login-note">Prepare sua ideia sem login. Para gerar e guardar o mapa, entre com sua conta Google.</p>
         <ul className="landing-proof-points" aria-label="Características principais">
           <li>Acesso gratuito</li>
           <li>Mapa Rápido ou Avançado</li>

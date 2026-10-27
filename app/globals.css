@@ -107,6 +107,7 @@ body {
 .landing-hero h1 { max-width:20ch; font-size:clamp(2.5rem,5.5vw,4.7rem); }
 .landing-lede { max-width:38rem; margin:1.5rem 0 0; color:var(--muted); font-size:clamp(1.05rem,2vw,1.35rem); line-height:1.55; }
 .landing-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2rem; }
+.landing-login-note { margin: .9rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 .landing-proof-points { display:flex; flex-wrap:wrap; gap:.6rem 1.3rem; margin:1.5rem 0 0; padding:0; color:var(--muted); font-size:.82rem; font-weight:700; list-style:none; }
 .landing-proof-points li { display:flex; align-items:center; gap:.5rem; }
 .landing-proof-points li::before { width:.45rem; height:.45rem; border-radius:50%; background:var(--accent); content:""; }

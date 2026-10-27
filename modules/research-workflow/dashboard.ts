@@ -4,6 +4,8 @@ import type {
   ValidatedElement,
   WorkflowState,
 } from "./schema";
+import { currentAdvisorReview } from "./advisor-review";
+import { workflowNavigationPosition } from "./workflow-navigation";
 
 export type WorkflowDashboardMeta = {
   area: string;
@@ -111,4 +113,39 @@ export function workflowDashboardMeta(workflow: ResearchWorkflow, fallback: Dash
     stageLabel: workflowStageLabel(workflow),
     title: workflowDashboardTitle(workflow, fallback),
   };
+}
+
+const CONTINUATION_STEPS = {
+  problem_statement: "Problemática",
+  general_objective: "Objetivo geral",
+  specific_objectives: "Objetivos específicos",
+  literature_topics: "Capítulo 2",
+  development_topics: "Capítulo 4",
+  methodology_matrix: "Metodologia",
+  final_map: "Mapa final",
+} as const;
+
+/** Only persisted, actionable student workflows can receive the continuation prompt. */
+export function studentContinuationMeta(
+  project: {
+    authoring_role: string;
+    owner_id: string;
+    status: string;
+    workflow_version: number;
+    advisor_email: string | null;
+  },
+  workflow: ResearchWorkflow | undefined,
+  actor: { activeRole: string; userId: string },
+) {
+  if (actor.activeRole !== "student" || project.owner_id !== actor.userId || project.authoring_role !== "student"
+    || project.workflow_version !== 2 || !["draft", "ready", "generated"].includes(project.status)
+    || !project.advisor_email?.trim() || !workflow || workflow.ownerId !== actor.userId
+    || ["completed", "failed", "discovering"].includes(workflow.state)
+    || currentAdvisorReview(workflow.content)) return null;
+
+  const position = workflowNavigationPosition(workflow);
+  const stageLabel = position ? CONTINUATION_STEPS[position] : workflow.state === "draft_prompt"
+    ? "Descoberta de propostas" : workflow.state === "choosing_problem"
+      ? "Escolha da proposta" : null;
+  return stageLabel ? { stageLabel, progress: workflowProgress(workflow) } : null;
 }

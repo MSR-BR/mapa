@@ -182,3 +182,7 @@ Cinco alertas na cadeia dev ESLint continuam pendentes.
 Cadeia vulnerável de braces removida com adaptador restrito ao Next lint 16.4.2.
 Audit completo zero; instalação limpa, compatibilidade, testes, lint/tipos e gate
 local PASS. Sem commit/deploy. [Evidências](changes/128-development-dependency-security/spec.md).
+
+## C157 — Implementação de entrada e retomada (27/10/2026)
+
+[Change 157](changes/157-implement-growth-entry-return/objective.md): candidata local C154-v1/C155-v1 sobre o commit funcional publicado `aa781d042ed125fee8f4bb49d2fa67702b3a2a02`, separada de C129–C134 e da branch documental C152–C156. Push público e deploy dependem de revisão e aprovação específicas; avanço operacional C152 continua sem fonte Mapa acessível nesta conexão.

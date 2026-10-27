@@ -637,7 +637,8 @@ test("implements the approved hybrid dashboard with prompt-first proposal discov
   assert.match(dashboard, /variant="completed"/);
   assert.match(dashboard, /variant="integrated"/);
   assert.match(dashboard, /Marque dois a quatro projetos/);
-  assert.match(dashboard, /const continuationMeta = activeProjects\[0\] \?\? null/);
+  assert.match(dashboard, /studentContinuationMeta\(project, workflowByProject\.get\(project\.id\)/);
+  assert.match(dashboard, /Próxima etapa:/);
   assert.doesNotMatch(dashboard, /\?\? projects\[0\]/);
   assert.match(dashboard, /DashboardProjectGrid/);
   assert.match(quickStart, /useActionState/);
