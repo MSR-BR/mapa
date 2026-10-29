@@ -28,7 +28,7 @@ O texto e a ordem das seções públicas permanecem: hero com a promessa e o pap
 - Título, descrição, canonical, Open Graph, Twitter, JSON-LD `WebApplication`, `robots: index, follow`, `/robots.txt` e `/sitemap.xml` mantidos. Apenas `lastModified` da homepage no sitemap passa a 2026-10-29; `/mapa` mantém sua data anterior.
 - HTML renderizado: um H1, H2 ordenados, âncoras com alvos existentes, imagens com texto alternativo e carregadas, sem rolagem horizontal a 390 px. O vídeo mantém legenda, transcrição e controle de velocidade.
 - `next build`, TypeScript, ESLint dos arquivos alterados, teste da landing canônica e validação XML dos SVGs passaram. Logs de erro/aviso do navegador local: nenhum no momento da inspeção.
-- Prévia local: `http://127.0.0.1:3101/` (o servidor precisa permanecer ativo); capturas `preview-desktop.png` e `preview-mobile.png` nesta pasta.
+- Prévia local: `http://127.0.0.1:3101/` (o servidor precisa permanecer ativo); capturas preservadas em `~/.codex/visualizations/2026/10/06/01a10eda-341c-76b1-a181-beefcd7013ef/landing-c166/`.
 
 ## Limites e próximo gate
 
