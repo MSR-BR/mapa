@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -8,6 +9,8 @@ import { type PublicSearchParams } from "@/modules/analytics/campaign-attributio
 import { BrandLogo } from "@/modules/branding/brand-logo";
 import { PresentationVideo } from "@/modules/landing/presentation-video";
 import { LegalLinks } from "@/modules/legal/legal-links";
+
+import "./landing-refresh.css";
 
 const canonicalUrl = "https://mapadapesquisa.com.br/";
 const socialCardUrl = "/brand/mapa-da-pesquisa-social-card.png";
@@ -99,39 +102,52 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (
-    <main className="landing-page">
+    <main className="landing-page landing-home">
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} nonce={nonce} type="application/ld+json" />
       <header className="landing-header">
         <Link className="landing-brand" href="/" aria-label="Mapa da Pesquisa">
           <BrandLogo variant="wordmark" priority />
         </Link>
+        <nav className="landing-nav" aria-label="Navegação da página inicial">
+          <Link href="#como-funciona">Como funciona</Link>
+          <Link href="#criar-mapa">Escolher modo</Link>
+          <Link href="#apresentacao">Vídeo</Link>
+        </nav>
         <Link className="landing-login" href={authenticated ? "/dashboard" : "/login"}>{authenticated ? "Meus projetos" : "Entrar"}</Link>
       </header>
 
       <section className="landing-hero" aria-labelledby="landing-title">
-        <p className="eyebrow">Mapa da Pesquisa</p>
-        <h1 id="landing-title">Planeje seu projeto de pesquisa com IA.</h1>
-        <p className="landing-lede">
-          Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.
-        </p>
-        <div className="landing-actions">
-          <Link className="landing-primary" href="/mapa">Começar meu projeto</Link>
-          <Link className="landing-secondary" href="#como-funciona">Como funciona</Link>
+        <div className="landing-hero-copy">
+          <p className="eyebrow">Mapa da Pesquisa</p>
+          <h1 id="landing-title">Planeje seu projeto de pesquisa <span>com IA.</span></h1>
+          <p className="landing-lede">
+            Organize o problema, os objetivos, a revisão da literatura e a metodologia do seu TCC, monografia, dissertação, tese ou artigo. A IA sugere caminhos; você revisa e decide.
+          </p>
+          <div className="landing-actions">
+            <Link className="landing-primary" href="/mapa">Começar meu projeto <span aria-hidden="true">↗</span></Link>
+            <Link className="landing-secondary" href="#como-funciona">Como funciona</Link>
+          </div>
+          <ul className="landing-proof-points" aria-label="Características principais">
+            <li>Acesso gratuito</li>
+            <li>Mapa Rápido ou Avançado</li>
+            <li>Aluno ou Orientador</li>
+          </ul>
         </div>
-        <ul className="landing-proof-points" aria-label="Características principais">
-          <li>Acesso gratuito</li>
-          <li>Mapa Rápido ou Avançado</li>
-          <li>Aluno ou Orientador</li>
-        </ul>
+        <figure className="landing-hero-figure">
+          <Image src="/landing/research-journey.svg" alt="Diagrama: sua ideia se transforma em pergunta, objetivos, literatura, método e projeto de pesquisa" width={900} height={760} priority unoptimized />
+          <figcaption>Da primeira ideia a um plano de pesquisa com sentido.</figcaption>
+        </figure>
       </section>
 
       <section className="landing-section landing-entry-modes" id="criar-mapa" aria-labelledby="start-title">
-        <p className="eyebrow">Sua ideia é o ponto de partida</p>
-        <h2 id="start-title">Escolha como começar seu mapa.</h2>
-        <p>Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.</p>
-        <div className="landing-audience-grid">
-          <article><h3>Mapa Avançado</h3><p>Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.</p><Link className="landing-primary" href="/mapa?modo=avancado">Começar no modo Avançado →</Link></article>
-          <article><h3>Mapa Rápido</h3><p>Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.</p><Link className="landing-secondary" href="/mapa?modo=rapido">Começar no modo Rápido →</Link></article>
+        <div className="landing-section-heading">
+          <p className="eyebrow">Sua ideia é o ponto de partida</p>
+          <h2 id="start-title">Escolha como começar seu mapa.</h2>
+          <p>Abra o espaço de criação e prepare sua ideia sem login. Para gerar e guardar o projeto, entre com sua conta Google.</p>
+        </div>
+        <div className="landing-audience-grid landing-modes-grid">
+          <article className="landing-mode-advanced"><span className="landing-mode-number" aria-hidden="true">01</span><h3>Mapa Avançado</h3><p>Cinco perguntas ajudam a delimitar o problema, o contexto e a contribuição da pesquisa.</p><Link className="landing-primary" href="/mapa?modo=avancado">Começar no modo Avançado →</Link></article>
+          <article className="landing-mode-quick"><span className="landing-mode-number" aria-hidden="true">02</span><h3>Mapa Rápido</h3><p>Escreva sua ideia em linguagem natural e organize os primeiros caminhos da investigação.</p><Link className="landing-secondary" href="/mapa?modo=rapido">Começar no modo Rápido →</Link></article>
         </div>
       </section>
 
@@ -150,8 +166,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
       </section>
 
       <section className="landing-section" id="como-funciona" aria-labelledby="how-title">
-        <p className="eyebrow">Um processo guiado</p>
-        <h2 id="how-title">Como planejar seu projeto de pesquisa.</h2>
+        <div className="landing-section-heading"><p className="eyebrow">Um processo guiado</p><h2 id="how-title">Como planejar seu projeto de pesquisa.</h2></div>
         <div className="landing-steps">
           <article><span>01</span><h3>Formule o problema</h3><p>Responda cinco perguntas guiadas para transformar uma inquietação em situação-problema e pergunta de pesquisa.</p></article>
           <article><span>02</span><h3>Escolha o produto</h3><p>Selecione TCC, monografia, dissertação, tese ou artigo. A escolha ajusta o rigor, a literatura e a contribuição esperada.</p></article>
@@ -160,8 +175,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
       </section>
 
       <section className="landing-section landing-products" aria-labelledby="products-title">
-        <p className="eyebrow">Níveis de pesquisa</p>
-        <h2 id="products-title">Um mapa na medida do seu produto.</h2>
+        <div className="landing-section-heading"><p className="eyebrow">Níveis de pesquisa</p><h2 id="products-title">Um mapa na medida do seu produto.</h2></div>
         <div className="landing-product-grid">
           <article><strong>TCC / Graduação</strong><span>Recorte viável e fundamentos essenciais.</span></article>
           <article><strong>Monografia / Especialização</strong><span>Aprofundamento aplicado e análise consistente.</span></article>
@@ -173,16 +187,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<Pub
       </section>
 
       <section className="landing-feature" aria-labelledby="references-title">
-        <div><p className="eyebrow">Pesquisa com rastreabilidade</p><h2 id="references-title">Ideias apoiadas por literatura.</h2><p>O Research Starter ajuda a localizar fontes relacionadas ao tema. As referências entram no mapa para que tópicos, objetivos e metodologia possam ser revisados com mais contexto.</p></div>
-        <div className="landing-feature-note"><strong>Você decide.</strong><span>A IA sugere; você revisa, justifica e valida.</span></div>
+        <div className="landing-feature-copy"><p className="eyebrow">Pesquisa com rastreabilidade</p><h2 id="references-title">Ideias apoiadas por literatura.</h2><p>O Research Starter ajuda a localizar fontes relacionadas ao tema. As referências entram no mapa para que tópicos, objetivos e metodologia possam ser revisados com mais contexto.</p><div className="landing-feature-note"><strong>Você decide.</strong><span>A IA sugere; você revisa, justifica e valida.</span></div></div>
+        <figure className="landing-literature-figure"><Image src="/landing/literature-links.svg" alt="Diagrama de fontes verificáveis conectadas aos objetivos, tópicos e método do mapa" width={800} height={650} unoptimized /><figcaption>As referências ajudam a conectar decisões ao longo do mapa.</figcaption></figure>
       </section>
 
       <section className="landing-section landing-audience" aria-labelledby="audience-title">
-        <p className="eyebrow">Para cada papel</p>
-        <h2 id="audience-title">Autoria própria e orientação quando necessária.</h2>
+        <div className="landing-section-heading"><p className="eyebrow">Para cada papel</p><h2 id="audience-title">Autoria própria e orientação quando necessária.</h2></div>
         <div className="landing-audience-grid">
-          <article><h3>Aluno</h3><p>Construa seus projetos, salve o progresso e vincule um orientador para revisar e aprovar cada avanço.</p></article>
-          <article><h3>Orientador</h3><p>Crie projetos próprios sem supervisor externo e acompanhe, comente ou valide os projetos de alunos vinculados.</p></article>
+          <article><span className="landing-role-icon" aria-hidden="true">A</span><h3>Aluno</h3><p>Construa seus projetos, salve o progresso e vincule um orientador para revisar e aprovar cada avanço.</p></article>
+          <article><span className="landing-role-icon" aria-hidden="true">O</span><h3>Orientador</h3><p>Crie projetos próprios sem supervisor externo e acompanhe, comente ou valide os projetos de alunos vinculados.</p></article>
         </div>
       </section>
 

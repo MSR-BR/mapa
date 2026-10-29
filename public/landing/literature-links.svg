@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="650" viewBox="0 0 800 650" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">Referências ligadas ao mapa da pesquisa</title>
+  <desc id="description">Fontes verificáveis se conectam aos tópicos, objetivos e metodologia da pesquisa.</desc>
+  <defs><linearGradient id="bg" x1="32" y1="40" x2="790" y2="650" gradientUnits="userSpaceOnUse"><stop stop-color="#EFF8EF"/><stop offset="1" stop-color="#E8F2F7"/></linearGradient><filter id="s" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="15" stdDeviation="20" flood-color="#1B513B" flood-opacity=".12"/></filter></defs>
+  <rect width="800" height="650" rx="48" fill="url(#bg)"/>
+  <circle cx="397" cy="333" r="215" stroke="#B8DDC9" stroke-width="2"/><circle cx="397" cy="333" r="278" stroke="#C8E5D5" stroke-width="2" stroke-dasharray="5 12"/>
+  <path d="M219 200C287 215 302 270 350 307M541 200C513 246 498 278 467 311M221 475C282 441 314 389 352 359M550 475C517 441 491 396 469 361" stroke="#57A57C" stroke-width="3" stroke-dasharray="6 9"/>
+  <g filter="url(#s)"><rect x="290" y="266" width="220" height="137" rx="28" fill="#133B2E"/></g>
+  <circle cx="337" cy="309" r="17" fill="#7BC49C"/><path d="M332 309h10m-5-5v10" stroke="#133B2E" stroke-width="2" stroke-linecap="round"/>
+  <text x="368" y="317" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#A9E7C3">O centro</text>
+  <text x="322" y="363" font-family="Arial,Helvetica,sans-serif" font-size="29" font-weight="700" fill="#FFFFFF">Seu mapa</text>
+  <g filter="url(#s)"><rect x="84" y="119" width="230" height="108" rx="22" fill="#FFFFFF"/><rect x="486" y="119" width="230" height="108" rx="22" fill="#FFFFFF"/><rect x="84" y="436" width="230" height="108" rx="22" fill="#FFFFFF"/><rect x="486" y="436" width="230" height="108" rx="22" fill="#FFFFFF"/></g>
+  <rect x="109" y="144" width="38" height="38" rx="11" fill="#DFF4E8"/><path d="M119 154h18m-18 8h18m-18 8h13" stroke="#126648" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="159" y="160" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#204237">Fontes</text><text x="159" y="184" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#61746B">verificáveis</text>
+  <rect x="511" y="144" width="38" height="38" rx="11" fill="#E3EDF8"/><circle cx="530" cy="163" r="10" stroke="#416E8B" stroke-width="2.5"/><circle cx="530" cy="163" r="3" fill="#416E8B"/>
+  <text x="561" y="160" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#204237">Objetivos</text><text x="561" y="184" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#61746B">alinhados</text>
+  <rect x="109" y="461" width="38" height="38" rx="11" fill="#E8F2D7"/><path d="M118 473h20m-20 8h20m-20 8h12" stroke="#5B7937" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="159" y="477" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#204237">Tópicos</text><text x="159" y="501" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#61746B">conectados</text>
+  <rect x="511" y="461" width="38" height="38" rx="11" fill="#F1E7DC"/><path d="M522 474l7 7 11-13m-18 20h18" stroke="#876A49" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="561" y="477" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#204237">Método</text><text x="561" y="501" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#61746B">com contexto</text>
+</svg>
