@@ -25,13 +25,20 @@
 - Candidato local corrigido: `microphone=(self)` no cabeçalho global, preservando `camera=()` e `geolocation=()`. O navegador ainda exige permissão do usuário; somente a própria origem fica habilitada a solicitá-la. `npm run check` passou, com o aviso antigo de lint. O app compilado em `127.0.0.1:3100/mapa` respondeu HTTP 200 com o cabeçalho corrigido.
 - O teste sintético de ditado anterior continua válido para a interface. Microfone físico e navegadores alvo ainda não foram testados. O candidato corrigido precisa de nova aprovação exata antes de push/deploy; a revisão anterior não foi promovida.
 
+## Publicação verificada — 29/10/2026
+
+- O usuário autorizou explicitamente a revisão corrigida `a1c6d9708fbb8e553a419088154d8bd7aa32ba25` e os destinos GitHub público `MSR-BR/mapa` (branch `codex/change-003-004`) e Vercel `mapadapesquisa` em produção. A migration C165 não foi repetida.
+- O GitHub passou a apontar exatamente para esse commit. O deployment `dpl_2dfC1gSDKvihBxfSuxnsjNvJTHKB` ficou `READY`, foi conferido isoladamente (`/api/health` ok, `/mapa` HTTP 200 e `microphone=(self)`) e então promovido ao domínio principal.
+- No domínio `mapadapesquisa.com.br`, `/api/health` respondeu `ok`, `/mapa` respondeu HTTP 200 com `Permissions-Policy: camera=(), geolocation=(), microphone=(self)` e o HTML contém o botão de ditado. O cadastro acadêmico sem login respondeu HTTP 307 para `/login`.
+- O campo `version` do health continua `v22102026.1` porque a revisão C165 não altera esse identificador; para rastrear esta publicação, use o commit e o deployment acima. Microfone físico e navegadores alvo ainda dependem de conferência prática.
+
 A migration aditiva já aplicada é compatível com o app anterior. O rollback do app consiste em restaurar o deployment anterior; a migration permanece para preservar os dados eventualmente inseridos.
 
-PUBLICATION_STATE: APPROVAL_PENDING
-REVIEW_CANDIDATE: nova revisão local que inclui `microphone=(self)`; SHA final a registrar após commit. A revisão `86a0509` foi aprovada, enviada ao GitHub e compilada em deployment sem domínio, mas não promovida por causa do bloqueio do microfone.
-APPROVED_REVISION: `86a05096495f059162e6ac4ca1761a88651fe5f3` para a publicação original; a nova revisão permanece pendente de aprovação.
-APPROVED_DESTINATION: GitHub público `MSR-BR/mapa`, Supabase Mapa `aeaweherkrqmlqnxsmib` e Vercel `mapadapesquisa` em produção para a revisão original; nova revisão pendente.
-APPROVAL_EVIDENCE: resposta explícita do usuário em 29/10/2026, “Sim, autorizo exatamente esta revisão e destinos”.
-PUBLICATION_EVIDENCE: push e migration concluídos; deployment de verificação `READY`, sem promoção ao domínio principal.
+PUBLICATION_STATE: PUBLISHED
+REVIEW_CANDIDATE: revisão do app `a1c6d9708fbb8e553a419088154d8bd7aa32ba25`, incluindo `microphone=(self)`; a revisão anterior `86a0509` não foi promovida.
+APPROVED_REVISION: `a1c6d9708fbb8e553a419088154d8bd7aa32ba25` para GitHub e Vercel; a migration C165 já tinha aprovação e foi aplicada antes.
+APPROVED_DESTINATION: GitHub público `MSR-BR/mapa` branch `codex/change-003-004`, Supabase Mapa `aeaweherkrqmlqnxsmib` e Vercel `mapadapesquisa` em produção.
+APPROVAL_EVIDENCE: respostas explícitas do usuário em 29/10/2026, “Sim, autorizo exatamente esta revisão e destinos” e “Sim, autorizo este commit e esses destinos”.
+PUBLICATION_EVIDENCE: GitHub em `a1c6d97`, migration C165 registrada e conferida no Supabase, deployment `dpl_2dfC1gSDKvihBxfSuxnsjNvJTHKB` promovido, verificações públicas descritas acima.
 
 Rota de correção: reaplicar a versão anterior no Vercel se o app falhar; a migration é aditiva e permanece, evitando perda dos dados já inseridos. Uma remoção posterior da tabela/coluna exigiria migration separada e descarte explícito desses dados. Próxima Change canônica: NONE — ciclo C165 concluído localmente, aguardando decisão de publicação.
