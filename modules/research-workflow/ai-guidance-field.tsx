@@ -2,6 +2,7 @@
 
 import { WorkflowAction } from "./workflow-action";
 import { useEffect, useId, useRef, useState } from "react";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 type Props = {
   className?: string;
@@ -53,9 +54,9 @@ export function AiGuidanceField({ className = "", context, contextPlaceholder, l
         <button disabled={disabled} aria-pressed={mode === "request"} onClick={() => { if (mode !== "request" && context) onRequestChange(context); setMode("request"); }} type="button">Pedido para regenerar{request.trim() ? " •" : ""}</button>
       </div>
       {mode === "context" ? (
-        <label htmlFor={`${id}-context`}><span className="sr-only">{label}: contexto acadêmico</span><textarea disabled={disabled} id={`${id}-context`} maxLength={1000} onChange={(event) => onContextChange(event.target.value)} placeholder={contextPlaceholder} value={context} /></label>
+        <><label htmlFor={`${id}-context`}><span className="sr-only">{label}: contexto acadêmico</span><textarea disabled={disabled} id={`${id}-context`} maxLength={1000} onChange={(event) => onContextChange(event.target.value)} placeholder={contextPlaceholder} value={context} /></label><VoiceDictationButton targetId={`${id}-context`} label={`${label}: contexto`} /></>
       ) : (
-        <label htmlFor={`${id}-request`}><span className="sr-only">{label}: pedido para regenerar</span><textarea disabled={disabled} id={`${id}-request`} maxLength={1000} onChange={(event) => onRequestChange(event.target.value)} placeholder={requestPlaceholder} value={request} /></label>
+        <><label htmlFor={`${id}-request`}><span className="sr-only">{label}: pedido para regenerar</span><textarea disabled={disabled} id={`${id}-request`} maxLength={1000} onChange={(event) => onRequestChange(event.target.value)} placeholder={requestPlaceholder} value={request} /></label><VoiceDictationButton targetId={`${id}-request`} label={`${label}: pedido para regenerar`} /></>
       )}
       {required && mode === "context" ? <small>Contexto para revisão do orientador: pelo menos 10 caracteres recomendados.</small> : null}
       {mode === "request" && onRegenerate ? <div className="card-regeneration-action"><WorkflowAction className="definition-button secondary" disabled={disabled} onClick={onRegenerate} type="button" help="Salva a página e usa o texto atual deste quadro, seu pedido e a IA para gerar uma nova versão. Os outros quadros permanecem como estão. O resultado fica no rascunho até você confirmar em Próximo.">Regenerar com IA</WorkflowAction></div> : null}

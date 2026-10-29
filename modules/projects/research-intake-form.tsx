@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type KeyboardEvent } from "react";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 import {
   RESEARCH_INTAKE_FIELDS,
@@ -119,6 +120,7 @@ export function ResearchIntakeForm({ value, onChange, showResearchType = false }
               rows={3}
               value={value[field.name]}
             />
+            <VoiceDictationButton targetId={`research-intake-${field.name}`} label={field.label} />
             <small id={`research-intake-${field.name}-count`}>{value[field.name].length}/{RESEARCH_INTAKE_MAX_LENGTH} caracteres{value[field.name].length > RESEARCH_INTAKE_MAX_LENGTH ? " — Este rascunho antigo foi preservado. Reduza a resposta para iniciar um novo mapa." : ""}</small>
           </section>
         ))}

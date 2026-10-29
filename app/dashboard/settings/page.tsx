@@ -41,6 +41,7 @@ export default async function AccountSettingsPage() {
         key={`${actorState.actor.activeRole}-${actorState.actor.roleVersion}`}
         roleVersion={actorState.actor.roleVersion}
       />
+      {actorState.actor.activeRole === "student" ? <Link href="/dashboard/student-profile">Atualizar meus dados acadêmicos →</Link> : null}
     </main>
   );
 }

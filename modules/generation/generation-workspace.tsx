@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
 
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
@@ -213,6 +214,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
             <label>
               Palavras-chave
               <textarea
+                id="generation-keywords"
                 autoFocus
                 maxLength={800}
                 onChange={(event) => setKeywordsInput(event.target.value)}
@@ -221,6 +223,7 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
                 value={keywordsInput}
               />
             </label>
+            <VoiceDictationButton targetId="generation-keywords" label="Palavras-chave para nova busca" />
             <div className="keyword-dialog-actions">
               <button className="primary-action" onClick={() => setOptimizingLiterature(false)} type="button">Cancelar</button>
               <button className="primary-action" onClick={optimizeLiterature} type="button">OK e regenerar</button>
@@ -278,8 +281,9 @@ export function GenerationWorkspace({ autoGenerate = false, initialSnapshot, pro
                     </label>
                     <label>
                       Conteúdo
-                      <textarea maxLength={12_000} onChange={(event) => updateSection(chapterIndex, sectionIndex, "content", event.target.value)} rows={7} value={section.content} />
+                      <textarea id={`chapter-section-${section.id}`} maxLength={12_000} onChange={(event) => updateSection(chapterIndex, sectionIndex, "content", event.target.value)} rows={7} value={section.content} />
                     </label>
+                    <VoiceDictationButton targetId={`chapter-section-${section.id}`} label={`Conteúdo da seção ${section.title}`} />
                     {section.referenceIds.length > 0 ? <p className="reference-ids">Evidências: {section.referenceIds.join(", ")}</p> : null}
                   </div>
                 ))}

@@ -118,6 +118,14 @@
       "migration": "20260924222657_c104_reduce_legacy_explicit_grants.sql"
     },
     {
+      "name": "public.student_academic_profiles",
+      "consumer": "somente o titular autenticado; nome sincronizado ao projeto para leitura pelo orientador vinculado",
+      "rls": true,
+      "policies": ["student_academic_profiles_select_own", "student_academic_profiles_insert_own", "student_academic_profiles_update_own"],
+      "privileges": { "public": [], "anon": [], "authenticated": ["select", "insert", "update"], "service_role": [] },
+      "migration": "20261029120000_c165_student_academic_profile.sql"
+    },
+    {
       "name": "public.legal_consents",
       "consumer": "titular autenticado no modo ativo",
       "rls": true,
@@ -574,6 +582,22 @@
         "service_role": false
       },
       "migration": "20261023165336_c129_ai_budget_settlement.sql"
+    },
+    {
+      "signature": "private.sync_student_academic_name()",
+      "consumer": "trigger interno de sincronização do nome no projeto",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": { "public": false, "anon": false, "authenticated": false, "service_role": false },
+      "migration": "20261029120000_c165_student_academic_profile.sql"
+    },
+    {
+      "signature": "private.copy_student_academic_name()",
+      "consumer": "trigger interno de cópia do nome ao criar projeto",
+      "security": "definer",
+      "searchPath": "empty",
+      "execute": { "public": false, "anon": false, "authenticated": false, "service_role": false },
+      "migration": "20261029120000_c165_student_academic_profile.sql"
     }
   ],
   "managedDependencies": [

@@ -55,7 +55,7 @@ export async function setInitialProfileRole(formData: FormData) {
   }
 
   revalidatePath("/dashboard");
-  redirect("/dashboard");
+  redirect(role === "student" ? "/dashboard/student-profile" : "/dashboard");
 }
 
 function switchErrorState(

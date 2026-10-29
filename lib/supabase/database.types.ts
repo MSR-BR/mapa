@@ -182,6 +182,7 @@ export type Database = {
           owner_id: string
           problem_statement: string | null
           status: string
+          student_display_name: string | null
           theme: string | null
           title: string
           updated_at: string
@@ -199,6 +200,7 @@ export type Database = {
           owner_id: string
           problem_statement?: string | null
           status?: string
+          student_display_name?: string | null
           theme?: string | null
           title: string
           updated_at?: string
@@ -216,6 +218,7 @@ export type Database = {
           owner_id?: string
           problem_statement?: string | null
           status?: string
+          student_display_name?: string | null
           theme?: string | null
           title?: string
           updated_at?: string
@@ -390,6 +393,12 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: []
+      }
+      student_academic_profiles: {
+        Row: { user_id: string; display_name: string; university: string; department: string; course_name: string; study_levels: string[]; created_at: string; updated_at: string }
+        Insert: { user_id: string; display_name: string; university: string; department: string; course_name: string; study_levels: string[]; created_at?: string; updated_at?: string }
+        Update: { user_id?: string; display_name?: string; university?: string; department?: string; course_name?: string; study_levels?: string[]; created_at?: string; updated_at?: string }
         Relationships: []
       }
     }

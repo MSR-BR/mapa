@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 import { readWorkflowPayload, WorkflowHttpError, workflowClientFailure, WorkflowRequestError } from "@/modules/research-workflow/request-failure";
 
 import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
@@ -284,9 +285,11 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
               return <div key={objective.id}><label><input disabled={busy || waitingForAdvisor} checked={Boolean(coverage)} onChange={() => toggleObjective(topic, objective.id, chapter === "development" && index === 0)} type="checkbox" /> {label}</label>{coverage ? <select disabled={busy || waitingForAdvisor} aria-label={`Grau de cobertura de ${label}`} onChange={(event) => updateTopic(topic.id, { objectiveCoverage: topic.objectiveCoverage.map((item) => item.objectiveId === objective.id ? { ...item, degree: event.target.value as "partial" | "full" } : item) })} value={coverage.degree}><option value="partial">{OBJECTIVE_COVERAGE_LABELS.partial}</option><option value="full">{OBJECTIVE_COVERAGE_LABELS.full}</option></select> : null}</div>;
             })}</fieldset>
             {chapter === "development" && index === 0 ? (
+              <div>
               <label className="case-study-note">
                 Se 4.1 for apresentação do estudo de caso{topic.objectiveCoverage.length === 0 ? " *" : ""}
                 <textarea
+                  id={`topic-exception-${topic.id}`}
                   aria-required={topic.objectiveCoverage.length === 0}
                   maxLength={FIELD_LIMITS.exceptionJustification}
                   onChange={(event) => updateTopic(topic.id, { exceptionJustification: event.target.value || null })}
@@ -294,6 +297,8 @@ export function LiteratureDevelopmentWorkspace({ initialWorkflow, isSelfDirected
                   value={topic.exceptionJustification ?? ""}
                 />
               </label>
+              <VoiceDictationButton targetId={`topic-exception-${topic.id}`} label={`Justificativa do tópico ${chapterNumber}.${index + 1}`} />
+              </div>
             ) : null}
             <AiGuidanceField className="topic-student-justification" context={topic.studentJustification ?? ""} contextPlaceholder="Explique a contribuição deste tópico e o contexto que deve orientar as próximas etapas." label={`Contexto e orientações para a IA — tópico ${chapterNumber}.${index + 1}`} onContextChange={(value) => updateTopic(topic.id, { studentJustification: value || null })} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(topic.id)} onRequestChange={(value) => updateRequest(topic.id, value)} request={regenerationRequests[topic.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para este tópico na próxima regeneração." required={false} />
             <details className="topic-reference-picker"><summary>{topic.referenceIds.length} referências associadas</summary>{references.map((reference) => <label key={reference.referenceId}><input disabled={busy || waitingForAdvisor} checked={topic.referenceIds.includes(reference.referenceId)} onChange={() => toggleReference(topic, reference.referenceId)} type="checkbox" />{reference.title || reference.referenceId}{reference.year ? ` (${reference.year})` : ""}</label>)}</details>

@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 import { useActionState, useEffect, useRef, useState } from "react";
 
@@ -87,12 +88,14 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
       </label>
       <label>
         Tema
-        <textarea defaultValue={project?.theme ?? ""} maxLength={500} name="theme" rows={3} {...fieldA11y("theme")} />
+        <textarea id="project-theme" defaultValue={project?.theme ?? ""} maxLength={500} name="theme" rows={3} {...fieldA11y("theme")} />
         {errorFor("theme") ? <small className="field-error" id="theme-error">{errorFor("theme")}</small> : null}
       </label>
+      <VoiceDictationButton targetId="project-theme" label="Tema" />
       <label>
         Situação-problema
         <textarea
+          id="project-problem-statement"
           defaultValue={project?.problem_statement ?? ""}
           maxLength={5000}
           name="problemStatement"
@@ -101,6 +104,7 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
         />
         {errorFor("problemStatement") ? <small className="field-error" id="problemStatement-error">{errorFor("problemStatement")}</small> : null}
       </label>
+      <VoiceDictationButton targetId="project-problem-statement" label="Situação-problema" />
       <label>
         Palavras-chave <span>separe por vírgulas; máximo de 12</span>
         <input

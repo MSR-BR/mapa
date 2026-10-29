@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -221,10 +222,12 @@ export function ManualReferencePanel({ onWorkflow, projectId, workflow }: Props)
               </div>
             </div>
             <label>Título<input disabled={busy} maxLength={500} onChange={(event) => update("title", event.target.value)} required value={draft.title} /></label>
-            <label>Autores<textarea disabled={busy} maxLength={1200} onChange={(event) => update("authors", event.target.value)} placeholder="Separe autores por ponto e vírgula" value={draft.authors} /></label>
+            <label>Autores<textarea id="manual-reference-authors" disabled={busy} maxLength={1200} onChange={(event) => update("authors", event.target.value)} placeholder="Separe autores por ponto e vírgula" value={draft.authors} /></label>
+            <VoiceDictationButton targetId="manual-reference-authors" label="Autores da referência" />
             <label>Revista<input disabled={busy} maxLength={240} onChange={(event) => update("journal", event.target.value)} value={draft.journal} /></label>
             <label>Volume, ano, páginas<input disabled={busy} maxLength={240} onChange={(event) => update("volumeIssuePages", event.target.value)} placeholder="Ex.: v. 12, n. 2, 2024, p. 10-25" value={draft.volumeIssuePages} /></label>
-            <label className="manual-reference-abstract">Abstract<textarea disabled={busy} maxLength={5000} onChange={(event) => update("abstract", event.target.value)} value={draft.abstract} /></label>
+            <label className="manual-reference-abstract">Abstract<textarea id="manual-reference-abstract" disabled={busy} maxLength={5000} onChange={(event) => update("abstract", event.target.value)} value={draft.abstract} /></label>
+            <VoiceDictationButton targetId="manual-reference-abstract" label="Abstract da referência" />
             {message ? <p className="manual-reference-message" role="alert">{message}</p> : null}
             <div className="manual-reference-actions">
               <button className="definition-button secondary" disabled={busy} onClick={close} type="button">Cancelar</button>

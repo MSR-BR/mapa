@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import {
   ActorAuthorizationError,
@@ -88,7 +89,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   if (profile.activeRole === "advisor") {
     await claimPendingAdvisorProjects(supabase);
   }
-  const projectColumns = "id, title, theme, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id, authoring_role";
+  const academicProfile = isStudentMode
+    ? await supabase.from("student_academic_profiles").select("user_id").eq("user_id", userId).maybeSingle()
+    : null;
+  const projectColumns = "id, title, theme, status, knowledge_area, academic_level, problem_statement, updated_at, workflow_version, advisor_email, advisor_id, owner_id, authoring_role, student_display_name";
   const ownedProjectsBase = supabase
     .from("projects")
     .select(projectColumns)
@@ -172,6 +176,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       integrationSource,
       isIntegration,
       ownerId: project.owner_id,
+      studentName: project.owner_id !== userId ? project.student_display_name ?? null : null,
       progress: meta?.progress ?? null,
       projectId: project.id,
       referenceCount: references.length,
@@ -218,6 +223,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   return (
     <main className="workspace-shell dashboard-home">
+      {isStudentMode && !academicProfile?.data ? <div className="student-profile-notice"><span>Dados acadêmicos: identifique-se para seu orientador e informe seu curso.</span><Link href="/dashboard/student-profile">Completar cadastro</Link></div> : null}
       {isStudentMode ? (
         <section className="quick-start" aria-labelledby="quick-start-title">
           <p className="section-kicker">{profilePresentation.dashboardKicker}</p>

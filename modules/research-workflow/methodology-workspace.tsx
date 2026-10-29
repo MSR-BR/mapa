@@ -1,6 +1,7 @@
 "use client";
 import { readWorkflowPayload, workflowClientFailure, workflowResponseFailure, WorkflowRequestError, type WorkflowFailureCode } from "./request-failure";
 import { FIELD_LIMITS, classificationListMaxLength, classificationListText, parseClassificationList } from "@/modules/research-workflow/field-limits";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 import { saveThenCompleteStep } from "./complete-step-client";
 import { methodologyIssues } from "./methodology-assistance";
@@ -508,7 +509,8 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
       </div>
 
       <div className="methodology-stage-request ai-guidance-field">
-        <label>Orientação para reescrever o título (opcional)<textarea disabled={busy || waitingForAdvisor} maxLength={1000} value={regenerationRequests.title ?? ""} onChange={(event) => updateRequest("title", event.target.value)} /></label>
+        <label>Orientação para reescrever o título (opcional)<textarea id="methodology-title-request" disabled={busy || waitingForAdvisor} maxLength={1000} value={regenerationRequests.title ?? ""} onChange={(event) => updateRequest("title", event.target.value)} /></label>
+        <VoiceDictationButton targetId="methodology-title-request" label="Orientação para o título" />
         <WorkflowAction className="definition-button secondary" disabled={busy || waitingForAdvisor} type="button" onClick={() => void regenerateCard("title")} help="Usa o título atual e seu pedido para reescrever somente o título. A classificação e as linhas permanecem preservadas.">Regenerar título com IA</WorkflowAction>
       </div>
 
@@ -525,11 +527,17 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
         </fieldset>
         <p className="methodology-list-help">Procedimentos e instrumentos: até 8 itens. Técnicas de análise: até 6. Escreva um item por linha, com até {FIELD_LIMITS.classificationItem} caracteres. Vírgulas podem fazer parte do texto.</p>
         <label>Procedimentos *<textarea rows={3} maxLength={classificationListMaxLength("procedures")} id="methodology-procedures" disabled={busy || waitingForAdvisor} onChange={(event) => setProceduresText(event.target.value)} value={proceduresText} /></label>
+        <VoiceDictationButton targetId="methodology-procedures" label="Procedimentos" />
         <label>Instrumentos *<textarea rows={3} maxLength={classificationListMaxLength("instruments")} id="methodology-instruments" disabled={busy || waitingForAdvisor} onChange={(event) => setInstrumentsText(event.target.value)} value={instrumentsText} /></label>
+        <VoiceDictationButton targetId="methodology-instruments" label="Instrumentos" />
         <label>Técnicas de análise *<textarea rows={3} maxLength={classificationListMaxLength("analysisTechniques")} id="methodology-analysisTechniques" disabled={busy || waitingForAdvisor} onChange={(event) => setAnalysisText(event.target.value)} value={analysisText} /></label>
+        <VoiceDictationButton targetId="methodology-analysisTechniques" label="Técnicas de análise" />
         <label>Justificativa metodológica *<textarea id="methodology-rationale" disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.rationale} onChange={(event) => setClassification((current) => ({ ...current, rationale: event.target.value }))} value={classification.rationale} /></label>
+        <VoiceDictationButton targetId="methodology-rationale" label="Justificativa metodológica" />
         <label>Avisos éticos ou de acesso<textarea id="methodology-ethicsWarnings" disabled={busy || waitingForAdvisor} maxLength={classificationListMaxLength("ethicsWarnings")} onChange={(event) => setEthicsText(event.target.value)} placeholder="Opcional. Se houver mais de um aviso, coloque um por linha." value={ethicsText} /></label>
-        <label>Orientação para a classificação (opcional)<textarea disabled={busy || waitingForAdvisor} maxLength={1000} value={regenerationRequests.classification ?? ""} onChange={(event) => updateRequest("classification", event.target.value)} /></label>
+        <VoiceDictationButton targetId="methodology-ethicsWarnings" label="Avisos éticos ou de acesso" />
+        <label>Orientação para a classificação (opcional)<textarea id="methodology-classification-request" disabled={busy || waitingForAdvisor} maxLength={1000} value={regenerationRequests.classification ?? ""} onChange={(event) => updateRequest("classification", event.target.value)} /></label>
+        <VoiceDictationButton targetId="methodology-classification-request" label="Orientação para a classificação" />
         <WorkflowAction className="definition-button secondary" disabled={busy || waitingForAdvisor} type="button" onClick={() => void regenerateCard("classification")} help="Reescreve somente a classificação metodológica com os valores atuais e sua orientação. Preserva título e matriz.">Regenerar classificação com IA</WorkflowAction>
       </aside>
 
@@ -552,9 +560,9 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
                 </div>
                 <p>{objective?.content}</p>
               </div>
-              <label role="cell">Levantamento *<textarea id={`methodology-${row.id}-dataCollection`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.dataCollection} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label>
-              <label role="cell">Análise/tratamento *<textarea id={`methodology-${row.id}-analysisTreatment`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.analysisTreatment} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label>
-              <label role="cell">Resultado esperado *<textarea id={`methodology-${row.id}-expectedResult`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.expectedResult} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label>
+              <div role="cell"><label>Levantamento *<textarea id={`methodology-${row.id}-dataCollection`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.dataCollection} onChange={(event) => updateRow(row.id, { dataCollection: event.target.value })} value={row.dataCollection} /></label><VoiceDictationButton targetId={`methodology-${row.id}-dataCollection`} label={`Levantamento ${index + 1}`} /></div>
+              <div role="cell"><label>Análise/tratamento *<textarea id={`methodology-${row.id}-analysisTreatment`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.analysisTreatment} onChange={(event) => updateRow(row.id, { analysisTreatment: event.target.value })} value={row.analysisTreatment} /></label><VoiceDictationButton targetId={`methodology-${row.id}-analysisTreatment`} label={`Análise ${index + 1}`} /></div>
+              <div role="cell"><label>Resultado esperado *<textarea id={`methodology-${row.id}-expectedResult`} disabled={busy || waitingForAdvisor} maxLength={FIELD_LIMITS.expectedResult} onChange={(event) => updateRow(row.id, { expectedResult: event.target.value })} value={row.expectedResult} /></label><VoiceDictationButton targetId={`methodology-${row.id}-expectedResult`} label={`Resultado esperado ${index + 1}`} /></div>
               <details className="methodology-row-note">
                 <summary>Contexto e pedido para regenerar — {objective?.label ?? `linha ${index + 1}`}</summary>
                 <AiGuidanceField context={row.studentJustification ?? ""} contextPlaceholder="Explique a contribuição desta linha metodológica e o contexto que deve orientar a análise." label={`Contexto e orientações para a IA — ${objective?.label ?? `linha ${index + 1}`}`} onContextChange={(value) => updateRow(row.id, { studentJustification: value || null })} disabled={busy || waitingForAdvisor} onRegenerate={() => void regenerateCard(row.id)} onRequestChange={(value) => updateRequest(row.id, value)} request={regenerationRequests[row.id] ?? ""} requestPlaceholder="Descreva o ajuste desejado para esta linha na próxima regeneração." />

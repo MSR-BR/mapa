@@ -1,5 +1,6 @@
 "use client";
 import { readProgressResponse } from "@/modules/ai/progress-client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 import { progressLabel, type AiProgressEvent } from "@/modules/ai/contract";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
@@ -142,6 +143,7 @@ export function ResearchPromptInput({
         rows={3}
         value={value}
       />
+      <VoiceDictationButton targetId={id} label="Tema ou palavras-chave da pesquisa" />
       {aiSuggestionsEnabled && normalizedPrompt.length >= AI_SUGGESTION_LENGTH ? (
         <button className="prompt-ai-request" disabled={loading || (suggestionsForPrompt === normalizedPrompt && suggestions.length > 0)}
           onClick={requestAiSuggestions} type="button">

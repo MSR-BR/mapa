@@ -38,6 +38,9 @@ for migration in supabase/migrations/*.sql; do
     --file "/workspace/$migration" >/dev/null
 done
 
+docker exec "$container_name" psql --username postgres --set ON_ERROR_STOP=1 \
+  --file /workspace/scripts/verify-student-academic-local.sql >/dev/null
+
 result="$(docker exec "$container_name" \
   psql \
   --username postgres \

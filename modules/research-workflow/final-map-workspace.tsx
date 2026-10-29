@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 import { useAiProgress } from "@/modules/ai/use-ai-progress";
 
 import { useEffect, useMemo, useState } from "react";
@@ -247,6 +248,7 @@ export function FinalMapWorkspace({ initialWorkflow, isSelfDirectedProject = fal
                 <p style={{ whiteSpace: "pre-wrap" }}>{workflow.content.initialBriefing![name]}</p>
                 <label htmlFor={`review-${name}`}><strong>Texto Mapa da Pesquisa:</strong></label>
                 <textarea aria-label={`Texto Mapa da Pesquisa — ${label}`} id={`review-${name}`} rows={4} maxLength={RESEARCH_INTAKE_MAX_LENGTH} value={editableReview[name]} onChange={(event) => setReviewDraft({ sourceBriefing: workflow.content.initialBriefing!, texts: { ...editableReview, [name]: event.target.value } })} disabled={busy || appendixLocked} />
+                <VoiceDictationButton targetId={`review-${name}`} label={`Texto Mapa da Pesquisa — ${label}`} />
                 <small>{editableReview[name].length}/{RESEARCH_INTAKE_MAX_LENGTH} caracteres</small>
               </section>
             ))}

@@ -355,6 +355,24 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .project-card h2, .project-card h3, .project-card > strong { margin: 0; font-size: 1.25rem; line-height: 1.25; letter-spacing: -0.03em; }
 .project-card p, .project-card time { margin: 0; color: var(--muted); font-size: 0.85rem; }
 .project-card-area { color: var(--muted); font-size: 0.85rem; }
+.project-card-student { display: block; color: var(--ink); font-size: .9rem; font-weight: 600; }
+.student-profile-notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; padding: 1rem 1.25rem; border: 1px solid #cbded4; border-radius: 1rem; background: #eff8f2; }
+.student-profile-notice a { color: #146344; font-weight: 700; }
+.student-profile-shell { max-width: 52rem; padding-block: 2.5rem; }
+.student-profile-shell h1 { margin-block: .35rem; }
+.student-profile-shell > p { line-height: 1.6; }
+.student-profile-form { display: grid; gap: 1rem; margin-block: 1.5rem; }
+.student-profile-form > label { display: grid; gap: .4rem; font-weight: 700; }
+.student-profile-form input:not([type="checkbox"]) { width: 100%; padding: .8rem; border: 1px solid #a9c6b8; border-radius: .65rem; background: white; font: inherit; }
+.student-profile-form fieldset { display: grid; gap: .6rem; border: 1px solid #cbded4; border-radius: .8rem; padding: 1rem; }
+.student-profile-form fieldset label { display: flex; align-items: center; gap: .6rem; }
+.student-profile-form fieldset p { margin: 0 0 .5rem; color: var(--muted); }
+.student-profile-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.voice-dictation { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-block: .45rem; font-size: .8rem; }
+.voice-dictation-button { border: 1px solid #8ebaa7; border-radius: .65rem; background: #f0f8f3; color: #165c42; padding: .4rem .65rem; font: inherit; font-weight: 700; cursor: pointer; }
+.voice-dictation-button[aria-pressed="true"] { background: #165c42; color: white; }
+.voice-dictation-button:disabled { opacity: .5; cursor: not-allowed; }
+.voice-dictation small { color: var(--muted); }
 .project-origin-badge { width: fit-content; margin-top: -0.35rem; border: 1px solid #d9c48d; border-radius: 999px; padding: 0.24rem 0.55rem; background: #fff8e5; color: #73570e; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
 .project-advisor-badge { width: fit-content; margin-top: -0.35rem; border: 1px solid #b9d6cb; border-radius: 999px; padding: 0.24rem 0.55rem; background: #eef8f3; color: #1e6b4e; font-size: 0.7rem; font-weight: 850; text-transform: uppercase; }
 .project-advisor-badge-pending { border-color: #d9c48d; background: #fff8e5; color: #73570e; }

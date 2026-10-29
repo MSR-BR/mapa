@@ -1,4 +1,5 @@
 "use client";
+import { VoiceDictationButton } from "@/modules/voice/voice-dictation-button";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -434,6 +435,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
           <label className="advisor-review-comments">
             <span>Comentários da revisão</span>
             <textarea
+              id="advisor-review-comments"
               disabled={!canAct || busyAction !== null}
               maxLength={2_000}
               onChange={(event) => setComments(event.target.value)}
@@ -441,6 +443,7 @@ export function AdvisorReviewWorkspace({ initialWorkflow, projectId, projectTitl
               value={comments}
             />
           </label>
+          <VoiceDictationButton targetId="advisor-review-comments" label="Comentários da revisão" />
 
           {message ? <p className="definition-save-state saved" role="status">{message}</p> : null}
           {error ? <p className="definition-save-state error" role="alert">{error}</p> : null}

@@ -23,6 +23,7 @@ export type DashboardProject = {
   relation: "advisor" | "owner";
   stageLabel: string;
   statusLabel: string;
+  studentName: string | null;
   title: string;
   updatedAt: string;
   workflowVersion: number;
@@ -51,6 +52,7 @@ export function ProjectCardModal({
   selected,
   stageLabel,
   statusLabel,
+  studentName,
   title,
   updatedAt,
   workflowVersion,
@@ -123,6 +125,7 @@ export function ProjectCardModal({
       ) : null}
       {isIntegration ? <span className="project-origin-badge">Integração de projetos</span> : null}
       <strong>{title}</strong>
+      {relation === "advisor" ? <span className="project-card-student">Aluno: {studentName || "Nome ainda não informado"}</span> : null}
       <span className="project-card-area">{academicArea}</span>
       {integrationSource ? <p className="project-card-origin">Integração dos projetos: {integrationSource}</p> : null}
       <div className="project-card-references" aria-label={`${referenceCount} referências associadas`}>
