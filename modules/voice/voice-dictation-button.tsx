@@ -60,6 +60,7 @@ export function VoiceDictationButton({ targetId, label }: { targetId: string; la
     const interimResults = new Map<number, string>();
     let insertedText = false;
     let hadError = false;
+    let ended = false;
     const insertTranscript = (transcript: string) => {
       const currentField = document.getElementById(targetId);
       const editable = currentField instanceof HTMLTextAreaElement
@@ -90,6 +91,7 @@ export function VoiceDictationButton({ targetId, label }: { targetId: string; la
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.onresult = (event) => {
+      if (ended || hadError) return;
       for (const [index, result] of Array.from(event.results).entries()) {
         const transcript = result[0]?.transcript?.trim() ?? "";
         if (result.isFinal) {
@@ -111,11 +113,14 @@ export function VoiceDictationButton({ targetId, label }: { targetId: string; la
       try { recognition.stop(); } catch { /* The browser may already have stopped it. */ }
     };
     recognition.onend = () => {
+      if (ended) return;
+      ended = true;
       if (!hadError) {
         const pending = Array.from(interimResults.values()).join(" ").trim();
         if (pending) insertTranscript(pending);
         else if (!insertedText) setMessage("Nenhum texto foi reconhecido. Tente falar novamente ou digite normalmente.");
       }
+      interimResults.clear();
       recognitionRef.current = null;
       setListening(false);
     };

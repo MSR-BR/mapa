@@ -88,6 +88,8 @@ try {
   assert.equal(await body.inputValue(), "Texto novo final", "interim speech should not be inserted twice");
   await page.getByRole("button", { name: "Parar ditado: Corpo" }).click();
   assert.equal(await body.inputValue(), "Texto novo final com voz", "interim-only recognition must be committed when listening ends");
+  await page.evaluate(() => window.recognitions.at(-1).onresult({ results: [{ isFinal: true, 0: { transcript: "com voz" } }] }));
+  assert.equal(await body.inputValue(), "Texto novo final com voz", "late final result must not duplicate the committed interim text");
   await page.getByRole("button", { name: /^Rerender/ }).click();
   assert.equal(await body.inputValue(), "Texto novo final com voz", "dictation must update the React state");
 
