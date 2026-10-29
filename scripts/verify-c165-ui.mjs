@@ -81,6 +81,26 @@ try {
   assert.equal(await body.inputValue(), "Texto novo final", "controlled textarea must retain the transcript");
   await page.getByRole("button", { name: "Parar ditado: Corpo" }).click();
 
+  await body.focus();
+  await body.press("End");
+  await page.getByRole("button", { name: "Ditar texto: Corpo" }).click();
+  await page.evaluate(() => window.recognitions.at(-1).onresult({ results: [{ isFinal: false, 0: { transcript: "com voz" } }] }));
+  assert.equal(await body.inputValue(), "Texto novo final", "interim speech should not be inserted twice");
+  await page.getByRole("button", { name: "Parar ditado: Corpo" }).click();
+  assert.equal(await body.inputValue(), "Texto novo final com voz", "interim-only recognition must be committed when listening ends");
+  await page.getByRole("button", { name: /^Rerender/ }).click();
+  assert.equal(await body.inputValue(), "Texto novo final com voz", "dictation must update the React state");
+
+  await page.getByRole("button", { name: "Ditar texto: Corpo" }).click();
+  await page.evaluate(() => {
+    const recognition = window.recognitions.at(-1);
+    const result = { results: [{ isFinal: true, 0: { transcript: "confirmado" } }] };
+    recognition.onresult(result);
+    recognition.onresult(result);
+  });
+  await page.getByRole("button", { name: "Parar ditado: Corpo" }).click();
+  assert.equal(await body.inputValue(), "Texto novo final com voz confirmado", "repeated final results must not duplicate text");
+
   await title.fill("Título");
   await title.press("End");
   await page.getByRole("button", { name: "Ditar texto: Título" }).click();
@@ -101,14 +121,14 @@ try {
   await page.getByRole("button", { name: "Ditar texto: Corpo" }).click();
   await page.getByRole("button", { name: "Bloquear corpo" }).click();
   await page.evaluate(() => window.recognitions.at(-1).onresult({ results: [{ isFinal: true, 0: { transcript: "não entra" } }] }));
-  assert.equal(await body.inputValue(), "Texto novo final");
+  assert.equal(await body.inputValue(), "Texto novo final com voz confirmado");
 
   await page.getByLabel("Universidade ou instituição").fill("Universidade editada");
   await page.getByRole("button", { name: "Salvar dados" }).click();
   await page.getByText(/Seus dados continuam aqui/).waitFor();
   assert.equal(await page.getByLabel("Universidade ou instituição").inputValue(), "Universidade editada");
   assert.deepEqual(errors, []);
-  console.log("PASS: ditado em textarea/input, posição do cursor, limite, campo bloqueado e cadastro preservado após erro; nenhuma requisição externa.");
+  console.log("PASS: ditado final e parcial em textarea/input, estado React, sem duplicatas, cursor, limite, campo bloqueado e cadastro preservado após erro; nenhuma requisição externa.");
 } finally {
   await browser.close();
 }

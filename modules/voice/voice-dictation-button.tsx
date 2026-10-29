@@ -56,32 +56,69 @@ export function VoiceDictationButton({ targetId, label }: { targetId: string; la
     const SpeechRecognition = browser.SpeechRecognition || browser.webkitSpeechRecognition;
     if (!SpeechRecognition) { setMessage("Ditado indisponível neste navegador. Continue digitando normalmente."); return; }
     const recognition = new SpeechRecognition();
-    recognition.lang = "pt-BR";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.onresult = (event) => {
-      if (!field.isConnected || field.disabled || field.readOnly) return;
-      const transcript = Array.from(event.results).filter((result) => result.isFinal).map((result) => result[0]?.transcript ?? "").join(" ");
-      const result = insertDictation(field.value, transcript, caretRef.current ?? field.value.length, field.maxLength);
-      if (result.value !== field.value) {
-        // Use the native setter so React's controlled onChange receives the input event.
-        const prototype = field instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    const committedResults = new Set<number>();
+    const interimResults = new Map<number, string>();
+    let insertedText = false;
+    let hadError = false;
+    const insertTranscript = (transcript: string) => {
+      const currentField = document.getElementById(targetId);
+      const editable = currentField instanceof HTMLTextAreaElement
+        || (currentField instanceof HTMLInputElement && ["text", "search"].includes(currentField.type))
+        ? currentField : null;
+      if (!editable || editable.disabled || editable.readOnly) {
+        setMessage("Este campo não está disponível para receber o ditado agora.");
+        return;
+      }
+      const result = insertDictation(editable.value, transcript, caretRef.current ?? editable.value.length, editable.maxLength);
+      if (result.value !== editable.value) {
+        // The native setter and bubbling input event update React-controlled fields too.
+        const prototype = editable instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
         const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
-        setter?.call(field, result.value);
-        field.dispatchEvent(new Event("input", { bubbles: true }));
-        field.setSelectionRange(result.caret, result.caret);
+        setter?.call(editable, result.value);
+        const inputEvent = typeof InputEvent === "function"
+          ? new InputEvent("input", { bubbles: true, inputType: "insertText", data: transcript })
+          : new Event("input", { bubbles: true });
+        editable.dispatchEvent(inputEvent);
+        editable.setSelectionRange(result.caret, result.caret);
         caretRef.current = result.caret;
+        insertedText = true;
       }
       if (result.truncated) setMessage("O limite deste campo foi atingido; revise o texto antes de continuar.");
-      field.focus();
+      editable.focus();
+    };
+    recognition.lang = "pt-BR";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.onresult = (event) => {
+      for (const [index, result] of Array.from(event.results).entries()) {
+        const transcript = result[0]?.transcript?.trim() ?? "";
+        if (result.isFinal) {
+          interimResults.delete(index);
+          if (!committedResults.has(index) && transcript) {
+            committedResults.add(index);
+            insertTranscript(transcript);
+          }
+        } else if (transcript && !committedResults.has(index)) {
+          interimResults.set(index, transcript);
+        }
+      }
     };
     recognition.onerror = (event) => {
+      hadError = true;
       setMessage(event.error === "not-allowed" ? "Permita o uso do microfone no navegador para ditar." : "Não foi possível reconhecer a fala. Você pode continuar digitando.");
       recognitionRef.current = null;
       setListening(false);
       try { recognition.stop(); } catch { /* The browser may already have stopped it. */ }
     };
-    recognition.onend = () => { recognitionRef.current = null; setListening(false); };
+    recognition.onend = () => {
+      if (!hadError) {
+        const pending = Array.from(interimResults.values()).join(" ").trim();
+        if (pending) insertTranscript(pending);
+        else if (!insertedText) setMessage("Nenhum texto foi reconhecido. Tente falar novamente ou digite normalmente.");
+      }
+      recognitionRef.current = null;
+      setListening(false);
+    };
     try { recognitionRef.current = recognition; recognition.start(); setListening(true); setMessage(""); }
     catch { recognitionRef.current = null; setListening(false); setMessage("O microfone não pôde ser iniciado."); }
   }
