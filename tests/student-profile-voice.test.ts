@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { parseStudentAcademicProfile } from "../modules/profile/student-academic-profile";
-import { appendDictation } from "../modules/voice/voice-dictation";
+import { insertDictation } from "../modules/voice/voice-dictation";
 
 test("student profile keeps multiple course levels and rejects missing data", () => {
   const form = new FormData();
@@ -17,8 +17,10 @@ test("student profile keeps multiple course levels and rejects missing data", ()
   assert.equal(parseStudentAcademicProfile(form), null);
 });
 
-test("dictation appends without erasing text and respects the box limit", () => {
-  assert.deepEqual(appendDictation("Texto escrito", " nova  frase ", 18), { value: "Texto escrito nova", truncated: true });
-  assert.deepEqual(appendDictation("", " nova  frase ", 40), { value: "nova frase", truncated: false });
-  assert.deepEqual(appendDictation("texto", "", 40), { value: "texto", truncated: false });
+test("dictation inserts at the caret without erasing text and respects the box limit", () => {
+  assert.deepEqual(insertDictation("Texto escrito", " nova  frase ", 13, 18), { value: "Texto escrito nova", caret: 18, truncated: true });
+  assert.deepEqual(insertDictation("Texto final", "novo", 6, 40), { value: "Texto novo final", caret: 10, truncated: false });
+  assert.deepEqual(insertDictation("final", "novo", 0, 40), { value: "novo final", caret: 4, truncated: false });
+  assert.deepEqual(insertDictation("texto", "", 3, 40), { value: "texto", caret: 3, truncated: false });
+  assert.deepEqual(insertDictation("texto", "novo", 5, 5), { value: "texto", caret: 5, truncated: true });
 });

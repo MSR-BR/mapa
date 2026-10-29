@@ -221,7 +221,8 @@ export function ManualReferencePanel({ onWorkflow, projectId, workflow }: Props)
                 {lookup?.warnings.map((warning) => <p key={warning}>{warning}</p>)}
               </div>
             </div>
-            <label>Título<input disabled={busy} maxLength={500} onChange={(event) => update("title", event.target.value)} required value={draft.title} /></label>
+            <label>Título<input id="manual-reference-title" disabled={busy} maxLength={500} onChange={(event) => update("title", event.target.value)} required value={draft.title} /></label>
+            <VoiceDictationButton targetId="manual-reference-title" label="Título da referência" />
             <label>Autores<textarea id="manual-reference-authors" disabled={busy} maxLength={1200} onChange={(event) => update("authors", event.target.value)} placeholder="Separe autores por ponto e vírgula" value={draft.authors} /></label>
             <VoiceDictationButton targetId="manual-reference-authors" label="Autores da referência" />
             <label>Revista<input disabled={busy} maxLength={240} onChange={(event) => update("journal", event.target.value)} value={draft.journal} /></label>

@@ -5,14 +5,19 @@ import { redirect } from "next/navigation";
 import { requireActorContext } from "./authorization";
 import { parseStudentAcademicProfile } from "./student-academic-profile";
 
-export async function saveStudentAcademicProfile(formData: FormData) {
+export type StudentAcademicSaveState = { status: "idle" | "invalid" | "save_error" };
+
+export async function saveStudentAcademicProfile(
+  _previousState: StudentAcademicSaveState,
+  formData: FormData,
+): Promise<StudentAcademicSaveState> {
   const actor = await requireActorContext();
   if (actor.activeRole !== "student") redirect("/dashboard");
   const profile = parseStudentAcademicProfile(formData);
-  if (!profile) redirect("/dashboard/student-profile?error=invalid");
+  if (!profile) return { status: "invalid" };
   const { error } = await actor.supabase.from("student_academic_profiles")
     .upsert({ ...profile, user_id: actor.userId, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
-  if (error) redirect("/dashboard/student-profile?error=save");
+  if (error) return { status: "save_error" };
   revalidatePath("/dashboard");
   redirect("/dashboard?profile=complete");
 }

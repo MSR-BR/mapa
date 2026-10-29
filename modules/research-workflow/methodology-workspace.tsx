@@ -505,6 +505,7 @@ export function MethodologyWorkspace({ initialWorkflow, isSelfDirectedProject = 
 
       <div className="methodology-title-editor">
         <label>Título final sugerido *<input id="methodology-title" disabled={busy || waitingForAdvisor} maxLength={FINAL_TITLE_MAX_LENGTH} onChange={(event) => setTitle(event.target.value)} value={title} /></label>
+        <VoiceDictationButton targetId="methodology-title" label="Título final sugerido" />
         <small>Até {FINAL_TITLE_MAX_LENGTH} caracteres. Acima de {FINAL_TITLE_RECOMMENDED_LENGTH}, o sistema apenas recomenda encurtar; você pode avançar.</small>
       </div>
 

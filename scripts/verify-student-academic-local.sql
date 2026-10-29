@@ -51,6 +51,21 @@ end $$;
 reset role;
 
 set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000165', false);
+do $$ begin
+  if (select count(*) from public.student_academic_profiles where display_name = 'Ana Revisada') <> 1 then
+    raise exception 'student_cannot_read_own_profile';
+  end if;
+  begin
+    update public.projects set student_display_name = 'Nome forjado'
+    where id = '00000000-0000-4000-8000-000000000167';
+    raise exception 'student_can_change_project_name_directly';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
+set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000168', false);
 do $$ begin
   if (select count(*) from public.projects where id = '00000000-0000-4000-8000-000000000167' and student_display_name = 'Ana Revisada') <> 1 then
@@ -59,5 +74,22 @@ do $$ begin
   if (select count(*) from public.student_academic_profiles) <> 0 then
     raise exception 'advisor_can_read_private_academic_profile';
   end if;
+end $$;
+reset role;
+
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000166', false);
+do $$ begin
+  update public.student_academic_profiles set display_name = 'Nome forjado'
+  where user_id = '00000000-0000-4000-8000-000000000165';
+  if found then raise exception 'other_student_can_change_profile'; end if;
+  begin
+    insert into public.student_academic_profiles
+      (user_id, display_name, university, department, course_name, study_levels)
+    values ('00000000-0000-4000-8000-000000000165', 'Nome forjado', 'UFF', 'Instituto', 'Física', array['tcc'])
+    on conflict (user_id) do update set display_name = excluded.display_name;
+    raise exception 'other_student_can_upsert_profile';
+  exception when insufficient_privilege then null;
+  end;
 end $$;
 reset role;

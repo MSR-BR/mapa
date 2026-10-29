@@ -223,7 +223,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   return (
     <main className="workspace-shell dashboard-home">
-      {isStudentMode && !academicProfile?.data ? <div className="student-profile-notice"><span>Dados acadêmicos: identifique-se para seu orientador e informe seu curso.</span><Link href="/dashboard/student-profile">Completar cadastro</Link></div> : null}
+      {isStudentMode && academicProfile?.error ? <div className="student-profile-notice"><span>Seus dados acadêmicos não puderam ser conferidos agora.</span><Link href="/dashboard/student-profile">Tentar novamente</Link></div> : null}
+      {isStudentMode && !academicProfile?.error && !academicProfile?.data ? <div className="student-profile-notice"><span>Dados acadêmicos: identifique-se para seu orientador e informe seu curso.</span><Link href="/dashboard/student-profile">Completar cadastro</Link></div> : null}
       {isStudentMode ? (
         <section className="quick-start" aria-labelledby="quick-start-title">
           <p className="section-kicker">{profilePresentation.dashboardKicker}</p>

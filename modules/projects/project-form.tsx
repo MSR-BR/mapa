@@ -83,9 +83,10 @@ export function ProjectForm({ action, project, submitLabel }: ProjectFormProps) 
       <input name="profileRoleVersion" type="hidden" value={roleVersion} />
       <label>
         Título <span>obrigatório</span>
-        <input defaultValue={project?.title} maxLength={160} name="title" required {...fieldA11y("title")} />
+        <input id="project-title" defaultValue={project?.title} maxLength={160} name="title" required {...fieldA11y("title")} />
         {errorFor("title") ? <small className="field-error" id="title-error">{errorFor("title")}</small> : null}
       </label>
+      <VoiceDictationButton targetId="project-title" label="Título do projeto" />
       <label>
         Tema
         <textarea id="project-theme" defaultValue={project?.theme ?? ""} maxLength={500} name="theme" rows={3} {...fieldA11y("theme")} />
