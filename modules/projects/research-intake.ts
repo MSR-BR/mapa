@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 
 import {
   RESEARCH_PRODUCT_TYPES,
@@ -21,11 +22,11 @@ export const researchIntakeSchema = z.object({
 });
 
 export const researchIntakeInputSchema = researchIntakeSchema.extend({
-  problemContext: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
-  observedSituation: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
-  discrepancyConsequences: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
-  existingKnowledgeGap: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
-  delimitationQuestion: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH),
+  problemContext: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH).regex(utf16MaxLengthPattern(RESEARCH_INTAKE_MAX_LENGTH)),
+  observedSituation: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH).regex(utf16MaxLengthPattern(RESEARCH_INTAKE_MAX_LENGTH)),
+  discrepancyConsequences: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH).regex(utf16MaxLengthPattern(RESEARCH_INTAKE_MAX_LENGTH)),
+  existingKnowledgeGap: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH).regex(utf16MaxLengthPattern(RESEARCH_INTAKE_MAX_LENGTH)),
+  delimitationQuestion: researchIntakeFieldSchema.max(RESEARCH_INTAKE_MAX_LENGTH).regex(utf16MaxLengthPattern(RESEARCH_INTAKE_MAX_LENGTH)),
 });
 
 export type ResearchIntake = z.infer<typeof researchIntakeSchema>;

@@ -1,4 +1,4 @@
-import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+import { FIELD_LIMITS, utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 import { collaborativeReviewSchema } from "@/modules/ai/contract";
 import { z } from "zod";
 
@@ -105,7 +105,7 @@ export const validatedElementSchema = z.object({
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
-  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.studentJustification)).nullable().default(null),
   type: workflowElementTypeSchema,
   updatedBy: z.enum(["ai", "user", "system"]),
 });
@@ -126,11 +126,11 @@ export const objectiveCoverageSchema = z.object({
 
 export const chapterTopicDetailSchema = z.object({
   chapter: z.enum(["literature", "development"]),
-  exceptionJustification: z.string().trim().max(FIELD_LIMITS.exceptionJustification).nullable(),
+  exceptionJustification: z.string().trim().max(FIELD_LIMITS.exceptionJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.exceptionJustification)).nullable(),
   generalObjectiveAligned: z.boolean(),
   objectiveCoverage: z.array(objectiveCoverageSchema).max(7),
   order: z.number().int().min(1).max(6),
-  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.studentJustification)).nullable().default(null),
   topicId: z.string().uuid(),
 });
 
@@ -148,14 +148,14 @@ export type KnowledgeSuggestion = z.infer<typeof knowledgeSuggestionSchema>;
 
 // Drafts may be incomplete; submission and AI output use stricter input schemas.
 export const methodologyClassificationSchema = z.object({
-  analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).max(6),
+  analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).max(6),
   approach: z.enum(["Qualitativa", "Quantitativa", "Mista"]),
-  ethicsWarnings: z.array(z.string().trim().min(1).max(FIELD_LIMITS.ethicsWarning)).max(6),
-  instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).max(8),
+  ethicsWarnings: z.array(z.string().trim().min(1).max(FIELD_LIMITS.ethicsWarning).regex(utf16MaxLengthPattern(FIELD_LIMITS.ethicsWarning))).max(6),
+  instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).max(8),
   nature: z.enum(["Básica", "Aplicada"]),
   objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).max(3),
-  procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).max(8),
-  rationale: z.string().trim().max(FIELD_LIMITS.rationale),
+  procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).max(8),
+  rationale: z.string().trim().max(FIELD_LIMITS.rationale).regex(utf16MaxLengthPattern(FIELD_LIMITS.rationale)),
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
@@ -165,16 +165,16 @@ export const methodologyClassificationSchema = z.object({
 export type MethodologyClassification = z.infer<typeof methodologyClassificationSchema>;
 
 export const methodologyRowSchema = z.object({
-  analysisTreatment: z.string().trim().max(FIELD_LIMITS.analysisTreatment),
+  analysisTreatment: z.string().trim().max(FIELD_LIMITS.analysisTreatment).regex(utf16MaxLengthPattern(FIELD_LIMITS.analysisTreatment)),
   associatedTopicIds: z.array(z.string().uuid()).max(12),
-  dataCollection: z.string().trim().max(FIELD_LIMITS.dataCollection),
-  expectedResult: z.string().trim().max(FIELD_LIMITS.expectedResult),
+  dataCollection: z.string().trim().max(FIELD_LIMITS.dataCollection).regex(utf16MaxLengthPattern(FIELD_LIMITS.dataCollection)),
+  expectedResult: z.string().trim().max(FIELD_LIMITS.expectedResult).regex(utf16MaxLengthPattern(FIELD_LIMITS.expectedResult)),
   id: z.string().uuid(),
   objectiveId: z.string().uuid(),
   revision: z.number().int().positive(),
   sourceRevision: z.number().int().positive(),
   status: validationStatusSchema,
-  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.studentJustification)).nullable().default(null),
   updatedBy: z.enum(["ai", "user", "system"]),
   warnings: z.array(z.string().trim().min(1).max(500)).max(6),
 });
@@ -237,7 +237,7 @@ export const problemCandidateSchema = z.object({
   knowledgeAreaProposed: z.boolean(),
   keywords: z.array(z.string().trim().min(2).max(80)).min(3).max(5),
   position: z.number().int().min(1).max(6),
-  problemQuestion: z.string().trim().min(20).max(FIELD_LIMITS.problem).regex(/^(Como|De que forma)\b/i),
+  problemQuestion: z.string().trim().min(20).max(FIELD_LIMITS.problem).regex(utf16MaxLengthPattern(FIELD_LIMITS.problem)).regex(/^(Como|De que forma)\b/i),
   referenceIds: z.array(z.string().trim().min(1).max(120)).max(12),
   title: z.string().trim().min(3).max(100),
 });

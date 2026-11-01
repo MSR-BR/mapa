@@ -1,4 +1,4 @@
-import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+import { FIELD_LIMITS, utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 
 import type { ChapterTopicInput } from "./chapter-validation";
@@ -15,11 +15,11 @@ export const methodologyClassificationInputSchema = methodologyClassificationSch
   status: true,
   updatedBy: true,
 }).extend({
-  analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(6),
-  instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
+  analysisTechniques: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).min(1).max(6),
+  instruments: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).min(1).max(8),
   objectives: z.array(z.enum(["Exploratória", "Descritiva", "Explicativa"])).min(1).max(3),
-  procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem)).min(1).max(8),
-  rationale: z.string().trim().min(3).max(FIELD_LIMITS.rationale),
+  procedures: z.array(z.string().trim().min(2).max(FIELD_LIMITS.classificationItem).regex(utf16MaxLengthPattern(FIELD_LIMITS.classificationItem))).min(1).max(8),
+  rationale: z.string().trim().min(3).max(FIELD_LIMITS.rationale).regex(utf16MaxLengthPattern(FIELD_LIMITS.rationale)),
 });
 
 export const methodologyRowInputSchema = methodologyRowSchema.omit({
@@ -29,10 +29,10 @@ export const methodologyRowInputSchema = methodologyRowSchema.omit({
   updatedBy: true,
   warnings: true,
 }).extend({
-  analysisTreatment: z.string().trim().min(3).max(FIELD_LIMITS.analysisTreatment),
-  dataCollection: z.string().trim().min(3).max(FIELD_LIMITS.dataCollection),
-  expectedResult: z.string().trim().min(3).max(FIELD_LIMITS.expectedResult),
-  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
+  analysisTreatment: z.string().trim().min(3).max(FIELD_LIMITS.analysisTreatment).regex(utf16MaxLengthPattern(FIELD_LIMITS.analysisTreatment)),
+  dataCollection: z.string().trim().min(3).max(FIELD_LIMITS.dataCollection).regex(utf16MaxLengthPattern(FIELD_LIMITS.dataCollection)),
+  expectedResult: z.string().trim().min(3).max(FIELD_LIMITS.expectedResult).regex(utf16MaxLengthPattern(FIELD_LIMITS.expectedResult)),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.studentJustification)).nullable().default(null),
   warnings: z.array(z.string().trim().min(1).max(500)).max(6).default([]),
 });
 
@@ -42,7 +42,7 @@ export const FINAL_TITLE_MAX_LENGTH = FIELD_LIMITS.title;
 export const methodologyPlanInputSchema = z.object({
   classification: methodologyClassificationInputSchema,
   rows: z.array(methodologyRowInputSchema).min(3).max(7),
-  title: z.string().trim().min(3).max(FINAL_TITLE_MAX_LENGTH),
+  title: z.string().trim().min(3).max(FINAL_TITLE_MAX_LENGTH).regex(utf16MaxLengthPattern(FINAL_TITLE_MAX_LENGTH)),
 });
 
 export type MethodologyPlanInput = z.infer<typeof methodologyPlanInputSchema>;

@@ -36,3 +36,10 @@ export function classificationListMaxLength(field: keyof typeof CLASSIFICATION_L
 export function problemDraftLimit(previous = "") {
   return Math.max(FIELD_LIMITS.problem, Math.min(previous.length, 12_000));
 }
+
+/** Keep server limits aligned with HTML maxLength after Zod switched to code points.
+ * No Unicode flag: each match consumes one UTF-16 code unit, including newlines.
+ */
+export function utf16MaxLengthPattern(limit: number) {
+  return new RegExp(`^[\\s\\S]{0,${limit}}$`);
+}

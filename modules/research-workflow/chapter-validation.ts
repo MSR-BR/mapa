@@ -1,8 +1,8 @@
-import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+import { FIELD_LIMITS, utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 
 export const chapterTopicInputSchema = z.object({
-  exceptionJustification: z.string().trim().max(FIELD_LIMITS.exceptionJustification).nullable().default(null),
+  exceptionJustification: z.string().trim().max(FIELD_LIMITS.exceptionJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.exceptionJustification)).nullable().default(null),
   generalObjectiveAligned: z.boolean().default(false),
   id: z.string().uuid(),
   objectiveCoverage: z.array(z.object({
@@ -10,12 +10,12 @@ export const chapterTopicInputSchema = z.object({
     objectiveId: z.string().uuid(),
   })).max(7),
   referenceIds: z.array(z.string().trim().min(1).max(120)).max(20),
-  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).nullable().default(null),
-  title: z.string().trim().min(3).max(FIELD_LIMITS.topic),
+  studentJustification: z.string().trim().max(FIELD_LIMITS.studentJustification).regex(utf16MaxLengthPattern(FIELD_LIMITS.studentJustification)).nullable().default(null),
+  title: z.string().trim().min(3).max(FIELD_LIMITS.topic).regex(utf16MaxLengthPattern(FIELD_LIMITS.topic)),
 });
 
 export const chapterTopicsInputSchema = z.array(chapterTopicInputSchema).min(3).max(6);
-export const chapterTopicsDraftSchema = z.array(chapterTopicInputSchema.extend({ title: z.string().trim().min(1).max(FIELD_LIMITS.topic) })).max(6);
+export const chapterTopicsDraftSchema = z.array(chapterTopicInputSchema.extend({ title: z.string().trim().min(1).max(FIELD_LIMITS.topic).regex(utf16MaxLengthPattern(FIELD_LIMITS.topic)) })).max(6);
 export function chapterInputErrors(error: z.ZodError) {
   return [...new Set(error.issues.map((issue) => {
     const [index, field] = issue.path;

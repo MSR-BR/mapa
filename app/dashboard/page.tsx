@@ -11,6 +11,7 @@ import { claimPendingAdvisorProjects } from "@/modules/profile/storage";
 import { DashboardProjectGrid } from "@/modules/projects/dashboard-project-grid";
 import { QuickStartForm } from "@/modules/projects/quick-start-form";
 import { workflowAdvisorStatus } from "@/modules/research-workflow/advisor-review";
+import { pendingReviewBadge } from "@/modules/research-workflow/pending-review-badge";
 import { workflowDashboardMeta } from "@/modules/research-workflow/dashboard";
 import {
   researchWorkflowContentSchema,
@@ -151,6 +152,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     });
     return parsed.success ? [[workflow.project_id, parsed.data] as const] : [];
   }));
+  // Async Server Component: snapshot the request time once, then serialize the badge.
+  // eslint-disable-next-line react-hooks/purity
+  const dashboardNow = Date.now();
   const dashboardProjects = allProjects.map((project) => {
     const workflow = workflowByProject.get(project.id);
     const structure = structureByProject.get(project.id);
@@ -177,6 +181,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       isIntegration,
       ownerId: project.owner_id,
       studentName: project.owner_id !== userId ? project.student_display_name ?? null : null,
+      pendingReview: isAdvisorMode && project.owner_id !== userId && workflow
+        ? pendingReviewBadge(workflow.content, dashboardNow)
+        : null,
       progress: meta?.progress ?? null,
       projectId: project.id,
       referenceCount: references.length,

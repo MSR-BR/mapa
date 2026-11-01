@@ -1,4 +1,4 @@
-import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+import { FIELD_LIMITS, utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 import type { AiOperation } from "@/modules/ai/policy";
 import { researchWorkflowContentSchema, type AdvisorReviewStep, type ResearchWorkflowContent } from "./schema";
@@ -26,9 +26,9 @@ export function regenerationCard(content: ResearchWorkflowContent, step: Advisor
 export type RegenerationCard = ReturnType<typeof regenerationCard>;
 export const cardClassificationSchema = methodologyClassificationInputSchema;
 export const cardRowSchema = z.object({
-  dataCollection: z.string().trim().min(20).max(FIELD_LIMITS.dataCollection),
-  analysisTreatment: z.string().trim().min(20).max(FIELD_LIMITS.analysisTreatment),
-  expectedResult: z.string().trim().min(20).max(FIELD_LIMITS.expectedResult),
+  dataCollection: z.string().trim().min(20).max(FIELD_LIMITS.dataCollection).regex(utf16MaxLengthPattern(FIELD_LIMITS.dataCollection)),
+  analysisTreatment: z.string().trim().min(20).max(FIELD_LIMITS.analysisTreatment).regex(utf16MaxLengthPattern(FIELD_LIMITS.analysisTreatment)),
+  expectedResult: z.string().trim().min(20).max(FIELD_LIMITS.expectedResult).regex(utf16MaxLengthPattern(FIELD_LIMITS.expectedResult)),
 });
 export type CardResult = { kind: "element"; text: string } | { kind: "row"; value: z.infer<typeof cardRowSchema> } | { kind: "classification"; value: z.infer<typeof cardClassificationSchema> };
 

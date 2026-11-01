@@ -1,11 +1,11 @@
-import { FIELD_LIMITS } from "@/modules/research-workflow/field-limits";
+import { FIELD_LIMITS, utf16MaxLengthPattern } from "@/modules/research-workflow/field-limits";
 import { z } from "zod";
 
-export const problemStatementInputSchema = z.string().trim().min(20).max(FIELD_LIMITS.problem);
-export const generalObjectiveInputSchema = z.string().trim().min(20).max(FIELD_LIMITS.objective);
+export const problemStatementInputSchema = z.string().trim().min(20).max(FIELD_LIMITS.problem).regex(utf16MaxLengthPattern(FIELD_LIMITS.problem));
+export const generalObjectiveInputSchema = z.string().trim().min(20).max(FIELD_LIMITS.objective).regex(utf16MaxLengthPattern(FIELD_LIMITS.objective));
 export const specificObjectivesInputSchema = z.array(z.object({
   id: z.string().uuid(),
-  content: z.string().trim().min(15).max(FIELD_LIMITS.objective),
+  content: z.string().trim().min(15).max(FIELD_LIMITS.objective).regex(utf16MaxLengthPattern(FIELD_LIMITS.objective)),
 })).min(3).max(6);
 
 const QUESTION_OPENING = /^(Como|De que forma)\b/i;

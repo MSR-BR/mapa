@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
 import { useActiveProfile } from "@/modules/profile/active-profile-context";
+import type { pendingReviewBadge } from "@/modules/research-workflow/pending-review-badge";
 
 import { deleteProject } from "./actions";
 
@@ -24,6 +25,7 @@ export type DashboardProject = {
   stageLabel: string;
   statusLabel: string;
   studentName: string | null;
+  pendingReview?: ReturnType<typeof pendingReviewBadge>;
   title: string;
   updatedAt: string;
   workflowVersion: number;
@@ -43,6 +45,7 @@ export function ProjectCardModal({
   integrationSource,
   isIntegration,
   onSelectionChange,
+  pendingReview,
   progress,
   projectId,
   referenceCount,
@@ -126,6 +129,11 @@ export function ProjectCardModal({
       {isIntegration ? <span className="project-origin-badge">Integração de projetos</span> : null}
       <strong>{title}</strong>
       {relation === "advisor" ? <span className="project-card-student">Aluno: {studentName || "Nome ainda não informado"}</span> : null}
+      {relation === "advisor" && pendingReview ? (
+        <span className={`project-pending-review project-pending-review-${pendingReview.tone}`}>
+          {pendingReview.label}
+        </span>
+      ) : null}
       <span className="project-card-area">{academicArea}</span>
       {integrationSource ? <p className="project-card-origin">Integração dos projetos: {integrationSource}</p> : null}
       <div className="project-card-references" aria-label={`${referenceCount} referências associadas`}>

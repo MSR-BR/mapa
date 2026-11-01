@@ -356,6 +356,11 @@ h1 { max-width: 16ch; margin: 0; font-size: clamp(2rem, 6vw, 3.75rem); line-heig
 .project-card p, .project-card time { margin: 0; color: var(--muted); font-size: 0.85rem; }
 .project-card-area { color: var(--muted); font-size: 0.85rem; }
 .project-card-student { display: block; color: var(--ink); font-size: .9rem; font-weight: 600; }
+.project-pending-review { justify-self: start; max-width: 100%; padding: .35rem .55rem; border: 1px solid; border-radius: .4rem; font-size: .75rem; font-weight: 650; line-height: 1.4; overflow-wrap: anywhere; }
+.project-pending-review-green { color: #14532d; background: #dcfce7; border-color: #86efac; }
+.project-pending-review-yellow { color: #713f12; background: #fef9c3; border-color: #fde047; }
+.project-pending-review-red { color: #7f1d1d; background: #fee2e2; border-color: #fca5a5; }
+.project-pending-review-unknown { color: #374151; background: #f3f4f6; border-color: #d1d5db; }
 .student-profile-notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; padding: 1rem 1.25rem; border: 1px solid #cbded4; border-radius: 1rem; background: #eff8f2; }
 .student-profile-notice a { color: #146344; font-weight: 700; }
 .student-profile-shell { max-width: 52rem; padding-block: 2.5rem; }
