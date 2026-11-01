@@ -7,4 +7,4 @@
 - [x] Tipos, lint, 285 testes unitários, verificadores e exportações aprovados.
 - [x] Build alternativo Webpack aprovado; restrição Turbopack documentada.
 - [x] Memória e evidências salvas, alterações anteriores preservadas.
-- [ ] Publicação: fora desta etapa.
+- [x] Publicação autorizada, promoção e smokes públicos verificados; limite de login documentado.

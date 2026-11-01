@@ -193,3 +193,10 @@ C129–C134 autorizadas para execução. Implementações locais concluídas ond
 - [C132 — Redução de chamadas desnecessárias](changes/132-ai-call-efficiency/spec.md): IMPLEMENTED_LOCAL; publicação pendente.
 - [C133 — Atendimento simultâneo de turmas](changes/133-classroom-concurrency/spec.md): IMPLEMENTED_LOCAL_PARTIAL; cotas reais e jornadas completas pendentes.
 - [C134 — Monitoramento e validação da capacidade](changes/134-ai-capacity-observability/spec.md): IMPLEMENTED_LOCAL_PARTIAL; dados de produção e custo por mapa completo pendentes.
+
+
+## C168 — Indicação de validação pendente — 01/11/2026
+
+[168-advisor-pending-validation](changes/168-advisor-pending-validation/objective.md): implementação local solicitada; caixa verde/amarela/vermelha por tempo desde o envio. Sem publicação nesta etapa.
+
+C168: **PUBLICADA** em v01112026.1, 01/11/2026; [CPD](changes/168-advisor-pending-validation/cpd-2026-11-01.md).

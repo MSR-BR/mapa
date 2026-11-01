@@ -551,3 +551,21 @@ deployment final.
 - O runner remoto sintético baseado em senha ficou incompatível com a decisão
   Google-only da C92. Não reativar Email para executá-lo; uma futura automação
   remota deve usar autenticação suportada ou credenciais efêmeras próprias.
+
+
+## C168 — Cards com validação pendente — 01/11/2026
+
+Pedido direto de alteração da área do Orientador. APP, escopo local de apresentação, sem alterações em dados/permissões; perfil S3 existente reutilizado. Usa requestedAt da revisão pending vigente: verde até 72h, amarelo >72h até 120h, vermelho >120h. Indicador junto ao nome, apenas em projetos orientados; cálculo a cada carregamento do dashboard. Trabalhos anteriores preservados.
+
+PO_MAGICO_SOURCE: ../po-magico (local e remoto em 81e3cbe)
+PO_MAGICO_VERSION_USED: v20261020.002
+PO_MAGICO_LAST_CHECKED: 2026-11-01
+PO_MAGICO_CHECKPOINT: start/classification/resume/change/phase
+PO_MAGICO_DELTA_ADOPTED: yes — escopo e limites temporais explícitos, validação sintética responsiva
+PO_MAGICO_LESSON_CANDIDATE: none
+
+Mapa ausente do catálogo do orquestrador; caminho explicitamente fornecido pelo usuário e Git confirmados, sem mover arquivos nem modificar arquivo do orquestrador. Executor Codex baseado em GPT-6; variante/esforço não expostos. Verificação local em andamento; sem commit/push/deploy nesta etapa.
+
+C168 — checkpoint delivery: implementação local verificada; 285 testes unitários e verificadores aprovados, lint com aviso preexistente, tipos/grants/exportações aprovados; UI sintética em 1280/390/320 px; build Webpack aprovado. Turbopack bloqueado por restrição local de porta interna. READY local YES; sem commit, push ou deploy. Evidências em `.specs/changes/168-advisor-pending-validation/`.
+
+C168 — CPD 01/11/2026: produção v01112026.1, commit funcional f8cbc10, deployment dpl_DpLH2f6TAqwDQDV3LmjMudDFUT5w. Build Turbopack remoto, 285 testes e smokes públicos aprovados. Zod/undici corrigidos; zero vulnerabilidades de produção. Login Google bloqueado pela revisão automática, autorização específica solicitada. Rascunhos preexistentes preservados só em stash local 04bd5b7fb7db3c6a7bfd73b86d2fd1091716b556, fora do repositório público. PO_MAGICO_CHECKPOINT: delivery; versão v20261020.002; delta: release gate, preservação local e evidência limitada corretamente.

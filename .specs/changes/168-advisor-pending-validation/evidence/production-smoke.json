@@ -1,0 +1,24 @@
+{
+  "health": {
+    "checks": {
+      "openai": "configured",
+      "gemini": "configured",
+      "resend": "configured",
+      "researchStarter": "configured",
+      "supabase": "configured"
+    },
+    "service": "mapa-da-pesquisa",
+    "status": "ok",
+    "version": "v01112026.1"
+  },
+  "healthStatus": 200,
+  "anonymousExportStatus": 401,
+  "dashboardRedirect": "https://mapadapesquisa.com.br/login",
+  "publishedBadgeStyles": [
+    "green",
+    "yellow",
+    "red"
+  ],
+  "privateDataRead": false,
+  "paidCalls": 0
+}

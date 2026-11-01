@@ -4,5 +4,5 @@ Cálculo no servidor ao carregar dashboard, relógio único por resposta e props
 
 Pó Mágico v20261020.002, local/remoto em 81e3cbe; Mapa ausente do catálogo, usado caminho explícito do usuário, sem mover ou alterar registro. Documentação Next instalada consultada. Trabalho não relacionado preservado.
 
-PUBLICATION_STATE: NOT_IN_SCOPE
-Sem commit, push ou deploy solicitado nesta etapa.
+PUBLICATION_STATE: PUBLISHED
+CPD posteriormente autorizado e executado; ver cpd-2026-11-01.md.

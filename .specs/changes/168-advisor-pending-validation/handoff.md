@@ -1,13 +1,16 @@
 # CHANGE 168 — advisor-pending-validation
 
-READY: YES — candidato local
-LOCALLY RECORDED: YES — arquivos nesta pasta e código indicado em files-to-create-or-modify.md; sem commit
-LOCAL PATHS / EVIDENCE: validation.md, evidence/cards-1280.png, evidence/cards-390.png, evidence/cards-320.png, evidence/build-webpack.log
-VALIDATION: tipos/lint, 285 testes unitários, verificadores sintéticos, exportações, browser responsivo e build Webpack aprovados
-OPEN ISSUES: build Turbopack bloqueado pelo ambiente; não publicado
+READY: YES — publicação e verificações públicas concluídas
+LOCALLY RECORDED: YES
+LOCAL PATHS / EVIDENCE: cpd-2026-11-01.md; evidence/production-smoke.json; evidence/deployment.json
+VALIDATION: 285 testes, rotas, exportações, UI sintética responsiva, build local e remoto aprovados; health e proteção de acesso confirmados
+OPEN ISSUES: conferência autenticada não executada por bloqueio de aprovação do login; rascunhos alheios preservados somente em stash local
 NEXT CHANGE: NONE
 NEXT PLANNED MODEL: não aplicável
 NEXT PLANNED REASONING: não aplicável
-NEXT MODEL RATIONALE: escopo local entregue
+NEXT MODEL RATIONALE: escopo concluído
 EXECUTION STATE: COMPLETE
-PUBLICATION_STATE: APPROVED — pedido explícito “cpd limpo” em 01/11/2026
+PUBLICATION_STATE: PUBLISHED
+APPROVED_DESTINATION: https://mapadapesquisa.com.br
+APPROVAL_EVIDENCE: pedido explícito “cpd limpo”
+PUBLICATION_EVIDENCE: deployment dpl_DpLH2f6TAqwDQDV3LmjMudDFUT5w
